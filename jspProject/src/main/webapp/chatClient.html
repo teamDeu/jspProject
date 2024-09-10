@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Chat Client</title>
+    <script type="text/javascript">
+        var ws;
+        function connect() {
+            var username = document.getElementById("username").value;
+            ws = new WebSocket("ws://localhost:8080/chat/" + username);
+            
+            ws.onopen = function() {
+                updateStatus("Connected");
+            };
+            
+            ws.onmessage = function(event) {
+                var log = document.getElementById("chatlog");
+                log.innerHTML += event.data + "\n";
+            };
+            
+            ws.onclose = function() {
+                updateStatus("Disconnected");
+            };
+        }
+        
+        function send() {
+            var content = document.getElementById("msg").value;
+            ws.send(content);
+            document.getElementById("msg").value = '';
+        }
+
+        function updateStatus(status) {
+            document.getElementById("status").innerHTML = status;
+        }
+    </script>
+</head>
+<body>
+    <h2>WebSocket Chat Client</h2>
+    Username: <input type="text" id="username" value="Guest"/><br>
+    <button onclick="connect();">Connect</button>
+    <div id="status">Disconnected</div>
+    <textarea id="chatlog" rows="20" cols="50"></textarea><br>
+    <input type="text" id="msg">
+    <button onclick="send();">Send</button>
+</body>
+</html>
