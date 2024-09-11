@@ -12,7 +12,6 @@
     <title>실시간 채팅</title>
     <script type="text/javascript">
         var ws;
-        var user  = "<%= request.getRemoteHost()%>";
         var id = "<%=id%>";
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%= request.getContextPath() %>/chat");
@@ -29,7 +28,23 @@
               	data = rawdata[1];
               	
               	if(command == ("sendMessage")){
+              		comment = data.split(":")[1];
+              		user = data.split(":")[0];
               		chatArea.value += data + "\n";
+              		
+              		
+              		user = document.getElementById(user);
+              		miniroom = document.getElementById("miniroom");
+              		newDiv = document.createElement("div");
+              		newContent = document.createTextNode(comment);
+              		newDiv.appendChild(newContent);
+              		
+              		newDiv.classList.add("sayBox");
+          
+              		newDiv.style.top = "300px";
+              		newDiv.style.left = "50px";
+              		miniroom.appendChild(newDiv);
+              		
               	}
               	else if(command == ("init")){
               		printUser(data,rawdata[2]);
@@ -53,7 +68,7 @@
         }
 
         function sendMessage() {
-            var message = "sendMessage;" + user + ":" + document.getElementById("messageInput").value;
+            var message = "sendMessage;" + id + ":" + document.getElementById("messageInput").value;
             if (message.trim() !== "") {
                 ws.send(message);
                 document.getElementById("messageInput").value = '';
@@ -71,7 +86,7 @@
     		  }
     		  newContent = document.createTextNode(id);
     		  newDiv.appendChild(newContent);
-    		  
+    		  newDiv.style.backgroundColor = color;
     		  newDiv.classList.add("user");
     		  // add the newly created element and its content into the DOM
     		  if(miniroom){
@@ -80,9 +95,11 @@
     		  else{
     			  alert("찾을수없음");
     		  }
+    		  console.dir(newDiv);
         }
         function disconnect(){
         	var message = "disconnect;" + id;
+        	location.href ="index.jsp";
         	ws.send(message);
         	ws.close();
         }
@@ -90,22 +107,23 @@
     </script>
     <style>
     	#miniroom{
-    		width : 300px;
+    		display:flex;
+    		align-items:flex-end;
+    		justify-content:space-between;
+    		width : 1000px;
     		height : 300px;
     		border : 1px solid black;
     	}
     	.user{
     		width :100px;
     		height : 30px;
-    		background-color : black;
+     	}
+    	.sayBox{
+    		position : absolute;
+    		width : 150px;
+    		height : 60px;
+    		border :1px solid black;
     	}
-    	.red{
-    		background-color : red;
-    	}
-    	.blue{
-    		background-color : blue;
-    	}
-    	
     </style>
 </head>
 <body onload="connect();">

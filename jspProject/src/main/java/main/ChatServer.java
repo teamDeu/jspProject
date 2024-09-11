@@ -18,6 +18,8 @@ public class ChatServer {
     private static HashMap<String,String> userColor = new HashMap<String,String>();
     private static HashMap<String,String> userId = new HashMap<String,String>();
     @OnOpen
+    
+    
     public void onOpen(Session session) {
         clients.add(session);
         
@@ -52,7 +54,6 @@ public class ChatServer {
         	userId.put(session.getId(),data);
         	userColor.put(data, rawData[2]);
         }
-      
     	synchronized (clients) {
             for (Session client : clients) {
                 client.getBasicRemote().sendText(message);
