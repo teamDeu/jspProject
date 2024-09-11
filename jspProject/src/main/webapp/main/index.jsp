@@ -24,7 +24,10 @@
     <div id="contentDiv">
         여기에 새로운 내용이 표시됩니다.
     </div>
-    
-    <a href="userList.jsp">가기</a>
+    <form name = "goChat" action = "chat.jsp">
+    id : <input type = "text" name = "id"><br>
+    color : <input type ="text" name ="color"><br>
+    <button type ="submit">가기</button>
+    </form>
 </body>
 </html>
