@@ -18,7 +18,7 @@
 <div>
 	TEST 김민석
 	<span>김민석</span>
-	<button>김민석</button>
+	<button onclick = "박정현">김민석</button>
 </div>
 <body>
 
