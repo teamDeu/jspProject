@@ -65,6 +65,7 @@
             if (message.trim() !== "") {
                 ws.send(message);
                 document.getElementById("messageInput").value = '';
+                
             }
         }
         
