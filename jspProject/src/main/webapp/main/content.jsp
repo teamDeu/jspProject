@@ -7,8 +7,13 @@
 <title>Insert title here</title>
 </head>
 <body>
+<<<<<<< HEAD
 	<div class = "miniroom_box">
 	김민석
+=======
+		<div class = "miniroom_box">
+	박정현
+>>>>>>> branch 'main' of https://github.com/teamDeu/jspProject.git
 	</div>
 </body>
 </html>
