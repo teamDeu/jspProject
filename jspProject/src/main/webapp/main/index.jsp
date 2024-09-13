@@ -13,6 +13,7 @@
                     document.getElementById("contentDiv").innerHTML = xhr.responseText;
                 }
             };
+            
             xhr.open("GET", "chat.jsp", true);
             xhr.send();
         }
