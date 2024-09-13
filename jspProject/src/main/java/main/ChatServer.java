@@ -15,7 +15,8 @@ import java.util.Set;
 public class ChatServer {
 
     private static Set<Session> clients = Collections.synchronizedSet(new HashSet<>());
-    private static HashMap<String,String> userColor = new HashMap<String,String>();
+    private static HashMap<String,String> servers = new HashMap<String,String>();
+    private static HashMap<String,String> userCharacter = new HashMap<String,String>();
     private static HashMap<String,String> userId = new HashMap<String,String>();
     @OnOpen
     
@@ -29,7 +30,7 @@ public class ChatServer {
             	Session client = (Session)clients.toArray()[i];
             	try {
             		String userIdValue = userId.get(client.getId());
-            		String userColorValue = userColor.get(userIdValue);
+            		String userColorValue = userCharacter.get(userIdValue);
             		System.out.println(client.getId() + userIdValue + userColorValue);
             		if(session.getId() == client.getId()) {
             			continue;
@@ -52,7 +53,7 @@ public class ChatServer {
         String data = rawData[1];
         if(command.equals("connect")) {
         	userId.put(session.getId(),data);
-        	userColor.put(data, rawData[2]);
+        	userCharacter.put(data, rawData[2]);
         }
     	synchronized (clients) {
             for (Session client : clients) {

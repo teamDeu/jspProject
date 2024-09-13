@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSP Button Click Example</title>
+    <title>CloverStory 채팅방 접속</title>
     <script>
         // 버튼 클릭 시 AJAX 요청을 보내고, 응답을 받아 div 내용 변경
         function loadContent() {
@@ -13,21 +13,28 @@
                     document.getElementById("contentDiv").innerHTML = xhr.responseText;
                 }
             };
-            xhr.open("GET", "content.jsp", true);
+            xhr.open("GET", "chat.jsp", true);
             xhr.send();
+        }
+        function countUp(){
+        	t = document.getElementById("test");
+        	t.innerText = parseInt(t.innerText) + 1
         }
     </script>
 </head>
-<body>
-    <h1>JSP 버튼 클릭으로 내용 변경</h1>
-    <button onclick="loadContent()">내용 불러오기</button>
-    <div id="contentDiv">
-        여기에 새로운 내용이 표시됩니다.
-    </div>
+<button onclick = "loadContent()">가져오기</button>
+<div id = "contentDiv"></div>
+<body align="center">
+    <h1>CloverStory 채팅방 접속</h1>
     <form name = "goChat" action = "chat.jsp">
-    id : <input type = "text" name = "id"><br>
-    color : <input type ="text" name ="color"><br>
-    <button type ="submit">가기</button>
+    이름 : <input type = "text" name = "id">
+    이미지 : <select name ="character">
+    	<%for(int i = 1 ; i <= 5 ; i++) {
+    	String value = "character" + i + ".png";%>
+    	<option value = "<%=value%>"><%=i %>번캐릭터</option>
+    	<%} %>
+    </select>
+    <button type ="submit">접속</button>
     </form>
 </body>
 </html>
