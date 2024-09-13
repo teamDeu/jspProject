@@ -7,8 +7,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<div class = "miniroom_box">
-		
+		<div class = "miniroom_box">
+	dsdadsadsad
 	</div>
 </body>
 </html>
