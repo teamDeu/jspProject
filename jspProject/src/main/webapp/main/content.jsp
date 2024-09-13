@@ -11,7 +11,7 @@
 		김민석
 <body>
 		<div class = "miniroom_box">
-	박정현
+	박정현 야이 나쁜놈들아 좀 되라 
 
 	</div>
 </body>
