@@ -8,7 +8,7 @@
 </head>
 <body>
 		<div class = "miniroom_box">
-	dsdadsadsad
+	dsdadsadsads
 	</div>
 </body>
 </html>
