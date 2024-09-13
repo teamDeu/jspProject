@@ -8,7 +8,7 @@
 </head>
 <body>
 		<div class = "miniroom_box">
-	dsdadsadsadsds
+	박정현
 	</div>
 </body>
 </html>
