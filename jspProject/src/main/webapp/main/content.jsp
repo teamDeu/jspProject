@@ -7,8 +7,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-		<div class = "miniroom_box">
-	dsdadsadsadsds
+	<div class = "miniroom_box">
+	김민석
 	</div>
 </body>
 </html>
