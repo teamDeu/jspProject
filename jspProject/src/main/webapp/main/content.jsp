@@ -9,6 +9,10 @@
 <body>
 	<div class = "miniroom_box">
 		김민석
+<body>
+		<div class = "miniroom_box">
+	박정현
+
 	</div>
 </body>
 </html>
