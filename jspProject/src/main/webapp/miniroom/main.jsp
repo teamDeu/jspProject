@@ -178,6 +178,7 @@ function chatOff(){
         }
        	window.addEventListener("beforeunload",disconnect);
     </script>
+
 </head>
 <body>
 	<div class="container">
