@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <title>실시간 채팅</title>
-    <script type="text/javascript">
+    <%-- <script type="text/javascript">
         var ws;
         var sayBoxId = 0;
         let userNum = 0;
@@ -149,12 +149,16 @@
         	ws.close();
         }
        	window.addEventListener("beforeunload",disconnect);
-    </script>
+    </script> --%>
 	<link href="./css/chat.css" rel="stylesheet" />
 </head>
 <body onload="connect();">
-    <h2>실시간 채팅</h2>
-    <p id="status">서버에 연결되지 않음</p>
+	<div class ="miniroom_header">
+		<font size = "24" color ="#80A46F">미니룸</font>
+		<span id="status">서버에 연결되지 않음</span>
+    	<hr color = "#BAB9AA" width = "100%">
+	</div>
+    
     <div id = "miniroom">
     	<img id ="miniroom_background" src="img/backgroundImg.png">
     </div>
@@ -168,8 +172,6 @@
     <input type="text" placeholder ="일촌과 나누고 싶은 이야기를 남겨보세요~" id="messageInput" onkeypress="if(event.keyCode==13) sendMessage();">
     <button onclick="sendMessage()">전송</button>
     </div>
-    
-    <button onclick="disconnect()">연결끊기</button>
     <script>
     	miniroom = document.getElementById("miniroom");
     </script>

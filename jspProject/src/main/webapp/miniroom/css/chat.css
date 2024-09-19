@@ -34,11 +34,14 @@ body{
     		padding : 10px;
     		display:flex;
     		align-items:center;
+
     		box-sizing : border-box;
     	}
     	.setting{
     		display:flex;
     		width : 736px;
+    		margin-top : 10px;
+    		align-items:center;
     		justify-content:space-between;
     	}
     	.user{
@@ -123,6 +126,7 @@ body{
 			flex-direction : column;
 			background-color : #F2F2F2;
 			overflow-y : scroll;
+			margin : 10px 0px;
 		}
 
 		.chat{
@@ -169,4 +173,9 @@ body{
 			word-break: break-all;
 			word-wrap:break-word;
 			background-color : #C0E5AF;
+		}
+		.miniroom_header{
+			display:flex;
+			flex-direction:column;
+			width:90%;
 		}

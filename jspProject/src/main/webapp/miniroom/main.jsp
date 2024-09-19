@@ -42,12 +42,14 @@ function chatOff(){
         var sayBoxId = 0;
         let userNum = 0;
         var localId = "<%=id%>";
+        var character = "<%=character%>"
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
             ws.onopen = function() {
                 document.getElementById("status").textContent = "서버와 연결됨";
                 if(localId == "null") localId = "비회원";
-                message = "connect;" + localId +";" + "<%=character%>";
+                if(character == "null") character = "character1.png"
+                message = "connect;" + localId +";" + character;
                 ws.send(message);
             };
 
