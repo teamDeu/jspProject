@@ -7,6 +7,12 @@
 <title>Insert title here</title>
 </head>
 <body>
-helloworldd
+<<<<<<< HEAD
+helloworld
+=======
+<span>
+	TEST!!!
+</span>
+>>>>>>> branch 'main' of https://github.com/teamDeu/jspProject.git
 </body>
 </html>
