@@ -5,6 +5,19 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script>
+	function loadContent() {
+	    var xhr = new XMLHttpRequest();
+	    xhr.onreadystatechange = function() {
+	        if (xhr.readyState == 4 && xhr.status == 200) {
+	            document.getElementById("contentDiv").innerHTML = xhr.responseText;
+	        }
+	    };
+	    
+	    xhr.open("GET", "chat.jsp", true);
+	    xhr.send();
+	}
+</script>
 </head>
 <body>
 	<div class = "miniroom_box">
