@@ -12,19 +12,14 @@
 <body>
 		<div class = "miniroom_box">
 	박정현 야이 나쁜놈들아 좀 되라 
+	양지혁
 
 	</div>
 </body>
 <div>
 	TEST 김민석
-<<<<<<< HEAD
-	<span>김민석</span>
-	<button onclick = "박정현">김민석</button>
-	<button onclick = "양지혁">박은효</button>
-=======
 	<span>김민석</span>
 	<button onclick = "김민석">김민석</button>
->>>>>>> branch 'main' of https://github.com/teamDeu/jspProject.git
 </div>
 <body>
 
