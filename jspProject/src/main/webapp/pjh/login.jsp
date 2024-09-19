@@ -101,7 +101,7 @@
             <input type="button" value="로그인" onclick="loginCheck()" >
            
         </form>
-    </div>
+    </div> 
     <div class="links">
         <a href="#">아이디 찾기</a> |
         <a href="#">비밀번호 찾기</a> |
