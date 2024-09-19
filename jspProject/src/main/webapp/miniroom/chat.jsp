@@ -158,7 +158,6 @@
 		<span id="status">서버에 연결되지 않음</span>
     	<hr color = "#BAB9AA" width = "100%">
 	</div>
-    
     <div id = "miniroom">
     	<img id ="miniroom_background" src="img/backgroundImg.png">
     </div>
