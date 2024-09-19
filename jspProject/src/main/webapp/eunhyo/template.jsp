@@ -28,7 +28,7 @@
 						class="between-image"> <img src="img/img1.png"
 						alt="Image between boxes 2" class="between-image">
 				</div>
-				<div class="inner-box-2"></div>
+				<div align = "center" class="inner-box-2"></div>
 			</div>
 			<!-- 버튼 -->
 			<div class="button-container">

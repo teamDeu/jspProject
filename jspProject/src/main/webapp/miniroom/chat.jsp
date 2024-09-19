@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <title>실시간 채팅</title>
-    <script type="text/javascript">
+    <%-- <script type="text/javascript">
         var ws;
         var sayBoxId = 0;
         let userNum = 0;
@@ -149,180 +149,16 @@
         	ws.close();
         }
        	window.addEventListener("beforeunload",disconnect);
-    </script>
-    <style>
-    	body{
-    		display:flex;
-    		flex-direction : column;
-    		align-items:center;
-    	}
-    	.userCharacter{
-    		object-fit : cover;
-    		width : 80px;
-    		heigth : 120px;
-    	}
-    	#miniroom{
-    		display:flex;
-    		align-items:flex-end;
-    		justify-content:space-around;
-    		width : 736px;
-    		height : 359px;
-    		border : 1px solid black;
-    		border-radius : 10px
-    	}
-    	#miniroom_background{
-    		position:absolute;
-    		z-index : -1;
-    		object-fit : cover;
- 			width : 736px;
- 			height :359px;
- 			
-    	}
-    	#chatArea{
-    		width:736px;
-    		heigth : 214px;
-    		border-radius : 5px;
-    		padding : 10px;
-    		display:flex;
-    		align-items:center;
-    		box-sizing : border-box;
-    	}
-    	.setting{
-    		display:flex;
-    		width : 736px;
-    		justify-content:space-between;
-    	}
-    	.user{
-    		display:flex;
-    		flex-direction:column;
-    		align-items:center;
-     	}
-    	.sayBox{
-    		position : absolute;
-    		max-width : 150px;
-    		border :1px solid black;
-    		background-color : white;
-    		padding:5px;
-    		border-radius : 5px;
-    		animation: fadeout 3s;
-			  -moz-animation: fadeout 3s; /* Firefox */
-			  -webkit-animation: fadeout 3s; /* Safari and Chrome */
-			  -o-animation: fadeout 3s; /* Opera */
-			  animation-fill-mode: forwards;
-			overflow-x : hidden;
-			word-break: break-all;
-			word-wrap:break-word;
-    	}
-    	#inputArea{
-    		width : 736px;
-    		padding : 10px;
-    		border : 1px solid black;
-    		border-radius : 5px;
-    		box-sizing : border-box;
-    	}
-		@keyframes fadeout {
-		    from {
-		        opacity: 1;
-		    }
-		    to {
-		        opacity: 0;
-		    }
-		}
-		@-moz-keyframes fadeout { /* Firefox */
-		    from {
-		        opacity: 1;
-		    }
-		    to {
-		        opacity: 0;
-		    }
-		}
-		@-webkit-keyframes fadeout { /* Safari and Chrome */
-		    from {
-		        opacity: 1;
-		    }
-		    to {
-		        opacity: 0;
-		    }
-		}
-		@-o-keyframes fadeout { /* Opera */
-		    from {
-		        opacity: 1;
-		    }
-		    to {
-		        opacity: 0;
-		    }
-		}
-		.input_title{
-			font-size : 20px;
-			color : #80A46F;
-		}
-		input[type=text] {
-		width: 500px ;
-		height: 20px ;
-		font-size: 12px ;
-		margin: 0px 10px;
-		}
-		#chatArea2{
-			width : 736px;
-			height : 200px;
-			border : 1px solid black;
-			border-radius : 5px;
-			display:flex;
-			flex-direction : column;
-			background-color : #F2F2F2;
-			overflow-y : scroll;
-		}
-
-		.chat{
-			max-width : 200px;
-			padding : 5px;
-			border-radius : 10px;
-			display:flex;
-			word-break: break-all;
-			word-wrap:break-word;
-		}
-		.myChatBox{
-			align-self : flex-end;
-			
-		}
-		.otherChatBox{
-			align-self : flex-start;
-			
-		}
-		.myChat{
-			align-self : flex-end;
-			background-color : #F8F6E3;
-		
-		}
-		.otherChat{
-			align-self : flex-start;
-			background-color : #FEFEFE;
-		}
-		.chatBox{
-			display:flex;
-			flex-direction :column;
-			background-color : none;
-			margin : 5px 10px;
-		}
-		.chatName{
-			font-size : 10px;
-			margin : 5px 10px;
-			align-self :inherit;
-		}
-		.notice{
-			max-width : 200px;
-			padding : 5px;
-			border-radius : 10px;
-			display:flex;
-			word-break: break-all;
-			word-wrap:break-word;
-			background-color : #C0E5AF;
-		}
-    </style>
+    </script> --%>
+	<link href="./css/chat.css" rel="stylesheet" />
 </head>
 <body onload="connect();">
-    <h2>실시간 채팅</h2>
-    <p id="status">서버에 연결되지 않음</p>
+	<div class ="miniroom_header">
+		<font size = "24" color ="#80A46F">미니룸</font>
+		<span id="status">서버에 연결되지 않음</span>
+    	<hr color = "#BAB9AA" width = "100%">
+	</div>
+    
     <div id = "miniroom">
     	<img id ="miniroom_background" src="img/backgroundImg.png">
     </div>
@@ -336,8 +172,6 @@
     <input type="text" placeholder ="일촌과 나누고 싶은 이야기를 남겨보세요~" id="messageInput" onkeypress="if(event.keyCode==13) sendMessage();">
     <button onclick="sendMessage()">전송</button>
     </div>
-    
-    <button onclick="disconnect()">연결끊기</button>
     <script>
     	miniroom = document.getElementById("miniroom");
     </script>
