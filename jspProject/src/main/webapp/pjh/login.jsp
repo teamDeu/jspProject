@@ -9,9 +9,13 @@
     <title>Clover Story Login</title>
     <link href="style.css" rel="stylesheet" type="text/css">
     <style>
+    @font-face {
+    font-family: 'NanumTobak';
+    src: url('나눔손글씨 또박또박.TTF') format('truetype');
+		}
         body {
             background-color: #FFFAF0; /* 이미지와 같은 배경색 */
-            font-family: 'Arial', sans-serif;
+            font-family: 'NanumTobak';
         }
         .container {
             text-align: center;
@@ -50,8 +54,8 @@
             border-radius: 5px;
         }
         .links {
-            margin-top: 20px;
-            font-size: 12px;
+            margin-top: 10px;
+            font-size: 25px;
         }
         .links a {
             text-decoration: none;
