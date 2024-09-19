@@ -20,10 +20,12 @@
         .container {
             text-align: center;
             margin-top: 140px;
+            font-family: 'NanumTobak', sans-serif;
         }
         .logo {
             font-size: 36px;
             font-weight: bold;
+            font-family: 'NanumTobak', sans-serif;
         }
         .login-box {
             background-color: #FFFAF0;
@@ -31,6 +33,7 @@
             padding: 30px;
             width: 300px;
             margin: 0 auto;
+            font-family: 'NanumTobak', sans-serif;
 
         }
         input[type="text"], input[type="password"] {
@@ -39,28 +42,33 @@
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
+			font-size: 25px;
+            font-family: 'NanumTobak', sans-serif;
         }
         input[type="button"] {
             background-color: #90EE90;
             border: none;
             color: white;
-            padding: 10px 120px;
+            padding: 10px 130px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            font-size: 16px;
+            font-size: 25px;
             margin: 10px 2px;
             cursor: pointer;
             border-radius: 5px;
+            font-family: 'NanumTobak', sans-serif;
         }
         .links {
             margin-top: 10px;
             font-size: 25px;
+            font-family: 'NanumTobak', sans-serif;
         }
         .links a {
             text-decoration: none;
             color: #333;
             margin: 0 10px;
+            font-family: 'NanumTobak', sans-serif;
         }
     </style>
     <script type="text/javascript">

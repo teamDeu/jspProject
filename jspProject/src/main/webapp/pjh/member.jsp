@@ -10,7 +10,7 @@
             font-family: 'NanumTobak';
             src: url('나눔손글씨 또박또박.TTF') format('truetype');
         }
-        body { 
+        body {
             background-color: #FFFAF0;
             font-family: 'NanumTobak', sans-serif;
         }
