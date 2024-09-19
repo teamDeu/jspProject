@@ -30,7 +30,7 @@
 				</div>
 				<div align = "center" class="inner-box-2"></div>
 			</div>
-			<!-- 버튼 -->
+			<!-- 버튼 --> 
 			<div class="button-container">
 				<button class="custom-button">홈</button>
 				<button class="custom-button">프로필</button>
