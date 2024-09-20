@@ -52,11 +52,11 @@
             background-color: #90EE90;
             border: none;
             color: white;
-            padding: 10px 30px;
+            padding: 10px 20px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            font-size: 25px;
+            font-size: 16px;
             margin: 10px 2px;
             cursor: pointer;
             border-radius: 5px;
@@ -112,7 +112,7 @@
                 <!-- 인증번호 입력과 재전송 버튼 -->
                 <div class="form-group">
                     <input type="text" name="number" placeholder="인증번호">
-                    <input type="button" class="button-small" value="재전송 ">
+                    <input type="button" class="button-small" value="재전송">
                 </div>
 
                 <!-- 이메일 -->

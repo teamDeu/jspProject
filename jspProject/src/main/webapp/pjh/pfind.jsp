@@ -83,7 +83,6 @@
         .footer-links {
             margin-top: 20px;
             font-size: 25px;
-            font-family: 'NanumTobak';
         }
 
         .footer-links a {
@@ -129,8 +128,9 @@
     </div>
 
     <div class="box">
-        <h2>아이디 찾기</h2>
-        <form action="processFindID.jsp" method="post">
+        <h2>비밀번호 찾기</h2>
+        <form action="processFindPWD.jsp" method="post">
+        	<input type="text" name="id" placeholder="아이디" required>
             <input type="text" name="name" placeholder="이름" required>
 
             <input type="text" name="phone" placeholder="전화번호" required>
@@ -146,7 +146,7 @@
     <div class="footer-links">
         <a href="login.jsp">로그인</a> |
         <a href="member.jsp">회원가입</a> |
-        <a href="pfind.jsp">비밀번호 찾기</a>
+        <a href="ifind.jsp">아이디 찾기</a>
     </div>
 </div>
 
