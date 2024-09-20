@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Random;
 import java.util.Vector;
-import mail.MailSend;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import net.nurigo.sdk.NurigoApp;
@@ -139,15 +138,6 @@ public class MemberMgr {
         return bean;
     }
 
-    // 아이디와 비밀번호 전송
-    public void sendAccount(String id) {
-        MemberBean bean = getMember(id);
-        String pwd = bean.getUser_pwd();
-        String title = "사이트에서 아이디와 비밀번호 전송";
-        String content = "<font color='red'><b>user_id: " + id + " / user_pwd: " + pwd + "</b></font>";
-        String toEmail = bean.getUser_email();
-        MailSend.send(title, content, toEmail);
-    }
 
 // 인증번호 생성
 public String generateAuthCode() {
