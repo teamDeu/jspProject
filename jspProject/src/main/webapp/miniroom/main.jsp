@@ -178,6 +178,7 @@ function chatOff(){
         }
        	window.addEventListener("beforeunload",disconnect);
     </script>
+
 </head>
 <body>
 	<div class="container">
@@ -209,7 +210,7 @@ function chatOff(){
 				<button onclick="javascript:chatOpen()" class="custom-button">홈</button>
 				<button onclick="javascript:loadContent('index.jsp')"
 					class="custom-button">프로필</button>
-				<button class="custom-button">미니룸</button>
+				<button onclick = "javascript:loadContent('../miniroomDesign/miniDesign.jsp')" class="custom-button">미니룸</button>
 				<button class="custom-button">게시판</button>
 				<button class="custom-button">방명록</button>
 				<button class="custom-button">상점</button>

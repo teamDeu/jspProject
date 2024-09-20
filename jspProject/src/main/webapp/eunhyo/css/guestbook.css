@@ -1,0 +1,103 @@
+@font-face {
+    font-family: 'NanumTobak';
+    src: url('../나눔손글씨 또박또박.TTF') format('truetype');
+}
+/* inner-box-2의 방명록 텍스트 스타일 */
+.guestbook-title {
+    color: #80A46F; 
+    text-align: center; 
+    font-size: 36px; 
+    font-weight: 600; 
+    position: absolute; 
+    top: 0px; 
+    left: 30px; 
+}
+
+/* inner-box-2의 내용이 가운데 정렬*/
+.inner-box-2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 실선 스타일 */
+.guestbook-line {
+    border-bottom: 2px solid #BAB9AA; /* 실선 색상 및 두께 */
+    width: 95%; /* 실선의 너비 */
+    position: absolute; 
+    top: 80px; 
+    left: 25px; 
+}
+
+/* 방명록 작성 폼 스타일 */
+.guestbook-form {
+    display: flex;
+    align-items: center;
+    position: absolute; 
+    bottom: 30px; 
+     
+    width: 90%;
+    justify-content: space-between;
+    background-color: #F2F2F2;
+    padding: 10px;
+    border: 1px solid #e0e0d1;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+
+.guestbook-input {
+	height : 35px;
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #DCDCDC;
+    border-radius: 5px;
+    color: #000000;
+    background-color: #FFFFFF;
+    font-family: 'NanumTobak', sans-serif;
+    font-size: 25px;
+}
+
+
+#private {
+    margin-left: 10px;
+    vertical-align: middle;
+}
+/* 체크박스 옆 텍스트(라벨)의 폰트 크기를 조정 */
+label[for="private"] {
+    font-size: 20px; /* 원하는 폰트 크기로 변경 */
+    vertical-align: middle;
+}
+
+
+.submit-button {
+    background-color: #FFFFFF;
+    color: #666;
+    border: 1px solid #DCDCDC;
+    border-radius: 10px;
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-family: 'NanumTobak', sans-serif;
+    font-size:20px;
+}
+
+.guestbook-entry {
+    background-color: #FFFFFF;
+    border: 1px solid #DCDCDC;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    height:100px;
+    width: 800px;
+    position: absolute; 
+    top: 80px;
+    left:35px; 
+
+}
+
+.guestbook-content {
+    font-family: 'NanumTobak', sans-serif;
+    font-size: 30px;
+    color: #333;
+}
