@@ -7,7 +7,9 @@
 <title>CloverStory</title>
 <!-- Linking the CSS file -->
 <link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="css/guestbook.css">
 </head>
+
 <body>
 	<div class="container">
 		<div class="header">
@@ -28,7 +30,18 @@
 						class="between-image"> <img src="img/img1.png"
 						alt="Image between boxes 2" class="between-image">
 				</div>
-				<div class="inner-box-2"></div>
+				<div align = "center" class="inner-box-2">
+					<h1 class="guestbook-title">방명록</h1>
+					<div class="guestbook-line"></div> <!-- 실선 -->
+			
+					    <!-- 방명록 작성 폼 -->
+				    <div class="guestbook-form">
+				        <input type="text" id="guestbook-input" class="guestbook-input" placeholder="일촌에게 방명록 기록을 남겨보세요~ !" />
+				        <label for="private"><input type="checkbox" id="private" /> 비밀글</label>
+				        <button id="submit-button" class="submit-button">등록</button>
+				    </div>
+					
+				</div>
 			</div>
 			<!-- 버튼 -->
 			<div class="button-container">
@@ -36,13 +49,11 @@
 				<button class="custom-button">프로필</button>
 				<button class="custom-button">미니룸</button>
 				<button class="custom-button">게시판</button>
-				<button class="custom-button">방명록</button>
+				<button class="custom-button" style="background-color: #F7F7F7; font-weight: 600;" >방명록</button>
 				<button class="custom-button">상점</button>
 				<button class="custom-button">게임</button>
 				<button class="custom-button">음악</button>
 			</div>
-
-
 
 		</div>
 	</div>
