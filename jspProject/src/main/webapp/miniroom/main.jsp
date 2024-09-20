@@ -214,7 +214,7 @@ function chatOff(){
 				<button class="custom-button">게시판</button>
 				<button class="custom-button">방명록</button>
 				<button class="custom-button">상점</button>
-				<button class="custom-button">게임</button>
+				<button class="custom-button" onclick="location.href='../yang/game2.jsp';">게임</button>
 				<button class="custom-button">음악</button>
 			</div>
 
