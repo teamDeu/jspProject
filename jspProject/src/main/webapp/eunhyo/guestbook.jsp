@@ -40,7 +40,10 @@
 				        <label for="private"><input type="checkbox" id="private" /> 비밀글</label>
 				        <button id="submit-button" class="submit-button">등록</button>
 				    </div>
-					
+
+				    <!-- 방명록 항목들이 추가되는 영역 -->
+				    <div class="guestbook-entries"></div>
+
 				</div>
 			</div>
 			<!-- 버튼 -->
@@ -57,5 +60,39 @@
 
 		</div>
 	</div>
+
+	<!-- 자바스크립트 코드 -->
+	<script>
+	    // 등록 버튼 클릭 시 동작하는 함수
+	    document.getElementById('submit-button').addEventListener('click', function() {
+	        var inputField = document.getElementById('guestbook-input');
+	        var content = inputField.value.trim();
+	
+	        // 입력 필드에 내용이 있는 경우에만 방명록 추가
+	        if (content) {
+	            // 새로운 방명록 항목 생성
+	            var newEntry = document.createElement('div');
+	            newEntry.className = 'guestbook-entry';
+	            
+	            // 방명록 내용 추가
+	            var entryContent = document.createElement('p');
+	            entryContent.className = 'guestbook-content';
+	            entryContent.textContent = content;
+	            
+	            newEntry.appendChild(entryContent);
+	            
+	            // 방명록 글 목록의 맨 위에 새 항목 추가
+	            var entriesContainer = document.querySelector('.guestbook-entries');
+	            entriesContainer.insertBefore(newEntry, entriesContainer.firstChild);
+	
+	            // 입력 필드 초기화
+	            inputField.value = '';
+	        } else {
+	            alert('내용을 입력하세요.');
+	        }
+	    });
+	</script>
+
+
 </body>
 </html>
