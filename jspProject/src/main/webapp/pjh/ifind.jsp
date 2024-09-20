@@ -12,7 +12,7 @@
         @font-face {
         font-family: 'NanumTobak';
         src: url('나눔손글씨 또박또박.TTF') format('truetype');
-        } 
+        }
         body {
             font-family: 'NanumTobak';
             background-color: #FFFAF0;
@@ -45,7 +45,7 @@
             display: inline-block;
             padding: 10px 0;
             width: 250px;
-            background-color: #98D193;
+            background-color: #90EE90;
             color: white;
             text-decoration: none;
             border-radius: 5px;
@@ -129,7 +129,7 @@
             <input type="text" name="phone" placeholder="전화번호" required>
             <div class="verification-container">
                 <input style ="margin:0px;"type="text" name="verificationCode" placeholder="인증번호" required>
-                <button type="button" class="btn-resend" id="resendBtn">재전송</button>
+                <button type="button" class="btn-resend" id="resendBtn" style = "background-color: #90EE90;">재전송</button>
             </div>
             <br>
             <input type="submit"  class="btn" value="아이디 찾기" style = "width :270px;">
