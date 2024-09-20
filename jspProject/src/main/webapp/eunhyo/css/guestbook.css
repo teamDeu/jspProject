@@ -97,6 +97,7 @@ label[for="private"] {
     border-radius: 5px;
     height: 120px;
     width: 800px;
+    position: relative;
 }
 
 /* 방명록 내용을 담는 컨테이너 */
@@ -114,7 +115,7 @@ label[for="private"] {
 /* 방명록 내용의 위치와 스타일 */
 .guestbook-content {
     font-family: 'NanumTobak', sans-serif;
-    font-size: 21px;
+    font-size: 22px;
     color: #333;
     text-align: left;
     padding: 0;
@@ -220,7 +221,7 @@ label[for="private"] {
 }
 
 .profile-name {
-    margin-top: -10px;
+    margin-top: -5px;
     font-weight: bold;
     font-size: 20px;
     color: #333;
@@ -231,3 +232,14 @@ label[for="private"] {
     color: #888;
     margin-left: 10px;
 }
+
+/* 휴지통  */
+.delete-icon {
+    width: 13px; 
+    height: 15px;
+    position: absolute; 
+    top: 20px; /* 상단에서 10px 떨어지도록 */
+    right: 30px; /* 오른쪽에서 10px 떨어지도록 */
+    cursor: pointer; /* 커서 모양을 변경하여 클릭 가능하게 */
+}
+

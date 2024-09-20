@@ -37,7 +37,7 @@
                     <!-- 방명록 작성 폼 -->
                     <div class="guestbook-form">
                         <input type="text" id="guestbook-input" class="guestbook-input"
-                            placeholder="일촌에게 방명록 기록을 남겨보세요~ !" />
+                            placeholder="일촌에게 방문 기록을 남겨보세요~ !" />
                         <label for="private"><input type="checkbox" id="private" /> 비밀글</label>
                         <button id="submit-button" class="submit-button">등록</button>
                     </div>
@@ -73,6 +73,14 @@
     const itemsPerPage = 3; // 페이지당 항목 수
     let currentPage = 1; // 현재 페이지 번호
 
+ // 방명록 항목을 삭제하는 함수
+    function deleteEntry(entryElement, index) {
+        entries.splice(index, 1); // entries 배열에서 해당 항목 삭제
+        entryElement.remove(); // DOM에서 해당 방명록 항목 삭제
+        updatePagination(); // 삭제 후 페이지네이션 업데이트
+    }
+
+    // 방명록 작성 후 deleteIcon에 이벤트 추가
     document.getElementById('submit-button').addEventListener('click', function () {
         var inputField = document.getElementById('guestbook-input');
         var content = inputField.value.trim();
@@ -86,6 +94,12 @@
             // 새로운 방명록 항목 생성
             var newEntry = document.createElement('div');
             newEntry.className = 'guestbook-entry';
+
+            // 삭제 아이콘 추가 (오른쪽 상단)
+            var deleteIcon = document.createElement('img');
+            deleteIcon.src = 'img/bin.png'; // bin.png 파일 경로
+            deleteIcon.className = 'delete-icon';
+            newEntry.appendChild(deleteIcon);
 
             // 프로필, 이름, 날짜 및 시간 추가
             var profileSection = document.createElement('div');
@@ -141,8 +155,13 @@
             // 방명록 항목에 답글 폼 추가
             newEntry.appendChild(replyForm);
 
-            // 새 방명록 항목을 배열의 맨 앞에 저장 (최신 글이 앞에 나타나도록)
+            // entries 배열에 항목 추가
             entries.unshift(newEntry);
+
+            // 삭제 아이콘 클릭 이벤트 (해당 인덱스를 전달하여 삭제)
+            deleteIcon.addEventListener('click', function () {
+                deleteEntry(newEntry, entries.indexOf(newEntry)); // 방명록 항목 삭제
+            });
 
             // 현재 페이지를 1로 설정 (새 게시글 추가 시 1페이지로 이동)
             currentPage = 1;
@@ -156,6 +175,50 @@
             alert('내용을 입력하세요.');
         }
     });
+
+    // 페이지 번호 업데이트 및 표시 함수
+    function updatePagination() {
+        const entriesContainer = document.querySelector('.guestbook-entries');
+        const paginationContainer = document.querySelector('.pagination-container');
+
+        // 방명록 항목을 페이지당 3개씩 나눠서 표시
+        entriesContainer.innerHTML = ''; // 기존 항목 초기화
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const itemsToDisplay = entries.slice(startIndex, endIndex);
+
+        // 현재 페이지에 해당하는 항목을 표시
+        itemsToDisplay.forEach(item => entriesContainer.appendChild(item));
+
+        // 페이지 번호 생성
+        paginationContainer.innerHTML = ''; // 기존 페이지 버튼 초기화
+        const totalPages = Math.ceil(entries.length / itemsPerPage);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i;
+            pageButton.classList.add('page-button');
+            if (i === currentPage) {
+                pageButton.classList.add('active'); // 현재 페이지 표시
+            }
+
+            // 페이지 버튼 클릭 시 해당 페이지로 이동
+            pageButton.addEventListener('click', function () {
+                currentPage = i;
+                updatePagination();
+            });
+
+            paginationContainer.appendChild(pageButton);
+        }
+
+        // 현재 페이지에 글이 하나도 없으면 이전 페이지로 이동
+        if (entries.length > 0 && itemsToDisplay.length === 0 && currentPage > 1) {
+            currentPage--;
+            updatePagination();
+        }
+    }
+
+
 
     // 페이지 번호 업데이트 및 표시 함수
     function updatePagination() {
