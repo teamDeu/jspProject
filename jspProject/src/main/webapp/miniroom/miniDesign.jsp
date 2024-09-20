@@ -96,17 +96,15 @@
 		align-items:center;
 		gap : 30px;
 		border : 1px dashed #8A8A8A;
-		justify-content : space-between;
 		padding : 20px;
 		border-radius:10px;
 		background-color : white;
-		max-height : 500px;
-		overflow-y : hidden;
-		flex-wrap : wrap;
+		overflow:scroll;
 	}
 	
 	.miniroom_design_background_room{
-		width : 40%;
+		width:40%;
+		height : 280px;
 	}
 	.miniroom_design_background_room:hover{
 		opacity:0.5;
