@@ -20,12 +20,11 @@
         .container {
             text-align: center;
             margin-top: 140px;
-            font-family: 'NanumTobak', sans-serif;
         }
         .logo {
             font-size: 36px;
             font-weight: bold;
-            font-family: 'NanumTobak', sans-serif;
+            font-family: 'NanumTobak'
         }
         .login-box {
             background-color: #FFFAF0;
@@ -33,8 +32,7 @@
             padding: 30px;
             width: 300px;
             margin: 0 auto;
-            font-family: 'NanumTobak', sans-serif;
-
+			
         }
         input[type="text"], input[type="password"] {
             width: 90%;
@@ -42,33 +40,34 @@
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
-			font-size: 25px;
-            font-family: 'NanumTobak', sans-serif;
+            font-size: 24px;
+            font-family: 'NanumTobak'
+            
         }
         input[type="button"] {
             background-color: #90EE90;
             border: none;
             color: white;
-            padding: 10px 130px;
+            padding: 10px 120px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            font-size: 25px;
+            font-size: 24px;
             margin: 10px 2px;
             cursor: pointer;
             border-radius: 5px;
-            font-family: 'NanumTobak', sans-serif;
+            font-family: 'NanumTobak'
         }
         .links {
             margin-top: 10px;
             font-size: 25px;
-            font-family: 'NanumTobak', sans-serif;
+            font-family: 'NanumTobak'
         }
         .links a {
             text-decoration: none;
             color: #333;
             margin: 0 10px;
-            font-family: 'NanumTobak', sans-serif;
+            font-family: 'NanumTobak'
         }
     </style>
     <script type="text/javascript">
@@ -106,13 +105,13 @@
         <form name="loginFrm" method="post" action="loginProc.jsp">
             <input type="text" name="id" placeholder="아이디" value="<%=(id!=null)?id:""%>">
             <input type="password" name="pwd" placeholder="비밀번호" value="">
-            <input type="button" value="로그인" onclick="loginCheck()" >
+            <input type="button" value="로그인" onclick="loginCheck()" style = "width : 290px;">
            
         </form>
-    </div> 
+    </div>
     <div class="links">
-        <a href="#">아이디 찾기</a> |
-        <a href="#">비밀번호 찾기</a> |
+        <a href="ifind.jsp">아이디 찾기</a> |
+        <a href="pfind.jsp">비밀번호 찾기</a> |
         <a href="member.jsp">회원가입</a>
     </div>
     <% } %>
