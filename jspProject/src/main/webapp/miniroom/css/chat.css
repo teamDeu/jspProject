@@ -7,7 +7,6 @@ body{
     	.userCharacter{
     		object-fit : cover;
     		width : 80px;
-    		heigth : 120px;
     	}
     	#miniroom{
     		display:flex;
