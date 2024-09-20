@@ -138,8 +138,8 @@
 
     <div class="footer-links">
         <a href="login.jsp">로그인</a> |
-        <a href="signup.jsp">회원가입</a> |
-        <a href="findPassword.jsp">비밀번호 찾기</a>
+        <a href="member.jsp">회원가입</a> |
+        <a href="pfind.jsp">비밀번호 찾기</a>
     </div>
 </div>
 
