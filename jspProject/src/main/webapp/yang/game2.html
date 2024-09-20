@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>돌림판 게임</title>
+    <style>
+        body {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .wheel-container {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            margin: 0 auto;
+        }
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid #333;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+            cursor: pointer;
+        }
+        .pointer {
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-top: 60px solid red;
+            transform: translateX(-50%);
+        }
+        #start-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #FFFECC;
+            color: red;
+            font-weight: bold;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            border: 2px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="wheel-container">
+        <canvas id="wheel" width="600" height="600"></canvas>
+        <div class="pointer"></div>
+        <div id="start-button">START</div>
+    </div>
+
+    <script>
+        const wheelCanvas = document.getElementById('wheel');
+        const ctx = wheelCanvas.getContext('2d');
+        const startButton = document.getElementById('start-button');
+        
+        let isSpinning = false;
+        let currentAngle = 0;
+        let spinSpeed = 0;
+        
+        // 섹션 8개 정의 (이미지 이름 배열로 변경)
+        const images = [
+            "img/bomb.png",
+            "img/clover1.png",
+            "img/clover3.png",
+            "img/bomb.png",
+            "img/clover2.png",
+            "img/clover1.png",
+            "img/bomb.png",
+            "img/clover2.png"  // 오타 수정: colver2 -> clover2
+        ];
+        const numSegments = images.length;
+
+        // 각 섹션의 각도 (라디안 값)
+        const segmentAngle = (2 * Math.PI) / numSegments;
+
+        // 색상 설정
+        const colors = ['#FEFFF5', '#FFDDC1', '#FEFFF5', '#FFDDC1', '#FEFFF5', '#FFDDC1', '#FEFFF5', '#FFDDC1'];
+
+        // 이미지 배열에 담을 변수
+        let loadedImages = [];
+
+        // 이미지 로드 함수
+        function loadImages(callback) {
+            let loadedCount = 0;
+            for (let i = 0; i < images.length; i++) {
+                const img = new Image();
+                img.src = images[i];
+                img.onload = () => {
+                    loadedImages[i] = img;
+                    loadedCount++;
+                    if (loadedCount === images.length) {
+                        callback();
+                    }
+                };
+                img.onerror = () => { // 이미지가 로드되지 않을 경우
+                    console.error("Image failed to load:", images[i]);
+                    loadedImages[i] = null; // 이미지가 없으면 null로 설정
+                    loadedCount++;
+                    if (loadedCount === images.length) {
+                        callback();
+                    }
+                };
+            }
+        }
+
+        // 돌림판 그리기
+        function drawWheel() {
+            for (let i = 0; i < numSegments; i++) {
+                ctx.beginPath();
+                ctx.moveTo(300, 300);  // 중심 좌표
+                ctx.arc(300, 300, 300, i * segmentAngle, (i + 1) * segmentAngle);
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+                ctx.stroke();
+                ctx.save();
+
+                // 이미지 표시
+                ctx.translate(300, 300);
+                ctx.rotate((i + 0.5) * segmentAngle);
+                if (loadedImages[i]) {
+                    ctx.drawImage(loadedImages[i], 150, -50, 100, 100);  // 이미지를 섹션 중앙에 배치 (x, y, width, height)
+                } else {
+                    // 이미지가 없을 경우, 섹션 중앙에 기본 텍스트 표시
+                    ctx.fillStyle = 'black';
+                    ctx.font = '20px Arial';
+                    ctx.fillText('NO IMG', 150, 10);
+                }
+                ctx.restore();
+            }
+        }
+
+        // 돌림판 회전
+        function rotateWheel() {
+            currentAngle += spinSpeed;
+            spinSpeed *= 0.98;  // 속도 감소
+            ctx.clearRect(0, 0, 600, 600);
+            ctx.save();
+            ctx.translate(300, 300);
+            ctx.rotate(currentAngle);
+            ctx.translate(-300, -300);
+            drawWheel();
+            ctx.restore();
+
+            if (spinSpeed > 0.01) {
+                requestAnimationFrame(rotateWheel);
+            } else {
+                isSpinning = false;
+
+                // 현재 각도를 0 ~ 2*PI 범위로 맞추기
+                const normalizedAngle = (currentAngle % (2 * Math.PI));
+
+                // 첫 번째 섹션이 12시에 오도록 90도(PI / 2) 보정
+                const correctedAngle = (2 * Math.PI - normalizedAngle - Math.PI / 2) % (2 * Math.PI);
+
+                // 당첨된 섹션 계산 (화살표가 가리키는 섹션)
+                let winningSegment = Math.floor((correctedAngle / segmentAngle) % numSegments);
+                if (winningSegment < 0) {
+                    winningSegment += numSegments;
+                }
+				if(images[winningSegment]=="img/bomb.png")
+                	alert("클로버 x 0");
+				else if(images[winningSegment]=="img/clover1.png")
+                	alert("클로버 x 1");
+				else if(images[winningSegment]=="img/clover2.png")
+                	alert("클로버 x 2");
+				else if(images[winningSegment]=="img/clover3.png")
+                	alert("클로버 x 3");
+            }
+        }
+
+        // 작은 원 클릭 이벤트 처리
+        startButton.addEventListener('click', () => {
+            if (!isSpinning) {
+                isSpinning = true;
+                spinSpeed = Math.random() * 0.5 + 0.2;  // 랜덤 속도 설정
+                rotateWheel();
+            }
+        });
+
+        // 이미지 로드 후 돌림판 그리기
+        loadImages(() => {
+            drawWheel();
+        });
+    </script>
+</body>
+</html>
