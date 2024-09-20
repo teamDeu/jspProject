@@ -82,6 +82,15 @@ label[for="private"] {
     font-size:20px;
 }
 
+/*방명록 전체 container*/
+.entry-container {
+    width: 100%;
+    height: 500px; 
+    margin-top:-80px;
+    overflow-y: auto; /*스크롤 */
+    background-color: #F7F7F7; /* 상자의 배경색 */
+    /*  padding: 10px;*/
+}
 .guestbook-entry {
     background-color: #FFFFFF;
     border: 1px solid #DCDCDC;
@@ -90,10 +99,6 @@ label[for="private"] {
     border-radius: 5px;
     height:100px;
     width: 800px;
-    position: absolute; 
-    top: 80px;
-    left:35px; 
-
 }
 
 .guestbook-content {
