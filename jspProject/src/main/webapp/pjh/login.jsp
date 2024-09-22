@@ -31,7 +31,7 @@
             border-radius: 10px;
             padding: 30px;
             width: 300px;
-            margin: 0 auto;
+            margin: 0 auto; 
 			
         }
         input[type="text"], input[type="password"] {
