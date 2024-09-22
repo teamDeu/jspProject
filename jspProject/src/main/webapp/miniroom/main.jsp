@@ -217,7 +217,7 @@ function clickOpenBox(id){
 				<button class="custom-button">음악</button>
 			</div>
 
- 
+  
 
 		</div>
 	</div>
