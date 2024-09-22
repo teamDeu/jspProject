@@ -136,10 +136,10 @@
             <input type="text" name="phone" placeholder="전화번호" required>
             <div class="verification-container">
                 <input style ="margin:0px;"type="text" name="verificationCode" placeholder="인증번호" required>
-                <button type="button" class="btn-resend" id="resendBtn" style = "background-color: #90EE90;">재전송</button>
+                <button type="button" class="btn-resend" id="resendBtn" style = "background-color: #90EE90;">전송</button>
             </div>
             <br>
-            <input type="submit"  class="btn" value="아이디 찾기" style = "width :270px;">
+            <input type="submit"  class="btn" value="비밀번호찾기" style = "width :270px;">
         </form>
     </div>
 
@@ -151,7 +151,33 @@
 </div>
 
 <script>
-    // JavaScript logic can be added here if necessary
+var authCode = ""; // 서버로부터 받은 인증번호를 저장할 변수
+
+//인증번호 요청
+document.getElementById('resendBtn').addEventListener('click', function() {
+ var phoneNumber = document.querySelector('input[name="phone"]').value;
+
+ if (phoneNumber == "") {
+     alert("전화번호를 입력하세요.");
+     return;
+ }
+
+ // 서버로 인증번호 요청 (Ajax로 처리)
+ var xhr = new XMLHttpRequest();
+ xhr.open("POST", "authCodeSend.jsp", true);
+ xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+ xhr.onreadystatechange = function() {
+     if (xhr.readyState == 4 && xhr.status == 200) {
+         authCode = xhr.responseText.trim(); // 서버에서 받은 인증번호 저장
+         if (authCode !== "") {
+             alert("인증번호가 발송되었습니다.");
+         } else {
+             alert("인증번호 발송에 실패했습니다.");
+         }
+     }
+ };
+ xhr.send("phoneNumber=" + phoneNumber);
+});
 </script>
 
 </body>

@@ -34,7 +34,7 @@ public class MemberMgr {
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, id);
             rs = pstmt.executeQuery();
-            flag = rs.next(); // true이면 중복, false 중복 아님
+            flag = rs.next(); //true이면 중복, false 중복 아님
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -149,6 +149,8 @@ public String generateAuthCode() {
     return authCode.toString();
 }
 
+
+
 // 인증번호 전송
 public boolean sendAuthCode(String phoneNumber, String authCode) {
     Message message = new Message();
@@ -168,5 +170,79 @@ public boolean sendAuthCode(String phoneNumber, String authCode) {
         return false;
     }
 }
+//아이디 찾기 기능: 이름과 전화번호로 아이디 조회
+public String findUserIdByNameAndPhone(String name, String phone) {
+ Connection con = null;
+ PreparedStatement pstmt = null;
+ ResultSet rs = null;
+ String sql = null;
+ String userId = null;
+ try {
+     con = pool.getConnection();
+     sql = "SELECT user_id FROM user WHERE user_name = ? AND user_phone = ?";
+     pstmt = con.prepareStatement(sql);
+     pstmt.setString(1, name);
+     pstmt.setString(2, phone);
+     rs = pstmt.executeQuery();
+     if (rs.next()) {
+         userId = rs.getString("user_id");  // 아이디 반환
+     }
+ } catch (Exception e) {
+     e.printStackTrace();
+ } finally {
+     pool.freeConnection(con, pstmt, rs);
+ }
+ return userId;
+}
+//사용자 검증: 아이디, 이름, 전화번호로 사용자 정보 확인
+public boolean verifyUserForPasswordReset(String id, String name, String phone) {
+ Connection con = null;
+ PreparedStatement pstmt = null;
+ ResultSet rs = null;
+ String sql = null;
+ boolean isValidUser = false;
+ try {
+     con = pool.getConnection();
+     sql = "SELECT * FROM user WHERE user_id = ? AND user_name = ? AND user_phone = ?";
+     pstmt = con.prepareStatement(sql);
+     pstmt.setString(1, id);
+     pstmt.setString(2, name);
+     pstmt.setString(3, phone);
+     rs = pstmt.executeQuery();
+     if (rs.next()) {
+         isValidUser = true;  // 사용자가 존재함
+     }
+ } catch (Exception e) {
+     e.printStackTrace();
+ } finally {
+     pool.freeConnection(con, pstmt, rs);
+ }
+ return isValidUser;
+}
+//비밀번호 업데이트
+public boolean updatePassword(String id, String newPassword) {
+ Connection con = null;
+ PreparedStatement pstmt = null;
+ String sql = null;
+ boolean isUpdated = false;
+ try {
+     con = pool.getConnection();
+     sql = "UPDATE user SET user_pwd = ? WHERE user_id = ?";
+     pstmt = con.prepareStatement(sql);
+     pstmt.setString(1, newPassword);
+     pstmt.setString(2, id);
+     int result = pstmt.executeUpdate();
+     if (result == 1) {
+         isUpdated = true;
+     }
+ } catch (Exception e) {
+     e.printStackTrace();
+ } finally {
+     pool.freeConnection(con, pstmt);
+ }
+ return isUpdated;
+}
+
+
 }
 
