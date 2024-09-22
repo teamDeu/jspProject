@@ -1,68 +1,91 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>스토어</title>
     <style>
-        body {
-            font-family: 'Nanum Gothic', sans-serif;
+        @font-face {
+            font-family: 'NanumTobak';
+            src: url('나눔손글씨 또박또박.TTF') format('truetype');
+        }
+        .store {
+            font-family: 'NanumTobak', sans-serif;
             background-color: #F5F5F5;
             text-align: center;
+            margin: 0;
+            padding: 0;
+            
         }
         .container {
-            width: 90%;
+            width: 100%;
             margin: 0 auto;
-            text-align: center;
+            padding: 20px;
+            background-color: #FFF;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         /* 상점 제목 */
         .store-title {
-            font-size: 24px;
+            font-size: 30px;
             color: black;
             font-weight: bold;
-            margin: 20px 0;
+            text-align: left;
+            margin-bottom: 10px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        /* 클로버 금액 */
+        .clover-amount {
+            font-size: 18px;
+            color: green;
+            position: absolute;
+            top: 20px;
+            right: 20px;
         }
         /* 카테고리 탭 */
         .nav-tabs {
             display: flex;
-            justify-content: center;
+            justify-content: left;
             list-style: none;
             padding: 0;
             margin-bottom: 20px;
+            margin-top: 80px;
         }
         .nav-tabs li {
             padding: 10px 30px;
             cursor: pointer;
             font-size: 18px;
-            border-bottom: 2px solid transparent;
-            color: gray;
+            color: #888;
             transition: color 0.3s ease;
         }
         .nav-tabs li.active {
-            color: black;
+            color: green;
             border-bottom: 2px solid green;
         }
-        /* 인기순, 가격순 및 클로버 충전 */
+        /* 인기순, 가격순, 클로버 충전 */
         .sort-options {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            justify-content: flex-end;
             align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            margin-right: 20px;
         }
         .sort-buttons {
             display: flex;
             gap: 20px;
         }
-        .sort-buttons button {
-            padding: 10px 20px;
-            background-color: #EEE;
-            border: none;
+        .sort-buttons span {
+            font-size: 18px;
             cursor: pointer;
-            font-size: 16px;
+            color: #888;
         }
-        .sort-buttons button.active {
-            background-color: #90EE90;
-            color: white;
+        .sort-buttons span.active {
+            color: green;
         }
         .search button {
             padding: 10px 20px;
@@ -70,6 +93,7 @@
             border: none;
             color: white;
             cursor: pointer;
+            border-radius: 20px;
         }
         /* 상품 목록 */
         .items-container {
@@ -123,11 +147,14 @@
         }
     </style>
 </head>
-<body>
+<div class ="store">
 
-<div class="container">
+<div class="container" style = "overflow : scroll" >
     <!-- 상점 제목 -->
     <div class="store-title">상점</div>
+
+    <!-- 클로버 금액 -->
+    <div class="clover-amount">20,000</div>
 
     <!-- 카테고리 탭 -->
     <ul class="nav-tabs">
@@ -140,8 +167,8 @@
     <!-- 인기순, 가격순 및 클로버 충전 -->
     <div class="sort-options">
         <div class="sort-buttons">
-            <button class="active">인기순</button>
-            <button>가격순</button>
+            <span class="active">인기순</span>
+            <span>가격순</span>
         </div>
         <div class="search">
             <button>클로버 충전</button>
@@ -151,7 +178,7 @@
     <!-- 상품 목록 -->
     <div class="items-container">
         <div class="item">
-            <img src="박효신.jpg" alt="박효신">
+            <img src="img/눈의꽃.jfif" alt="박효신">
             <div class="item-title">박효신 - 꽃</div>
             <div class="item-price">
                 <img src="clover_icon.png" alt="클로버">
@@ -159,7 +186,7 @@
             </div>
         </div>
         <div class="item">
-            <img src="bigbang.jpg" alt="BIGBANG">
+            <img src="img/하루하루.jfif" alt="BIGBANG">
             <div class="item-title">BIGBANG - 하루 하루</div>
             <div class="item-price">
                 <img src="clover_icon.png" alt="클로버">
@@ -167,7 +194,7 @@
             </div>
         </div>
         <div class="item">
-            <img src="프리스타일.jpg" alt="프리스타일">
+            <img src="img/프리스타일.jfif" alt="프리스타일">
             <div class="item-title">프리스타일 - Y</div>
             <div class="item-price">
                 <img src="clover_icon.png" alt="클로버">
@@ -175,7 +202,7 @@
             </div>
         </div>
         <div class="item">
-            <img src="박봄.jpg" alt="박봄">
+            <img src="img/박봄.jfif" alt="박봄">
             <div class="item-title">박봄 - YOU AND I</div>
             <div class="item-price">
                 <img src="clover_icon.png" alt="클로버">
@@ -183,7 +210,7 @@
             </div>
         </div>
         <div class="item">
-            <img src="다이나믹듀오.jpg" alt="다이나믹듀오">
+            <img src="img/죽일놈.jfif" alt="다이나믹듀오">
             <div class="item-title">다이나믹듀오 - 죽일놈</div>
             <div class="item-price">
                 <img src="clover_icon.png" alt="클로버">
@@ -191,7 +218,7 @@
             </div>
         </div>
         <div class="item">
-            <img src="mc스나이퍼.jpg" alt="MC 스나이퍼">
+            <img src="img/마법의성.jfif" alt="MC 스나이퍼">
             <div class="item-title">MC 스나이퍼 - 마법의 성</div>
             <div class="item-price">
                 <img src="clover_icon.png" alt="클로버">
@@ -233,5 +260,5 @@
     </div>
 </div>
 
-</body>
+</div>
 </html>
