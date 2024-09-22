@@ -202,6 +202,8 @@ function clickOpenBox(id){
 				<div id="Box_miniroom_design" class ="inner-box-2" style="display: none" >
 					<jsp:include page="miniDesign.jsp"></jsp:include>
 				</div>
+				<div id="game" class ="inner-box-2" style="display: none" >
+				</div>
 			</div>
 			<!-- 버튼 -->
 			<div class="button-container">
