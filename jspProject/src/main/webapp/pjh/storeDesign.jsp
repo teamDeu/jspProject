@@ -13,29 +13,21 @@
         .container {
             width: 90%;
             margin: 0 auto;
+            text-align: center;
         }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-        }
-        .header .balance {
-            font-size: 20px;
-            color: green;
-        }
+        /* 상점 제목 */
         .store-title {
             font-size: 24px;
             color: black;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin: 20px 0;
         }
+        /* 카테고리 탭 */
         .nav-tabs {
             display: flex;
             justify-content: center;
             list-style: none;
             padding: 0;
-            margin-top: 10px;
             margin-bottom: 20px;
         }
         .nav-tabs li {
@@ -44,11 +36,42 @@
             font-size: 18px;
             border-bottom: 2px solid transparent;
             color: gray;
+            transition: color 0.3s ease;
         }
         .nav-tabs li.active {
             color: black;
             border-bottom: 2px solid green;
         }
+        /* 인기순, 가격순 및 클로버 충전 */
+        .sort-options {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .sort-buttons {
+            display: flex;
+            gap: 20px;
+        }
+        .sort-buttons button {
+            padding: 10px 20px;
+            background-color: #EEE;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .sort-buttons button.active {
+            background-color: #90EE90;
+            color: white;
+        }
+        .search button {
+            padding: 10px 20px;
+            background-color: #90EE90;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        /* 상품 목록 */
         .items-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -60,6 +83,7 @@
             border-radius: 10px;
             padding: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
         .item img {
             width: 100%;
@@ -79,6 +103,7 @@
             width: 20px;
             margin-right: 5px;
         }
+        /* 페이지네이션 */
         .pagination {
             display: flex;
             justify-content: center;
@@ -96,25 +121,6 @@
             color: #FFF;
             border-color: green;
         }
-        /* 인기순, 가격순 버튼 스타일 */
-        .sort-buttons {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .sort-buttons button {
-            padding: 10px 20px;
-            background-color: #EEE;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .sort-buttons button.active {
-            background-color: #90EE90;
-            color: white;
-        }
     </style>
 </head>
 <body>
@@ -123,7 +129,7 @@
     <!-- 상점 제목 -->
     <div class="store-title">상점</div>
 
-    <!-- 탭 메뉴 -->
+    <!-- 카테고리 탭 -->
     <ul class="nav-tabs">
         <li class="active">전체</li>
         <li>음악</li>
@@ -132,7 +138,7 @@
     </ul>
 
     <!-- 인기순, 가격순 및 클로버 충전 -->
-    <div class="header">
+    <div class="sort-options">
         <div class="sort-buttons">
             <button class="active">인기순</button>
             <button>가격순</button>
