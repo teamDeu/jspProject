@@ -68,7 +68,7 @@
             color: #333;
             margin: 0 10px;
             font-family: 'NanumTobak'
-        }
+        } 
     </style>
     <script type="text/javascript">
         function loginCheck() {
