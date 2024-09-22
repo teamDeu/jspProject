@@ -10,7 +10,7 @@
             font-family: 'NanumTobak';
             src: url('나눔손글씨 또박또박.TTF') format('truetype');
         }
-        body {
+        .store {
             font-family: 'NanumTobak', sans-serif;
             background-color: #F5F5F5;
             text-align: center;
@@ -19,14 +19,13 @@
             
         }
         .container {
-            width: 80%;
+            width: 100%;
             margin: 0 auto;
             padding: 20px;
             background-color: #FFF;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             position: relative;
-            height: 80vh; /* 높이를 설정하여 스크롤이 발생할 수 있도록 설정 */
         }
         /* 상점 제목 */
         .store-title {
@@ -148,7 +147,7 @@
         }
     </style>
 </head>
-<body>
+<div class ="store">
 
 <div class="container" style = "overflow : scroll" >
     <!-- 상점 제목 -->
@@ -261,5 +260,5 @@
     </div>
 </div>
 
-</body>
+</div>
 </html>
