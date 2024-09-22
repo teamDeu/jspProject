@@ -213,7 +213,7 @@ function chatOff(){
 				<button onclick = "javascript:loadContent('../miniroomDesign/miniDesign.jsp')" class="custom-button">미니룸</button>
 				<button class="custom-button">게시판</button>
 				<button class="custom-button">방명록</button>
-				<button class="custom-button">상점</button>
+				<button onclick = "javascript:loadContent('../pjh/storeDesign.jsp')" class="custom-button">상점</button>
 				<button class="custom-button">게임</button>
 				<button class="custom-button">음악</button>
 			</div>
