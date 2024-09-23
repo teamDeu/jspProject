@@ -23,9 +23,6 @@
 }
 
 
-
- 
-
  
 /* inner-box-2의 내용이 가운데 정렬*/
 .inner-box-2 {
@@ -33,3 +30,70 @@
     justify-content: center;
     align-items: center;
 }
+
+
+
+.folder-container {
+    width: 90%;
+    height: 800px;
+    margin-left: 15px;
+    margin-right: 20px;
+    padding: 20px;
+    border: 2px dashed #bbb;  
+    border-radius: 15px;      
+    background-color: #FBF7E1; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.folder-manage-button {
+     width: 100%;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+	left: 0;
+}
+
+.folder-manage-button:hover {
+    background-color: #e0e0e0;
+}
+
+
+.board-line {
+    border-bottom: 1px solid #BAB9AA; /* 실선 색상 및 두께 */
+    width: calc(100% - 55px); /* 실선의 너비 */
+    position: absolute; 
+    top: 80px; 
+    left: 25px; 
+}
+
+.folder-input-container {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+    padding: 5px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+	margin-bottom: 10px;
+}
+
+
+
+
+
+.folder-input-container input {
+    width: 70%;
+    padding: 5px;
+    border: none;
+    outline: none;
+}
+

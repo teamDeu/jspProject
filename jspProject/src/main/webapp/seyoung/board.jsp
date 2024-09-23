@@ -9,6 +9,7 @@
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <link rel="stylesheet" type="text/css" href="css/board.css">
 <style>
+
 .board-recentpost {
     color: black; 
     text-align: center; 
@@ -20,57 +21,76 @@
     display: inline-block; 
 }
 
-.board-content {
+.board-line {
+    border-bottom: 1px solid #BAB9AA; /* 실선 색상 및 두께 */
+    width: calc(100% - 55px); /* 실선의 너비 */
+    position: absolute; 
+    top: 80px; 
+    left: 25px; 
+}
+
+.folder-container {
+    width: 230px;
+    height: 700px;
+    margin: 10px 11px 10px 10px;
+    padding: 20px;
+    border: 2px dashed #bbb;  
+    border-radius: 30px;      
+    background-color: #F7F7F7; 
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
+}
+
+
+
+.folder-manage-button {
+	font-family: 'NanumTobak', sans-serif;
+    font-size: 22px;
+    width: 85%;
+    margin-left: 20px;
+    margin-bottom: 20px;
     padding: 10px;
-    margin-top: 10px;
-    position: relative; /* absolute를 relative로 변경 */
-    top: 0px; /* 위치를 조정하여 레이아웃 개선 */
-	width: calc(100% - 100px); /* 너비 조정 */
-	border: 1px solid #BAB9AA;
-	padding: 20px; /* 내부 여백 */
-    background-color: #F7F7F7; /* 배경 색상 */
-    margin: 20px auto; /* 위아래 간격 및 중앙 정렬 */
-    height: 350px; /* 내용에 맞게 높이 자동 조정 */
+    background-color: #f7f7f7;
+    border: 1.5px solid #ddd;
+    text-align: center;
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+	left: 0;
+	border-radius: 10px;
+}
+
+.folder-input-container img {
+    width: 27px; 
+    height: 27px;
+    margin-right: 10px; 
+    border: none;
+    outline: none;
 }
 
 
-.b-title {
-	display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    border-bottom: 1px solid #000;
-    padding-bottom: 5px;
-    margin-bottom: 15px;.
-	border-bottom: 1px dashed #BAB9AA;
-    padding-bottom: 10px;
-    margin-bottom: 20px;./
-    font-size: 16px;
-    color: #333333;
+.folder-input-container input {
+	font-family: 'NanumTobak', sans-serif;
+	font-size: 18px;
+}
+
+ .folder-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: calc(100% - 60px); /* b-title의 너비를 조정하여 board-content와 맞춤 */
-    margin: 20px auto; /* 중앙 정렬 */
+    margin-bottom: 8px;
+    width: 100%;
 }
 
-.b-header .title {
-    font-weight: bold;
+.folder-item img {
+    width: 27px; /* 아이콘 크기 조정 */
+    height: 27px; /* 아이콘 크기 조정 */
+    margin-right: 10px; /* 폴더명과 간격 */
 }
 
-.b-header .date,
-.b-header .edit {
-    font-size: 14px;
-    color: #666666;
-}
-
-.board-content .post-image {
-    max-width: 100%;
-    border-radius: 5px;
-    margin-bottom: 10px;
+.folder-item span {
+    font-size: 16px;
+    font-weight: 500;
 }
 
 
@@ -90,7 +110,31 @@
 		<div class="dashed-box">
 			<!-- 테두리 없는 상자 -->
 			<div class="solid-box">
-				<div class="inner-box-1"></div>
+				<div class="inner-box-1">
+					<!-- 폴더 관리하기 섹션 -->
+                    <div class="folder-container">
+                      	
+                      	<div class="folder-input-container" id="folderInputContainer">
+                            <img src="img/folder.png" alt="Folder Icon">
+                            <input type="text" id="folderNameInput" placeholder="폴더명을 입력하세요.">
+                            <button onclick="addFolder()">
+                            	<img src="img/plus.png">
+                            </button>
+                        </div>
+                      	
+                      	
+                      	
+                      	
+                        <button class="folder-manage-button" onclick="toggleFolderInput()">폴더 관리 하기</button>
+					</div>	
+					
+					
+					
+					
+					
+					
+					
+				</div>
 				<!-- 이미지가 박스 -->
 				<div class="image-box">
 					<img src="img/img1.png" alt="Image between boxes 1"
@@ -101,23 +145,8 @@
 				
 					<h1 class="board-title">게시판</h1>
 					<h2 class="board-recentpost"> | 최근게시물</h2>
+					<div class="board-line"></div>
 					
-					<div class="board-header"></div>
-					
-					<div class="b-title">
-						<span class="title">게시판 제목</span>
-						<span class="date">2024-09-20</span>
-						<span class="edit">수정 | 삭제</span>
-
-					</div>
-					
-					<div class="board-content">
-						<img src="img/logo1.png" alt="게시물 이미지" class="post-image">
-						<p class="content-text">
-							사이하트 다시 오픈한다는데 이 기가새들이 게시물 쓸 수 있는 토토코쿠폰 준다는 건 정말이냐 ㅇㅇ나 이거 암튼
-							개새라고 다이 갑자 선물 부모와 우선 주부당. 개새라고 많이 많이 들었소
-						</p>
-					</div>
 												
 				</div>
 			</div>
@@ -137,5 +166,46 @@
 
 		</div>
 	</div>
+	
+	<script>
+        function toggleFolderInput() {
+            var inputContainer = document.getElementById('folderInputContainer');
+            if (inputContainer.style.display === 'flex') {
+                inputContainer.style.display = 'none';
+            } else {
+                inputContainer.style.display = 'flex';
+            }
+        }
+        
+        function addFolder() {
+            var folderNameInput = document.getElementById('folderNameInput');
+            var folderName = folderNameInput.value.trim();
+
+            if (folderName !== '') {
+                var folderContainer = document.querySelector('.folder-container');
+                
+                // 새로운 폴더 아이템 생성
+                var folderItem = document.createElement('div');
+                folderItem.classList.add('folder-item');
+
+                var folderIcon = document.createElement('img');
+                folderIcon.src = 'img/folder.png';
+                folderIcon.alt = 'Folder Icon';
+
+                var folderNameSpan = document.createElement('span');
+                folderNameSpan.textContent = folderName;
+
+                folderItem.appendChild(folderIcon);
+                folderItem.appendChild(folderNameSpan);
+
+                // 폴더 컨테이너에 추가
+                folderContainer.insertBefore(folderItem, folderContainer.children[folderContainer.children.length - 1]);
+
+                // 입력 필드 초기화
+                folderNameInput.value = '';
+            }
+        }
+        
+    </script>
 </body>
 </html>
