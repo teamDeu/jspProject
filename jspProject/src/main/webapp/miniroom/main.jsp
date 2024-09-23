@@ -6,7 +6,14 @@
 <%
 	String id = (String)session.getAttribute("idKey");
 	String character = iMgr.getUsingCharacter(id).getItem_path();
-	String background = iMgr.getUsingBackground(id).getItem_path();
+	String url = request.getParameter("url");
+	if(url == null){
+		url = id;
+	}
+	String background = iMgr.getUsingBackground(url).getItem_path();
+	if(background == null){
+		background = "./img/backgroundImg.png";
+	}
 	System.out.println(background);
 	MemberBean userBean = mMgr.getMember(id);
 %>
@@ -45,6 +52,7 @@ function clickOpenBox(id){
         let userNum = 0;
         var localId = "<%=userBean.getUser_name()%>";
         var character = "<%=character%>"
+        var url = "<%=url%>";
         console.log(character);
         console.log('<%=background%>');
         function connect() {
@@ -53,7 +61,7 @@ function clickOpenBox(id){
                 document.getElementById("status").textContent = "서버와 연결됨";
                 if(localId == "null") localId = "비회원";
                 if(character == "null") character = "character1.png"
-                message = "connect;" + localId +";" + character;
+                message = "connect;"+ localId +";" + character +";" + url
                 ws.send(message);
             };
 
