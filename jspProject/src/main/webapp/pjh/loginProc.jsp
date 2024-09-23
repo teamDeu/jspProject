@@ -11,7 +11,7 @@
 	    session.setAttribute("idKey", user_id);
 	    msg = "로그인에 성공 하였습니다.";
 
-	    href ="../miniroom/main.jsp?url="+user_id;
+	    href ="../pjh/main.jsp?url="+user_id;
 
 	  } else if (result == 1) {  // 비밀번호 불일치
 	    msg = "비밀번호가 일치하지 않습니다.";
