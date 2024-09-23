@@ -104,7 +104,7 @@ label[for="private"] {
 .guestbook-content-container {
     width: 95%;
     max-height: 50px; /* 최대 높이 설정 */
-    background-color:#FFFFFF;
+    background-color:#FFFFFF; 
     border-top: 1px solid #DCDCDC;
     margin-bottom: 10px;
     overflow-y: auto; /* 세로 스크롤 */
@@ -115,7 +115,7 @@ label[for="private"] {
 /* 방명록 내용의 위치와 스타일 */
 .guestbook-content {
     font-family: 'NanumTobak', sans-serif;
-    font-size: 22px;
+    font-size: 21.5px;
     color: #333;
     text-align: left;
     padding: 0;
@@ -130,7 +130,7 @@ label[for="private"] {
     height: 30px;
     display: flex;
     justify-content: space-between;
-    margin-top: 40px;
+    margin-top: 10px;
     margin-left: -10px;
 }
 
@@ -161,13 +161,13 @@ label[for="private"] {
     margin-left: 15px;
     background-color: #FFFFFF;
     width: 95%;
-    height: 25px;  /* 답글 컨테이너의 최대 높이 설정 */
+    height: 50px;  /* 답글 컨테이너의 최대 높이 설정 */
     overflow-y: auto;   /* 높이를 넘을 경우 스크롤 표시 */
 }
 
 .reply-content {
     margin-top: 5px;
-    font-size: 20px;
+    font-size: 18px;
     color: #555;
     font-family: 'NanumTobak', sans-serif;
     text-align: left;
@@ -256,10 +256,20 @@ label[for="private"] {
     font-size: 14px;
     color: #888;
     margin-left: 10px;
+
 }
 
+/* 비밀글 아이콘 */
+.secret-icon {
+    width: 12px;  /* 아이콘 크기 */
+    height: 15px;
+    position: absolute;
+    top: 20px;  
+    right: 70px;  
 
-/* 휴지통  */
+}
+
+/* 휴지통 아이콘*/
 .delete-icon {
     width: 13px; 
     height: 15px;
