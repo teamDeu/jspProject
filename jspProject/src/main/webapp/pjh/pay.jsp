@@ -14,6 +14,7 @@
             width: 30%;
             margin: 0 auto;
             text-align: center;
+            
         }
         .header {
             display: flex;
@@ -42,6 +43,7 @@
             padding: 20px;
             background-color: #f8f8f8;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            
         }
         .clover-count {
             font-size: 24px;
