@@ -245,7 +245,8 @@
                 <span>가격순</span>
             </div>
             <div class="search">
-                <button>클로버 충전</button>
+                <button onclick="window.open('pay.jsp', '_blank', )">클로버 충전</button>
+
             </div>
         </div>
 
