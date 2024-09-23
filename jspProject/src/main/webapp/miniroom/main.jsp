@@ -237,6 +237,7 @@ function clickOpenBox(id){
 
 </head>
 <body>
+
    <div class="container">
       <div class="header">
          <img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
@@ -266,6 +267,7 @@ function clickOpenBox(id){
                <jsp:include page="miniDesign.jsp"></jsp:include>
             </div>
             <div id="game" class ="inner-box-2" style="display: none" >
+            	<jsp:include page="../yang/game.jsp"></jsp:include>
             </div>
 			<div id="store" class="inner-box-2" style="display: none">
 				<jsp:include page="storeDesign.jsp"></jsp:include>
@@ -279,7 +281,7 @@ function clickOpenBox(id){
             <button class="custom-button">게시판</button>
             <button class="custom-button">방명록</button>
             <button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
-            <button class="custom-button">게임</button>
+            <button onclick = "javascript:clickOpenBox('game')" class="custom-button">게임</button>
             <button class="custom-button">음악</button>
          </div>
 

@@ -35,7 +35,7 @@
                     <div class="guestbook-line"></div> <!-- 실선 -->
 
                     <!-- 방명록 작성 폼 -->
-                    <div class="guestbook-form">
+                    <div class="guestbook-form"> 
                         <input type="text" id="guestbook-input" class="guestbook-input"
                             placeholder="일촌에게 방문 기록을 남겨보세요~ !" />
                         <label for="private"><input type="checkbox" id="private" /> 비밀글</label>

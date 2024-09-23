@@ -1,0 +1,31 @@
+@charset "UTF-8";
+
+.board-title {
+    color: #80A46F; 
+    text-align: center; 
+    font-size: 36px; 
+    font-weight: 600; 
+    position: absolute; 
+    top: 0px; 
+    left: 30px; 
+    display: inline-block;
+}
+
+
+
+/* 실선 스타일 */
+.boardlist-line {
+    border-bottom: 1px solid #BAB9AA; /* 실선 색상 및 두께 */
+    width: calc(100% - 55px); /* 실선의 너비 */
+    position: absolute; 
+    top: 80px; 
+    left: 25px; 
+}
+
+
+/* inner-box-2의 내용이 가운데 정렬*/
+.inner-box-2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
