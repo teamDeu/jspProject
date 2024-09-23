@@ -44,7 +44,7 @@
             color: green;
             position: absolute;
             top: 20px;
-            right: 20px;
+            right: 60px;
         }
         /* 카테고리 탭 */
         .nav-tabs {
@@ -111,6 +111,7 @@
         }
         .item img {
             width: 100%;
+            height: 70%;
             border-radius: 10px;
         }
         .item-title {
@@ -148,6 +149,53 @@
     </style>
 
     <script type="text/javascript">
+    const itemsPerPage = 8; // 페이지당 8개 아이템
+    let currentPage = 1; // 현재 페이지
+    let items = []; // 모든 아이템을 담을 배열
+
+    // 페이지를 바꾸는 함수
+    function changePage(page) {
+        currentPage = page;
+        displayItems();
+        updatePagination();
+    }
+
+    // 아이템을 보여주는 함수
+    function displayItems() {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const visibleItems = items.slice(start, end);
+
+        const itemsContainer = document.getElementById('allItems');
+        itemsContainer.innerHTML = ''; // 기존 아이템 제거
+
+        visibleItems.forEach(item => {
+            itemsContainer.appendChild(item);
+        });
+    }
+
+    // 페이지네이션 업데이트 함수
+    function updatePagination() {
+        const totalPages = Math.ceil(items.length / itemsPerPage);
+        const paginationContainer = document.querySelector('.pagination');
+        paginationContainer.innerHTML = ''; // 기존 페이지네이션 제거
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageSpan = document.createElement('span');
+            pageSpan.textContent = i;
+            pageSpan.classList.toggle('active', i === currentPage);
+            pageSpan.onclick = () => changePage(i);
+            paginationContainer.appendChild(pageSpan);
+        }
+    }
+
+    // 페이지가 로드될 때 초기화
+    window.onload = function () {
+        const itemsContainer = document.getElementById('allItems');
+        items = Array.from(itemsContainer.children); // 모든 아이템을 배열로 저장
+        displayItems();
+        updatePagination();
+    };
         function clickOpenType(id) {
             openBox = document.getElementById(id);
             anotherBox = document.querySelectorAll(".items-container");
@@ -165,11 +213,14 @@
         <div class="store-title">상점</div>
 
         <!-- 클로버 금액 -->
-        <div class="clover-amount">20,000</div>
+        <div class="clover-amount">
+        <img src="clover_icon.png" alt="클로버">
+        20,000
+        </div>
 
         <!-- 카테고리 탭 -->
         <ul class="nav-tabs">
-            <li onclick="clickOpenType('allItems')" class="active">전체</li>
+            <li onclick="clickOpenType('allItems')" >전체</li>
             <li onclick="clickOpenType('musicItems')">음악</li>
             <li onclick="clickOpenType('characterItems')">캐릭터</li>
             <li onclick="clickOpenType('backgroundItems')">배경</li>
@@ -231,12 +282,26 @@
                 </div>
             </div>
             <div class="item">
-                <img src="img/핑크배경.png" alt="핑크 배경">
-                <div class="item-title">핑크 배경</div>
+                <img src="img/핑크배경.png" alt="배경 1">
+                <div class="item-title">배경 1</div>
                 <div class="item-price">
                     <img src="clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
+            <div class="item">
+                <img src="img/backgroundImg.png" alt="배경 2">
+                <div class="item-title">배경 2</div>
+                <div class="item-price">
+                    <img src="clover_icon.png" alt="클로버"> 5개
+                </div>
+            </div>
+            <div class="item">
+                <img src="img/backgroundImg22.png" alt="배경 3">
+                <div class="item-title">배경 3</div>
+                <div class="item-price">
+                    <img src="clover_icon.png" alt="클로버"> 5개
+                </div>
+            </div>                        
             <div class="item">
                 <img src="img/포차코.jfif" alt="포차코">
                 <div class="item-title">포차코</div>
@@ -251,6 +316,7 @@
                     <img src="clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
+    
         </div>
 
         <!-- 음악 상품 목록 -->
@@ -320,20 +386,31 @@
         <!-- 배경 상품 목록 -->
         <div id="backgroundItems" class="items-container" style="display: none;">
             <div class="item">
-                <img src="img/핑크배경.png" alt="핑크 배경">
-                <div class="item-title">핑크 배경</div>
+                <img src="img/핑크배경.png" alt="배경 1">
+                <div class="item-title">배경 1</div>
                 <div class="item-price">
                     <img src="clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
+            <div class="item">
+                <img src="img/backgroundImg.png" alt="배경 2">
+                <div class="item-title">배경 2</div>
+                <div class="item-price">
+                    <img src="clover_icon.png" alt="클로버"> 5개
+                </div>
+            </div>
+            <div class="item">	
+                <img src="img/backgroundImg22.png" alt="배경 3">
+                <div class="item-title">배경 3</div>
+                <div class="item-price">
+                    <img src="clover_icon.png" alt="클로버"> 5개
+                </div>
+            </div>                        
         </div>
 
-        <!-- 페이지네이션 -->
+ <!-- 페이지네이션 -->
         <div class="pagination">
-            <span class="active">1</span>
-            <span>2</span>
-            <span>3</span>
-            <span>4</span>
+            <!-- 페이지 번호가 여기에 표시됩니다 -->
         </div>
     </div>
 

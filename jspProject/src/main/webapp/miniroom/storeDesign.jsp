@@ -111,6 +111,7 @@
         }
         .item img {
             width: 100%;
+            height: 70%;
             border-radius: 10px;
         }
         .item-title {
@@ -148,7 +149,7 @@
     </style>
 
     <script type="text/javascript">
-        function clickOpenBox(id) {
+        function clickOpenType(id) {
             openBox = document.getElementById(id);
             anotherBox = document.querySelectorAll(".items-container");
             for (i = 0; i < anotherBox.length; i++) {
@@ -169,10 +170,10 @@
 
         <!-- 카테고리 탭 -->
         <ul class="nav-tabs">
-            <li onclick="clickOpenBox('allItems')" class="active">전체</li>
-            <li onclick="clickOpenBox('musicItems')">음악</li>
-            <li onclick="clickOpenBox('characterItems')">캐릭터</li>
-            <li onclick="clickOpenBox('backgroundItems')">배경</li>
+            <li onclick="clickOpenType('allItems')" class="active">전체</li>
+            <li onclick="clickOpenType('musicItems')">음악</li>
+            <li onclick="clickOpenType('characterItems')">캐릭터</li>
+            <li onclick="clickOpenType('backgroundItems')">배경</li>
         </ul>
 
         <!-- 인기순, 가격순 및 클로버 충전 -->
@@ -231,12 +232,26 @@
                 </div>
             </div>
             <div class="item">
-                <img src="img/핑크배경.png" alt="핑크 배경">
-                <div class="item-title">핑크 배경</div>
+                <img src="img/핑크배경.png" alt="배경 1">
+                <div class="item-title">배경 1</div>
                 <div class="item-price">
                     <img src="clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
+            <div class="item">
+                <img src="img/backgroundImg.png" alt="배경 2">
+                <div class="item-title">배경 2</div>
+                <div class="item-price">
+                    <img src="clover_icon.png" alt="클로버"> 5개
+                </div>
+            </div>
+            <div class="item">
+                <img src="img/backgroundImg22.png" alt="배경 3">
+                <div class="item-title">배경 3</div>
+                <div class="item-price">
+                    <img src="clover_icon.png" alt="클로버"> 5개
+                </div>
+            </div>                        
             <div class="item">
                 <img src="img/포차코.jfif" alt="포차코">
                 <div class="item-title">포차코</div>
@@ -251,6 +266,7 @@
                     <img src="clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
+    
         </div>
 
         <!-- 음악 상품 목록 -->
@@ -320,12 +336,26 @@
         <!-- 배경 상품 목록 -->
         <div id="backgroundItems" class="items-container" style="display: none;">
             <div class="item">
-                <img src="img/핑크배경.png" alt="핑크 배경">
-                <div class="item-title">핑크 배경</div>
+                <img src="img/핑크배경.png" alt="배경 1">
+                <div class="item-title">배경 1</div>
                 <div class="item-price">
                     <img src="clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
+            <div class="item">
+                <img src="img/backgroundImg.png" alt="배경 2">
+                <div class="item-title">배경 2</div>
+                <div class="item-price">
+                    <img src="clover_icon.png" alt="클로버"> 5개
+                </div>
+            </div>
+            <div class="item">
+                <img src="img/backgroundImg22.png" alt="배경 3">
+                <div class="item-title">배경 3</div>
+                <div class="item-price">
+                    <img src="clover_icon.png" alt="클로버"> 5개
+                </div>
+            </div>                        
         </div>
 
         <!-- 페이지네이션 -->

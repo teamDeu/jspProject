@@ -10,7 +10,7 @@
 	  if(result == 2){  // 로그인 성공 시
 	    session.setAttribute("idKey", user_id);
 	    msg = "로그인에 성공 하였습니다.";
-	    href ="../miniroom/main.jsp";
+	    href ="main.jsp";
 	  } else if (result == 1) {  // 비밀번호 불일치
 	    msg = "비밀번호가 일치하지 않습니다.";
 	  } else if (result == 0) {  // 아이디가 존재하지 않음
