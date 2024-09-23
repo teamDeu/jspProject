@@ -1,13 +1,12 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>CloverStory</title>
-<!-- Linking the CSS file -->
-<link rel="stylesheet" type="text/css" href="css/style.css">
-<link rel="stylesheet" type="text/css" href="css/guestbook.css">
+    <meta charset="UTF-8">
+    <title>CloverStory</title>
+    <!-- Linking the CSS file -->
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/guestbook.css">
 </head>
 
 <body>
@@ -15,7 +14,7 @@
         <div class="header">
             <img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
             <div class="settings">
-            <span></span>
+                <span></span>
                 <a href="#">설정</a> <a href="#">로그아웃</a>
             </div>
         </div>
@@ -26,9 +25,8 @@
                 <div class="inner-box-1"></div>
                 <!-- 이미지가 박스 -->
                 <div class="image-box">
-                    <img src="img/img1.png" alt="Image between boxes 1"
-                        class="between-image"> <img src="img/img1.png"
-                        alt="Image between boxes 2" class="between-image">
+                    <img src="img/img1.png" alt="Image between boxes 1" class="between-image"> 
+                    <img src="img/img1.png" alt="Image between boxes 2" class="between-image">
                 </div>
                 <div align="center" class="inner-box-2">
                     <h1 class="guestbook-title">방명록</h1>
@@ -63,7 +61,6 @@
                 <button class="custom-button">게임</button>
                 <button class="custom-button">음악</button>
             </div>
-
         </div>
     </div>
 
@@ -72,8 +69,11 @@
     let entries = []; // 모든 방명록 항목을 저장할 배열
     const itemsPerPage = 3; // 페이지당 항목 수
     let currentPage = 1; // 현재 페이지 번호
+    const maxPageButtons = 5; // 한 번에 표시할 페이지 수
+    let totalPages = 0;
+    let pageGroup = 1; // 페이지 그룹
 
- // 방명록 항목을 삭제하는 함수
+    // 방명록 항목을 삭제하는 함수
     function deleteEntry(entryElement, index) {
         entries.splice(index, 1); // entries 배열에서 해당 항목 삭제
         entryElement.remove(); // DOM에서 해당 방명록 항목 삭제
@@ -85,9 +85,26 @@
         var inputField = document.getElementById('guestbook-input');
         var content = inputField.value.trim();
 
-        // 현재 시간 생성
+        // 현재 시간 생성 및 포맷팅
         var now = new Date();
-        var timeString = now.toLocaleString();  // 날짜와 시간을 문자열로 변환
+
+        // 각 시간 요소 추출
+        var year = now.getFullYear();  // 연도
+        var month = now.getMonth() + 1; // 월 (0부터 시작하므로 +1)
+        var day = now.getDate(); // 일
+        var hours = now.getHours(); // 시
+        var minutes = now.getMinutes(); // 분
+
+        // 숫자가 한 자리일 경우 두 자리로 만들기 (예: 9 -> 09)
+        month = month < 10 ? '0' + month : month;
+        day = day < 10 ? '0' + day : day;
+        hours = hours < 10 ? '0' + hours : hours;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+
+        // 최종 시간 문자열
+        var timeString = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+        console.log("Generated timeString:", timeString);  // 콘솔에 시간 출력
 
         // 입력 필드에 내용이 있는 경우에만 방명록 추가
         if (content) {
@@ -106,7 +123,8 @@
             profileSection.className = 'profile-section';
             profileSection.innerHTML = `
                 <img src="img/p1.png" alt="프로필 사진" class="profile-image" />
-                <span class="profile-name">신짱구</span> <span class="profile-time">${timeString}</span>
+                <span class="profile-name">홍길동</span> 
+                <span class="profile-time">(${timeString})</span>
             `;
             newEntry.appendChild(profileSection);
 
@@ -140,7 +158,7 @@
                 if (replyText) {
                     var replyEntry = document.createElement('p');
                     replyEntry.className = 'reply-content';
-                    replyEntry.textContent = '└ 유리 :  ' + replyText;
+                    replyEntry.textContent = '└ 유리 : ' + replyText;
 
                     // 방명록 항목에 답글 추가 (replyContainer 안에 답글을 추가)
                     replyContainer.appendChild(replyEntry);
@@ -160,11 +178,15 @@
 
             // 삭제 아이콘 클릭 이벤트 (해당 인덱스를 전달하여 삭제)
             deleteIcon.addEventListener('click', function () {
-                deleteEntry(newEntry, entries.indexOf(newEntry)); // 방명록 항목 삭제
+                const confirmDelete = confirm("삭제하시겠습니까?");
+                if (confirmDelete) {
+                    deleteEntry(newEntry, entries.indexOf(newEntry)); // 방명록 항목 삭제
+                }
             });
 
-            // 현재 페이지를 1로 설정 (새 게시글 추가 시 1페이지로 이동)
+            // 현재 페이지와 페이지 그룹을 1로 설정 (새 게시글 추가 시 1페이지로 이동)
             currentPage = 1;
+            pageGroup = 1;  // 페이지 그룹도 초기화
 
             // 페이지 업데이트
             updatePagination();
@@ -190,11 +212,27 @@
         // 현재 페이지에 해당하는 항목을 표시
         itemsToDisplay.forEach(item => entriesContainer.appendChild(item));
 
-        // 페이지 번호 생성
+        // 페이지 버튼 생성
         paginationContainer.innerHTML = ''; // 기존 페이지 버튼 초기화
-        const totalPages = Math.ceil(entries.length / itemsPerPage);
+        totalPages = Math.ceil(entries.length / itemsPerPage);
+        const startPage = (pageGroup - 1) * maxPageButtons + 1;
+        const endPage = Math.min(startPage + maxPageButtons - 1, totalPages);
 
-        for (let i = 1; i <= totalPages; i++) {
+        // 이전 버튼 추가 (1페이지 그룹보다 크면 이전 버튼 표시)
+        if (pageGroup > 1) {
+            const prevButton = document.createElement('button');
+            prevButton.textContent = '이전';
+            prevButton.classList.add('page-button', 'nav-button');
+            prevButton.addEventListener('click', function () {
+                pageGroup--;
+                currentPage = (pageGroup - 1) * maxPageButtons + 1; // 이전 페이지 그룹의 첫 번째 페이지로 이동
+                updatePagination();
+            });
+            paginationContainer.appendChild(prevButton);
+        }
+
+        // 현재 페이지 그룹에 해당하는 페이지 번호만 표시
+        for (let i = startPage; i <= endPage; i++) {
             const pageButton = document.createElement('button');
             pageButton.textContent = i;
             pageButton.classList.add('page-button');
@@ -211,52 +249,20 @@
             paginationContainer.appendChild(pageButton);
         }
 
-        // 현재 페이지에 글이 하나도 없으면 이전 페이지로 이동
-        if (entries.length > 0 && itemsToDisplay.length === 0 && currentPage > 1) {
-            currentPage--;
-            updatePagination();
-        }
-    }
-
-
-
-    // 페이지 번호 업데이트 및 표시 함수
-    function updatePagination() {
-        const entriesContainer = document.querySelector('.guestbook-entries');
-        const paginationContainer = document.querySelector('.pagination-container');
-
-        // 방명록 항목을 페이지당 3개씩 나눠서 표시
-        entriesContainer.innerHTML = ''; // 기존 항목 초기화
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const itemsToDisplay = entries.slice(startIndex, endIndex);
-
-        // 현재 페이지에 해당하는 항목을 표시
-        itemsToDisplay.forEach(item => entriesContainer.appendChild(item));
-
-        // 페이지 번호 생성
-        paginationContainer.innerHTML = ''; // 기존 페이지 버튼 초기화
-        const totalPages = Math.ceil(entries.length / itemsPerPage);
-
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement('button');
-            pageButton.textContent = i;
-            pageButton.classList.add('page-button');
-            if (i === currentPage) {
-                pageButton.classList.add('active'); // 현재 페이지 표시
-            }
-
-            // 페이지 버튼 클릭 시 해당 페이지로 이동
-            pageButton.addEventListener('click', function () {
-                currentPage = i;
+        // 다음 버튼 추가 (더 많은 페이지가 있으면 다음 버튼 표시)
+        if (endPage < totalPages) {
+            const nextButton = document.createElement('button');
+            nextButton.textContent = '다음';
+            nextButton.classList.add('page-button', 'nav-button');
+            nextButton.addEventListener('click', function () {
+                pageGroup++;
+                currentPage = (pageGroup - 1) * maxPageButtons + 1; // 다음 페이지 그룹의 첫 번째 페이지로 이동
                 updatePagination();
             });
-
-            paginationContainer.appendChild(pageButton);
+            paginationContainer.appendChild(nextButton);
         }
     }
 </script>
 
 </body>
-
 </html>
