@@ -108,7 +108,7 @@
             gap: 10px; /* 이미지와 박스 사이의 간격 */
         }
         
-        .box-image {
+        .box-image1 {
             width: 60px; /* 이미지의 너비 */
             height: 60px; /* 이미지의 높이 */
             object-fit: cover; /* 이미지의 크기를 박스에 맞춤 */
@@ -225,7 +225,7 @@
 
             <!-- 배팅 금액 입력 부분 -->
             <div class="long-box-with-image">
-                <img src="img/clover1.png" alt="Sample Image" class="box-image">
+                <img src="img/clover1.png" alt="Sample Image" class="box-image1">
                 <div class="long-box">
                     <textarea class="input-box" id="betAmount" placeholder="배팅 금액"></textarea>
                 </div>

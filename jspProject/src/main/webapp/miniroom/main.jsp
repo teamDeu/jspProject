@@ -222,7 +222,7 @@ function clickOpenBox(id){
                <jsp:include page="miniDesign.jsp"></jsp:include>
             </div>
             <div id="game" class ="inner-box-2" style="display: none" >
-            	<jsp:include page="../yang/game2.jsp"></jsp:include>
+            	<jsp:include page="../yang/game.jsp"></jsp:include>
             </div>
 			<div id="store" class="inner-box-2" style="display: none">
 				<jsp:include page="storeDesign.jsp"></jsp:include>
