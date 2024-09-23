@@ -23,7 +23,41 @@
 <meta charset="UTF-8">
 <title>CloverStory</title>
 <!-- Linking the CSS file -->
-<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="./css/style.css">
+<style>
+@font-face {
+    font-family: 'NanumTobak';
+    src: url('../나눔손글씨 또박또박.TTF') format('truetype');
+}
+
+* {
+    font-family: 'NanumTobak', sans-serif;
+}
+.miniroom_information {
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	width: 100px;
+	padding : 14px;
+	gap:10px;
+	border-radius : 10px;
+	box-sizing:border-box;
+	background-color:#FFFEF3;
+	top: -60px;
+	border: 2px solid #BAB9AA;
+}
+.miniroom_information button{
+	padding : 2px 10px;
+	border : 1px solid #DCDCDC;
+	background-color : #FFFFFF;
+	font-size : 12px;
+	border-radius : 10px;
+}
+.miniroom_information span{
+	align-self:center;
+	font-size : 18px;
+}
+</style>
 <script>
 function loadContent(url) {
     var xhr = new XMLHttpRequest();
@@ -53,8 +87,6 @@ function clickOpenBox(id){
         var localId = "<%=userBean.getUser_name()%>";
         var character = "<%=character%>"
         var url = "<%=url%>";
-        console.log(character);
-        console.log('<%=background%>');
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
             ws.onopen = function() {
@@ -119,11 +151,24 @@ function clickOpenBox(id){
         	nowvisit.innerText = "Now " + userNum; 
     		  // and give it some content
     		  // add the text node to the newly created div
-    		  newDiv.id = id;
-    		  newContent = document.createTextNode(id);
-    		  newDiv.appendChild(newContent);
-    		  newDiv.appendChild(newImg);
-    		  newDiv.classList.add("user");
+    		newDiv.id = id;
+    		newContent = document.createTextNode(id);
+    		newDiv.appendChild(newContent);
+    		newDiv.appendChild(newImg);
+    		newDiv.classList.add("user");
+    		
+    		informationDiv = document.createElement("div");
+    		informationDiv.classList.add("miniroom_information");
+    		userNameSpan = document.createElement("span");
+    		addFriendBtn = document.createElement("button");
+    		goHomepageBtn = document.createElement("button");
+    		addFriendBtn.innerText = "친구추가";
+    		goHomepageBtn.innerText = "미니룸 구경가기";
+    		userNameSpan.innerText = id;
+    		informationDiv.appendChild(userNameSpan);
+    		informationDiv.appendChild(addFriendBtn);
+    		informationDiv.appendChild(goHomepageBtn);
+    		newDiv.appendChild(informationDiv);
     		  // add the newly created element and its content into the DOM
     		  if(miniroom){
     			  miniroom.appendChild(newDiv);

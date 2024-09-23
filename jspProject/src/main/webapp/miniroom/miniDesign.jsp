@@ -4,7 +4,7 @@
     pageEncoding="UTF-8"%>
 <jsp:useBean id="mgr" class ="miniroom.ItemMgr"/>
 <%
-	String user_id = "als981209";
+	String user_id = (String)session.getAttribute("idKey");
 	Vector<ItemBean> characterList = mgr.getHoldCharacter(user_id);
 	Vector<ItemBean> backgroundList = mgr.getHoldBackgroundImg(user_id);
 	ItemBean usingCharacter = mgr.getUsingCharacter(user_id);
