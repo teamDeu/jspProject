@@ -205,9 +205,11 @@
 					int num = characterBean.getItem_num();
 					String name = characterBean.getItem_name();
 				%>
-					<div id = "<%=num %>" onclick ="clickCharacterRoom(this,'<%=num%>','<%=image %>') " class = "miniroom_design_character_room">
-						<img  id = "<%=num %>" class = "miniroom_design_character" alt = '<%=name %>' src='<%=image%>'">
-					</div>
+					<jsp:include page="characterRoom.jsp">
+						<jsp:param value="<%=num %>" name="num"/>
+						<jsp:param value="<%=image %>" name="image"/>
+						<jsp:param value="<%=name %>" name="name"/>
+					</jsp:include>
 				<%} %>
 			</div>
 		</section>
