@@ -202,6 +202,10 @@ function clickOpenBox(id){
 				<div id="Box_miniroom_design" class ="inner-box-2" style="display: none" >
 					<jsp:include page="miniDesign.jsp"></jsp:include>
 				</div>
+				<div id="Box_game_design" class ="inner-box-2" style="display: none" >
+					<jsp:include page="game2.jsp"></jsp:include>
+				</div>
+
 			</div>
 			<!-- 버튼 -->
 			<div class="button-container">
@@ -211,7 +215,7 @@ function clickOpenBox(id){
 				<button class="custom-button">게시판</button>
 				<button class="custom-button">방명록</button>
 				<button class="custom-button">상점</button>
-				<button class="custom-button" onclick="location.href='../yang/game2.jsp';">게임</button>
+				<button onclick ="javascript:clickOpenBox('Box_game_design')" class="custom-button">게임</button>
 				<button class="custom-button">음악</button>
 			</div>
 
