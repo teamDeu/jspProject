@@ -2,6 +2,7 @@
     font-family: 'NanumTobak';
     src: url('../나눔손글씨 또박또박.TTF') format('truetype');
 }
+
 /* inner-box-2의 방명록 텍스트 스타일 */
 .guestbook-title {
     color: #80A46F; 
@@ -13,7 +14,7 @@
     left: 30px; 
 }
 
-/* inner-box-2의 내용이 가운데 정렬*/
+/* inner-box-2의 내용이 가운데 정렬 */
 .inner-box-2 {
     display: flex;
     justify-content: center;
@@ -35,19 +36,17 @@
     align-items: center;
     position: absolute; 
     bottom: 30px; 
-     
     width: 90%;
     justify-content: space-between;
     background-color: #F2F2F2;
     padding: 10px;
     border: 1px solid #e0e0d1;
     border-radius: 5px;
-    margin-top: 20px;
+    margin-bottom: -20px;
 }
 
-
 .guestbook-input {
-	height : 35px;
+    height: 20px;
     flex: 1;
     padding: 8px;
     border: 1px solid #DCDCDC;
@@ -55,20 +54,19 @@
     color: #000000;
     background-color: #FFFFFF;
     font-family: 'NanumTobak', sans-serif;
-    font-size: 25px;
+    font-size: 20px;
 }
-
 
 #private {
     margin-left: 10px;
     vertical-align: middle;
 }
+
 /* 체크박스 옆 텍스트(라벨)의 폰트 크기를 조정 */
 label[for="private"] {
-    font-size: 20px; /* 원하는 폰트 크기로 변경 */
+    font-size: 20px;
     vertical-align: middle;
 }
-
 
 .submit-button {
     background-color: #FFFFFF;
@@ -79,25 +77,169 @@ label[for="private"] {
     margin-left: 10px;
     cursor: pointer;
     font-family: 'NanumTobak', sans-serif;
-    font-size:20px;
+    font-size: 20px;
+}
+
+/* 방명록 전체 container */
+.entry-container {
+    width: 100%;
+    height: 570px;
+    margin-top: -10px;
+    background-color: #F7F7F7;
+    
 }
 
 .guestbook-entry {
     background-color: #FFFFFF;
     border: 1px solid #DCDCDC;
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 50px;
     border-radius: 5px;
-    height:100px;
+    height: 120px;
     width: 800px;
-    position: absolute; 
-    top: 80px;
-    left:35px; 
-
+    position: relative;
 }
 
+/* 방명록 내용을 담는 컨테이너 */
+.guestbook-content-container {
+    width: 95%;
+    max-height: 50px; /* 최대 높이 설정 */
+    background-color:#FFFFFF;
+    border-top: 1px solid #DCDCDC;
+    margin-bottom: 10px;
+    overflow-y: auto; /* 세로 스크롤 */
+    overflow-x: hidden; /* 가로 스크롤 숨기기 */
+}
+
+
+/* 방명록 내용의 위치와 스타일 */
 .guestbook-content {
     font-family: 'NanumTobak', sans-serif;
-    font-size: 30px;
+    font-size: 22px;
+    color: #333;
+    text-align: left;
+    padding: 0;
+    margin: 0 0 0 10px;
+    overflow-y: auto;
+}
+
+/* 답글 입력 폼 */
+.reply-form {
+	position: absolute;
+    width: 820px;
+    height: 30px;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    margin-left: -10px;
+}
+
+.reply-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #DCDCDC;
+    border-radius: 5px;
+    font-family: 'NanumTobak', sans-serif;
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+.reply-button {
+    background-color: #FFFFFF;
+    color: #666;
+    border: 1px solid #DCDCDC;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: 'NanumTobak', sans-serif;
+    font-size: 16px;
+}
+
+/* 답글 표시 */
+.reply-container {
+    margin-top: 10px;
+    margin-left: 15px;
+    background-color: #FFFFFF;
+    width: 95%;
+    height: 25px;  /* 답글 컨테이너의 최대 높이 설정 */
+    overflow-y: auto;   /* 높이를 넘을 경우 스크롤 표시 */
+}
+
+.reply-content {
+    margin-top: 5px;
+    font-size: 20px;
+    color: #555;
+    font-family: 'NanumTobak', sans-serif;
+    text-align: left;
+    padding: 0;
+    margin: 0 0 0 10px;
+}
+
+/* 페이지 버튼 */
+.pagination-container {
+    position: absolute;
+    bottom: 50px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.page-button {
+    border-radius: 5px;
+    background-color: white;
+    border: 1px solid #DCDCDC;
+    padding: 5px 10px;
+    margin: 5px;
+    cursor: pointer;
+    font-family: 'NanumTobak', sans-serif;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    padding: 0;
+}
+
+.page-button.active {
+    background-color: white;
+    color: #80A46F;
+    font-weight: bold;
+}
+
+/* 방명록 항목 프로필 섹션 */
+.profile-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.profile-image {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.profile-name {
+    margin-top: -5px;
+    font-weight: bold;
+    font-size: 20px;
     color: #333;
 }
+
+.profile-time {
+    font-size: 14px;
+    color: #888;
+    margin-left: 10px;
+}
+
+/* 휴지통  */
+.delete-icon {
+    width: 13px; 
+    height: 15px;
+    position: absolute; 
+    top: 20px; /* 상단에서 10px 떨어지도록 */
+    right: 30px; /* 오른쪽에서 10px 떨어지도록 */
+    cursor: pointer; /* 커서 모양을 변경하여 클릭 가능하게 */
+}
+
