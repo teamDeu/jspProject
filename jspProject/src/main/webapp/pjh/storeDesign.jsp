@@ -16,15 +16,17 @@
             margin: 0;
             padding: 0;
             overflow: scroll;
+            
         }
         .storecontainer {
-            width: 100%;
+            width: 95%;
             margin: 0 auto;
             padding: 20px;
             background-color: #FFF;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             position: relative;
+            
         }
         /* 상점 제목 */
         .store-title {
@@ -36,6 +38,7 @@
             position: absolute;
             top: 20px;
             left: 20px;
+            border-bottom: 2px solid #ccc; /* 제목 아래 줄 추가 */
         }
         /* 클로버 금액 */
         .clover-amount {
@@ -44,6 +47,7 @@
             position: absolute;
             top: 20px;
             right: 60px;
+            
         }
         /* 카테고리 탭 */
         .nav-tabs {
@@ -53,6 +57,7 @@
             padding: 0;
             margin-bottom: 20px;
             margin-top: 80px;
+            border-bottom: 2px solid #ccc; /* 카테고리 아래 줄 추가 */
         }
         .nav-tabs li {
             padding: 10px 30px;
@@ -73,6 +78,7 @@
             gap: 20px;
             margin-bottom: 20px;
             margin-right: 20px;
+            
         }
         .sort-buttons {
             display: flex;
@@ -100,6 +106,7 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             padding: 20px;
+            border: 1px solid #ccc;
         }
         .item {
             background-color: #FFF;
@@ -107,6 +114,7 @@
             padding: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            border: 1px solid #ccc; /* 상품에 네모난 테두리 추가 */
         }
         .item img {
             width: 100%;

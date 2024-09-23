@@ -7,16 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>가로로 긴 네모 박스 레이아웃</title>
     <script>
-	function clickOpenBox(id){
-		openBox = document.getElementById(id);
-		anotherBox = document.querySelectorAll(".inner-box-2");
-		for(i = 0 ; i < anotherBox.length ; i++){
-			anotherBox[i].style.display ="none";
-		}
-		openBox.style.display = "flex";
-	}
-
-</script>
+	    function game1show() {
+	        document.getElementById("main").style.display = "none";
+	        document.getElementById("game1-container").style.display = "block";
+	        document.getElementById("game2-container").style.display = "none";
+	    }
+	    
+        function game2show() {
+            document.getElementById("main").style.display = "none";
+            document.getElementById("game1-container").style.display = "none";
+            document.getElementById("game2-container").style.display = "block";
+        }
+        
+    </script>
     <style>
         .box-container {
             width: 750px; /* 박스의 가로 길이 */
@@ -94,9 +97,15 @@
         .box-button:hover {
             background-color: #C0E5AF; /* 버튼에 마우스를 올렸을 때 색 변경 */
         }
+
+        /* game2.jsp를 포함하는 컨테이너 */
+        #game-container {
+            display: none; /* 처음에는 숨겨진 상태 */
+        }
     </style>
 </head>
 <body>
+    <!-- 메인 콘텐츠 -->
     <div id="main" style="text-align: center; margin-top: 50px;">
         <!-- 가로줄과 텍스트 -->
         <div class="game-title">
@@ -111,7 +120,7 @@
                     <div class="box-title">사다리 게임</div> <!-- 제목 -->
                     <div class="box-description">참가자가 가로로 그려진 사다리 위의 세로 선을 타고 내려가며 가로로 그려진 연결선을 만나 방향을 바꿔 내려가면서 가장 밑의 상금을 얻는 게임</div> <!-- 설명 -->
                 </div>
-                <button class="box-button">-> start</button> <!-- 버튼 -->
+                <button class="box-button" onclick="game1show()">-> start</button> 
             </div>
         </div>
 
@@ -123,9 +132,17 @@
                     <div class="box-title">돌림판 게임</div> <!-- 제목 -->
                     <div class="box-description">참가자가 회전하는 원판을 돌려서 랜덤하게 상금을 얻는 게임</div> <!-- 설명 -->
                 </div>
-                <button class="box-button">-> start</button> <!-- 버튼 -->
+                <button class="box-button" onclick="game2show()">-> start</button>
             </div>
         </div>
+    </div>
+
+
+    <div id="game2-container">
+        <jsp:include page="game2.jsp"></jsp:include>
+    </div>
+    <div id="game1-container">
+        <jsp:include page="game1.jsp"></jsp:include>
     </div>
 </body>
 </html>
