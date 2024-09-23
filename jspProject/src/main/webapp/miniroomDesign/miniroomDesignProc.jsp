@@ -14,6 +14,6 @@
 %>
 
 <script>
-	alert("<%=msg%>");
-	location.href = "miniDesign.jsp";
+	opener.alert("<%=msg%>");
+	window.close();
 </script>

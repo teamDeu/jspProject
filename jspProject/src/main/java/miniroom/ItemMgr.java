@@ -128,4 +128,51 @@ public class ItemMgr {
 		return flag;
 	}
 	
+	public ItemBean getUsingCharacter(String id) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		ItemBean bean = new ItemBean();
+		String sql = "";
+		try {
+			con = pool.getConnection();
+			sql = "SELECT i.item_num,i.item_path FROM item i JOIN user u ON i.item_num = u.user_character WHERE u.user_id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				bean.setItem_num(rs.getInt(1));
+				bean.setItem_path(rs.getString(2));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return bean;
+	}
+	
+	public ItemBean getUsingBackground(String id) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		ItemBean bean = new ItemBean();
+		String sql = "";
+		try {
+			con = pool.getConnection();
+			sql = "SELECT i.item_num,i.item_path FROM item i JOIN miniroom m ON i.item_num = m.miniroom_image WHERE m.user_id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				bean.setItem_num(rs.getInt(1));
+				bean.setItem_path(rs.getString(2));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return bean;
+	}
 }
