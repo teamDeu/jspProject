@@ -1,8 +1,14 @@
+<%@page import="pjh.MemberBean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<jsp:useBean id="iMgr" class ="miniroom.ItemMgr"/>
+<jsp:useBean id="mMgr" class ="pjh.MemberMgr"/>
 <%
-String character = request.getParameter("character");
-String id = request.getParameter("id");
+	String id = (String)session.getAttribute("idKey");
+	String character = iMgr.getUsingCharacter(id).getItem_path();
+	String background = iMgr.getUsingBackground(id).getItem_path();
+	System.out.println(background);
+	MemberBean userBean = mMgr.getMember(id);
 %>
 <!DOCTYPE html>
 <html>
@@ -37,8 +43,10 @@ function clickOpenBox(id){
         var ws;
         var sayBoxId = 0;
         let userNum = 0;
-        var localId = "<%=id%>";
+        var localId = "<%=userBean.getUser_name()%>";
         var character = "<%=character%>"
+        console.log(character);
+        console.log('<%=background%>');
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
             ws.onopen = function() {
@@ -98,7 +106,7 @@ function clickOpenBox(id){
         	newDiv = document.createElement("div");
         	newImg = document.createElement("img");
         	newImg.classList.add("userCharacter");
-        	newImg.src ="img/"+character;
+        	newImg.src =character;
         	nowvisit = document.getElementById("nowvisit");
         	nowvisit.innerText = "Now " + userNum; 
     		  // and give it some content
@@ -195,7 +203,9 @@ function clickOpenBox(id){
 						alt="Image between boxes 2" class="between-image">
 				</div>
 				<div id="chatBox" class="inner-box-2">
-					<jsp:include page="chat.jsp"></jsp:include>
+					<jsp:include page="chat.jsp">
+						<jsp:param value="<%=background%>" name="backgroundImg"/>
+					</jsp:include>
 				</div>
 				<div id="anotherBox" class="inner-box-2" style="display: none">
 				</div>

@@ -99,7 +99,7 @@
 		align-items:center;
 		gap : 30px;
 		border : 1px dashed #8A8A8A;
-		justify-content : space-between;
+		justify-content : space-around;
 		padding : 20px 40px;
 		border-radius:10px;
 		background-color : white;
@@ -266,9 +266,21 @@
 %>
 	 function printBackground(index){
 		div = document.querySelector(".miniroom_design_background_div");
+		indexLeft = div.querySelector(".index_button_left");
+		console.log(indexLeft);
+		indexRight = div.querySelector(".index_button_right");
+		console.log(indexRight);
+		div.innerHTML = "";
+		div.appendChild(indexLeft);
+		div.appendChild(indexRight);
 		for(i = (index)*2 ; i < (index+1)*2 ; i++){
 			if(i == backgroundArray.length){
 				break;
+			}
+			if(i % 2 == 1){
+				separator = document.createElement("div");
+				separator.classList.add("miniroom_design_background_separator");
+				div.appendChild(separator);
 			}
 			e = backgroundArray[i];
 			backgroundRoom = document.createElement("div");
@@ -290,7 +302,12 @@
 	}
 	
 	function printCharacter(index){
-		div = document.querySelector(".miniroom_design_character_div")
+		div = document.querySelector(".miniroom_design_character_div");
+		indexLeft = div.querySelector(".index_button_left");
+		indexRight = div.querySelector(".index_button_right");
+		div.innerHTML = "";
+		div.appendChild(indexLeft);
+		div.appendChild(indexRight);
 		for(i = index*8 ; i < (index+1)*8; i++){
 			if(i == characterArray.length){
 				break;
@@ -326,6 +343,7 @@
 		else if(type == "background"){
 			if(backgroundIndex != 0){
 				backgroundIndex --;
+				console.log(backgroundIndex);
 				printBackground(backgroundIndex);
 			}
 		}
