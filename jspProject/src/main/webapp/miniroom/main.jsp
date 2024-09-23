@@ -192,50 +192,7 @@ function clickOpenBox(id){
 
 </head>
 <body>
-<<<<<<< HEAD
-	<div class="container">
-		<div class="header">
-			<img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
-			<div class="settings">
-				<span></span> <a href="#">설정</a> <a href="#">로그아웃</a>
-			</div>
-		</div>
-		<!-- 큰 점선 테두리 상자 -->
-		<div class="dashed-box">
-			<!-- 테두리 없는 상자 -->
-			<div class="solid-box">
-				<div class="inner-box-1"></div>
-				<!-- 이미지가 박스 -->
-				<div class="image-box">
-					<img src="img/img1.png" alt="Image between boxes 1"
-						class="between-image"> <img src="img/img1.png"-
-						alt="Image between boxes 2" class="between-image">
-				</div>
-				<div id="chatBox" class="inner-box-2">
-					<jsp:include page="chat.jsp"></jsp:include>
-				</div>
-				<div id="anotherBox" class="inner-box-2" style="display: none">
-				</div>
-				<div id="Box_miniroom_design" class ="inner-box-2" style="display: none" >
-					<jsp:include page="miniDesign.jsp"></jsp:include>
-				</div>
-				<div id="Box_game_design" class ="inner-box-2" style="display: none" >
-					<jsp:include page="game2.jsp"></jsp:include>
-				</div>
 
-			</div>
-			<!-- 버튼 -->
-			<div class="button-container">
-				<button onclick="javascript:clickOpenBox('chatBox')" class="custom-button">홈</button>
-				<button class="custom-button">프로필</button>
-				<button onclick="javascript:clickOpenBox('Box_miniroom_design')" class="custom-button">미니룸</button>
-				<button class="custom-button">게시판</button>
-				<button class="custom-button">방명록</button>
-				<button class="custom-button">상점</button>
-				<button onclick ="javascript:clickOpenBox('Box_game_design')" class="custom-button">게임</button>
-				<button class="custom-button">음악</button>
-			</div>
-=======
    <div class="container">
       <div class="header">
          <img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
@@ -265,6 +222,7 @@ function clickOpenBox(id){
                <jsp:include page="miniDesign.jsp"></jsp:include>
             </div>
             <div id="game" class ="inner-box-2" style="display: none" >
+            	<jsp:include page="../yang/game2.jsp"></jsp:include>
             </div>
 			<div id="store" class="inner-box-2" style="display: none">
 				<jsp:include page="storeDesign.jsp"></jsp:include>
@@ -278,10 +236,9 @@ function clickOpenBox(id){
             <button class="custom-button">게시판</button>
             <button class="custom-button">방명록</button>
             <button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
-            <button class="custom-button">게임</button>
+            <button onclick = "javascript:clickOpenBox('game')" class="custom-button">게임</button>
             <button class="custom-button">음악</button>
          </div>
->>>>>>> branch 'main' of https://github.com/teamDeu/jspProject.git
 
   
 
