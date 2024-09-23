@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -149,59 +148,72 @@
     </style>
 
     <script type="text/javascript">
-    const itemsPerPage = 8; // 페이지당 8개 아이템
-    let currentPage = 1; // 현재 페이지
-    let items = []; // 모든 아이템을 담을 배열
+        const itemsPerPage = 8; // 페이지당 8개 아이템
+        let currentPage = 1; // 현재 페이지
+        let items = []; // 모든 아이템을 담을 배열
 
-    // 페이지를 바꾸는 함수
-    function changePage(page) {
-        currentPage = page;
-        displayItems();
-        updatePagination();
-    }
-
-    // 아이템을 보여주는 함수
-    function displayItems() {
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const visibleItems = items.slice(start, end);
-
-        const itemsContainer = document.getElementById('allItems');
-        itemsContainer.innerHTML = ''; // 기존 아이템 제거
-
-        visibleItems.forEach(item => {
-            itemsContainer.appendChild(item);
-        });
-    }
-
-    // 페이지네이션 업데이트 함수
-    function updatePagination() {
-        const totalPages = Math.ceil(items.length / itemsPerPage);
-        const paginationContainer = document.querySelector('.pagination');
-        paginationContainer.innerHTML = ''; // 기존 페이지네이션 제거
-
-        for (let i = 1; i <= totalPages; i++) {
-            const pageSpan = document.createElement('span');
-            pageSpan.textContent = i;
-            pageSpan.classList.toggle('active', i === currentPage);
-            pageSpan.onclick = () => changePage(i);
-            paginationContainer.appendChild(pageSpan);
+        // 페이지를 바꾸는 함수
+        function changePage(page) {
+            currentPage = page;
+            displayItems();
+            updatePagination();
         }
-    }
 
-    // 페이지가 로드될 때 초기화
-    window.onload = function () {
-        const itemsContainer = document.getElementById('allItems');
-        items = Array.from(itemsContainer.children); // 모든 아이템을 배열로 저장
-        displayItems();
-        updatePagination();
-    };
-        function clickOpenType(id) {
-            openBox = document.getElementById(id);
-            anotherBox = document.querySelectorAll(".items-container");
-            for (i = 0; i < anotherBox.length; i++) {
-                anotherBox[i].style.display = "none";
+        // 아이템을 보여주는 함수
+        function displayItems() {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const visibleItems = items.slice(start, end);
+
+            const itemsContainer = document.getElementById('allItems');
+            itemsContainer.innerHTML = ''; // 기존 아이템 제거
+
+            visibleItems.forEach(item => {
+                itemsContainer.appendChild(item);
+            });
+        }
+
+        // 페이지네이션 업데이트 함수
+        function updatePagination() {
+            const totalPages = Math.ceil(items.length / itemsPerPage);
+            const paginationContainer = document.querySelector('.pagination');
+            paginationContainer.innerHTML = ''; // 기존 페이지네이션 제거
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageSpan = document.createElement('span');
+                pageSpan.textContent = i;
+                pageSpan.classList.toggle('active', i === currentPage);
+                pageSpan.onclick = () => changePage(i);
+                paginationContainer.appendChild(pageSpan);
             }
+        }
+
+        // 페이지가 로드될 때 초기화
+        window.onload = function () {
+            const itemsContainer = document.getElementById('allItems');
+            items = Array.from(itemsContainer.children); // 모든 아이템을 배열로 저장
+            displayItems();
+            updatePagination();
+        };
+
+        // 탭 클릭 시 active 클래스 적용
+        function clickOpenType(id, clickedTab) {
+            const openBox = document.getElementById(id);
+            const anotherBox = document.querySelectorAll(".items-container");
+            const tabs = document.querySelectorAll('.nav-tabs li');
+
+            // 모든 컨테이너 숨기기
+            anotherBox.forEach(box => {
+                box.style.display = "none";
+            });
+
+            // 선택된 탭에 active 클래스 적용하고 나머지 탭에서 제거
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            clickedTab.classList.add('active');
+
+            // 선택된 아이템 컨테이너만 보이기
             openBox.style.display = "grid";
         }
     </script>
@@ -214,16 +226,16 @@
 
         <!-- 클로버 금액 -->
         <div class="clover-amount">
-        <img src="clover_icon.png" alt="클로버">
-        20,000
+            <img src="clover_icon.png" alt="클로버">
+            20,000
         </div>
 
         <!-- 카테고리 탭 -->
         <ul class="nav-tabs">
-            <li onclick="clickOpenType('allItems')" >전체</li>
-            <li onclick="clickOpenType('musicItems')">음악</li>
-            <li onclick="clickOpenType('characterItems')">캐릭터</li>
-            <li onclick="clickOpenType('backgroundItems')">배경</li>
+            <li onclick="clickOpenType('allItems', this)" class="active">전체</li>
+            <li onclick="clickOpenType('musicItems', this)">음악</li>
+            <li onclick="clickOpenType('characterItems', this)">캐릭터</li>
+            <li onclick="clickOpenType('backgroundItems', this)">배경</li>
         </ul>
 
         <!-- 인기순, 가격순 및 클로버 충전 -->
