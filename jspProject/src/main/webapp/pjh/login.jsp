@@ -10,7 +10,7 @@
     <link href="style.css" rel="stylesheet" type="text/css">
     <style>
     @font-face {
-    font-family: 'NanumTobak';
+    font-family: 'NanumTobak'; 
     src: url('나눔손글씨 또박또박.TTF') format('truetype');
 		}
         body {
