@@ -15,9 +15,9 @@ import java.util.Set;
 public class ChatServer {
 
     private static Set<Session> clients = Collections.synchronizedSet(new HashSet<>());
-    private static HashMap<String,String> servers = new HashMap<String,String>();
     private static HashMap<String,String> userCharacter = new HashMap<String,String>();
     private static HashMap<String,String> userId = new HashMap<String,String>();
+    private static HashMap<String,String> userUrl = new HashMap<String,String>();
     @OnOpen
     
     
@@ -25,23 +25,6 @@ public class ChatServer {
         clients.add(session);
         
         System.out.println("클라이언트가 연결되었습니다: " + session.getId());
-        synchronized (clients) {
-            for (int i = 0; i < clients.size() ; i++) {
-            	Session client = (Session)clients.toArray()[i];
-            	try {
-            		String userIdValue = userId.get(client.getId());
-            		String userColorValue = userCharacter.get(userIdValue);
-            		System.out.println(client.getId() + userIdValue + userColorValue);
-            		if(session.getId() == client.getId()) {
-            			continue;
-            		}
-            		session.getBasicRemote().sendText("init;" +userIdValue +";" + userColorValue);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-                
-            }
-        }
     }
     
     @OnMessage
@@ -52,12 +35,37 @@ public class ChatServer {
         String command = rawData[0];
         String data = rawData[1];
         if(command.equals("connect")) {
+        	String url = rawData[3];
+        	userUrl.put(session.getId(),url);
         	userId.put(session.getId(),data);
         	userCharacter.put(data, rawData[2]);
+        	synchronized (clients) {
+                for (int i = 0; i < clients.size() ; i++) {
+                	Session client = (Session)clients.toArray()[i];
+                	try {
+                		String userIdValue = userId.get(client.getId());
+                		String userCharacterValue = userCharacter.get(userIdValue);
+                		if(session.getId() == client.getId()) {
+                			continue;
+                		}
+                		System.out.println("접속된사람의 URL : " + userUrl.get(client.getId()));
+                		System.out.println("방금접속한 사람의 URL : "  + userUrl.get(session.getId()));
+                		if(userUrl.get(client.getId()).equals(userUrl.get(session.getId()))){
+                			session.getBasicRemote().sendText("init;" +userIdValue +";" + userCharacterValue);
+                		}
+                		
+    				} catch (Exception e) {
+    					e.printStackTrace();
+    				}
+                    
+                }
+            }
         }
     	synchronized (clients) {
             for (Session client : clients) {
-                client.getBasicRemote().sendText(message);
+            	if(userUrl.get(client.getId()).equals(userUrl.get(session.getId()))){
+            		client.getBasicRemote().sendText(message);
+        		}
             }
         }
         

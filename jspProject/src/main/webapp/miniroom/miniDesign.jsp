@@ -151,7 +151,7 @@
 		top:5px;
 	}
 	.miniroom_saveBtn:hover{
-		background-color : black;
+		background-color : #9B9B9B;
 	}
 	.miniroom_design_title{
 		font-size:24px;
