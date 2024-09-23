@@ -148,7 +148,7 @@
     </style>
 
     <script type="text/javascript">
-        function clickOpenType(id) {
+        function clickOpenBox(id) {
             openBox = document.getElementById(id);
             anotherBox = document.querySelectorAll(".items-container");
             for (i = 0; i < anotherBox.length; i++) {
@@ -169,10 +169,10 @@
 
         <!-- 카테고리 탭 -->
         <ul class="nav-tabs">
-            <li onclick="clickOpenType('allItems')" class="active">전체</li>
-            <li onclick="clickOpenType('musicItems')">음악</li>
-            <li onclick="clickOpenType('characterItems')">캐릭터</li>
-            <li onclick="clickOpenType('backgroundItems')">배경</li>
+            <li onclick="clickOpenBox('allItems')" class="active">전체</li>
+            <li onclick="clickOpenBox('musicItems')">음악</li>
+            <li onclick="clickOpenBox('characterItems')">캐릭터</li>
+            <li onclick="clickOpenBox('backgroundItems')">배경</li>
         </ul>
 
         <!-- 인기순, 가격순 및 클로버 충전 -->
