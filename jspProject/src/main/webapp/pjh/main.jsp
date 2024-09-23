@@ -35,6 +35,14 @@ function chatOff(){
 	chatBox.style.display = "none";
 	anotherBox.style.display = "flex";
 }
+function clickOpenBox(id){
+	openBox = document.getElementById(id);
+	anotherBox = document.querySelectorAll(".inner-box-2");
+	for(i = 0 ; i < anotherBox.length ; i++){
+		anotherBox[i].style.display ="none";
+	}
+	openBox.style.display = "flex";
+}
 </script>
 <!-- 웹소켓통신 자바스크립트 -->
 <script type="text/javascript">
@@ -177,6 +185,8 @@ function chatOff(){
         	ws.close();
         }
        	window.addEventListener("beforeunload",disconnect);
+       	
+       	
     </script>
 
 </head>
@@ -202,7 +212,8 @@ function chatOff(){
 				<div id="chatBox" class="inner-box-2">
 					<jsp:include page="chat.jsp"></jsp:include>
 				</div>
-				<div id="anotherBox" class="inner-box-2" style="display: none">
+				<div id="store" class="inner-box-2" style="display: none">
+					<jsp:include page="storeDesign.jsp"></jsp:include>
 				</div>
 			</div>
 			<!-- 버튼 -->
@@ -213,7 +224,7 @@ function chatOff(){
 				<button onclick = "javascript:loadContent('../miniroomDesign/miniDesign.jsp')" class="custom-button">미니룸</button>
 				<button class="custom-button">게시판</button>
 				<button class="custom-button">방명록</button>
-				<button onclick = "javascript:loadContent('../pjh/storeDesign.jsp')" class="custom-button">상점</button>
+				<button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
 				<button class="custom-button">게임</button>
 				<button class="custom-button">음악</button>
 			</div>
