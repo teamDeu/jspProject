@@ -8,7 +8,7 @@ import miniroom.DBConnectionMgr;
 import miniroom.ItemBean;
 
 public class BoardWriteMgr {
-private DBConnectionMgr pool;
+	private DBConnectionMgr pool;
 	
 	public BoardWriteMgr() {
 		
