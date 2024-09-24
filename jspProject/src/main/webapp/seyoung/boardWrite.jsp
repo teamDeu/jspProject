@@ -289,13 +289,13 @@
     display: flex; /* 처음에는 숨겨져 있도록 설정 */
     align-items: center; 
     width: 80%;
-    /* padding: 5px; */
+    padding: 5px;
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;    
   	position: absolute; /* 요소를 부모 기준으로 절대 위치에 배치 */
-    top: 615px; /* 하단에서 40px 위로 */
- 	left: 49%; 
+    top: 622px; /* 하단에서 40px 위로 */
+ 	left: 8%; 
     
 }
 
@@ -358,36 +358,162 @@
 }
 
 
+/* 이미지 컨테이너 스타일 */
+        .img-container {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+            /* 초기 너비 설정 */
+            width: 200px;
+            /* 최소 너비 설정 */
+            min-width: 50px;
+            /* 커서 변경 */
+            cursor: nwse-resize;
+            /* 선택 방지 */
+            user-select: none;
+            /* 테두리 없애기 */
+            border: none;
+        }
 
+        /* 선택 시 컨테이너에 테두리 추가 */
+        .img-container.selected {
+            border: 2px dashed #007BFF;
+        }
+
+        /* 이미지 스타일 */
+        .img-container img {
+            display: block;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* 콘텐츠 에디터 스타일 */
+        .board_content.empty::before {
+            content: attr(data-placeholder);
+            color: #aaa;
+            pointer-events: none;
+            display: block;
+        }
 
 
 </style>
 
 <script>
+	//현재 선택된 이미지 컨테이너
+	let currentSelected = null;
     // 파일 선택 창 열기 및 파일 선택 시 이미지 삽입
     function handleFileSelect() {
         document.getElementById('file-input').click(); // 숨겨진 파일 입력 필드를 클릭
     }
 
-    // 파일 업로드 및 이미지 미리보기 설정
+	 // 파일 업로드 및 이미지 미리보기 설정
     function previewImage(event) {
-        var file = event.target.files[0];
+        const file = event.target.files[0];
         if (file && file.type.match('image.*')) {
-            var reader = new FileReader();
+            const reader = new FileReader();
             reader.onload = function(e) {
-                var boardContentDiv = document.getElementById('board-content');
+                const boardContentDiv = document.getElementById('board-content');
                 if (boardContentDiv) {
-                    // div 내부에 이미지 삽입
-                    boardContentDiv.innerHTML = "<img src='" + e.target.result + "' alt='첨부 이미지' style='max-width:100%;'><br>" + boardContentDiv.innerHTML;
-                    boardContentDiv.classList.remove('empty'); // 이미지 삽입 후 빈 상태 제거
+                    // 현재 커서 위치 가져오기
+                    const selection = window.getSelection();
+                    if (!selection.rangeCount) return;
+                    const range = selection.getRangeAt(0);
+
+                    // 이미지가 들어갈 컨테이너 div 생성
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'img-container';
+                    imgContainer.style.width = '200px'; // 초기 너비 설정
+
+                    // 이미지 요소 생성
+                    const imgElement = document.createElement('img');
+                    imgElement.src = e.target.result;
+                    imgElement.alt = '첨부 이미지';
+
+                    // 이미지 로드 시 비율 계산
+                    imgElement.onload = function() {
+                        const aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight;
+                        imgContainer.style.height = (imgContainer.offsetWidth / aspectRatio) + 'px';
+                        imgContainer.dataset.aspectRatio = aspectRatio.toFixed(2);
+                    };
+
+                    // 이미지에 mousedown 이벤트 추가
+                    imgElement.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        selectImage(imgContainer);
+                        startResizing(e, imgContainer);
+                    });
+
+                    // 이미지에 클릭 이벤트 추가 (선택 토글)
+                    imgElement.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        selectImage(imgContainer);
+                    });
+
+                    // 이미지 컨테이너에 이미지 삽입
+                    imgContainer.appendChild(imgElement);
+
+                    // 커서 위치에 이미지 삽입
+                    range.insertNode(imgContainer);
+
+                    // 이미지 삽입 후 커서를 다음 줄로 이동
+                    range.setStartAfter(imgContainer);
+                    range.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+
+                    // 줄바꿈 추가
+                    const br = document.createElement('br');
+                    range.insertNode(br);
+
+                    boardContentDiv.classList.remove('empty');
                 }
             };
-            reader.readAsDataURL(file); // 파일을 읽어 미리보기 설정
+            reader.readAsDataURL(file);
         } else {
             alert("이미지 파일만 업로드할 수 있습니다.");
         }
     }
     
+ 	// 이미지 선택 함수
+    function selectImage(container) {
+        if (currentSelected && currentSelected !== container) {
+            currentSelected.classList.remove('selected');
+        }
+        currentSelected = container;
+        container.classList.toggle('selected');
+    }
+
+    // 크기 조절 시작
+    function startResizing(e, container) {
+        const aspectRatio = parseFloat(container.dataset.aspectRatio);
+        const startX = e.clientX;
+        const startWidth = container.offsetWidth;
+
+        function doResize(e) {
+            const deltaX = e.clientX - startX;
+            let newWidth = startWidth + deltaX;
+            if (newWidth < 50) newWidth = 50; // 최소 너비 설정
+            container.style.width = newWidth + 'px';
+            container.style.height = (newWidth / aspectRatio) + 'px';
+        }
+
+        function stopResize() {
+            document.removeEventListener('mousemove', doResize);
+            document.removeEventListener('mouseup', stopResize);
+        }
+
+        document.addEventListener('mousemove', doResize);
+        document.addEventListener('mouseup', stopResize);
+    }
+
+    // 클릭 시 이미지 선택 해제
+    document.addEventListener('click', function(e) {
+        if (currentSelected) {
+            currentSelected.classList.remove('selected');
+            currentSelected = null;
+        }
+    });
 	// div가 비어 있는지 확인하고 placeholder를 보여주는 함수
     function checkPlaceholder() {
         var boardContentDiv = document.getElementById('board-content');
@@ -577,7 +703,7 @@
                             <!-- 파일 첨부 버튼 -->
                             <div class="button-group">
                                 <button type="button" onclick="handleFileSelect()">
-                                    <img src="img/photo-icon.png" alt="첨부파일">첨부파일
+                                    <img src="img/photo-icon.png" alt="사진">사진
                                 </button>
                             </div>
                         </div>
