@@ -1,14 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%
-String requestSendUser = request.getParameter("requestSendUser");
-String requestReciveUser = request.getParameter("requestReciveUser");
-%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>친구추가</title>
 <style>
 @font-face {
     font-family: 'NanumTobak';
@@ -17,9 +13,8 @@ String requestReciveUser = request.getParameter("requestReciveUser");
 
 * {
     font-family: 'NanumTobak', sans-serif;
-    font-size : 24px;
 }
-body {
+.request_main_div {
 	display:flex;
 	align-items:center;
 	width: 360px;
@@ -30,6 +25,9 @@ body {
 	padding: 40px 20px;
 	box-sizing : border-box;
 	border-radius:20px;
+}
+.request_main_div *{
+	    font-size : 24px;
 }
 .request_div{
 	display:flex;
@@ -85,8 +83,23 @@ body {
 	background-color : #E8E8E8;
 }
 </style>
+<script>
+	function clickCancelBtn(){
+		document.getElementById("friend_request_modal").style.display = "none";
+	}
+	function clickSubmitBtn(){
+		fr_form = document.friend_request_form;
+		fr_form.request_comment.value = document.querySelector(".request_comment").value;
+		fr_form.submit();
+		document.getElementById("friend_request_modal").style.display = "none";
+	}
+	function changeType(select){
+		fr_form = document.friend_request_form;
+		fr_form.request_type.value = select.value;
+	}
+</script>
 </head>
-<body>
+<div class ="request_main_div">
 	<div class="request_div">
 		<div class="request_header">
 			<section class="request_profile_section">
@@ -97,18 +110,18 @@ body {
 					<font class="request_user_name_font"> 신짱구 </font>님께 <br>
 				</div>
 				<div>
-					<select>
-						<option>일촌</option>
-						<option>이촌</option>
+					<select onchange ="changeType(this)">
+						<option value ="1">일촌</option>
+						<option value ="2">이촌</option>
 					</select> 을 신청합니다.
 				</div>
 			</section>
 		</div>
-			<input class="request_comment" type="text">
+			<input class="request_comment" type="text" placeholder = "친구신청 메시지">
 		<div>
-			<button class ="request_button">취소</button>
-			<button class ="request_button">전송</button>
+			<button onclick = "clickCancelBtn()" class ="request_button">취소</button>
+			<button onclick = "clickSubmitBtn()" class ="request_button">전송</button>
 		</div>
 	</div>
-</body>
+</div>
 </html>

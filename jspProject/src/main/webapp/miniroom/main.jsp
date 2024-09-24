@@ -57,6 +57,15 @@
    align-self:center;
    font-size : 20px;
 }
+#friend_request_modal{
+	position:absolute;
+	width : 100%;
+	height : 100%;
+	display:flex;
+	align-items : center;
+	justify-content : center;
+	z-index : 11;
+}
 </style>
 <script>
 function loadContent(url) {
@@ -185,31 +194,19 @@ function clickUser(event){
                   }
               };
           })(informationDiv);
-          addFriendBtn.onclick = (function(requestSendUser, requestReciveUser) {
+          addFriendBtn.onclick = (function(requestSendUser, requestReciveUser,character,name) {
         	    return function() {
-        	        var frm = document.friend_request_form;
-        	        if (!frm) {
-        	            console.error("friend_request_form is not found");
-        	            return;
-        	        }
-
-        	        if (!frm.requestSendUser || !frm.requestReciveUser) {
-        	            console.error("Form fields not found");
-        	            return;
-        	        }
-
-        	        if (!requestSendUser || !requestReciveUser) {
-        	            console.error("Invalid user IDs");
-        	            return;
-        	        }
-
-        	        var windowOpen = window.open('', '친구추가', 'width=360, height=300, location = 0, resizable=0, scrollbars=no, status=0, titlebar=0, toolbar=0, left=300, top=200');
-        	        frm.target = '친구추가';
-        	        frm.requestSendUser.value = requestSendUser;
-        	        frm.requestReciveUser.value = requestReciveUser;
-        	        frm.submit();
+        	        fr_modal = document.getElementById("friend_request_modal");
+        	        console.log(fr_modal);
+        	        fr_form = document.friend_request_form;
+        	        fr_form.request_senduserid.value = requestSendUser;
+        	        fr_form.request_receiveuserid.value = requestReciveUser;
+        	        fr_modal.style.display = "flex";
+        	        fr_modal.querySelector(".request_comment").value = "";
+        	        fr_modal.querySelector(".request_user_name_font").innerText = name;
+        	        fr_modal.querySelector(".request_profile_img").src = character;
         	    };
-        	})(localId, id);
+        	})(localId, id,character,name);
           goHomepageBtn.onclick = (function(id) {
               return function() {
                  console.log(id);
@@ -319,7 +316,7 @@ function clickUser(event){
             </div>
 	         <div id="store" class="inner-box-2" style="display: none">
 	            <jsp:include page="storeDesign.jsp"></jsp:include>
-	         </div>            
+	         </div>          
          </div>
          <!-- 버튼 -->
          <div class="button-container">
@@ -336,9 +333,15 @@ function clickUser(event){
 
       </div>
    </div>
-   <form name = "friend_request_form" action = "./friendRequest.jsp">
-   		<input type ="hidden" name = "requestSendUser" value ="">
-   		<input type ="hidden" name = "requestReciveUser" value ="">
+   <form name = "friend_request_form" action = "./friendRequestProc.jsp" target  ="_blank">
+   		<input type ="hidden" name = "request_senduserid" value ="">
+   		<input type ="hidden" name = "request_receiveuserid" value ="">
+   		<input type ="hidden" name = "request_type" value ="1">
+   		<input type ="hidden" name ="request_comment" value ="">
    </form>
+   <div id ="friend_request_modal" style = "display:none">
+   		<jsp:include page="friendRequest.jsp"></jsp:include>
+   </div>
+   
 </body>
 </html>

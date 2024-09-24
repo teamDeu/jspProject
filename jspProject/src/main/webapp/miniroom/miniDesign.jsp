@@ -9,6 +9,9 @@
 	Vector<ItemBean> backgroundList = mgr.getHoldBackgroundImg(user_id);
 	ItemBean usingCharacter = mgr.getUsingCharacter(user_id);
 	ItemBean usingBackground = mgr.getUsingBackground(user_id);
+	if(usingBackground.getItem_path() == null){
+		usingBackground.setItem_path("./img/backgroundImg.png");
+	}
 	int index = 0;
 	if(request.getParameter("index") != null){
 		index = Integer.parseInt(request.getParameter("index"));
