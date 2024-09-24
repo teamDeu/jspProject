@@ -5,22 +5,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>돌림판 게임</title>
+    <title>돌림판게임</title>
     <style>
         .wheel-container-wrapper {
-            width: 700px; /* 감싸는 사각형의 크기 */
+            width: 700px;
             padding: 50px;
             margin: 0 auto;
-            margin-bottom: 20px; /* 사각형과 줄 사이의 여백 */
-            border: 3px solid #BAB9AA; 
-            background-color: #f7f7f7; /* 사각형 배경색 */
-            border-radius: 15px; /* 모서리를 둥글게 만듦 */
+            margin-bottom: 20px;
+            border: 3px solid #BAB9AA;
+            background-color: #f7f7f7;
+            border-radius: 15px;
         }
 
         .wheel-container {
             position: relative;
-            width: 500px; /* 크기 조금 키우기 */
-            height: 500px; /* 크기 조금 키우기 */
+            width: 500px;
+            height: 500px;
             margin: 0 auto;
         }
 
@@ -43,7 +43,7 @@
             border-right: 20px solid transparent;
             border-top: 40px solid red;
             transform: translateX(-50%);
-            border-radius: 5px; /* 모서리를 둥글게 만듦 */
+            border-radius: 5px;
         }
 
         #start-button {
@@ -66,70 +66,69 @@
         }
 
         .game-title {
-            width: 800px; /* 줄 길이 */
-            height: 2px;  /* 줄의 높이 */
+            width: 800px;
+            height: 2px;
             background-color: #BAB9AA;
             margin: 0 auto;
             position: relative;
-            margin-top: 0; /* 위쪽 여백 */
-            margin-bottom: 20px; /* 줄과 사각형 사이에 공간 추가 */
+            margin-top: 0;
+            margin-bottom: 20px;
         }
         
         .game-title span {
             position: absolute;
-            top: -40px; /* 텍스트를 줄과 멀리 떨어뜨리기 */
-            left: 0; /* 텍스트를 왼쪽 끝으로 이동 */
+            top: -40px;
+            left: 0;
             font-size: 35px;
             color: #80A46F;
         }
         
         .long-box-container {
             display: flex;
-            justify-content: space-between; /* 박스들이 양쪽에 위치하도록 설정 */
-            align-items: center; /* 박스를 수평으로 맞추기 위해 중앙 정렬 */
-            gap: 200px; /* 두 박스 사이의 간격 설정 */
-            margin-top: -10px; /* 큰 네모박스와의 여백 */
+            justify-content: space-between;
+            align-items: center;
+            gap: 200px;
+            margin-top: -10px;
         }
         
         .long-box {
-            width: 250px; /* 긴 네모의 너비 */
-            height: 30px; /* 긴 네모의 높이 */
-            background-color: white; /* 긴 네모의 배경색 */
-            border: 2px solid #BAB9AA; /* 테두리 */
-            border-radius: 10px; /* 모서리를 둥글게 */
+            width: 250px;
+            height: 30px;
+            background-color: white;
+            border: 2px solid #BAB9AA;
+            border-radius: 10px;
             display: flex;
-            justify-content: center; /* 수평으로 가운데 정렬 */
-            align-items: center; /* 수직으로 가운데 정렬 */
+            justify-content: center;
+            align-items: center;
         }
         
         .long-box-with-image {
             display: flex;
-            align-items: center; /* 이미지와 박스가 수직으로 가운데 정렬되도록 */
-            gap: 10px; /* 이미지와 박스 사이의 간격 */
+            align-items: center;
+            gap: 10px;
         }
         
         .box-image1 {
-            width: 60px; /* 이미지의 너비 */
-            height: 60px; /* 이미지의 높이 */
-            object-fit: cover; /* 이미지의 크기를 박스에 맞춤 */
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
         }
         
         .input-box {
-            width: 90%; /* 입력 필드가 박스 내에 맞도록 너비 설정 */
-            height: 100%; /* 입력 필드 높이를 박스에 맞춤 */
+            width: 90%;
+            height: 100%;
             border: none;
-            resize: none; /* 입력 필드 크기 조정 불가능하게 설정 */
-            background-color: transparent; /* 배경색 투명 */
-            font-size: 24px; /* 글자 크기 */
-            outline: none; /* 입력할 때 테두리 제거 */
-            text-align: center; /* 텍스트를 수평으로 가운데 정렬 */
+            resize: none;
+            background-color: transparent;
+            font-size: 24px;
+            outline: none;
+            text-align: center;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 5px; /* 입력 필드 안쪽 여백 */
+            padding: 5px;
         }
 
-        /* 게임 룰 박스 */
         .game-rules-box {
             display: flex;
             align-items: center;
@@ -164,19 +163,18 @@
             height: 0;
             border-left: 10px solid transparent;
             border-right: 10px solid transparent;
-            border-bottom: 15px solid black; /* 기본적으로 똑바로 된 삼각형 */
-            transition: transform 0.3s ease; /* 회전 애니메이션 추가 */
+            border-bottom: 15px solid black;
+            transition: transform 0.3s ease;
         }
 
         .triangle.rotate {
-            transform: rotate(180deg); /* 역삼각형으로 회전 */
+            transform: rotate(180deg);
         }
 
-        /* 게임 룰 설명 박스 */
         .game-rules-detail {
-            display: none; /* 초기 상태는 숨김 */
+            display: none;
             position: absolute;
-            top: -326px; /* '게임 룰' 박스 바로 위에 위치 */
+            top: -326px;
             left: 0;
             width: 250px;
             height: 300px;
@@ -187,43 +185,93 @@
         }
 
         .game-rules-detail img {
-            width: 230px; /* 이미지 크기 */
+            width: 230px;
             height: 280px;
             object-fit: cover;
             margin-bottom: 10px;
         }
+
+        /* 팝업창 스타일 */
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 300px;
+            background-color: white;
+            border: 2px solid #BAB9AA;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        #popup h2 {
+            margin-top: 20px;
+            font-size:40px;
+        }
+
+        #popup img {
+            margin-top: 10px;
+        }
+
+        #popup button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid black;
+            background-color: #FFFECC;
+            font-size: 18px;
+            cursor: pointer;
+        }
+		.popup-content {
+		    display: flex;
+		    justify-content: center;
+		    align-items: center;
+		    margin-top: 20px;
+		    gap: 10px; /* 이미지와 배수 사이 간격 설정 */
+		    font-size:40px;
+		}
+		
+		.popup-image {
+		    width: 60px;
+		    height: 60px;
+		}
+		
+		.popup-multiplier {
+		    font-size: 40px;
+		    font-weight: bold;
+		}
+
     </style>
 </head>
 <body>
-    <!-- div에 직접 style 적용 -->
     <div style="text-align: center; margin-top: 50px;">
         <div class="game-title">
-            <span>돌림판 게임</span>
+            <span>돌림판게임</span>
         </div>
 
-        <!-- 사각형을 감싸는 wrapper -->
         <div class="wheel-container-wrapper">
             <div class="wheel-container">
-                <canvas id="wheel" width="400" height="400"></canvas> <!-- 크기 조금 키우기 -->
+                <canvas id="wheel" width="400" height="400"></canvas>
                 <div class="pointer"></div>
                 <div id="start-button">START</div>
             </div>
         </div>
 
         <div class="long-box-container">
-            <!-- 게임 룰 박스 -->
             <div class="game-rules-box">
                 <span>게임 룰</span>
                 <div class="clickable-box">
                     <div class="triangle"></div>
                 </div>
-                <!-- 숨겨진 룰 설명 박스 -->
                 <div class="game-rules-detail">
-                    <img src="img/gamerule.png" alt="New Image"> <!-- 새로운 이미지 경로로 수정 -->
+                    <img src="img/gamerule.png" alt="New Image">
                 </div>
             </div>
 
-            <!-- 배팅 금액 입력 부분 -->
             <div class="long-box-with-image">
                 <img src="img/clover1.png" alt="Sample Image" class="box-image1">
                 <div class="long-box">
@@ -233,20 +281,41 @@
         </div>
     </div>
 
+	<div id="popup">
+	    <h2 id="popup-title"></h2>
+	    <div class="popup-content">
+	        <img id="popup-image" src="" alt="Winning Image" class="popup-image">
+	        <span class="popup-multiplier">x <span id="popup-multiplier"></span></span>
+	    </div>
+	    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px;">
+	        <img src="img/clover1.png" alt="Clover Image" style="width: 50px; height: 50px;">
+	        <div style="border: 2px solid #BAB9AA; border-radius: 10px; width: 100px; height: 30px; display: flex; align-items: center; justify-content: center;">
+	            <span id="popup-total-amount" style="font-size : 30pt;"></span>
+	        </div>
+	    </div>
+	    <button id="confirm-button">확인</button>
+	</div>
+
     <script>
         const wheelCanvas = document.getElementById('wheel');
         const ctx = wheelCanvas.getContext('2d');
         const startButton = document.getElementById('start-button');
-        const betAmountInput = document.getElementById('betAmount'); // 배팅 금액 입력 필드
+        const betAmountInput = document.getElementById('betAmount');
 
         const clickableBox = document.querySelector(".clickable-box");
         const gameRulesDetail = document.querySelector(".game-rules-detail");
+
+        const popup = document.getElementById('popup');
+        const popupTitle = document.getElementById('popup-title');
+        const popupImage = document.getElementById('popup-image');
+        const popupMultiplier = document.getElementById('popup-multiplier');
+        const popupTotalAmount = document.getElementById('popup-total-amount');
+        const confirmButton = document.getElementById('confirm-button');
 
         let isSpinning = false;
         let currentAngle = 0;
         let spinSpeed = 0;
 
-        // 섹션 8개 정의 (이미지 이름 배열로 변경)
         const images = [
             "img/bomb.png",
             "img/clover1.png",
@@ -258,17 +327,10 @@
             "img/clover2.png"
         ];
         const numSegments = images.length;
-
-        // 각 섹션의 각도 (라디안 값)
         const segmentAngle = (2 * Math.PI) / numSegments;
-
-        // 색상 설정
         const colors = ['#FEFFF5', '#FFDDC1', '#FEFFF5', '#FFDDC1', '#FEFFF5', '#FFDDC1', '#FEFFF5', '#FFDDC1'];
-
-        // 이미지 배열에 담을 변수
         let loadedImages = [];
 
-        // 이미지 로드 함수
         function loadImages(callback) {
             let loadedCount = 0;
             for (let i = 0; i < images.length; i++) {
@@ -281,9 +343,9 @@
                         callback();
                     }
                 };
-                img.onerror = () => { // 이미지가 로드되지 않을 경우
+                img.onerror = () => {
                     console.error("Image failed to load:", images[i]);
-                    loadedImages[i] = null; // 이미지가 없으면 null로 설정
+                    loadedImages[i] = null;
                     loadedCount++;
                     if (loadedCount === images.length) {
                         callback();
@@ -292,41 +354,37 @@
             }
         }
 
-        // 돌림판 그리기
         function drawWheel() {
             for (let i = 0; i < numSegments; i++) {
                 ctx.beginPath();
-                ctx.moveTo(200, 200);  // 중심 좌표 변경
-                ctx.arc(200, 200, 200, i * segmentAngle, (i + 1) * segmentAngle); // 크기 조정
+                ctx.moveTo(200, 200);
+                ctx.arc(200, 200, 200, i * segmentAngle, (i + 1) * segmentAngle);
                 ctx.fillStyle = colors[i];
                 ctx.fill();
                 ctx.stroke();
                 ctx.save();
 
-                // 이미지 표시
-                ctx.translate(200, 200); // 중심 좌표 조정
+                ctx.translate(200, 200);
                 ctx.rotate((i + 0.5) * segmentAngle);
                 if (loadedImages[i]) {
-                    ctx.drawImage(loadedImages[i], 100, -35, 75, 75);  // 이미지 크기 조정
+                    ctx.drawImage(loadedImages[i], 100, -35, 75, 75);
                 } else {
-                    // 이미지가 없을 경우, 섹션 중앙에 기본 텍스트 표시
                     ctx.fillStyle = 'black';
-                    ctx.font = '14px Arial'; // 글자 크기 조정
+                    ctx.font = '14px Arial';
                     ctx.fillText('NO IMG', 100, 5);
                 }
                 ctx.restore();
             }
         }
 
-        // 돌림판 회전
         function rotateWheel() {
             currentAngle += spinSpeed;
-            spinSpeed *= 0.98;  // 속도 감소
+            spinSpeed *= 0.98;
             ctx.clearRect(0, 0, 400, 400);
             ctx.save();
-            ctx.translate(200, 200);  // 중심 좌표 변경
+            ctx.translate(200, 200);
             ctx.rotate(currentAngle);
-            ctx.translate(-200, -200);  // 중심 좌표 변경
+            ctx.translate(-200, -200);
             drawWheel();
             ctx.restore();
 
@@ -335,65 +393,82 @@
             } else {
                 isSpinning = false;
 
-                // 현재 각도를 0 ~ 2*PI 범위로 맞추기
                 const normalizedAngle = (currentAngle % (2 * Math.PI));
-
-                // 첫 번째 섹션이 12시에 오도록 90도(PI / 2) 보정
                 const correctedAngle = (2 * Math.PI - normalizedAngle - Math.PI / 2) % (2 * Math.PI);
-
-                // 당첨된 섹션 계산 (화살표가 가리키는 섹션)
                 let winningSegment = Math.floor((correctedAngle / segmentAngle) % numSegments);
+
                 if (winningSegment < 0) {
                     winningSegment += numSegments;
                 }
 
-                // 배팅 금액 가져오기
                 let betAmount = parseInt(betAmountInput.value) || 0;
                 let multiplier = 0;
+                let picture;
+                let result;
 
-                // 섹션에 따라 배수 설정
-                if(images[winningSegment] == "img/bomb.png") {
+                if (images[winningSegment] === "img/bomb.png") {
                     multiplier = 0;
-                } else if(images[winningSegment] == "img/clover1.png") {
+                    picture = "img/bomb.png";
+                    result = "실패";
+                } else if (images[winningSegment] === "img/clover1.png") {
                     multiplier = 1;
-                } else if(images[winningSegment] == "img/clover2.png") {
+                    picture = "img/clover1.png";
+                    result = "당첨";
+                } else if (images[winningSegment] === "img/clover2.png") {
                     multiplier = 2;
-                } else if(images[winningSegment] == "img/clover3.png") {
+                    picture = "img/clover2.png";
+                    result = "당첨";
+                } else if (images[winningSegment] === "img/clover3.png") {
                     multiplier = 3;
+                    picture = "img/clover3.png";
+                    result = "당첨";
                 }
 
-                // 결과 계산 및 출력
                 let totalAmount = betAmount * multiplier;
-                alert("총 결과: " + totalAmount + " (배팅 금액: " + betAmount + " x " + multiplier + ")");
+
+                showPopup(result, picture, multiplier, totalAmount);
             }
         }
 
-        // 작은 원 클릭 이벤트 처리
         startButton.addEventListener('click', () => {
             if (!isSpinning) {
                 isSpinning = true;
-                spinSpeed = Math.random() * 0.5 + 0.2;  // 랜덤 속도 설정
+                spinSpeed = Math.random() * 0.5 + 0.2;
                 rotateWheel();
             }
         });
 
-        // 이미지 로드 후 돌림판 그리기
         loadImages(() => {
             drawWheel();
         });
 
-        // 네모 박스 클릭 시 룰 표시/숨기기 및 삼각형 회전 처리
         clickableBox.addEventListener("click", () => {
-            // 룰 박스 표시/숨기기
             if (gameRulesDetail.style.display === "none" || gameRulesDetail.style.display === "") {
                 gameRulesDetail.style.display = "block";
             } else {
                 gameRulesDetail.style.display = "none";
             }
-
-            // 삼각형 회전 처리
             const triangle = document.querySelector(".triangle");
-            triangle.classList.toggle("rotate"); // rotate 클래스를 추가하거나 제거
+            triangle.classList.toggle("rotate");
+        });
+
+        function showPopup(result, picture, multiplier, totalAmount) {
+            // 결과에 따라 다른 이미지를 설정
+            if (result === "당첨") {
+                popupImage.src = picture;  // 당첨 이미지
+            } else if (result === "실패") {
+                popupImage.src = "img/clover1.png";  // 실패 이미지 경로
+            }
+            
+            popupTitle.textContent = result;
+            popupMultiplier.textContent = multiplier;
+            popupTotalAmount.textContent = totalAmount;
+            popup.style.display = 'block';
+        }
+
+
+        confirmButton.addEventListener('click', () => {
+            popup.style.display = 'none';
         });
     </script>
 </body>
