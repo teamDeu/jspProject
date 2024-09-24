@@ -34,7 +34,7 @@
     font-family: 'NanumTobak', sans-serif;
 }
 .miniroom_information {
-	display: flex;
+	display: none;
 	flex-direction: column;
 	position: absolute;
 	width: 100px;
@@ -43,7 +43,7 @@
 	border-radius : 10px;
 	box-sizing:border-box;
 	background-color:#FFFEF3;
-	top: -60px;
+	top: -80px;
 	border: 2px solid #BAB9AA;
 }
 .miniroom_information button{
@@ -77,14 +77,16 @@ function clickOpenBox(id){
    }
    openBox.style.display = "flex";
 }
-
+function clickUser(event){
+	console.log(event);
+}
 </script>
 <!-- 웹소켓통신 자바스크립트 -->
 <script type="text/javascript">
         var ws;
         var sayBoxId = 0;
         let userNum = 0;
-        var localId = "<%=userBean.getUser_name()%>";
+        var localId = "<%=userBean.getUser_id()%>";
         var character = "<%=character%>"
         var url = "<%=url%>";
         function connect() {
@@ -168,6 +170,22 @@ function clickOpenBox(id){
     		informationDiv.appendChild(userNameSpan);
     		informationDiv.appendChild(addFriendBtn);
     		informationDiv.appendChild(goHomepageBtn);
+    		newDiv.onclick = (function(informationDiv) {
+    		    return function() {
+    		        console.log(informationDiv.style.display);
+    		        if (informationDiv.style.display == "none" || informationDiv.style.display == "") {
+    		            informationDiv.style.display = "flex";
+    		        } else {
+    		            informationDiv.style.display = "none";
+    		        }
+    		    };
+    		})(informationDiv);
+    		goHomepageBtn.onclick = (function(id) {
+    		    return function() {
+    		    	console.log(id);
+    		    	location.href = "http://localhost/jspProject/miniroom/main.jsp?url=" + id;	
+    		    };
+    		})("<%=userBean.getUser_id()%>");
     		newDiv.appendChild(informationDiv);
     		  // add the newly created element and its content into the DOM
     		  if(miniroom){
