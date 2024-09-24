@@ -1,5 +1,47 @@
-<%@page import="pjh.MemberBean"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr" %>
+<%
+    String user_id = (String) session.getAttribute("idKey");
+	System.out.println(user_id);
+    // 클로버 잔액을 가져오기 위한 변수
+    int user_clover = 0;
+    DBConnectionMgr pool = null;
+    Connection conn = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+
+    try {
+        if (user_id != null) {
+            pool = DBConnectionMgr.getInstance();
+            conn = pool.getConnection();  // Connection 가져오기
+            
+            if (conn != null) {
+                String sql = "SELECT user_clover FROM user WHERE user_id = ?";
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, user_id);
+                rs = pstmt.executeQuery();
+
+                if (rs.next()) {
+                    user_clover = rs.getInt("user_clover");
+                }
+            } else {
+                throw new Exception("DB 연결에 실패하였습니다.");
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace(); // 오류 로그 출력
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (pstmt != null) pstmt.close();
+            if (conn != null) pool.freeConnection(conn);  // Connection 반환
+        } catch (SQLException e) {
+            e.printStackTrace();  // 오류 로그 출력
+        }
+    }
+%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -81,7 +123,7 @@
             margin-right: 20px;
             
         }
-        .sort-buttons {
+        .sort-buttons {	
             display: flex;
             gap: 20px;
         }
@@ -197,14 +239,7 @@
             }
         }
 
-        // 페이지가 로드될 때 초기화
-        document.addEventListener('DOMContentLoaded', function () {
-    	const itemsContainer = document.getElementById('allItems');
-    	items = Array.from(itemsContainer.children); // 모든 아이템을 배열로 저장
-    	displayItems();
-    	updatePagination();
-		});
-
+       
 
         // 탭 클릭 시 active 클래스 적용
         function clickOpenType(id, clickedTab) {
@@ -237,16 +272,7 @@
         <!-- 클로버 금액 -->
         <div class="clover-amount">
             <img src="clover_icon.png" alt="클로버">
-            <% 
-                // 세션에서 로그인된 사용자 정보를 가져옴
-                MemberBean member = (MemberBean) session.getAttribute("loggedInUser"); 
-                if (member != null) {
-                    // 사용자 클로버 잔액을 표시
-                    out.print(member.getUser_clover());
-                } else {
-                    out.print("로그인 필요");
-                }
-            %>
+            <%= user_clover %> <!-- 여기서 클로버 값 출력 -->
         </div>
 
         <!-- 카테고리 탭 -->

@@ -1,12 +1,24 @@
-<%@page import="pjh.MemberBean"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="pjh.DBConnectionMgr, java.sql.*" %>
+<%@ page import="pjh.DBConnectionMgr, pjh.MemberBean, java.sql.*" %>
+
 <%
     // 결제 페이지에서 전달된 데이터를 받아 처리
     String cloverAmountStr = request.getParameter("cloverAmount");
     String quantityStr = request.getParameter("quantity");
     String totalPriceStr = request.getParameter("totalPrice");
 
+    // null 값이 전달될 경우 기본값 설정
+    if (cloverAmountStr == null || cloverAmountStr.isEmpty()) {
+        cloverAmountStr = "0";
+    }
+    if (quantityStr == null || quantityStr.isEmpty()) {
+        quantityStr = "0";
+    }
+    if (totalPriceStr == null || totalPriceStr.isEmpty()) {
+        totalPriceStr = "0";
+    }
+
+    // 정수로 변환
     int cloverAmount = Integer.parseInt(cloverAmountStr);
     int quantity = Integer.parseInt(quantityStr);
     int totalPrice = Integer.parseInt(totalPriceStr);
@@ -27,7 +39,7 @@
         PreparedStatement pstmt = null;
         try {
             conn = DBConnectionMgr.getInstance().getConnection();
-            String sql = "UPDATE members SET user_clover = ? WHERE user_id = ?";
+            String sql = "UPDATE user SET user_clover = ? WHERE user_id = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, member.getUser_clover());
             pstmt.setString(2, member.getUser_id());
@@ -43,6 +55,6 @@
             if (conn != null) DBConnectionMgr.getInstance().freeConnection(conn);
         }
     } else {
-        out.print("사용자 세션이 만료되었습니다. 다시 로그인 해주세요.");	
+        out.print("사용자 세션이 만료되었습니다. 다시 로그인 해주세요.");
     }
 %>

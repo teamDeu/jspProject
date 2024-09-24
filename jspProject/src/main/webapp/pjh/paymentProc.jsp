@@ -8,13 +8,28 @@
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
-
+    try {
+        conn = DBConnectionMgr.getInstance().getConnection();
+        String sql = "UPDATE user SET user_clover = ? WHERE user_email = ?";
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, cloverAmount);
+        pstmt.setString(2, email);
+        pstmt.executeUpdate();
+        out.print("SUCCESS");  // 이 부분이 AJAX에서 'SUCCESS'로 인식될 수 있어야 합니다.
+    } catch (Exception e) {
+        e.printStackTrace();
+        out.print("ERROR");
+    } finally {
+        if (pstmt != null) pstmt.close();
+        if (conn != null) conn.close();
+    }
+    
     try {
         DBConnectionMgr dbMgr = DBConnectionMgr.getInstance();
         conn = dbMgr.getConnection();
 
         // 사용자의 현재 클로버 수 조회
-        String selectSql = "SELECT user_clover FROM members WHERE user_email = ?";
+        String selectSql = "SELECT user_clover FROM user WHERE user_email = ?";
         pstmt = conn.prepareStatement(selectSql);
         pstmt.setString(1, email);
         rs = pstmt.executeQuery();
@@ -26,7 +41,7 @@
 
         // 클로버 수 업데이트
         int newClover = currentClover + cloverAmount;
-        String updateSql = "UPDATE members SET user_clover = ? WHERE user_email = ?";
+        String updateSql = "UPDATE user SET user_clover = ? WHERE user_email = ?";
         pstmt = conn.prepareStatement(updateSql);
         pstmt.setInt(1, newClover);
         pstmt.setString(2, email);
