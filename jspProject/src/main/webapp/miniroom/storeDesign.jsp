@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -17,15 +16,17 @@
             margin: 0;
             padding: 0;
             overflow: scroll;
+            
         }
         .storecontainer {
-            width: 100%;
+            width: 95%;
             margin: 0 auto;
             padding: 20px;
             background-color: #FFF;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             position: relative;
+            
         }
         /* 상점 제목 */
         .store-title {
@@ -37,6 +38,7 @@
             position: absolute;
             top: 20px;
             left: 20px;
+            border-bottom: 2px solid #ccc; /* 제목 아래 줄 추가 */
         }
         /* 클로버 금액 */
         .clover-amount {
@@ -44,7 +46,8 @@
             color: green;
             position: absolute;
             top: 20px;
-            right: 20px;
+            right: 60px;
+            
         }
         /* 카테고리 탭 */
         .nav-tabs {
@@ -54,6 +57,7 @@
             padding: 0;
             margin-bottom: 20px;
             margin-top: 80px;
+            border-bottom: 2px solid #ccc; /* 카테고리 아래 줄 추가 */
         }
         .nav-tabs li {
             padding: 10px 30px;
@@ -74,6 +78,7 @@
             gap: 20px;
             margin-bottom: 20px;
             margin-right: 20px;
+            
         }
         .sort-buttons {
             display: flex;
@@ -101,6 +106,7 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             padding: 20px;
+            border: 1px solid #ccc;
         }
         .item {
             background-color: #FFF;
@@ -108,6 +114,7 @@
             padding: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            border: 1px solid #ccc; /* 상품에 네모난 테두리 추가 */
         }
         .item img {
             width: 100%;
@@ -149,12 +156,72 @@
     </style>
 
     <script type="text/javascript">
-        function clickOpenType(id) {
-            openBox = document.getElementById(id);
-            anotherBox = document.querySelectorAll(".items-container");
-            for (i = 0; i < anotherBox.length; i++) {
-                anotherBox[i].style.display = "none";
+        const itemsPerPage = 8; // 페이지당 8개 아이템
+        let currentPage = 1; // 현재 페이지
+        let items = []; // 모든 아이템을 담을 배열
+
+        // 페이지를 바꾸는 함수
+        function changePage(page) {
+            currentPage = page;
+            displayItems();
+            updatePagination();
+        }
+
+        // 아이템을 보여주는 함수
+        function displayItems() {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const visibleItems = items.slice(start, end);
+
+            const itemsContainer = document.getElementById('allItems');
+            itemsContainer.innerHTML = ''; // 기존 아이템 제거
+
+            visibleItems.forEach(item => {
+                itemsContainer.appendChild(item);
+            });
+        }
+
+        // 페이지네이션 업데이트 함수
+        function updatePagination() {
+            const totalPages = Math.ceil(items.length / itemsPerPage);
+            const paginationContainer = document.querySelector('.pagination');
+            paginationContainer.innerHTML = ''; // 기존 페이지네이션 제거
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageSpan = document.createElement('span');
+                pageSpan.textContent = i;
+                pageSpan.classList.toggle('active', i === currentPage);
+                pageSpan.onclick = () => changePage(i);
+                paginationContainer.appendChild(pageSpan);
             }
+        }
+
+        // 페이지가 로드될 때 초기화
+        window.onload = function () {
+            const itemsContainer = document.getElementById('allItems');
+            items = Array.from(itemsContainer.children); // 모든 아이템을 배열로 저장
+            displayItems();
+            updatePagination();
+        };
+
+        // 탭 클릭 시 active 클래스 적용
+        function clickOpenType(id, clickedTab) {
+            const openBox = document.getElementById(id);
+            const anotherBox = document.querySelectorAll(".items-container");
+            const tabs = document.querySelectorAll('.nav-tabs li');
+
+            // 모든 컨테이너 숨기기
+            anotherBox.forEach(box => {
+                box.style.display = "none";
+            });
+
+            // 선택된 탭에 active 클래스 적용하고 나머지 탭에서 제거
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            clickedTab.classList.add('active');
+
+            // 선택된 아이템 컨테이너만 보이기
             openBox.style.display = "grid";
         }
     </script>
@@ -166,14 +233,17 @@
         <div class="store-title">상점</div>
 
         <!-- 클로버 금액 -->
-        <div class="clover-amount">20,000</div>
+        <div class="clover-amount">
+            <img src="clover_icon.png" alt="클로버">
+            20,000
+        </div>
 
         <!-- 카테고리 탭 -->
         <ul class="nav-tabs">
-            <li onclick="clickOpenType('allItems')" class="active">전체</li>
-            <li onclick="clickOpenType('musicItems')">음악</li>
-            <li onclick="clickOpenType('characterItems')">캐릭터</li>
-            <li onclick="clickOpenType('backgroundItems')">배경</li>
+            <li onclick="clickOpenType('allItems', this)" class="active">전체</li>
+            <li onclick="clickOpenType('musicItems', this)">음악</li>
+            <li onclick="clickOpenType('characterItems', this)">캐릭터</li>
+            <li onclick="clickOpenType('backgroundItems', this)">배경</li>
         </ul>
 
         <!-- 인기순, 가격순 및 클로버 충전 -->
@@ -183,7 +253,8 @@
                 <span>가격순</span>
             </div>
             <div class="search">
-                <button>클로버 충전</button>
+                <button onclick="window.open('pay.jsp', '_blank', )">클로버 충전</button>
+
             </div>
         </div>
 
@@ -349,7 +420,7 @@
                     <img src="clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
-            <div class="item">
+            <div class="item">	
                 <img src="img/backgroundImg22.png" alt="배경 3">
                 <div class="item-title">배경 3</div>
                 <div class="item-price">
@@ -358,12 +429,9 @@
             </div>                        
         </div>
 
-        <!-- 페이지네이션 -->
+ <!-- 페이지네이션 -->
         <div class="pagination">
-            <span class="active">1</span>
-            <span>2</span>
-            <span>3</span>
-            <span>4</span>
+            <!-- 페이지 번호가 여기에 표시됩니다 -->
         </div>
     </div>
 
