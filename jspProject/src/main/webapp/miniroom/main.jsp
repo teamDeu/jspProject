@@ -4,18 +4,18 @@
 <jsp:useBean id="iMgr" class ="miniroom.ItemMgr"/>
 <jsp:useBean id="mMgr" class ="pjh.MemberMgr"/>
 <%
-	String id = (String)session.getAttribute("idKey");
-	String character = iMgr.getUsingCharacter(id).getItem_path();
-	String url = request.getParameter("url");
-	if(url == null){
-		url = id;
-	}
-	String background = iMgr.getUsingBackground(url).getItem_path();
-	if(background == null){
-		background = "./img/backgroundImg.png";
-	}
-	System.out.println(background);
-	MemberBean userBean = mMgr.getMember(id);
+   String id = (String)session.getAttribute("idKey");
+   String character = iMgr.getUsingCharacter(id).getItem_path();
+   String url = request.getParameter("url");
+   if(url == null){
+      url = id;
+   }
+   String background = iMgr.getUsingBackground(url).getItem_path();
+   if(background == null){
+      background = "./img/backgroundImg.png";
+   }
+   System.out.println(background);
+   MemberBean userBean = mMgr.getMember(id);
 %>
 <!DOCTYPE html>
 <html>
@@ -34,28 +34,28 @@
     font-family: 'NanumTobak', sans-serif;
 }
 .miniroom_information {
-	display: flex;
-	flex-direction: column;
-	position: absolute;
-	width: 100px;
-	padding : 14px;
-	gap:10px;
-	border-radius : 10px;
-	box-sizing:border-box;
-	background-color:#FFFEF3;
-	top: -60px;
-	border: 2px solid #BAB9AA;
+   display: none;
+   flex-direction: column;
+   position: absolute;
+   width: 100px;
+   padding : 14px;
+   gap:10px;
+   border-radius : 10px;
+   box-sizing:border-box;
+   background-color:#FFFEF3;
+   top: -80px;
+   border: 2px solid #BAB9AA;
 }
 .miniroom_information button{
-	padding : 2px 10px;
-	border : 1px solid #DCDCDC;
-	background-color : #FFFFFF;
-	font-size : 12px;
-	border-radius : 10px;
+   padding : 2px 10px;
+   border : 1px solid #DCDCDC;
+   background-color : #FFFFFF;
+   font-size : 12px;
+   border-radius : 10px;
 }
 .miniroom_information span{
-	align-self:center;
-	font-size : 18px;
+   align-self:center;
+   font-size : 18px;
 }
 </style>
 <script>
@@ -77,14 +77,16 @@ function clickOpenBox(id){
    }
    openBox.style.display = "flex";
 }
-
+function clickUser(event){
+   console.log(event);
+}
 </script>
 <!-- 웹소켓통신 자바스크립트 -->
 <script type="text/javascript">
         var ws;
         var sayBoxId = 0;
         let userNum = 0;
-        var localId = "<%=userBean.getUser_name()%>";
+        var localId = "<%=userBean.getUser_id()%>";
         var character = "<%=character%>"
         var url = "<%=url%>";
         function connect() {
@@ -143,39 +145,55 @@ function clickOpenBox(id){
         }
         
         function printUser(id,character){
-        	newDiv = document.createElement("div");
-        	newImg = document.createElement("img");
-        	newImg.classList.add("userCharacter");
-        	newImg.src =character;
-        	nowvisit = document.getElementById("nowvisit");
-        	nowvisit.innerText = "Now " + userNum; 
-    		  // and give it some content
-    		  // add the text node to the newly created div
-    		newDiv.id = id;
-    		newContent = document.createTextNode(id);
-    		newDiv.appendChild(newContent);
-    		newDiv.appendChild(newImg);
-    		newDiv.classList.add("user");
-    		
-    		informationDiv = document.createElement("div");
-    		informationDiv.classList.add("miniroom_information");
-    		userNameSpan = document.createElement("span");
-    		addFriendBtn = document.createElement("button");
-    		goHomepageBtn = document.createElement("button");
-    		addFriendBtn.innerText = "친구추가";
-    		goHomepageBtn.innerText = "미니룸 구경가기";
-    		userNameSpan.innerText = id;
-    		informationDiv.appendChild(userNameSpan);
-    		informationDiv.appendChild(addFriendBtn);
-    		informationDiv.appendChild(goHomepageBtn);
-    		newDiv.appendChild(informationDiv);
-    		  // add the newly created element and its content into the DOM
-    		  if(miniroom){
-    			  miniroom.appendChild(newDiv);
-    		  }
-    		  else{
-    			  alert("찾을수없음");
-    		  }
+           newDiv = document.createElement("div");
+           newImg = document.createElement("img");
+           newImg.classList.add("userCharacter");
+           newImg.src =character;
+           nowvisit = document.getElementById("nowvisit");
+           nowvisit.innerText = "Now " + userNum; 
+            // and give it some content
+            // add the text node to the newly created div
+          newDiv.id = id;
+          newContent = document.createTextNode(id);
+          newDiv.appendChild(newContent);
+          newDiv.appendChild(newImg);
+          newDiv.classList.add("user");
+          
+          informationDiv = document.createElement("div");
+          informationDiv.classList.add("miniroom_information");
+          userNameSpan = document.createElement("span");
+          addFriendBtn = document.createElement("button");
+          goHomepageBtn = document.createElement("button");
+          addFriendBtn.innerText = "친구추가";
+          goHomepageBtn.innerText = "미니룸 구경가기";
+          userNameSpan.innerText = id;
+          informationDiv.appendChild(userNameSpan);
+          informationDiv.appendChild(addFriendBtn);
+          informationDiv.appendChild(goHomepageBtn);
+          newDiv.onclick = (function(informationDiv) {
+              return function() {
+                  console.log(informationDiv.style.display);
+                  if (informationDiv.style.display == "none" || informationDiv.style.display == "") {
+                      informationDiv.style.display = "flex";
+                  } else {
+                      informationDiv.style.display = "none";
+                  }
+              };
+          })(informationDiv);
+          goHomepageBtn.onclick = (function(id) {
+              return function() {
+                 console.log(id);
+                 location.href = "http://localhost/jspProject/miniroom/main.jsp?url=" + id;   
+              };
+          })("<%=userBean.getUser_id()%>");
+          newDiv.appendChild(informationDiv);
+            // add the newly created element and its content into the DOM
+            if(miniroom){
+               miniroom.appendChild(newDiv);
+            }
+            else{
+               alert("찾을수없음");
+            }
         }
         
         function printSayBox(id){
@@ -267,11 +285,11 @@ function clickOpenBox(id){
                <jsp:include page="miniDesign.jsp"></jsp:include>
             </div>
             <div id="game" class ="inner-box-2" style="display: none" >
-            	<jsp:include page="../yang/game.jsp"></jsp:include>
+               <jsp:include page="../yang/game.jsp"></jsp:include>
             </div>
-			<div id="store" class="inner-box-2" style="display: none">
-				<jsp:include page="storeDesign.jsp"></jsp:include>
-			</div>            
+         <div id="store" class="inner-box-2" style="display: none">
+            <jsp:include page="storeDesign.jsp"></jsp:include>
+         </div>            
          </div>
          <!-- 버튼 -->
          <div class="button-container">
