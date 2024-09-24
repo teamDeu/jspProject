@@ -89,8 +89,10 @@ function clickUser(event){
         var localId = "<%=userBean.getUser_id()%>";
         var character = "<%=character%>"
         var url = "<%=url%>";
+        console.log("ws://" + location.host + "<%=request.getContextPath()%>/chat");
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
+            
             ws.onopen = function() {
                 document.getElementById("status").textContent = "서버와 연결됨";
                 if(localId == "null") localId = "비회원";
