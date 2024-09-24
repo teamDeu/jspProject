@@ -4,18 +4,18 @@
 <jsp:useBean id="iMgr" class ="miniroom.ItemMgr"/>
 <jsp:useBean id="mMgr" class ="pjh.MemberMgr"/>
 <%
-	String id = (String)session.getAttribute("idKey");
-	String character = iMgr.getUsingCharacter(id).getItem_path();
-	String url = request.getParameter("url");
-	if(url == null){
-		url = id;
-	}
-	String background = iMgr.getUsingBackground(url).getItem_path();
-	if(background == null){
-		background = "./img/backgroundImg.png";
-	}
-	System.out.println(background);
-	MemberBean userBean = mMgr.getMember(id);
+   String id = (String)session.getAttribute("idKey");
+   String character = iMgr.getUsingCharacter(id).getItem_path();
+   String url = request.getParameter("url");
+   if(url == null){
+      url = id;
+   }
+   String background = iMgr.getUsingBackground(url).getItem_path();
+   if(background == null){
+      background = "./img/backgroundImg.png";
+   }
+   System.out.println(background);
+   MemberBean userBean = mMgr.getMember(id);
 %>
 <!DOCTYPE html>
 <html>
@@ -34,28 +34,28 @@
     font-family: 'NanumTobak', sans-serif;
 }
 .miniroom_information {
-	display: flex;
-	flex-direction: column;
-	position: absolute;
-	width: 100px;
-	padding : 14px;
-	gap:10px;
-	border-radius : 10px;
-	box-sizing:border-box;
-	background-color:#FFFEF3;
-	top: -60px;
-	border: 2px solid #BAB9AA;
+   display: none;
+   flex-direction: column;
+   position: absolute;
+   width: 120px;
+   padding : 10px;
+   gap:10px;
+   border-radius : 10px;
+   box-sizing:border-box;
+   background-color:#FFFEF3;
+   top: -100px;
+   border: 2px solid #BAB9AA;
 }
 .miniroom_information button{
-	padding : 2px 10px;
-	border : 1px solid #DCDCDC;
-	background-color : #FFFFFF;
-	font-size : 12px;
-	border-radius : 10px;
+   padding : 2px 10px;
+   border : 1px solid #DCDCDC;
+   background-color : #FFFFFF;
+   font-size : 16px;
+   border-radius : 10px;
 }
 .miniroom_information span{
-	align-self:center;
-	font-size : 18px;
+   align-self:center;
+   font-size : 20px;
 }
 </style>
 <script>
@@ -77,23 +77,26 @@ function clickOpenBox(id){
    }
    openBox.style.display = "flex";
 }
-
+function clickUser(event){
+   console.log(event);
+}
 </script>
 <!-- 웹소켓통신 자바스크립트 -->
 <script type="text/javascript">
         var ws;
         var sayBoxId = 0;
         let userNum = 0;
-        var localId = "<%=userBean.getUser_name()%>";
+        var localId = "<%=userBean.getUser_id()%>";
         var character = "<%=character%>"
         var url = "<%=url%>";
+        var name = "<%=userBean.getUser_name()%>";
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
             ws.onopen = function() {
                 document.getElementById("status").textContent = "서버와 연결됨";
                 if(localId == "null") localId = "비회원";
                 if(character == "null") character = "character1.png"
-                message = "connect;"+ localId +";" + character +";" + url
+                message = "connect;"+ localId +";" + character +";" + url +";" + name;
                 ws.send(message);
             };
 
@@ -101,29 +104,33 @@ function clickOpenBox(id){
                  rawdata = event.data.split(";");
                  command = rawdata[0];
                  data = rawdata[1];
-                 
                  if(command == ("sendMessage")){
                     comment = data.split(":")[1];
                     user = data.split(":")[0];
+                    name = data.split(":")[2];
                     if(comment == "") return;
                     printSayBox(user);
-                  printChatBox(user,comment,"chat");
+                  printChatBox(user,comment,"chat",name);
                     
                  }
                  else if(command == ("init")){
                     userNum ++;
-                    printUser(data,rawdata[2]);
+                    character = rawdata[2];
+                    name = rawdata[3];
+                    printUser(data,character,name);
                     
                  }
                  else if(command == ("connect")){
                     // create a new div element
                     userNum ++;
-                  printUser(data,rawdata[2]);
-                  printChatBox(data,data+"님이 입장하셨습니다.","notice");
+                    character = rawdata[2];
+                    name = rawdata[4];
+                  printUser(data,character,name);
+                  printChatBox(data,name+"님이 입장하셨습니다.","notice",name);
                     
                  }
                  else if(command == ("disconnect")){
-                    printChatBox(data,data+"님이 퇴장하셨습니다.","notice");
+                    printChatBox(data,name+"님이 퇴장하셨습니다.","notice",name);
                     user = document.getElementById(data);
                     user.remove();
                     userNum --;
@@ -134,7 +141,7 @@ function clickOpenBox(id){
             };
         }
         function sendMessage() {
-            var message = "sendMessage;" + localId + ":" + document.getElementById("messageInput").value;
+            var message = "sendMessage;" + localId + ":" + document.getElementById("messageInput").value + ":" + name;
             if (message.trim() !== "") {
                 ws.send(message);
                 document.getElementById("messageInput").value = '';
@@ -142,40 +149,81 @@ function clickOpenBox(id){
             }
         }
         
-        function printUser(id,character){
-        	newDiv = document.createElement("div");
-        	newImg = document.createElement("img");
-        	newImg.classList.add("userCharacter");
-        	newImg.src =character;
-        	nowvisit = document.getElementById("nowvisit");
-        	nowvisit.innerText = "Now " + userNum; 
-    		  // and give it some content
-    		  // add the text node to the newly created div
-    		newDiv.id = id;
-    		newContent = document.createTextNode(id);
-    		newDiv.appendChild(newContent);
-    		newDiv.appendChild(newImg);
-    		newDiv.classList.add("user");
-    		
-    		informationDiv = document.createElement("div");
-    		informationDiv.classList.add("miniroom_information");
-    		userNameSpan = document.createElement("span");
-    		addFriendBtn = document.createElement("button");
-    		goHomepageBtn = document.createElement("button");
-    		addFriendBtn.innerText = "친구추가";
-    		goHomepageBtn.innerText = "미니룸 구경가기";
-    		userNameSpan.innerText = id;
-    		informationDiv.appendChild(userNameSpan);
-    		informationDiv.appendChild(addFriendBtn);
-    		informationDiv.appendChild(goHomepageBtn);
-    		newDiv.appendChild(informationDiv);
-    		  // add the newly created element and its content into the DOM
-    		  if(miniroom){
-    			  miniroom.appendChild(newDiv);
-    		  }
-    		  else{
-    			  alert("찾을수없음");
-    		  }
+        function printUser(id,character,name){
+           newDiv = document.createElement("div");
+           newImg = document.createElement("img");
+           newImg.classList.add("userCharacter");
+           newImg.src =character;
+           nowvisit = document.getElementById("nowvisit");
+           nowvisit.innerText = "Now " + userNum; 
+            // and give it some content
+            // add the text node to the newly created div
+          newDiv.id = id;
+          newContent = document.createTextNode(name);
+          newDiv.appendChild(newContent);
+          newDiv.appendChild(newImg);
+          newDiv.classList.add("user");
+          
+          informationDiv = document.createElement("div");
+          informationDiv.classList.add("miniroom_information");
+          userNameSpan = document.createElement("span");
+          addFriendBtn = document.createElement("button");
+          goHomepageBtn = document.createElement("button");
+          addFriendBtn.innerText = "친구추가";
+          goHomepageBtn.innerText = "미니룸 구경가기";
+          userNameSpan.innerText = name;
+          informationDiv.appendChild(userNameSpan);
+          informationDiv.appendChild(addFriendBtn);
+          informationDiv.appendChild(goHomepageBtn);
+          newDiv.onclick = (function(informationDiv) {
+              return function() {
+                  console.log(informationDiv.style.display);
+                  if (informationDiv.style.display == "none" || informationDiv.style.display == "") {
+                      informationDiv.style.display = "flex";
+                  } else {
+                      informationDiv.style.display = "none";
+                  }
+              };
+          })(informationDiv);
+          addFriendBtn.onclick = (function(requestSendUser, requestReciveUser) {
+        	    return function() {
+        	        var frm = document.friend_request_form;
+        	        if (!frm) {
+        	            console.error("friend_request_form is not found");
+        	            return;
+        	        }
+
+        	        if (!frm.requestSendUser || !frm.requestReciveUser) {
+        	            console.error("Form fields not found");
+        	            return;
+        	        }
+
+        	        if (!requestSendUser || !requestReciveUser) {
+        	            console.error("Invalid user IDs");
+        	            return;
+        	        }
+
+        	        var windowOpen = window.open('', '친구추가', 'width=360, height=300, location = 0, resizable=0, scrollbars=no, status=0, titlebar=0, toolbar=0, left=300, top=200');
+        	        frm.target = '친구추가';
+        	        frm.requestSendUser.value = requestSendUser;
+        	        frm.requestReciveUser.value = requestReciveUser;
+        	        frm.submit();
+        	    };
+        	})(localId, id);
+          goHomepageBtn.onclick = (function(id) {
+              return function() {
+                 console.log(id);
+                 location.href = "http://localhost/jspProject/miniroom/main.jsp?url=" + id;   
+              };
+          })(id);
+          newDiv.appendChild(informationDiv);
+            // add the newly created element and its content into the DOM
+            if(miniroom){
+               miniroom.appendChild(newDiv);
+            }
+            else{
+               alert("찾을수없음");
+            }
         }
         
         function printSayBox(id){
@@ -193,7 +241,7 @@ function clickOpenBox(id){
               sleep(5000).then(() => document.getElementById(sayBoxId).remove());
         }
         
-        function printChatBox(id,comment,type){
+        function printChatBox(id,comment,type,name){
            chatArea2 = document.getElementById("chatArea2");
            chatBoxDiv = document.createElement("div");
            newContent = document.createTextNode(comment);
@@ -212,7 +260,7 @@ function clickOpenBox(id){
            chatDiv.classList.add(type);
            userNameDiv = document.createElement("div");
            let today = new Date();
-          userNameContent = document.createTextNode(today.toLocaleString() + "  " + id);
+          userNameContent = document.createTextNode(today.toLocaleString() + "  " + name);
           
           userNameDiv.appendChild(userNameContent);
           userNameDiv.classList.add("chatName");
@@ -227,7 +275,7 @@ function clickOpenBox(id){
            }
         
         function disconnect(){
-           var message = "disconnect;" + localId;
+           var message = "disconnect;" + localId + ";" + name;
            location.href ="index.jsp";
            ws.send(message);
            ws.close();
@@ -267,11 +315,11 @@ function clickOpenBox(id){
                <jsp:include page="miniDesign.jsp"></jsp:include>
             </div>
             <div id="game" class ="inner-box-2" style="display: none" >
-            	<jsp:include page="../yang/game.jsp"></jsp:include>
+               <jsp:include page="../yang/game.jsp"></jsp:include>
             </div>
-			<div id="store" class="inner-box-2" style="display: none">
-				<jsp:include page="storeDesign.jsp"></jsp:include>
-			</div>            
+	         <div id="store" class="inner-box-2" style="display: none">
+	            <jsp:include page="storeDesign.jsp"></jsp:include>
+	         </div>            
          </div>
          <!-- 버튼 -->
          <div class="button-container">
@@ -284,10 +332,13 @@ function clickOpenBox(id){
             <button onclick = "javascript:clickOpenBox('game')" class="custom-button">게임</button>
             <button class="custom-button">음악</button>
          </div>
-
   
 
       </div>
    </div>
+   <form name = "friend_request_form" action = "./friendRequest.jsp">
+   		<input type ="hidden" name = "requestSendUser" value ="">
+   		<input type ="hidden" name = "requestReciveUser" value ="">
+   </form>
 </body>
 </html>
