@@ -4,11 +4,14 @@
     pageEncoding="UTF-8"%>
 <jsp:useBean id="mgr" class ="miniroom.ItemMgr"/>
 <%
-	String user_id = "als981209";
+	String user_id = (String)session.getAttribute("idKey");
 	Vector<ItemBean> characterList = mgr.getHoldCharacter(user_id);
 	Vector<ItemBean> backgroundList = mgr.getHoldBackgroundImg(user_id);
 	ItemBean usingCharacter = mgr.getUsingCharacter(user_id);
 	ItemBean usingBackground = mgr.getUsingBackground(user_id);
+	if(usingBackground.getItem_path() == null){
+		usingBackground.setItem_path("./img/backgroundImg.png");
+	}
 	int index = 0;
 	if(request.getParameter("index") != null){
 		index = Integer.parseInt(request.getParameter("index"));

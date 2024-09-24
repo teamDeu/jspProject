@@ -18,6 +18,7 @@ public class ChatServer {
     private static HashMap<String,String> userCharacter = new HashMap<String,String>();
     private static HashMap<String,String> userId = new HashMap<String,String>();
     private static HashMap<String,String> userUrl = new HashMap<String,String>();
+    private static HashMap<String,String> userName = new HashMap<String,String>();
     @OnOpen
     
     
@@ -36,22 +37,25 @@ public class ChatServer {
         String data = rawData[1];
         if(command.equals("connect")) {
         	String url = rawData[3];
+        	String name = rawData[4];
         	userUrl.put(session.getId(),url);
         	userId.put(session.getId(),data);
         	userCharacter.put(data, rawData[2]);
+        	userName.put(session.getId(), name);
         	synchronized (clients) {
                 for (int i = 0; i < clients.size() ; i++) {
                 	Session client = (Session)clients.toArray()[i];
                 	try {
                 		String userIdValue = userId.get(client.getId());
                 		String userCharacterValue = userCharacter.get(userIdValue);
+                		String userNameValue = userName.get(client.getId());
                 		if(session.getId() == client.getId()) {
                 			continue;
                 		}
                 		System.out.println("접속된사람의 URL : " + userUrl.get(client.getId()));
                 		System.out.println("방금접속한 사람의 URL : "  + userUrl.get(session.getId()));
                 		if(userUrl.get(client.getId()).equals(userUrl.get(session.getId()))){
-                			session.getBasicRemote().sendText("init;" +userIdValue +";" + userCharacterValue);
+                			session.getBasicRemote().sendText("init;" +userIdValue +";" + userCharacterValue +";" +userNameValue);
                 		}
                 		
     				} catch (Exception e) {

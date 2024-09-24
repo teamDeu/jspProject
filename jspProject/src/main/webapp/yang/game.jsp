@@ -7,12 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>가로로 긴 네모 박스 레이아웃</title>
     <script>
+
 	    function game1show() {
 	        document.getElementById("main").style.display = "none";
 	        document.getElementById("game1-container").style.display = "block";
 	        document.getElementById("game2-container").style.display = "none";
 	    }
-	    
+
         function game2show() {
             document.getElementById("main").style.display = "none";
             document.getElementById("game1-container").style.display = "none";
@@ -138,10 +139,10 @@
     </div>
 
 
-    <div id="game2-container">
+    <div id="game2-container" style="display: none">
         <jsp:include page="game2.jsp"></jsp:include>
     </div>
-    <div id="game1-container">
+    <div id="game1-container" style="display: none">
         <jsp:include page="game1.jsp"></jsp:include>
     </div>
 </body>

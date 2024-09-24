@@ -26,9 +26,6 @@ public class MemberBean {
 		this.user_clover = user_clover;
 		this.user_character = user_character;
 	}
-
-
-
 	public String getUser_id() {
 		return user_id;
 	}

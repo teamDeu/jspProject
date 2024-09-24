@@ -1,3 +1,4 @@
+<%@page import="pjh.MemberBean"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -197,12 +198,13 @@
         }
 
         // 페이지가 로드될 때 초기화
-        window.onload = function () {
-            const itemsContainer = document.getElementById('allItems');
-            items = Array.from(itemsContainer.children); // 모든 아이템을 배열로 저장
-            displayItems();
-            updatePagination();
-        };
+        document.addEventListener('DOMContentLoaded', function () {
+    	const itemsContainer = document.getElementById('allItems');
+    	items = Array.from(itemsContainer.children); // 모든 아이템을 배열로 저장
+    	displayItems();
+    	updatePagination();
+		});
+
 
         // 탭 클릭 시 active 클래스 적용
         function clickOpenType(id, clickedTab) {
@@ -235,7 +237,16 @@
         <!-- 클로버 금액 -->
         <div class="clover-amount">
             <img src="clover_icon.png" alt="클로버">
-            20,000
+            <% 
+                // 세션에서 로그인된 사용자 정보를 가져옴
+                MemberBean member = (MemberBean) session.getAttribute("loggedInUser"); 
+                if (member != null) {
+                    // 사용자 클로버 잔액을 표시
+                    out.print(member.getUser_clover());
+                } else {
+                    out.print("로그인 필요");
+                }
+            %>
         </div>
 
         <!-- 카테고리 탭 -->

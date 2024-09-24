@@ -61,9 +61,7 @@
 	left: 0;
 }
 
-.folder-manage-button:hover {
-    background-color: #e0e0e0;
-}
+
 
 
 .board-line {
@@ -75,15 +73,18 @@
 }
 
 .folder-input-container {
-    display: none;
+    display: none; /* 처음에는 숨겨져 있도록 설정 */
     align-items: center;
     justify-content: space-between;
-    width: 90%;
+    width: 80%;
     padding: 5px;
     background-color: #fff;
     border: 1px solid #ddd;
-    border-radius: 5px;
-	margin-bottom: 10px;
+    border-radius: 5px;    
+    position: absolute; 
+    margin: 0 0 -535px -125px;
+    left: 50%; 
+    
 }
 
 

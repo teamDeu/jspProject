@@ -3,6 +3,7 @@ package pjh;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Random;
 import java.util.Vector;
 import net.nurigo.sdk.message.model.Message;
@@ -243,6 +244,43 @@ public boolean updatePassword(String id, String newPassword) {
  return isUpdated;
 }
 
+
+//DB에서 사용자 정보를 가져오는 메소드
+public MemberBean getMemberById(String userId) throws Exception {
+    MemberBean member = null;
+    Connection conn = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+
+    try {
+        // DBConnectionMgr를 이용하여 DB 연결
+        DBConnectionMgr dbMgr = DBConnectionMgr.getInstance();
+        conn = dbMgr.getConnection();
+
+        // SQL 쿼리: user_id로 사용자 정보 조회
+        String sql = "SELECT user_id, user_clover FROM members WHERE user_id = ?";
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, userId);
+        
+        rs = pstmt.executeQuery();
+
+        // 조회 결과가 있을 경우 MemberBean 객체에 저장
+        if (rs.next()) {
+            member = new MemberBean();
+            member.setUser_id(rs.getString("user_id"));
+            member.setUser_clover(rs.getInt("user_clover"));  // DB에서 가져온 클로버 수 설정
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();  // 오류 출력
+    } finally {
+        // 자원 해제
+        if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+        if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+        if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    return member;  // 사용자의 정보를 반환
+}
 
 }
 
