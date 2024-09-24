@@ -271,7 +271,7 @@
 
         <!-- 클로버 금액 -->
         <div class="clover-amount">
-            <img src="clover_icon.png" alt="클로버">
+            <img src="./img/clover_icon.png" alt="클로버">
             <%= user_clover %> <!-- 여기서 클로버 값 출력 -->
         </div>
 
@@ -301,77 +301,77 @@
                 <img src="img/눈의꽃.jfif" alt="박효신">
                 <div class="item-title">박효신 - 꽃</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/하루하루.jfif" alt="BIGBANG">
                 <div class="item-title">BIGBANG - 하루 하루</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/프리스타일.jfif" alt="프리스타일">
                 <div class="item-title">프리스타일 - Y</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/박봄.jfif" alt="박봄">
                 <div class="item-title">박봄 - YOU AND I</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/죽일놈.jfif" alt="다이나믹듀오">
                 <div class="item-title">다이나믹듀오 - 죽일놈</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/마법의성.jfif" alt="MC 스나이퍼">
                 <div class="item-title">MC 스나이퍼 - 마법의 성</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/핑크배경.png" alt="배경 1">
                 <div class="item-title">배경 1</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/backgroundImg.png" alt="배경 2">
                 <div class="item-title">배경 2</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/backgroundImg22.png" alt="배경 3">
                 <div class="item-title">배경 3</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>                        
             <div class="item">
                 <img src="img/포차코.jfif" alt="포차코">
                 <div class="item-title">포차코</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 7개
+                    <img src="./img/clover_icon.png" alt="클로버"> 7개
                 </div>
             </div>
             <div class="item">
                 <img src="img/마미미.png" alt="마미미">
                 <div class="item-title">마미미</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
     
@@ -383,42 +383,42 @@
                 <img src="img/눈의꽃.jfif" alt="박효신">
                 <div class="item-title">박효신 - 꽃</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/하루하루.jfif" alt="BIGBANG">
                 <div class="item-title">BIGBANG - 하루 하루</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>        
             <div class="item">
                 <img src="img/프리스타일.jfif" alt="프리스타일">
                 <div class="item-title">프리스타일 - Y</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/박봄.jfif" alt="박봄">
                 <div class="item-title">박봄 - YOU AND I</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/죽일놈.jfif" alt="다이나믹듀오">
                 <div class="item-title">다이나믹듀오 - 죽일놈</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/마법의성.jfif" alt="MC 스나이퍼">
                 <div class="item-title">MC 스나이퍼 - 마법의 성</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
         </div>
@@ -429,14 +429,14 @@
                 <img src="img/포차코.jfif" alt="포차코">
                 <div class="item-title">포차코</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 7개
+                    <img src="./img/clover_icon.png" alt="클로버"> 7개
                 </div>
             </div>
             <div class="item">
                 <img src="img/마미미.png" alt="마미미">
                 <div class="item-title">마미미</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
         </div>
@@ -447,21 +447,21 @@
                 <img src="img/핑크배경.png" alt="배경 1">
                 <div class="item-title">배경 1</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">
                 <img src="img/backgroundImg.png" alt="배경 2">
                 <div class="item-title">배경 2</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>
             <div class="item">	
                 <img src="img/backgroundImg22.png" alt="배경 3">
                 <div class="item-title">배경 3</div>
                 <div class="item-price">
-                    <img src="clover_icon.png" alt="클로버"> 5개
+                    <img src="./img/clover_icon.png" alt="클로버"> 5개
                 </div>
             </div>                        
         </div>
