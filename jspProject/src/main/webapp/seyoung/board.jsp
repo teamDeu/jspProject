@@ -32,14 +32,15 @@
 .folder-container {
     width: 230px;
     height: 700px;
-    margin: 10px 11px 10px 10px;
+    margin: 10px 11px 100px 10px;
     padding: 20px;
     border: 2px dashed #bbb;  
     border-radius: 30px;      
     background-color: #F7F7F7; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column-reverse; /* 아래에서 위로 정렬 */
+    align-items: flex-start; /* 좌측 정렬 */ 
+    position: relative;
+    
 }
 
 
@@ -75,24 +76,48 @@
 	font-size: 18px;
 }
 
- .folder-item {
+.folder-item {
     display: flex;
     align-items: center;
+    justify-content: space-between; /* 폴더명과 삭제 버튼 사이의 간격 조정 */    
     margin-bottom: 8px;
     width: 100%;
+    padding: 5px; /* 폴더 항목 여백 */
+    border: none;  
 }
 
 .folder-item img {
     width: 27px; /* 아이콘 크기 조정 */
     height: 27px; /* 아이콘 크기 조정 */
-    margin-right: 10px; /* 폴더명과 간격 */
+    margin-right: 7px; /* 폴더명과 간격 */
 }
 
 .folder-item span {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 500;
+    text-align: left; 
+    flex: 2;
 }
 
+.folder-input-container button {
+    background: none; 
+    border: none; 
+    padding: 0;
+    cursor: pointer; 
+}
+
+.folder-input-container button img {
+	top: 5px;
+    width: 25px; 
+    height: 25px; 
+}
+
+
+.folder-item .delete-button {
+    cursor: pointer; /* 커서 변경 */
+    width: 24px; /* 쓰레기통 아이콘 크기 */
+    height: 24px; 
+}
 
 </style>
 
@@ -183,7 +208,11 @@
 
             if (folderName !== '') {
                 var folderContainer = document.querySelector('.folder-container');
-                
+
+                // 기존 폴더 아이템의 수를 계산하여 새로운 폴더의 top 값을 결정
+                var folderItems = folderContainer.querySelectorAll('.folder-item');
+                var newTop = folderItems.length * 32; // 각 폴더 높이 27px + 간격 5px = 32px
+
                 // 새로운 폴더 아이템 생성
                 var folderItem = document.createElement('div');
                 folderItem.classList.add('folder-item');
@@ -195,16 +224,48 @@
                 var folderNameSpan = document.createElement('span');
                 folderNameSpan.textContent = folderName;
 
+                // 삭제 버튼 생성
+                var deleteButton = document.createElement('img');
+                deleteButton.src = 'img/trashcan.png'; // 쓰레기통 이미지 경로 설정
+                deleteButton.alt = 'Delete';
+                deleteButton.classList.add('delete-button');
+                deleteButton.onclick = function() {
+                    folderItem.remove(); // 폴더 항목 삭제
+                    updateFolderPositions(); // 폴더 위치 재조정
+                };
+
+                // 폴더 아이템에 요소 추가
                 folderItem.appendChild(folderIcon);
                 folderItem.appendChild(folderNameSpan);
+                folderItem.appendChild(deleteButton);
 
-                // 폴더 컨테이너에 추가
-                folderContainer.insertBefore(folderItem, folderContainer.children[folderContainer.children.length - 1]);
+                // 폴더 아이템의 위치를 컨테이너의 (0, newTop)으로 설정
+                folderItem.style.position = 'absolute'; // 절대 위치 지정
+                folderItem.style.top = newTop + 'px'; // 위쪽 위치
+                folderItem.style.left = '0'; // 왼쪽 위치
+
+                // 폴더 아이템을 컨테이너에 추가
+                folderContainer.appendChild(folderItem);
 
                 // 입력 필드 초기화
                 folderNameInput.value = '';
             }
         }
+
+        // 폴더 위치를 재조정하는 함수
+        function updateFolderPositions() {
+            var folderContainer = document.querySelector('.folder-container');
+            var folderItems = folderContainer.querySelectorAll('.folder-item');
+            
+            folderItems.forEach(function(folderItem, index) {
+                var newTop = index * 32; // 각 폴더 높이 27px + 간격 5px = 32px
+                folderItem.style.top = newTop + 'px';
+            });
+        }
+
+
+
+
         
     </script>
 </body>
