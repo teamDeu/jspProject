@@ -40,7 +40,8 @@
                             placeholder="일촌에게 방문 기록을 남겨보세요~ !" /> <label for="private"><input
                             type="checkbox" id="private" /> 비밀글</label>
                         <button id="submit-button" class="submit-button">등록</button>
-                    </div>
+                    </div> 
+                    
 
                     <!-- 방명록 항목들이 나타나는 네모 상자 -->
                     <div class="entry-container">
@@ -193,7 +194,7 @@
         });
 
 
-        // 방명록 항목을 삭제하는 함수
+// 방명록 항목을 삭제하는 함수
 // 방명록 항목을 삭제하는 함수
 function deleteEntry(entryElement, index) {
     entries.splice(index, 1); // entries 배열에서 해당 항목 삭제
@@ -204,6 +205,8 @@ function deleteEntry(entryElement, index) {
 
     if (totalEntriesOnCurrentPage === 0 && currentPage > 1) {
         currentPage--; // 이전 페이지로 이동
+        // 페이지 그룹 업데이트
+        pageGroup = Math.ceil(currentPage / maxPageButtons);
     }
 
     updatePagination(); // 삭제 후 페이지네이션 업데이트
@@ -236,7 +239,7 @@ function updatePagination() {
         prevButton.classList.add('page-button', 'nav-button');
         prevButton.addEventListener('click', function () {
             pageGroup--;
-            currentPage = (pageGroup - 1) * maxPageButtons + 1; // 이전 페이지 그룹의 첫 번째 페이지로 이동
+            currentPage = (pageGroup - 1) * maxPageButtons + maxPageButtons; // 이전 페이지 그룹의 마지막 페이지로 이동
             updatePagination();
         });
         paginationContainer.appendChild(prevButton);
@@ -273,6 +276,7 @@ function updatePagination() {
         paginationContainer.appendChild(nextButton);
     }
 }
+
 
 
     </script>

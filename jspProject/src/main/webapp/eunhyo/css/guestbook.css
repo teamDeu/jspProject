@@ -261,7 +261,7 @@ label[for="private"] {
 
 /* 비밀글 아이콘 */
 .secret-icon {
-    width: 12px;  /* 아이콘 크기 */
+    width: 12px;  
     height: 15px;
     position: absolute;
     top: 20px;  
