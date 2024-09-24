@@ -1,6 +1,6 @@
 <%@page import="pjh.MemberBean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-   pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <jsp:useBean id="iMgr" class ="miniroom.ItemMgr"/>
 <jsp:useBean id="mMgr" class ="pjh.MemberMgr"/>
 <%
@@ -23,7 +23,41 @@
 <meta charset="UTF-8">
 <title>CloverStory</title>
 <!-- Linking the CSS file -->
-<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="./css/style.css">
+<style>
+@font-face {
+    font-family: 'NanumTobak';
+    src: url('../나눔손글씨 또박또박.TTF') format('truetype');
+}
+
+* {
+    font-family: 'NanumTobak', sans-serif;
+}
+.miniroom_information {
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	width: 100px;
+	padding : 14px;
+	gap:10px;
+	border-radius : 10px;
+	box-sizing:border-box;
+	background-color:#FFFEF3;
+	top: -60px;
+	border: 2px solid #BAB9AA;
+}
+.miniroom_information button{
+	padding : 2px 10px;
+	border : 1px solid #DCDCDC;
+	background-color : #FFFFFF;
+	font-size : 12px;
+	border-radius : 10px;
+}
+.miniroom_information span{
+	align-self:center;
+	font-size : 18px;
+}
+</style>
 <script>
 function loadContent(url) {
     var xhr = new XMLHttpRequest();
@@ -36,12 +70,12 @@ function loadContent(url) {
     xhr.send();
 }
 function clickOpenBox(id){
-   openBox = document.getElementById(id);
-   anotherBox = document.querySelectorAll(".inner-box-2");
-   for(i = 0 ; i < anotherBox.length ; i++){
-      anotherBox[i].style.display ="none";
-   }
-   openBox.style.display = "flex";
+	openBox = document.getElementById(id);
+	anotherBox = document.querySelectorAll(".inner-box-2");
+	for(i = 0 ; i < anotherBox.length ; i++){
+		anotherBox[i].style.display ="none";
+	}
+	openBox.style.display = "flex";
 }
 
 </script>
@@ -53,8 +87,6 @@ function clickOpenBox(id){
         var localId = "<%=userBean.getUser_name()%>";
         var character = "<%=character%>"
         var url = "<%=url%>";
-        console.log(character);
-        console.log('<%=background%>');
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
             ws.onopen = function() {
@@ -66,36 +98,36 @@ function clickOpenBox(id){
             };
 
             ws.onmessage = function(event) {
-                 rawdata = event.data.split(";");
-                 command = rawdata[0];
-                 data = rawdata[1];
-                 
-                 if(command == ("sendMessage")){
-                    comment = data.split(":")[1];
-                    user = data.split(":")[0];
-                    if(comment == "") return;
-                    printSayBox(user);
-                  printChatBox(user,comment,"chat");
-                    
-                 }
-                 else if(command == ("init")){
-                    userNum ++;
-                    printUser(data,rawdata[2]);
-                    
-                 }
-                 else if(command == ("connect")){
-                    // create a new div element
-                    userNum ++;
-                  printUser(data,rawdata[2]);
-                  printChatBox(data,data+"님이 입장하셨습니다.","notice");
-                    
-                 }
-                 else if(command == ("disconnect")){
-                    printChatBox(data,data+"님이 퇴장하셨습니다.","notice");
-                    user = document.getElementById(data);
-                    user.remove();
-                    userNum --;
-                 }
+              	rawdata = event.data.split(";");
+              	command = rawdata[0];
+              	data = rawdata[1];
+              	
+              	if(command == ("sendMessage")){
+              		comment = data.split(":")[1];
+              		user = data.split(":")[0];
+              		if(comment == "") return;
+              		printSayBox(user);
+         			printChatBox(user,comment,"chat");
+      			  	
+              	}
+              	else if(command == ("init")){
+              		userNum ++;
+              		printUser(data,rawdata[2]);
+              		
+              	}
+              	else if(command == ("connect")){
+	              	// create a new div element
+	              	userNum ++;
+            		printUser(data,rawdata[2]);
+            		printChatBox(data,data+"님이 입장하셨습니다.","notice");
+	              	
+              	}
+              	else if(command == ("disconnect")){
+              		printChatBox(data,data+"님이 퇴장하셨습니다.","notice");
+              		user = document.getElementById(data);
+              		user.remove();
+              		userNum --;
+              	}
             };
             ws.onclose = function() {
                 document.getElementById("status").textContent = "서버 연결 끊김";
@@ -111,136 +143,148 @@ function clickOpenBox(id){
         }
         
         function printUser(id,character){
-           newDiv = document.createElement("div");
-           newImg = document.createElement("img");
-           newImg.classList.add("userCharacter");
-           newImg.src =character;
-           nowvisit = document.getElementById("nowvisit");
-           nowvisit.innerText = "Now " + userNum; 
-            // and give it some content
-            // add the text node to the newly created div
-            newDiv.id = id;
-            newContent = document.createTextNode(id);
-            newDiv.appendChild(newContent);
-            newDiv.appendChild(newImg);
-            newDiv.classList.add("user");
-            // add the newly created element and its content into the DOM
-            if(miniroom){
-               miniroom.appendChild(newDiv);
-            }
-            else{
-               alert("찾을수없음");
-            }
+        	newDiv = document.createElement("div");
+        	newImg = document.createElement("img");
+        	newImg.classList.add("userCharacter");
+        	newImg.src =character;
+        	nowvisit = document.getElementById("nowvisit");
+        	nowvisit.innerText = "Now " + userNum; 
+    		  // and give it some content
+    		  // add the text node to the newly created div
+    		newDiv.id = id;
+    		newContent = document.createTextNode(id);
+    		newDiv.appendChild(newContent);
+    		newDiv.appendChild(newImg);
+    		newDiv.classList.add("user");
+    		
+    		informationDiv = document.createElement("div");
+    		informationDiv.classList.add("miniroom_information");
+    		userNameSpan = document.createElement("span");
+    		addFriendBtn = document.createElement("button");
+    		goHomepageBtn = document.createElement("button");
+    		addFriendBtn.innerText = "친구추가";
+    		goHomepageBtn.innerText = "미니룸 구경가기";
+    		userNameSpan.innerText = id;
+    		informationDiv.appendChild(userNameSpan);
+    		informationDiv.appendChild(addFriendBtn);
+    		informationDiv.appendChild(goHomepageBtn);
+    		newDiv.appendChild(informationDiv);
+    		  // add the newly created element and its content into the DOM
+    		  if(miniroom){
+    			  miniroom.appendChild(newDiv);
+    		  }
+    		  else{
+    			  alert("찾을수없음");
+    		  }
         }
         
         function printSayBox(id){
-            miniroom = document.getElementById("miniroom");
-            newDiv = document.createElement("div");
-            newContent = document.createTextNode(comment);
-            newDiv.appendChild(newContent);
-            userDiv = document.getElementById(id);
-            userRect = userDiv.getBoundingClientRect();
-            newDiv.classList.add("sayBox");
-            newDiv.id = sayBoxId;
-            userDiv.appendChild(newDiv);
-            newDiv.style.top = -newDiv.offsetHeight+"px";
-            newDiv.style.left = 0 +"px";
-              sleep(5000).then(() => document.getElementById(sayBoxId).remove());
+      		miniroom = document.getElementById("miniroom");
+      		newDiv = document.createElement("div");
+      		newContent = document.createTextNode(comment);
+      		newDiv.appendChild(newContent);
+      		userDiv = document.getElementById(id);
+      		userRect = userDiv.getBoundingClientRect();
+      		newDiv.classList.add("sayBox");
+      		newDiv.id = sayBoxId;
+      		userDiv.appendChild(newDiv);
+      		newDiv.style.top = -newDiv.offsetHeight+"px";
+      		newDiv.style.left = 0 +"px";
+      	  	sleep(5000).then(() => document.getElementById(sayBoxId).remove());
         }
         
         function printChatBox(id,comment,type){
-           chatArea2 = document.getElementById("chatArea2");
-           chatBoxDiv = document.createElement("div");
-           newContent = document.createTextNode(comment);
-           chatDiv = document.createElement("div");
-           chatDiv.appendChild(newContent);
-           chatBoxDiv.appendChild(chatDiv);
-           if(id == localId){
-              chatDiv.classList.add("myChat");
-              chatBoxDiv.classList.add("myChatBox");
-           }
-           else{
-              chatDiv.classList.add("otherChat");
-              chatBoxDiv.classList.add("otherChatBox");
-           }
+        	chatArea2 = document.getElementById("chatArea2");
+        	chatBoxDiv = document.createElement("div");
+        	newContent = document.createTextNode(comment);
+        	chatDiv = document.createElement("div");
+        	chatDiv.appendChild(newContent);
+        	chatBoxDiv.appendChild(chatDiv);
+        	if(id == localId){
+        		chatDiv.classList.add("myChat");
+        		chatBoxDiv.classList.add("myChatBox");
+        	}
+        	else{
+        		chatDiv.classList.add("otherChat");
+        		chatBoxDiv.classList.add("otherChatBox");
+        	}
 
-           chatDiv.classList.add(type);
-           userNameDiv = document.createElement("div");
-           let today = new Date();
-          userNameContent = document.createTextNode(today.toLocaleString() + "  " + id);
-          
-          userNameDiv.appendChild(userNameContent);
-          userNameDiv.classList.add("chatName");
-          chatBoxDiv.appendChild(userNameDiv);
-          //
-           chatBoxDiv.classList.add("chatBox");
-           chatArea2.appendChild(chatBoxDiv);
-           chatArea2.scrollTop = chatArea2.scrollHeight;
+        	chatDiv.classList.add(type);
+        	userNameDiv = document.createElement("div");
+        	let today = new Date();
+    		userNameContent = document.createTextNode(today.toLocaleString() + "  " + id);
+    		
+    		userNameDiv.appendChild(userNameContent);
+    		userNameDiv.classList.add("chatName");
+    		chatBoxDiv.appendChild(userNameDiv);
+    		//
+        	chatBoxDiv.classList.add("chatBox");
+        	chatArea2.appendChild(chatBoxDiv);
+        	chatArea2.scrollTop = chatArea2.scrollHeight;
         }
         function sleep(ms) {
-             return new Promise((r) => setTimeout(r, ms));
-           }
+        	  return new Promise((r) => setTimeout(r, ms));
+        	}
         
         function disconnect(){
-           var message = "disconnect;" + localId;
-           location.href ="index.jsp";
-           ws.send(message);
-           ws.close();
+        	var message = "disconnect;" + localId;
+        	location.href ="index.jsp";
+        	ws.send(message);
+        	ws.close();
         }
-          window.addEventListener("beforeunload",disconnect);
+       	window.addEventListener("beforeunload",disconnect);
     </script>
 
 </head>
 <body>
-   <div class="container">
-      <div class="header">
-         <img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
-         <div class="settings">
-            <span></span> <a href="#">설정</a> <a href="#">로그아웃</a>
-         </div>
-      </div>
-      <!-- 큰 점선 테두리 상자 -->
-      <div class="dashed-box">
-         <!-- 테두리 없는 상자 -->
-         <div class="solid-box">
-            <div class="inner-box-1"></div>
-            <!-- 이미지가 박스 -->
-            <div class="image-box">
-               <img src="img/img1.png" alt="Image between boxes 1"
-                  class="between-image"> <img src="img/img1.png"-
-                  alt="Image between boxes 2" class="between-image">
-            </div>
-            <div id="chatBox" class="inner-box-2">
-               <jsp:include page="chat.jsp">
-                  <jsp:param value="<%=background%>" name="backgroundImg"/>
-               </jsp:include>
-            </div>
-            <div id="anotherBox" class="inner-box-2" style="display: none">
-            </div>
-            <div id="Box_miniroom_design" class ="inner-box-2" style="display: none" >
-               <jsp:include page="miniDesign.jsp"></jsp:include>
-            </div>
-            <div id="game" class ="inner-box-2" style="display: none" >
-            </div>
-			<div id="store" class="inner-box-2" style="display: none">
-				<jsp:include page="storeDesign.jsp"></jsp:include>
-			</div>            
-         </div>
-         <!-- 버튼 -->
-         <div class="button-container">
-            <button onclick="javascript:clickOpenBox('chatBox')" class="custom-button">홈</button>
-            <button class="custom-button">프로필</button>
-            <button onclick="javascript:clickOpenBox('Box_miniroom_design')" class="custom-button">미니룸</button>
-            <button class="custom-button">게시판</button>
-            <button class="custom-button">방명록</button>
-            <button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
-            <button class="custom-button">게임</button>
-            <button class="custom-button">음악</button>
-         </div>
+	<div class="container">
+		<div class="header">
+			<img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
+			<div class="settings">
+				<span></span> <a href="#">설정</a> <a href="#">로그아웃</a>
+			</div>
+		</div>
+		<!-- 큰 점선 테두리 상자 -->
+		<div class="dashed-box">
+			<!-- 테두리 없는 상자 -->
+			<div class="solid-box">
+				<div class="inner-box-1"></div>
+				<!-- 이미지가 박스 -->
+				<div class="image-box">
+					<img src="img/img1.png" alt="Image between boxes 1"
+						class="between-image"> <img src="img/img1.png"-
+						alt="Image between boxes 2" class="between-image">
+				</div>
+				<div id="chatBox" class="inner-box-2">
+					<jsp:include page="chat.jsp">
+						<jsp:param value="<%=background%>" name="backgroundImg"/>
+					</jsp:include>
+				</div>
+				<div id="anotherBox" class="inner-box-2" style="display: none">
+				</div>
+				<div id="Box_miniroom_design" class ="inner-box-2" style="display: none" >
+					<jsp:include page="miniDesign.jsp"></jsp:include>
+				</div>
+				<div id="game" class ="inner-box-2" style="display: none" >
+				</div>
+				<div id="store" class="inner-box-2" style="display: none">
+            		<jsp:include page="storeDesign.jsp"></jsp:include>
+			</div>
+			<!-- 버튼 -->
+			<div class="button-container">
+				<button onclick="javascript:clickOpenBox('chatBox')" class="custom-button">홈</button>
+				<button class="custom-button">프로필</button>
+				<button onclick="javascript:clickOpenBox('Box_miniroom_design')" class="custom-button">미니룸</button>
+				<button class="custom-button">게시판</button>
+				<button class="custom-button">방명록</button>
+				<button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
+				<button class="custom-button">게임</button>
+				<button class="custom-button">음악</button>
+			</div>
 
   
 
-      </div>
-   </div>
+		</div>
+	</div>
 </body>
 </html>
