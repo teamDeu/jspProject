@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>돌림판 게임</title>
+    <title>사다리게임</title>
     <style>
     	.wheel-container-wrapper {
             width: 700px; /* 감싸는 사각형의 크기 */
@@ -151,7 +151,7 @@
     <!-- div에 직접 style 적용 -->
     <div style="text-align: center; margin-top: 50px;">
         <div class="game-title">
-            <span>사다리 타기</span>
+            <span>사다리게임</span>
         </div>
 		
 		<div class="wheel-container-wrapper">
@@ -181,7 +181,24 @@
         </div>
     </div>
 	
+	<script>
+		const clickableBox = document.querySelector(".clickable-box");
+	    const gameRulesDetail = document.querySelector(".game-rules-detail");
+	    
+		// 네모 박스 클릭 시 룰 표시/숨기기 및 삼각형 회전 처리
+        clickableBox.addEventListener("click", () => {
+            // 룰 박스 표시/숨기기
+            if (gameRulesDetail.style.display === "none" || gameRulesDetail.style.display === "") {
+                gameRulesDetail.style.display = "block";
+            } else {
+                gameRulesDetail.style.display = "none";
+            }
 
+            // 삼각형 회전 처리
+            const triangle = document.querySelector(".triangle");
+            triangle.classList.toggle("rotate"); // rotate 클래스를 추가하거나 제거
+        });
+	</script>
     
 </body>
 </html>
