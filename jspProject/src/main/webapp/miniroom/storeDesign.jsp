@@ -196,13 +196,7 @@
             }
         }
 
-        // 페이지가 로드될 때 초기화
-        window.onload = function () {
-            const itemsContainer = document.getElementById('allItems');
-            items = Array.from(itemsContainer.children); // 모든 아이템을 배열로 저장
-            displayItems();
-            updatePagination();
-        };
+       
 
         // 탭 클릭 시 active 클래스 적용
         function clickOpenType(id, clickedTab) {
