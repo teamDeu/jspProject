@@ -286,7 +286,7 @@
 }
 
 .folder-input-container {
-    display: flex; /* 처음에는 숨겨져 있도록 설정 */
+    display: none; /* 처음에는 숨겨져 있도록 설정 */
     align-items: center; 
     width: 80%;
     padding: 5px;
