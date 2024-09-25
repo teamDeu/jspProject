@@ -224,7 +224,7 @@
             });
         }
 
-        // 페이지네이션 업데이트 함수
+     // 페이지네이션 업데이트 함수
         function updatePagination() {
             const totalPages = Math.ceil(items.length / itemsPerPage);
             const paginationContainer = document.querySelector('.pagination');
@@ -238,6 +238,15 @@
                 paginationContainer.appendChild(pageSpan);
             }
         }
+
+        // 페이지가 로드될 때 초기화
+        document.addEventListener('DOMContentLoaded', function () {
+    		const itemsContainer = document.getElementById('allItems');
+    		items = Array.from(itemsContainer.children); // 모든 아이템을 배열로 저장
+    		displayItems();
+    		updatePagination();
+});
+
 
        
 
