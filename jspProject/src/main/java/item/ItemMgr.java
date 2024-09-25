@@ -40,4 +40,5 @@ public class ItemMgr {
 		}
 		return vlist;
 	}
+	
 }
