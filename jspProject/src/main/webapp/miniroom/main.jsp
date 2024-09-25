@@ -101,6 +101,7 @@ function clickUser(event){
         var character = "<%=character%>"
         var url = "<%=url%>";
         var name = "<%=userBean.getUser_name()%>";
+        
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
             ws.onopen = function() {
@@ -280,6 +281,7 @@ function clickUser(event){
            ws.close();
         }
           window.addEventListener("beforeunload",disconnect);
+        
     </script>
 
 </head>

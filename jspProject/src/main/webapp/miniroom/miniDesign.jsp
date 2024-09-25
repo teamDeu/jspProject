@@ -193,6 +193,8 @@
 	}
 	function clickSaveBtn(){
 		document.frm.submit();
+		document.querySelector("#miniroom_background").src = document.querySelector(".miniroom_design_main_img").src;
+		document.querySelector("#<%=user_id%>").querySelector(".userCharacter").src = document.querySelector(".miniroom_design_main_character").src 
 	}
 	
 </script>
@@ -272,9 +274,7 @@
 	 function printBackground(index){
 		div = document.querySelector(".miniroom_design_background_div");
 		indexLeft = div.querySelector(".index_button_left");
-		console.log(indexLeft);
 		indexRight = div.querySelector(".index_button_right");
-		console.log(indexRight);
 		div.innerHTML = "";
 		div.appendChild(indexLeft);
 		div.appendChild(indexRight);
