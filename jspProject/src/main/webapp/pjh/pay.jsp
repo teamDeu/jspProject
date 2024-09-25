@@ -160,31 +160,13 @@
 
         // 결제 처리 함수
         function submitForm(cloverAmount, inputId) {
-            var form = document.createElement("form");
-            form.method = "POST";
-            form.action = "payProc.jsp"; // 결제 페이지로 POST 요청
-
+            frm = document.complete
             // 총 가격 계산
             var quantity = parseInt(document.getElementById(inputId).value);
             var totalPrice = cloverAmount * quantity;
-
-            // Form에 전송할 데이터 추가
-            var hiddenFields = [
-                { name: "cloverAmount", value: cloverAmount },
-                { name: "quantity", value: quantity },
-                { name: "totalPrice", value: totalPrice }
-            ];
-
-            hiddenFields.forEach(function (field) {
-                var input = document.createElement("input");
-                input.type = "hidden";
-                input.name = field.name;
-                input.value = field.value;
-                form.appendChild(input);
-            });
-
-            document.body.appendChild(form);
-            form.submit(); // Form 전송
+            frm.totalPrice.value = totalPrice;
+            frm.cloverAmount.value = cloverAmount*quantity;
+            frm.submit();
         }
     </script>
 
@@ -270,5 +252,9 @@
         </div>
     </div>
 </div>
+	<form name = "complete" method = "POST" action = "payProc.jsp">
+		<input type = "hidden" name ="totalPrice">
+		<input type = "hidden" name ="cloverAmount">
+	</form>
 </body>
 </html>
