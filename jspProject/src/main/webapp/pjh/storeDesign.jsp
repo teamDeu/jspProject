@@ -345,6 +345,48 @@ document.addEventListener('DOMContentLoaded', function () {
             // 선택된 아이템 컨테이너만 보이기
             openBox.style.display = "grid";
         }
+        
+        
+        function confirmPurchase(itemName, itemPrice, itemNum) {
+            console.log("itemPrice:", itemPrice);  // itemPrice 값 확인
+            const confirmed = confirm(`${itemName}을(를) ${itemPrice} 클로버로 구매하시겠습니까?`);
+            
+            if (confirmed) {
+                // 서버에 구매 요청을 보내는 함수 호출
+                purchaseItem(itemName, itemPrice, itemNum);
+            }
+        }
+
+
+        function purchaseItem(itemName, itemPrice, itemNum) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'purchaseItem.jsp', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            // 파라미터 값 디버깅
+            console.log("itemPrice:", itemPrice, "itemNum:", itemNum);  // itemPrice와 itemNum 확인
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        const responseText = xhr.responseText.trim();
+                        if (isNaN(responseText)) {
+                            alert(responseText); // 잔액 부족 등 메시지
+                        } else {
+                            alert('구매가 완료되었습니다!');
+                            document.querySelector('.clover-amount').textContent = `${responseText} 클로버`;
+                        }
+                    } else {
+                        alert('구매에 실패했습니다.');
+                    }
+                }
+            };
+
+            xhr.send(`itemName=${itemName}&itemPrice=${itemPrice}&itemNum=${itemNum}`);
+        }
+
+
+
     </script>
 </head>
 <div class="store">
@@ -386,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function () {
     for (int i = 0; i < Allvlist.size(); i++) {
         ItemBean bean = Allvlist.get(i);
     %>
-    <div class="allItems"> <!-- 전체 아이템 클래스 -->
+    <div class="allItems" onclick="confirmPurchase('<%=bean.getItem_name()%>', <%=bean.getItem_price()%>, <%=bean.getItem_num()%>)"> <!-- 전체 아이템 클래스 -->
         <jsp:include page="shopItem.jsp">
             <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
             <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -404,7 +446,7 @@ document.addEventListener('DOMContentLoaded', function () {
     for (int i = 0; i < Musicvlist.size(); i++) {
         ItemBean bean = Musicvlist.get(i);
     %>
-    <div class="musicItems"> <!-- 음악 아이템 클래스 -->
+    <div class="musicItems"onclick="confirmPurchase('<%=bean.getItem_name()%>', <%=bean.getItem_price()%>, <%=bean.getItem_num()%>)"> <!-- 음악 아이템 클래스 -->
         <jsp:include page="shopItem.jsp">
             <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
             <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -422,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function () {
     for (int i = 0; i < Charactervlist.size(); i++) {
         ItemBean bean = Charactervlist.get(i);
     %>
-    <div class="characterItems"> <!-- 캐릭터 아이템 클래스 -->
+    <div class="characterItems"onclick="confirmPurchase('<%=bean.getItem_name()%>', <%=bean.getItem_price()%>, <%=bean.getItem_num()%>)"> <!-- 캐릭터 아이템 클래스 -->
         <jsp:include page="shopItem.jsp">
             <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
             <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -440,7 +482,7 @@ document.addEventListener('DOMContentLoaded', function () {
     for (int i = 0; i < Backgroundvlist.size(); i++) {
         ItemBean bean = Backgroundvlist.get(i);
     %>
-    <div class="backgroundItems"> <!-- 배경 아이템 클래스 -->
+    <div class="backgroundItems"onclick="confirmPurchase('<%=bean.getItem_name()%>', <%=bean.getItem_price()%>, <%=bean.getItem_num()%>)"> <!-- 배경 아이템 클래스 -->
         <jsp:include page="shopItem.jsp">
             <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
             <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
