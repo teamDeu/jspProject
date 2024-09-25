@@ -16,8 +16,8 @@ boolean isUserHome = false;
 if (connect_id.equals(user_id))
 	isUserHome = true;
 
-Vector<FriendInfoBean> fInfoList = fMgr.getFriendList(connect_id);
-Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(connect_id);
+Vector<FriendInfoBean> fInfoList = fMgr.getFriendList(user_id);
+Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 %>
 <!DOCTYPE html>
 <html>
@@ -75,7 +75,8 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(connect_id);
 	position: absolute;
 	background: none;
 	border: none;
-	right: 0px;
+	right: 15px;
+	top:10px;
 }
 
 .main_profile_main_bottom {
@@ -151,10 +152,10 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(connect_id);
 	width: 100%;
 	object-fit: cover;
 }
-.
+
 .main_profile_friends_list_friendtype_btns {
-	position: relative;
 	display: flex;
+	position: relative;
 	gap: 2px;
 	left: 5px;
 }
@@ -169,7 +170,12 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(connect_id);
 	display: flex;
 }
 .main_profile_frinds_button_div{
-	
+	display:flex;
+}
+.main_profile_frinds_button_div button{
+	border-radius:1px;
+	background : none;
+	border : 1px solid #DCDCDC;
 }
 .main_profile_friendtype_btn:hover{
 	background-color: #C0E5AF;
@@ -197,7 +203,7 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(connect_id);
 	font-size: 18px;
 }
 
-.main_profile_frinds_list_div_header {
+.main_profile_friends_list_div_header {
 	display: flex;
 	gap: 3px;
 	justify-content: space-between;
@@ -218,9 +224,6 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(connect_id);
 			</div>
 			<div class="main_profile_comment">
 				<span style="font-size: 22px">후비적 후비적</span>
-				<button class="main_profile_alram">
-					<img class="main_profile_alram_img" src="./img/alram.png">
-				</button>
 			</div>
 			<div class="main_profile_main_bottom">
 				<%
@@ -249,8 +252,8 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(connect_id);
 			</div>
 			<div class="main_profile_friends_list_div">
 
-				<div class="main_profile_frinds_list_div_header">
-					<span><%=fInfoList.size()%>명</span>---------------------
+				<div class="main_profile_friends_list_div_header">
+					<span class="main_profile_friend_count">명</span>---------------------
 					<div class="main_profile_frinds_button_div">
 						<button onclick ="clickFriendListPrev()">
 							<img src="./img/left2.png">
@@ -276,6 +279,7 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(connect_id);
 						<jsp:param value="<%=image%>" name="profileImg" />
 						<jsp:param value="<%=bean.getUser_name()%>" name="profileName" />
 						<jsp:param value="<%=type %>" name = "type"/>
+						<jsp:param value="<%=bean.getUser_id() %>" name = "profileId"/>
 					</jsp:include>
 					<%
 					}
@@ -309,12 +313,14 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(connect_id);
 	function changeFriendType(event,friendType){
 		Array.from(document.querySelectorAll(".main_profile_friendtype_btn")).forEach((btn) => btn.style.backgroundColor = "#DCDCDC");
 		event.target.style.backgroundColor = "#C0E5AF";
+		
 		if(friendType == 1){
 			friend_items = friend_items_first;
 		}
 		else if(friendType == 2){
 			friend_items = friend_items_second;
 		}
+		document.querySelector(".main_profile_friend_count").innerText = friend_items.length + "명";
 		friend_currentPage = 1;
 		friend_displayItems();
 	}
@@ -333,6 +339,7 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(connect_id);
 		friend_items_first = Array.from(document.querySelectorAll('.friends_type_first'));
 		friend_items_second = Array.from(document.querySelectorAll('.friends_type_second'));
 		friend_items = friend_items_first;
+		document.querySelector(".main_profile_friend_count").innerText = friend_items.length + "명";
 		friend_displayItems();
 	})
 	</script>
