@@ -41,4 +41,90 @@ public class ItemMgr {
 		return vlist;
 	}
 	
+	public Vector<ItemBean> getMusicItems(){
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		Vector<ItemBean> vlist = new Vector<ItemBean>();
+		try {
+			con = pool.getConnection();
+			sql = "select * from item where item_type = '음악'";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				ItemBean bean =  new ItemBean();
+				bean.setItem_num(rs.getInt(1));
+				bean.setItem_name(rs.getString(2));
+				bean.setItem_image(rs.getString(3));
+				bean.setItem_type(rs.getString(4));
+				bean.setItem_price(rs.getInt(5));
+				bean.setItem_path(rs.getString(6));
+				vlist.add(bean);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return vlist;
+	}
+	
+	
+	public Vector<ItemBean> getCharacterItems(){
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		Vector<ItemBean> vlist = new Vector<ItemBean>();
+		try {
+			con = pool.getConnection();
+			sql = "select * from item where item_type = '캐릭터'";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				ItemBean bean =  new ItemBean();
+				bean.setItem_num(rs.getInt(1));
+				bean.setItem_name(rs.getString(2));
+				bean.setItem_image(rs.getString(3));
+				bean.setItem_type(rs.getString(4));
+				bean.setItem_price(rs.getInt(5));
+				bean.setItem_path(rs.getString(6));
+				vlist.add(bean);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return vlist;
+	}
+	public Vector<ItemBean> getBackgroundItems(){
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		Vector<ItemBean> vlist = new Vector<ItemBean>();
+		try {
+			con = pool.getConnection();
+			sql = "select * from item where item_type = '배경화면'";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				ItemBean bean =  new ItemBean();
+				bean.setItem_num(rs.getInt(1));
+				bean.setItem_name(rs.getString(2));
+				bean.setItem_image(rs.getString(3));
+				bean.setItem_type(rs.getString(4));
+				bean.setItem_price(rs.getInt(5));
+				bean.setItem_path(rs.getString(6));
+				vlist.add(bean);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return vlist;
+	}
 }

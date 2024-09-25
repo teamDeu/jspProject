@@ -6,7 +6,10 @@
 <%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
 <jsp:useBean id="mgr" class="item.ItemMgr" />
 <%
-Vector<ItemBean> vlist = mgr.getAllItems();
+Vector<ItemBean> Allvlist = mgr.getAllItems();
+Vector<ItemBean> Musicvlist = mgr.getMusicItems();
+Vector<ItemBean> Charactervlist = mgr.getCharacterItems();
+Vector<ItemBean> Backgroundvlist = mgr.getBackgroundItems();
 
 String user_id = (String) session.getAttribute("idKey");
 System.out.println(user_id);
@@ -326,8 +329,8 @@ try {
 		<!-- 전체상품목록 -->
 		<div id="allItems" class="items-container">
 			<%
-			for (int i = 0; i < vlist.size(); i++) {
-				ItemBean bean = vlist.get(i);
+			for (int i = 0; i < Allvlist.size(); i++) {
+				ItemBean bean = Allvlist.get(i);
 			%>
 			<jsp:include page="shopItem.jsp">
 				<jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
@@ -340,96 +343,49 @@ try {
 		</div>
 
 		<!-- 음악 상품 목록 -->
-		<div id="musicItems" class="items-container" style="display: none;">
-			<div class="item">
-				<img src="img/눈의꽃.jfif" alt="박효신">
-				<div class="item-title">박효신 - 꽃</div>
-				<div class="item-price">
-					<img src="./img/clover_icon.png" alt="클로버"> 5개
-				</div>
-			</div>
-			<div class="item">
-				<img src="img/하루하루.jfif" alt="BIGBANG">
-				<div class="item-title">BIGBANG - 하루 하루</div>
-				<div class="item-price">
-					<img src="./img/clover_icon.png" alt="클로버"> 5개
-				</div>
-			</div>
-			<div class="item">
-				<img src="img/프리스타일.jfif" alt="프리스타일">
-				<div class="item-title">프리스타일 - Y</div>
-				<div class="item-price">
-					<img src="./img/clover_icon.png" alt="클로버"> 5개
-				</div>
-			</div>
-			<div class="item">
-				<img src="img/박봄.jfif" alt="박봄">
-				<div class="item-title">박봄 - YOU AND I</div>
-				<div class="item-price">
-					<img src="./img/clover_icon.png" alt="클로버"> 5개
-				</div>
-			</div>
-			<div class="item">
-				<img src="img/죽일놈.jfif" alt="다이나믹듀오">
-				<div class="item-title">다이나믹듀오 - 죽일놈</div>
-				<div class="item-price">
-					<img src="./img/clover_icon.png" alt="클로버"> 5개
-				</div>
-			</div>
-			<div class="item">
-				<img src="img/마법의성.jfif" alt="MC 스나이퍼">
-				<div class="item-title">MC 스나이퍼 - 마법의 성</div>
-				<div class="item-price">
-					<img src="./img/clover_icon.png" alt="클로버"> 5개
-				</div>
-			</div>
+		<div id="musicItems" class="items-container" style = "display : none">
+		<%
+			for (int i = 0; i < Musicvlist.size(); i++) {
+				ItemBean bean = Musicvlist.get(i);
+			%>
+			<jsp:include page="shopItem.jsp">
+				<jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
+				<jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
+				<jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
+			</jsp:include>
+			<%
+			}
+			%>
 		</div>
-
 		<!-- 캐릭터 상품 목록 -->
-		<div id="characterItems" class="items-container"
-			style="display: none;">
-			<div class="item">
-				<img src="img/포차코.jfif" alt="포차코">
-				<div class="item-title">포차코</div>
-				<div class="item-price">
-					<img src="./img/clover_icon.png" alt="클로버"> 7개
-				</div>
-			</div>
-			<div class="item">
-				<img src="img/마미미.png" alt="마미미">
-				<div class="item-title">마미미</div>
-				<div class="item-price">
-					<img src="./img/clover_icon.png" alt="클로버"> 5개
-				</div>
-			</div>
+		<div id="characterItems" class="items-container" style = "display : none">
+		<%
+			for (int i = 0; i < Charactervlist.size(); i++) {
+				ItemBean bean = Charactervlist.get(i);
+			%>
+			<jsp:include page="shopItem.jsp">
+				<jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
+				<jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
+				<jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
+			</jsp:include>
+			<% } %>
 		</div>
 
 		<!-- 배경 상품 목록 -->
-		<div id="backgroundItems" class="items-container"
-			style="display: none;">
-			<div class="item">
-				<img src="img/핑크배경.png" alt="배경 1">
-				<div class="item-title">배경 1</div>
-				<div class="item-price">
-					<img src="./img/clover_icon.png" alt="클로버"> 5개
-				</div>
-			</div>
-			<div class="item">
-				<img src="img/backgroundImg.png" alt="배경 2">
-				<div class="item-title">배경 2</div>
-				<div class="item-price">
-					<img src="./img/clover_icon.png" alt="클로버"> 5개
-				</div>
-			</div>
-			<div class="item">
-				<img src="img/backgroundImg22.png" alt="배경 3">
-				<div class="item-title">배경 3</div>
-				<div class="item-price">
-					<img src="./img/clover_icon.png" alt="클로버"> 5개
-				</div>
-			</div>
+		<div id="backgroundItems" class="items-container " 	style = "display : none">
+		<%
+			for (int i = 0; i < Backgroundvlist.size(); i++) {
+				ItemBean bean = Backgroundvlist.get(i);
+			%>
+			<jsp:include page="shopItem.jsp">
+				<jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
+				<jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
+				<jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
+			</jsp:include>
+			<% 
+			}
+			%>
 		</div>
-
 		<!-- 페이지네이션 -->
 		<div class="pagination">
 			<!-- 페이지 번호가 여기에 표시됩니다 -->
