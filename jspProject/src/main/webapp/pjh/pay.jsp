@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*, pjh.DBConnectionMgr, pjh.MemberBean" %>
+<%@ page import="pjh.MemberMgr" %>
 
 <%
 		String user_id = (String) session.getAttribute("idKey");
@@ -199,7 +200,7 @@
         <%-- Item 1 --%>
         <div class="item">
             <div class="clover-count">🍀 10개</div>
-            <div class="price" id="price1" data-base-price="1">1원</div>
+            <div class="price" id="price1" data-base-price="10">10원</div>
             <div class="quantity-selector">
                 <button onclick="decrement('quantity1', 'price1')">-</button>
                 <input type="text" id="quantity1" value="1" readonly>
@@ -208,7 +209,7 @@
             <button class="pay-btn" onclick="submitForm(10, 'quantity1')">결제하기</button>
         </div>
 
-        <%-- Item 2 --%>
+        <%-- Item 2 --%>	
         <div class="item">
             <div class="clover-count">🍀 100개</div>
             <div class="price" id="price2" data-base-price="100">100원</div>

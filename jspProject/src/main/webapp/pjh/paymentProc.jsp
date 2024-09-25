@@ -1,61 +1,32 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="pjh.DBConnectionMgr, java.sql.*" %>
+<%@ page import="pjh.MemberMgr" %>
+
 <%
-    String email = request.getParameter("email");
+    // 결제 페이지에서 전달된 데이터를 받아 처리
+    String userId = (String) session.getAttribute("idKey");  // 세션에서 사용자 ID 가져오기
     String cloverAmountStr = request.getParameter("cloverAmount");
-    int cloverAmount = Integer.parseInt(cloverAmountStr); // 충전할 클로버 양
+    String quantityStr = request.getParameter("quantity");
 
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
-    try {
-        conn = DBConnectionMgr.getInstance().getConnection();
-        String sql = "UPDATE user SET user_clover = ? WHERE user_email = ?";
-        pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, cloverAmount);
-        pstmt.setString(2, email);
-        pstmt.executeUpdate();
-        out.print("SUCCESS");  // 이 부분이 AJAX에서 'SUCCESS'로 인식될 수 있어야 합니다.
-    } catch (Exception e) {
-        e.printStackTrace();
-        out.print("ERROR");
-    } finally {
-        if (pstmt != null) pstmt.close();
-        if (conn != null) conn.close();
+    // null 값이 전달될 경우 기본값 설정
+    if (cloverAmountStr == null || cloverAmountStr.isEmpty()) {
+        cloverAmountStr = "0";
     }
-    
-    try {
-        DBConnectionMgr dbMgr = DBConnectionMgr.getInstance();
-        conn = dbMgr.getConnection();
+    if (quantityStr == null || quantityStr.isEmpty()) {
+        quantityStr = "0";
+    }
 
-        // 사용자의 현재 클로버 수 조회
-        String selectSql = "SELECT user_clover FROM user WHERE user_email = ?";
-        pstmt = conn.prepareStatement(selectSql);
-        pstmt.setString(1, email);
-        rs = pstmt.executeQuery();
+    // 정수로 변환
+    int cloverAmount = Integer.parseInt(cloverAmountStr);
+    int quantity = Integer.parseInt(quantityStr);
+    int totalClover = cloverAmount * quantity;  // 클로버 수량 계산
 
-        int currentClover = 0;
-        if (rs.next()) {
-            currentClover = rs.getInt("user_clover");
-        }
+    // DB에 클로버 수량 업데이트
+    MemberMgr memberMgr = new MemberMgr();
+    boolean updateSuccess = memberMgr.updateCloverBalance(userId, totalClover);  // 클로버 잔액 업데이트
 
-        // 클로버 수 업데이트
-        int newClover = currentClover + cloverAmount;
-        String updateSql = "UPDATE user SET user_clover = ? WHERE user_email = ?";
-        pstmt = conn.prepareStatement(updateSql);
-        pstmt.setInt(1, newClover);
-        pstmt.setString(2, email);
-        pstmt.executeUpdate();
-
-        // DB 업데이트 성공 시 'SUCCESS' 응답 전송
-        out.print("SUCCESS");
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        out.print("ERROR");
-    } finally {
-        if (rs != null) rs.close();
-        if (pstmt != null) pstmt.close();
-        if (conn != null) conn.close();
+    if (updateSuccess) {
+        out.print("SUCCESS");  // 결제 성공
+    } else {
+        out.print("ERROR: DB 업데이트에 실패했습니다.");  // 결제 실패
     }
 %>

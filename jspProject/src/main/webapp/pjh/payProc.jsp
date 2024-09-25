@@ -11,30 +11,10 @@
     String stotalPrice = request.getParameter("totalPrice");
     int totalPrice = Integer.parseInt(stotalPrice);
 
-    // 클로버 충전 수량 계산 (100원당 1클로버)
+    // 클로버 충전 수량 계산 
     int cloverAmount = totalPrice / 100; 
     
     // DB 연동을 위해 DBConnectionMgr 사용
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-
-    try {
-        // 결제 성공 후 클로버 수 업데이트 및 DB 저장 로직 추가
-        DBConnectionMgr dbMgr = DBConnectionMgr.getInstance();
-        conn = dbMgr.getConnection();
-
-        // 현재 사용자의 클로버 수 업데이트
-        String sql = "UPDATE user SET user_clover = user_clover + ? WHERE user_email = ?";
-        pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, totalPrice / 100); // 결제 금액에 따른 클로버 양 계산 (100원당 1개)
-        pstmt.setString(2, email);
-        pstmt.executeUpdate();
-    } catch (Exception e) {
-        e.printStackTrace();
-    } finally {
-        if (pstmt != null) pstmt.close();
-        if (conn != null) conn.close();
-    }
 %>
 
 
@@ -51,8 +31,6 @@
     $(function(){
         var IMP = window.IMP; 
         IMP.init('iamport'); // 가맹점 식별코드 사용
-
-        var msg;
 
         IMP.request_pay({
             pg: 'inicis', 
@@ -76,7 +54,7 @@
             	        merchant_uid: rsp.merchant_uid,
             	        apply_num: rsp.apply_num,
             	        paid_amount: rsp.paid_amount,
-            	        cloverAmount: <%= cloverAmount %>,
+            	        cloverAmount: <%= cloverAmount %>,  // 클로버 양
             	        email: '<%= email %>'
             	    },
             	    success: function(response) {
@@ -93,8 +71,7 @@
             	    }
             	});
             } else {
-                msg = '결제에 실패하였습니다. 에러 내용: ' + rsp.error_msg;
-                alert(msg);
+                alert('결제에 실패하였습니다. 에러 내용: ' + rsp.error_msg);
                 location.href = "<%= request.getContextPath() %>/pjh/pay.jsp";
             }
         });
