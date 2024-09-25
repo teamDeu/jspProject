@@ -1,8 +1,12 @@
+<%@page import="friend.FriendRequestBean"%>
+<%@page import="friend.FriendInfoBean"%>
+<%@page import="java.util.Vector"%>
 <%@page import="pjh.MemberBean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <jsp:useBean id="fMgr" class ="friend.FriendMgr"/>
 <jsp:useBean id="uMgr" class ="pjh.MemberMgr"/>
+<jsp:useBean id="iMgr" class ="miniroom.ItemMgr"></jsp:useBean>
 <%
 	String connect_id = (String)session.getAttribute("idKey");
 	String user_id = request.getParameter("url");
@@ -10,6 +14,9 @@
 	
 	boolean isUserHome = false;
 	if(connect_id.equals(user_id)) isUserHome = true;
+	
+	Vector<FriendInfoBean> fInfoList = fMgr.getFriendList(connect_id);
+	Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(connect_id);
 %>
 <!DOCTYPE html>
 <html>
@@ -115,6 +122,7 @@
 }
 .main_profile_friends_list{
 	display:flex;
+	align-items:center;
 	gap : 8px;
 	width : 100%;
 }
@@ -123,6 +131,7 @@
 	display : flex;
 	flex-direction : column;
 	align-items : center;
+	justify-content : space-between;
 }
 .main_profile_friends{
 	width:100%;
@@ -207,25 +216,30 @@
 			<div class ="main_profile_friends_list_div">
 				
 				<div class ="main_profile_frinds_list_div_header">
-					<span>13명</span>---------------------
+					<span><%=fInfoList.size() %>명</span>---------------------
 					<div class ="main_profile_frinds_button_div">
 					<button><img src="./img/left2.png"></button>
 					<button><img src="./img/right2.png"></button>
 					</div>
 				</div>
 				<div class ="main_profile_friends_list">
-					<div class ="main_profile_friends_div">
-						<img class ="main_profile_friends" src="./img/character1.png"> <span>신짱구</span>
-					</div>
-					<div class ="main_profile_friends_div">
-						<img class ="main_profile_friends" src="./img/character1.png"> <span>신짱구</span>
-					</div>
-					<div class ="main_profile_friends_div">
-						<img class ="main_profile_friends" src="./img/character1.png"> <span>신짱구</span>
-					</div>
-					<div class ="main_profile_friends_div">
-						<img class ="main_profile_friends" src="./img/character1.png"> <span>신짱구</span>
-					</div>
+				<%
+					for(int i = 0 ; i < fInfoList.size();i++){
+						FriendInfoBean fInfoBean = fInfoList.get(i);
+						String friendId = fInfoBean.getUser_id1();
+						if(friendId.equals(user_id)){
+							friendId = fInfoBean.getUser_id2();
+						}
+						MemberBean bean = uMgr.getMember(friendId);
+						String image = iMgr.getUsingCharacter(friendId).getItem_path();
+				%>
+					<jsp:include page="friendComponent.jsp">
+						<jsp:param value="<%=image %>" name="profileImg"/>
+						<jsp:param value="<%=bean.getUser_name() %>" name="profileName"/>
+					</jsp:include>
+				<%
+					}
+				%>
 				</div>
 			</div>
 		</div>

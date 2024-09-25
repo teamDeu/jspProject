@@ -22,7 +22,7 @@
 	  // 세션에 사용자 정보 저장
 	  session.setAttribute("loggedInUser", bean);  // 'loggedInUser'로 세션에 저장
 	  
-	  href ="../pjh/main.jsp?url="+user_id;
+	  href ="../miniroom/main.jsp?url="+user_id;
 	
 	} else if (result == 1) {  // 비밀번호 불일치
 	  msg = "비밀번호가 일치하지 않습니다.";
