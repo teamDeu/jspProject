@@ -78,6 +78,7 @@ function loadContent(url) {
     xhr.open("GET", url, true);
     xhr.send();
 }
+
 function clickOpenBox(id){
    openBox = document.getElementById(id);
    anotherBox = document.querySelectorAll(".inner-box-2");
@@ -91,6 +92,7 @@ function clickUser(event){
 }
 </script>
 <!-- 웹소켓통신 자바스크립트 -->
+
 <script type="text/javascript">
         var ws;
         var sayBoxId = 0;
@@ -99,6 +101,7 @@ function clickUser(event){
         var character = "<%=character%>"
         var url = "<%=url%>";
         var name = "<%=userBean.getUser_name()%>";
+        
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
             ws.onopen = function() {
@@ -108,7 +111,6 @@ function clickUser(event){
                 message = "connect;"+ localId +";" + character +";" + url +";" + name;
                 ws.send(message);
             };
-
             ws.onmessage = function(event) {
                  rawdata = event.data.split(";");
                  command = rawdata[0];
@@ -154,7 +156,6 @@ function clickUser(event){
             if (message.trim() !== "") {
                 ws.send(message);
                 document.getElementById("messageInput").value = '';
-                
             }
         }
         
@@ -239,16 +240,19 @@ function clickUser(event){
         }
         
         function printChatBox(id,comment,type,name){
+        	
            chatArea2 = document.getElementById("chatArea2");
            chatBoxDiv = document.createElement("div");
            newContent = document.createTextNode(comment);
            chatDiv = document.createElement("div");
            chatDiv.appendChild(newContent);
            chatBoxDiv.appendChild(chatDiv);
+           
            if(id == localId){
               chatDiv.classList.add("myChat");
               chatBoxDiv.classList.add("myChatBox");
            }
+           
            else{
               chatDiv.classList.add("otherChat");
               chatBoxDiv.classList.add("otherChatBox");
@@ -258,7 +262,6 @@ function clickUser(event){
            userNameDiv = document.createElement("div");
            let today = new Date();
           userNameContent = document.createTextNode(today.toLocaleString() + "  " + name);
-          
           userNameDiv.appendChild(userNameContent);
           userNameDiv.classList.add("chatName");
           chatBoxDiv.appendChild(userNameDiv);
@@ -278,6 +281,7 @@ function clickUser(event){
            ws.close();
         }
           window.addEventListener("beforeunload",disconnect);
+        
     </script>
 
 </head>
@@ -294,7 +298,11 @@ function clickUser(event){
       <div class="dashed-box">
          <!-- 테두리 없는 상자 -->
          <div class="solid-box">
-            <div class="inner-box-1"></div>
+            <div class="inner-box-1">
+            	<jsp:include page="profile.jsp">
+            		<jsp:param value='<%=url %>' name="url"/>
+            	</jsp:include>
+            </div>
             <!-- 이미지가 박스 -->
             <div class="image-box">
                <img src="img/img1.png" alt="Image between boxes 1"

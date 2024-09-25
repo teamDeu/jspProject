@@ -1,22 +1,46 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*, pjh.DBConnectionMgr, pjh.MemberBean" %>
+<%@ page import="pjh.MemberMgr" %>
 
 <%
-    // 로그인된 사용자 정보 가져오기 (세션에서)
-    MemberBean member = (MemberBean) session.getAttribute("loggedInUser");
+		String user_id = (String) session.getAttribute("idKey");
+		System.out.println(user_id);
+		// 클로버 잔액을 가져오기 위한 변수
+		int user_clover = 0;
+		DBConnectionMgr pool = null;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 
-    int userClover = 0; // 기본 클로버 값
-    String userId = "";
-
-    // 세션에서 사용자 정보가 존재하는 경우
-    if (member != null) {
-        userClover = member.getUser_clover(); // 사용자의 클로버 값을 가져옴
-        userId = member.getUser_id();  // 사용자 ID도 가져옴
-    } else {
-        // 사용자 정보가 없으면 로그인 페이지로 이동
-        response.sendRedirect("login.jsp");
-        return;
-    }
+			try {
+			    if (user_id != null) {
+			        pool = DBConnectionMgr.getInstance();
+			        conn = pool.getConnection();  // Connection 가져오기
+			        
+			        if (conn != null) {
+			            String sql = "SELECT user_clover FROM user WHERE user_id = ?";
+			            pstmt = conn.prepareStatement(sql);
+			            pstmt.setString(1, user_id);
+			            rs = pstmt.executeQuery();
+			
+			            if (rs.next()) {
+			                user_clover = rs.getInt("user_clover");
+			            }
+			        } else {
+			            throw new Exception("DB 연결에 실패하였습니다.");
+			        }
+			    }
+			} catch (Exception e) {
+			    e.printStackTrace(); // 오류 로그 출력
+			} finally {
+			    try {
+			        if (rs != null) rs.close();
+			        if (pstmt != null) pstmt.close();
+			        if (conn != null) pool.freeConnection(conn);  // Connection 반환
+			    } catch (SQLException e) {
+			        e.printStackTrace();  // 오류 로그 출력
+			    }
+			}
 %>
 
 <!DOCTYPE html>
@@ -136,35 +160,13 @@
 
         // 결제 처리 함수
         function submitForm(cloverAmount, inputId) {
-            var form = document.createElement("form");
-            form.method = "POST";
-            form.action = "pay.jsp"; // 결제 페이지로 POST 요청
-
+            frm = document.complete
             // 총 가격 계산
             var quantity = parseInt(document.getElementById(inputId).value);
             var totalPrice = cloverAmount * quantity;
-
-            // 세션에서 user_id 가져오기
-            var userId = "<%= userId %>";
-
-            // Form에 전송할 데이터 추가
-            var hiddenFields = [
-                { name: "cloverAmount", value: cloverAmount },
-                { name: "quantity", value: quantity },
-                { name: "totalPrice", value: totalPrice },
-                { name: "user_id", value: userId }  // 사용자 아이디 추가
-            ];
-
-            hiddenFields.forEach(function (field) {
-                var input = document.createElement("input");
-                input.type = "hidden";
-                input.name = field.name;
-                input.value = field.value;
-                form.appendChild(input);
-            });
-
-            document.body.appendChild(form);
-            form.submit(); // Form 전송
+            frm.totalPrice.value = totalPrice;
+            frm.cloverAmount.value = cloverAmount*quantity;
+            frm.submit();
         }
     </script>
 
@@ -173,7 +175,7 @@
 <div class="container">
     <div class="header">
         <div class="recharge-title">클로버 충전</div> 
-        <div class="balance">🍀 <%= userClover %></div> <!-- DB에서 가져온 클로버 잔액 표시 -->
+        <div class="balance">🍀 <%= user_clover %></div> <!-- DB에서 가져온 클로버 잔액 표시 -->
     </div>
 
     <div class="item-grid">
@@ -189,7 +191,7 @@
             <button class="pay-btn" onclick="submitForm(10, 'quantity1')">결제하기</button>
         </div>
 
-        <%-- Item 2 --%>
+        <%-- Item 2 --%>	
         <div class="item">
             <div class="clover-count">🍀 100개</div>
             <div class="price" id="price2" data-base-price="100">100원</div>
@@ -250,5 +252,9 @@
         </div>
     </div>
 </div>
+	<form name = "complete" method = "POST" action = "payProc.jsp">
+		<input type = "hidden" name ="totalPrice">
+		<input type = "hidden" name ="cloverAmount">
+	</form>
 </body>
 </html>
