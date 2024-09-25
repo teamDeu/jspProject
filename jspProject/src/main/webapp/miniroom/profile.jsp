@@ -62,6 +62,8 @@
 
 .main_profile_alram {
 	position: absolute;
+	background : none;
+	border:none;
 	right: 0px;
 }
 
@@ -144,6 +146,29 @@
 .main_profile_friends_list_friendtype_btns button:hover{
 	background-color:#C0E5AF;
 }
+.main_profile_alram_img{
+	width:100%;
+	object-fit:cover;
+}
+.main_profile_setting_button{
+	display:flex;
+	align-items:center;
+	background:none;
+	border:none;
+	gap:5px;
+	font-size:18px;
+}
+.main_profile_setting_button_img{
+	width:10px;
+}
+.main_profile_username{
+	font-size:18px;
+}
+.main_profile_frinds_list_div_header{
+	display:flex;
+	gap: 3px;
+	justify-content : space-between;
+}
 </style>
 </head>
 <body>
@@ -158,14 +183,14 @@
 				<img class="main_profile_img" src="./img/character1.png">
 			</div>
 			<div class="main_profile_comment">
-				<span style="font-size: 18px">후비적 후비적</span>
-				<button class="main_profile_alram">알람</button>
+				<span style="font-size: 22px">후비적 후비적</span>
+				<button class="main_profile_alram"><img class ="main_profile_alram_img" src = "./img/alram.png"></button>
 			</div>
 			<div class="main_profile_main_bottom">
 				<% if(isUserHome){ %>
-				<button>프로필 설정</button>
+				<button class ="main_profile_setting_button"><img class ="main_profile_setting_button_img" src="./img/profileSetting.png">프로필 설정</button>
 				<%} %>
-				<span><%=user.getUser_name()%></span>
+				<span class ="main_profile_username"><%=user.getUser_name()%></span>
 			</div>
 		</div>
 		<hr width="100%" color="#BAB9AA" style="margin: 10px 0px">
@@ -181,10 +206,12 @@
 			</div>
 			<div class ="main_profile_friends_list_div">
 				
-				<div>
-					<span>13명</span>-----------------------
-					<button><</button>
-					<button>></button>
+				<div class ="main_profile_frinds_list_div_header">
+					<span>13명</span>---------------------
+					<div class ="main_profile_frinds_button_div">
+					<button><img src="./img/left2.png"></button>
+					<button><img src="./img/right2.png"></button>
+					</div>
 				</div>
 				<div class ="main_profile_friends_list">
 					<div class ="main_profile_friends_div">
