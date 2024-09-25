@@ -221,53 +221,106 @@ try {
 </style>
 
 <script type="text/javascript">
-        const itemsPerPage = 8; // 페이지당 8개 아이템
-        let currentPage = 1; // 현재 페이지
-        let items = []; // 모든 아이템을 담을 배열
 
-        // 페이지를 바꾸는 함수
-        function changePage(page) {
-            currentPage = page;
-            displayItems();
-            updatePagination();
-        }
+const itemsPerPage = 8; // 페이지당 8개 아이템
+let currentPage = 1; // 현재 페이지
+let items = []; // 현재 선택된 카테고리의 아이템들
+let itemsAll = []; // 전체 아이템 배열
+let itemsMusic = []; // 음악 아이템 배열
+let itemsCharacter = []; // 캐릭터 아이템 배열
+let itemsBackground = []; // 배경 아이템 배열
 
-        // 아이템을 보여주는 함수
-        function displayItems() {
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const visibleItems = items.slice(start, end);
+// 카테고리 타입 변경 시 호출되는 함수
+function changeItemType(event, itemType) {
+    // 모든 탭의 active 클래스 제거
+    document.querySelectorAll('.nav-tabs li').forEach(tab => tab.classList.remove('active'));
+    // 클릭된 탭에 active 클래스 추가
+    event.target.classList.add('active');
+    // 선택된 카테고리에 따라 아이템 설정
+    if (itemType === 'all') {
+        items = itemsAll;
+    } else if (itemType === 'music') {
+        items = itemsMusic;
+    } else if (itemType === 'character') {
+        items = itemsCharacter;
+    } else if (itemType === 'background') {
+        items = itemsBackground;
+    }
+    
+    // 페이지 초기화
+    currentPage = 1;
+    displayItems();
+}
 
-            const itemsContainer = document.getElementById('allItems');
-            itemsContainer.innerHTML = ''; // 기존 아이템 제거
+// 페이지를 변경하는 함수
+function changePage(page) {
+    currentPage = page;
+    displayItems();
+}
 
-            visibleItems.forEach(item => {
-                itemsContainer.appendChild(item);
-            });
-        }
+// 다음 페이지로 이동하는 함수
+function clickNext() {
+    if (items.length > currentPage * itemsPerPage) {
+        changePage(currentPage + 1);
+    }
+}
 
-     // 페이지네이션 업데이트 함수
-        function updatePagination() {
-            const totalPages = Math.ceil(items.length / itemsPerPage);
-            const paginationContainer = document.querySelector('.pagination');
-            paginationContainer.innerHTML = ''; // 기존 페이지네이션 제거
+// 이전 페이지로 이동하는 함수
+function clickPrev() {
+    if (currentPage > 1) {
+        changePage(currentPage - 1);
+    }
+}
 
-            for (let i = 1; i <= totalPages; i++) {
-                const pageSpan = document.createElement('span');
-                pageSpan.textContent = i;
-                pageSpan.classList.toggle('active', i === currentPage);
-                pageSpan.onclick = () => changePage(i);
-                paginationContainer.appendChild(pageSpan);
-            }
-        }
+// 아이템을 화면에 보여주는 함수
+function displayItems() {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    console.log(start,end);
+    const visibleItems = items.slice(start, end);
+    const itemsContainer = document.querySelector('.items-container'); // 아이템을 넣을 컨테이너
+    itemsContainer.innerHTML = ''; // 기존 아이템 제거
 
-        // 페이지가 로드될 때 초기화
-        document.addEventListener('DOMContentLoaded', function () {
-    		const itemsContainer = document.getElementById('allItems');
-    		items = Array.from(itemsContainer.children); // 모든 아이템을 배열로 저장
-    		displayItems();
-    		updatePagination();
+    // 선택된 아이템들을 화면에 추가
+    visibleItems.forEach(item => {
+        itemsContainer.appendChild(item);
+    });
+
+    // 페이지네이션 업데이트
+    updatePagination();
+}
+
+// 페이지네이션 업데이트 함수
+function updatePagination() {
+    const totalPages = Math.ceil(items.length / itemsPerPage);
+    const paginationContainer = document.querySelector('.pagination');
+    paginationContainer.innerHTML = ''; // 기존 페이지네이션 제거
+
+    for (let i = 1; i <= totalPages; i++) {
+        const pageSpan = document.createElement('span');
+        pageSpan.textContent = i;
+        pageSpan.classList.toggle('active', i === currentPage); // 현재 페이지 강조
+        pageSpan.onclick = () => changePage(i);
+        paginationContainer.appendChild(pageSpan);
+    }
+}
+
+// DOM이 로드되면 초기화
+document.addEventListener('DOMContentLoaded', function () {
+    itemsAll = Array.from(document.querySelectorAll('.allItems')); // 전체 아이템
+    itemsMusic = Array.from(document.querySelectorAll('.musicItems')); // 음악 아이템
+    itemsCharacter = Array.from(document.querySelectorAll('.characterItems')); // 캐릭터 아이템
+    itemsBackground = Array.from(document.querySelectorAll('.backgroundItems')); // 배경 아이템
+
+    // 기본적으로 전체 아이템을 선택하고 표시
+    items = itemsAll;
+    displayItems();
 });
+
+
+        
+        
+        
 
 
        
@@ -309,10 +362,11 @@ try {
 
 		<!-- 카테고리 탭 -->
 		<ul class="nav-tabs">
-			<li onclick="clickOpenType('allItems', this)" class="active">전체</li>
-			<li onclick="clickOpenType('musicItems', this)">음악</li>
-			<li onclick="clickOpenType('characterItems', this)">캐릭터</li>
-			<li onclick="clickOpenType('backgroundItems', this)">배경</li>
+			<li onclick="changeItemType(event, 'all')" class="active">전체</li>
+			<li onclick="changeItemType(event, 'music')">음악</li>
+			<li onclick="changeItemType(event, 'character')">캐릭터</li>
+			<li onclick="changeItemType(event, 'background')">배경</li>
+			
 		</ul>
 
 		<!-- 인기순, 가격순 및 클로버 충전 -->
@@ -326,70 +380,80 @@ try {
 			</div>
 		</div>
 
-		<!-- 전체상품목록 -->
-		<div id="allItems" class="items-container">
-			<%
-			for (int i = 0; i < Allvlist.size(); i++) {
-				ItemBean bean = Allvlist.get(i);
-			%>
-			<jsp:include page="shopItem.jsp">
-				<jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
-				<jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
-				<jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
-			</jsp:include>
-			<%
-			}
-			%>
-		</div>
+		<!-- 전체 상품 목록 -->
+<div id="allItems" class="items-container">
+    <%
+    for (int i = 0; i < Allvlist.size(); i++) {
+        ItemBean bean = Allvlist.get(i);
+    %>
+    <div class="allItems"> <!-- 전체 아이템 클래스 -->
+        <jsp:include page="shopItem.jsp">
+            <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
+            <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
+            <jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
+        </jsp:include>
+    </div>
+    <%
+    }
+    %>
+</div>
 
-		<!-- 음악 상품 목록 -->
-		<div id="musicItems" class="items-container" style = "display : none">
-		<%
-			for (int i = 0; i < Musicvlist.size(); i++) {
-				ItemBean bean = Musicvlist.get(i);
-			%>
-			<jsp:include page="shopItem.jsp">
-				<jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
-				<jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
-				<jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
-			</jsp:include>
-			<%
-			}
-			%>
-		</div>
-		<!-- 캐릭터 상품 목록 -->
-		<div id="characterItems" class="items-container" style = "display : none">
-		<%
-			for (int i = 0; i < Charactervlist.size(); i++) {
-				ItemBean bean = Charactervlist.get(i);
-			%>
-			<jsp:include page="shopItem.jsp">
-				<jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
-				<jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
-				<jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
-			</jsp:include>
-			<% } %>
-		</div>
+<!-- 음악 상품 목록 -->
+<div id="musicItems" class="items-container" style="display:none;">
+    <%
+    for (int i = 0; i < Musicvlist.size(); i++) {
+        ItemBean bean = Musicvlist.get(i);
+    %>
+    <div class="musicItems"> <!-- 음악 아이템 클래스 -->
+        <jsp:include page="shopItem.jsp">
+            <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
+            <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
+            <jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
+        </jsp:include>
+    </div>
+    <%
+    }
+    %>
+</div>
 
-		<!-- 배경 상품 목록 -->
-		<div id="backgroundItems" class="items-container " 	style = "display : none">
-		<%
-			for (int i = 0; i < Backgroundvlist.size(); i++) {
-				ItemBean bean = Backgroundvlist.get(i);
-			%>
-			<jsp:include page="shopItem.jsp">
-				<jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
-				<jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
-				<jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
-			</jsp:include>
-			<% 
-			}
-			%>
-		</div>
+<!-- 캐릭터 상품 목록 -->
+<div id="characterItems" class="items-container" style="display:none;">
+    <%
+    for (int i = 0; i < Charactervlist.size(); i++) {
+        ItemBean bean = Charactervlist.get(i);
+    %>
+    <div class="characterItems"> <!-- 캐릭터 아이템 클래스 -->
+        <jsp:include page="shopItem.jsp">
+            <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
+            <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
+            <jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
+        </jsp:include>
+    </div>
+    <%
+    }
+    %>
+</div>
+
+<!-- 배경 상품 목록 -->
+<div id="backgroundItems" class="items-container" style="display:none;">
+    <%
+    for (int i = 0; i < Backgroundvlist.size(); i++) {
+        ItemBean bean = Backgroundvlist.get(i);
+    %>
+    <div class="backgroundItems"> <!-- 배경 아이템 클래스 -->
+        <jsp:include page="shopItem.jsp">
+            <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
+            <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
+            <jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
+        </jsp:include>
+    </div>
+    <%
+    }
+    %>
+</div>
+
 		<!-- 페이지네이션 -->
-		<div class="pagination">
-			<!-- 페이지 번호가 여기에 표시됩니다 -->
-		</div>
+		<div class="pagination"></div>
 	</div>
 
 </div>
