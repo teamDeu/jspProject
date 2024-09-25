@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*, pjh.DBConnectionMgr, pjh.MemberBean" %>
+<%@ page import="pjh.MemberMgr" %>
 
 <%
 		String user_id = (String) session.getAttribute("idKey");
@@ -159,31 +160,13 @@
 
         // 결제 처리 함수
         function submitForm(cloverAmount, inputId) {
-            var form = document.createElement("form");
-            form.method = "POST";
-            form.action = "payProc.jsp"; // 결제 페이지로 POST 요청
-
+            frm = document.complete
             // 총 가격 계산
             var quantity = parseInt(document.getElementById(inputId).value);
             var totalPrice = cloverAmount * quantity;
-
-            // Form에 전송할 데이터 추가
-            var hiddenFields = [
-                { name: "cloverAmount", value: cloverAmount },
-                { name: "quantity", value: quantity },
-                { name: "totalPrice", value: totalPrice }
-            ];
-
-            hiddenFields.forEach(function (field) {
-                var input = document.createElement("input");
-                input.type = "hidden";
-                input.name = field.name;
-                input.value = field.value;
-                form.appendChild(input);
-            });
-
-            document.body.appendChild(form);
-            form.submit(); // Form 전송
+            frm.totalPrice.value = totalPrice;
+            frm.cloverAmount.value = cloverAmount*quantity;
+            frm.submit();
         }
     </script>
 
@@ -199,7 +182,7 @@
         <%-- Item 1 --%>
         <div class="item">
             <div class="clover-count">🍀 10개</div>
-            <div class="price" id="price1" data-base-price="1">1원</div>
+            <div class="price" id="price1" data-base-price="10">10원</div>
             <div class="quantity-selector">
                 <button onclick="decrement('quantity1', 'price1')">-</button>
                 <input type="text" id="quantity1" value="1" readonly>
@@ -208,7 +191,7 @@
             <button class="pay-btn" onclick="submitForm(10, 'quantity1')">결제하기</button>
         </div>
 
-        <%-- Item 2 --%>
+        <%-- Item 2 --%>	
         <div class="item">
             <div class="clover-count">🍀 100개</div>
             <div class="price" id="price2" data-base-price="100">100원</div>
@@ -269,5 +252,9 @@
         </div>
     </div>
 </div>
+	<form name = "complete" method = "POST" action = "payProc.jsp">
+		<input type = "hidden" name ="totalPrice">
+		<input type = "hidden" name ="cloverAmount">
+	</form>
 </body>
 </html>
