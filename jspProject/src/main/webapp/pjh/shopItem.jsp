@@ -13,4 +13,5 @@
                 <div class="item-price">
                     <img src="./img/clover_icon.png" alt="클로버"> <%=item_price %>개
                 </div>
-            </div>
+</div>
+            
