@@ -29,7 +29,13 @@
     top: 80px; 
     left: 25px; 
 }
-
+.guestbook-line2 {
+    border-bottom: 1px solid #BAB9AA; /* 실선 색상 및 두께 */
+    width: 95%; /* 실선의 너비 */
+    position: absolute; 
+    top: 35px; 
+    left: 20px; 
+}
 /* 방명록 작성 폼 스타일 */
 .guestbook-form {
     display: flex;
@@ -47,6 +53,7 @@
 
 .guestbook-input {
     height: 20px;
+    width: 660px;
     flex: 1;
     padding: 8px;
     border: 1px solid #DCDCDC;
@@ -119,18 +126,18 @@ label[for="private"] {
     color: #333;
     text-align: left;
     padding: 0;
-    margin: 0 0 0 10px;
+    margin: 1px 0 0 20px;
     overflow-y: auto;
 }
 
 /* 답글 입력 폼 */
 .reply-form {
 	position: absolute;
-    width: 820px;
+    width: 100%;
     height: 30px;
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
+    margin-top: 90px;
     margin-left: -10px;
 }
 
@@ -247,6 +254,7 @@ label[for="private"] {
 
 .profile-name {
     margin-top: -5px;
+    margin-left:-700px;
     font-weight: bold;
     font-size: 20px;
     color: #333;
@@ -274,7 +282,7 @@ label[for="private"] {
     width: 13px; 
     height: 15px;
     position: absolute; 
-    top: 20px; 
+    top: 15px; 
     right: 30px; 
     cursor: pointer; 
 }

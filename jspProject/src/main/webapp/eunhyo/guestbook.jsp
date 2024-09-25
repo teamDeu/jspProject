@@ -1,5 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="guestbook.GuestbookMgr, guestbook.GuestbookBean, java.util.List" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,49 +19,131 @@
                 <span></span> <a href="#">설정</a> <a href="#">로그아웃</a>
             </div>
         </div>
+
         <!-- 큰 점선 테두리 상자 -->
         <div class="dashed-box">
             <!-- 테두리 없는 상자 -->
             <div class="solid-box">
                 <div class="inner-box-1"></div>
-                <!-- 이미지가 박스 -->
+                <!-- 이미지 박스 -->
                 <div class="image-box">
-                    <img src="img/img1.png" alt="Image between boxes 1"
-                        class="between-image"> <img src="img/img1.png"
-                        alt="Image between boxes 2" class="between-image">
+                    <img src="img/img1.png" alt="Image between boxes 1" class="between-image">
+                    <img src="img/img1.png" alt="Image between boxes 2" class="between-image">
                 </div>
                 <div align="center" class="inner-box-2">
                     <h1 class="guestbook-title">방명록</h1>
                     <div class="guestbook-line"></div>
-                    <!-- 실선 -->
 
                     <!-- 방명록 작성 폼 -->
                     <div class="guestbook-form">
-                        <input type="text" id="guestbook-input" class="guestbook-input"
-                            placeholder="일촌에게 방문 기록을 남겨보세요~ !" /> <label for="private"><input
-                            type="checkbox" id="private" /> 비밀글</label>
-                        <button id="submit-button" class="submit-button">등록</button>
-                    </div> 
-                    
+                        <form method="POST" action="guestbook.jsp">
+                            <input type="text" name="guestbookContent" id="guestbook-input" class="guestbook-input" placeholder="일촌에게 방문 기록을 남겨보세요~ !" required />
+                            <label for="private">
+                                <input type="checkbox" name="guestbookSecret" id="private" value="Y"> 비밀글
+                            </label>
+                            <input type="submit" id="submit-button" class="submit-button" value="등록" />
+                        </form>
+                    </div>
 
                     <!-- 방명록 항목들이 나타나는 네모 상자 -->
                     <div class="entry-container">
-                        <div class="guestbook-entries"></div>
+                        <div class="guestbook-entries">
+                            <%
+                                // owner_id와 writer_id를 임의로 설정
+                                String ownerId = "aaa"; // 방명록 주인의 ID 설정
+                                int itemsPerPage = 3; // 페이지당 항목 수
+                                int currentPage = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+                                int totalEntries = 0;
+
+                                // GuestbookMgr 객체 생성
+                                GuestbookMgr guestbookMgr = new GuestbookMgr();
+
+                                // DB에서 방명록 목록 가져오기
+                                List<GuestbookBean> guestbookList = guestbookMgr.getGuestbookEntries(ownerId);
+                                totalEntries = guestbookList.size(); // 전체 방명록 수
+
+                                if (guestbookList != null && !guestbookList.isEmpty()) {
+                                    int startIndex = (currentPage - 1) * itemsPerPage;
+                                    int endIndex = Math.min(startIndex + itemsPerPage, guestbookList.size());
+                                    for (int i = startIndex; i < endIndex; i++) {
+                                        GuestbookBean entry = guestbookList.get(i);
+                                        int guestbookNum = entry.getGuestbookNum(); // 방명록 번호
+                                        String content = entry.getGuestbookContent(); // 방명록 내용
+                                        String writer = entry.getWriterId(); // 작성자
+                                        String guestbookSecret = entry.getGuestbookSecret(); // 비밀글 여부
+                            %>
+                            <div class="guestbook-entry" data-secret="<%= guestbookSecret %>">
+                              
+                                <!-- 작성자 정보 및 내용 출력 -->
+                                <span class="profile-name"><%= writer %></span>
+                              	<div class="guestbook-line2"></div>
+                                <p class="guestbook-content"><%= content %></p>
+
+                                <!-- 삭제 아이콘 -->
+                                <img src="img/bin.png" class="delete-icon" 
+                                     onclick="deleteEntry(this.parentElement, <%= guestbookNum %>, <%= guestbookList.indexOf(entry) %>)">
+
+                                <!-- 답글 입력 폼 -->
+                                <div class="reply-form">
+                                    <input type="text" class="reply-input" placeholder="답글을 입력하세요" />
+                                    <button class="reply-button" onclick="addReply(this)">답글</button>
+                                </div>
+                                <!-- 답글이 추가될 영역 -->
+                                <div class="reply-container"></div>
+                            </div>
+                            <%
+                                    }
+                                } else {
+                            %>
+                            <p>방명록 항목이 없습니다.</p>
+                            <%
+                                }
+                            %>
+                        </div>
                     </div>
 
                     <!-- 페이지네이션 영역 -->
-                    <div class="pagination-container"></div>
+                    <div class="pagination-container">
+                        <%
+                            int totalPages = (int) Math.ceil(totalEntries / (double) itemsPerPage);
+                            int maxPageButtons = 5; // 한 번에 표시할 페이지 수
+                            int pageGroup = (int) Math.ceil((double) currentPage / maxPageButtons);
+                            int startPage = (pageGroup - 1) * maxPageButtons + 1;
+                            int endPage = Math.min(startPage + maxPageButtons - 1, totalPages);
+
+                            // 이전 페이지 그룹 버튼
+                            if (startPage > 1) {
+                        %>
+                        <a href="guestbook.jsp?page=<%= Math.max(startPage - maxPageButtons, 1) %>" class="page-button">이전</a>
+                        <%
+                            }
+
+                            // 현재 페이지 그룹의 페이지 번호 표시
+                            for (int i = startPage; i <= endPage; i++) {
+                        %>
+                        <a href="guestbook.jsp?page=<%= i %>" class="page-button <%= i == currentPage ? "active" : "" %>"><%= i %></a>
+                        <%
+                            }
+
+                            // 다음 페이지 그룹 버튼
+                            if (endPage < totalPages) {
+                        %>
+                        <a href="guestbook.jsp?page=<%= endPage + 1 %>" class="page-button">다음</a>
+                        <%
+                            }
+                        %>
+                    </div>
 
                 </div>
             </div>
+
             <!-- 버튼 -->
             <div class="button-container">
                 <button class="custom-button">홈</button>
                 <button class="custom-button">프로필</button>
                 <button class="custom-button">미니룸</button>
                 <button class="custom-button">게시판</button>
-                <button class="custom-button"
-                    style="background-color: #F7F7F7; font-weight: 600;">방명록</button>
+                <button class="custom-button" style="background-color: #F7F7F7; font-weight: 600;">방명록</button>
                 <button class="custom-button">상점</button>
                 <button class="custom-button">게임</button>
                 <button class="custom-button">음악</button>
@@ -68,217 +151,92 @@
         </div>
     </div>
 
+<%
+    // 방명록 작성 처리
+    if (request.getMethod().equalsIgnoreCase("POST")) {
+        String guestbookSecret = request.getParameter("guestbookSecret") != null ? "Y" : "N";
+        String guestbookContent = request.getParameter("guestbookContent").trim();
+        // ownerId 및 writerId는 이미 선언된 변수이므로 재사용
+        String writerId = "bbb"; // 작성자 ID 임의로 설정
+
+        // DB에 방명록 저장
+        boolean success = guestbookMgr.writeGuestbook(guestbookSecret, ownerId, writerId, guestbookContent);
+
+        if (success) {
+            out.println("<p>방명록이 성공적으로 등록되었습니다.</p>");
+            response.sendRedirect("guestbook.jsp?page=" + currentPage); // 방명록이 등록되면 페이지를 새로고침하여 목록을 업데이트
+        } else {
+            out.println("<p>방명록 등록에 실패했습니다.</p>");
+        }
+    }
+%>
+
     <!-- 자바스크립트 코드 -->
     <script>
-        let entries = []; // 모든 방명록 항목을 저장할 배열
-        const itemsPerPage = 3; // 페이지당 항목 수
-        let currentPage = 1; // 현재 페이지 번호
-        const maxPageButtons = 5; // 한 번에 표시할 페이지 수
-        let totalPages = 0;
-        let pageGroup = 1; // 페이지 그룹
+	 // 방명록 항목들에 대해 비밀글 여부를 확인하고, 아이콘을 추가하는 함수
+	    document.querySelectorAll('.guestbook-entry').forEach(function(entry) {
+	        var isSecret = entry.getAttribute('data-secret') === 'Y'; // 'Y'가 비밀글을 의미
+	
+	        if (isSecret) {
+	            // 비밀글일 경우 secret.png 아이콘 추가
+	            var secretIcon = document.createElement('img');
+	            secretIcon.src = '<%= request.getContextPath() %>/eunhyo/img/secret.png'; // '/' 추가
+	            secretIcon.className = 'secret-icon'; // 아이콘 클래스 설정
+	            entry.appendChild(secretIcon); // entry div에 아이콘 추가
+	        }
+	    });
+        function deleteEntry(entryElement, guestbookNum, index) {
+            const confirmDelete = confirm("삭제하시겠습니까?");
+            if (confirmDelete) {
+                // AJAX 요청을 통해 서버에 삭제 요청을 보냄
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "<%=request.getContextPath()%>/eunhyo/deleteguestbook.jsp", true);
 
-     // 방명록 작성 후 deleteIcon에 이벤트 추가
-        document.getElementById('submit-button').addEventListener('click', function () {
-            var inputField = document.getElementById('guestbook-input');
-            var content = inputField.value.trim();
-            var isSecret = document.getElementById('private').checked; // 비밀글 체크박스 상태 확인
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-            // 입력된 글의 길이가 70자를 초과하면 경고 메시지 표시
-            if (content.length > 70) {
-                alert('70글자 이하로 작성해주세요.');
-                return; // 글이 70자를 넘으면 방명록 항목을 추가하지 않음
-            }
-
-            if (content) {
-                // 새로운 방명록 항목 생성
-                var newEntry = document.createElement('div');
-                newEntry.className = 'guestbook-entry';
-
-                // 비밀글 아이콘 추가 (비밀글 체크박스가 체크된 경우)
-                if (isSecret) {
-                    var secretIcon = document.createElement('img');
-                    secretIcon.src = 'img/secret.png'; // secret.png 파일 경로
-                    secretIcon.className = 'secret-icon'; // 아이콘 클래스
-                    newEntry.appendChild(secretIcon); // 비밀글 아이콘을 추가
-                }
-
-                // 삭제 아이콘 추가 (오른쪽 상단)
-                var deleteIcon = document.createElement('img');
-                deleteIcon.src = 'img/bin.png'; // bin.png 파일 경로
-                deleteIcon.className = 'delete-icon';
-                newEntry.appendChild(deleteIcon);
-
-                // 프로필, 이름 추가
-                var profileSection = document.createElement('div');
-                profileSection.className = 'profile-section';
-                profileSection.innerHTML = `
-                    <img src="img/p1.png" alt="프로필 사진" class="profile-image" />
-                    <span class="profile-name">홍길동</span>
-                `;
-                newEntry.appendChild(profileSection);
-
-                // 방명록 내용을 담는 컨테이너 생성
-                var contentContainer = document.createElement('div');
-                contentContainer.className = 'guestbook-content-container';
-                var entryContent = document.createElement('p');
-                entryContent.className = 'guestbook-content';
-                entryContent.textContent = content;
-
-                contentContainer.appendChild(entryContent);
-                newEntry.appendChild(contentContainer);
-
-                // 답글을 표시할 컨테이너 추가
-                var replyContainer = document.createElement('div');
-                replyContainer.className = 'reply-container';
-                newEntry.appendChild(replyContainer);
-
-                // 답글 입력 폼 생성
-                var replyForm = document.createElement('div');
-                replyForm.className = 'reply-form';
-                replyForm.innerHTML = `
-                    <input type="text" class="reply-input" placeholder="답글을 입력하세요" />
-                    <button class="reply-button">답글</button>
-                `;
-
-                // 답글 버튼 클릭 시 동작하는 이벤트 핸들러
-                replyForm.querySelector('.reply-button').addEventListener('click', function () {
-                    var replyInput = replyForm.querySelector('.reply-input');
-                    var replyText = replyInput.value.trim();
-                    // 답글의 길이가 70자를 초과하면 경고 메시지 표시
-                    if (replyText.length > 70) {
-                        alert('70글자 이하로 작성해주세요.');
-                        return; // 답글이 70자를 넘으면 추가하지 않음
-                    }
-
-                    if (replyText) {
-                        var replyEntry = document.createElement('p');
-                        replyEntry.className = 'reply-content';
-                        replyEntry.textContent = '└ 유리 : ' + replyText;
-
-                        // 방명록 항목에 답글 추가 (replyContainer 안에 답글을 추가)
-                        replyContainer.appendChild(replyEntry);
-
-                        // 답글 입력 필드 초기화
-                        replyInput.value = '';
+                xhr.onload = function () {
+                    if (xhr.status === 200 && xhr.responseText.trim() === "success") {
+                        entryElement.remove(); // 화면에서 해당 항목 제거
+                        
+                        // 현재 페이지 항목이 없으면 이전 페이지로 이동
+                        var remainingEntries = document.querySelectorAll('.guestbook-entry').length;
+                        if (remainingEntries === 0 && <%= totalEntries %> > 1) {
+                            if (currentPage > 1) {
+                                // 이전 페이지로 이동
+                                window.location.href = "guestbook.jsp?page=" + (currentPage - 1);
+                            } else {
+                                // 1페이지가 남아있는 상태라면 페이지 새로고침
+                                location.reload();
+                            }
+                        } else {
+                            location.reload(); // 항목 삭제 후 페이지 새로고침
+                        }
                     } else {
-                        alert('답글을 입력하세요.');
+                        alert('삭제에 실패했습니다. 서버 응답: ' + xhr.responseText); 
                     }
-                });
+                };
 
-                // 방명록 항목에 답글 폼 추가
-                newEntry.appendChild(replyForm);
-
-                // entries 배열에 항목 추가
-                entries.unshift(newEntry);
-
-                // 삭제 아이콘 클릭 이벤트 (해당 인덱스를 전달하여 삭제)
-                deleteIcon.addEventListener('click', function () {
-                    const confirmDelete = confirm("삭제하시겠습니까?");
-                    if (confirmDelete) {
-                        deleteEntry(newEntry, entries.indexOf(newEntry));
-                    }
-                });
-
-                // 현재 페이지와 페이지 그룹을 1로 설정 (새 게시글 추가 시 1페이지로 이동)
-                currentPage = 1;
-                pageGroup = 1;
-
-                // 페이지 업데이트
-                updatePagination();
-
-                // 입력 필드 초기화
-                inputField.value = '';
-            } else {
-                alert('내용을 입력하세요.');
+                var params = "guestbook_num=" + encodeURIComponent(guestbookNum);
+                xhr.send(params); 
             }
-        });
-
-
-// 방명록 항목을 삭제하는 함수
-// 방명록 항목을 삭제하는 함수
-function deleteEntry(entryElement, index) {
-    entries.splice(index, 1); // entries 배열에서 해당 항목 삭제
-    entryElement.remove(); // DOM에서 해당 방명록 항목 삭제
-    
-    // 삭제 후 현재 페이지의 항목이 0개 남았다면 이전 페이지로 이동
-    const totalEntriesOnCurrentPage = entries.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).length;
-
-    if (totalEntriesOnCurrentPage === 0 && currentPage > 1) {
-        currentPage--; // 이전 페이지로 이동
-        // 페이지 그룹 업데이트
-        pageGroup = Math.ceil(currentPage / maxPageButtons);
-    }
-
-    updatePagination(); // 삭제 후 페이지네이션 업데이트
-}
-
-// 페이지 번호 업데이트 및 표시 함수
-function updatePagination() {
-    const entriesContainer = document.querySelector('.guestbook-entries');
-    const paginationContainer = document.querySelector('.pagination-container');
-
-    // 방명록 항목을 페이지당 3개씩 나눠서 표시
-    entriesContainer.innerHTML = ''; // 기존 항목 초기화
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const itemsToDisplay = entries.slice(startIndex, endIndex);
-
-    // 현재 페이지에 해당하는 항목을 표시
-    itemsToDisplay.forEach(item => entriesContainer.appendChild(item));
-
-    // 페이지 버튼 생성
-    paginationContainer.innerHTML = ''; // 기존 페이지 버튼 초기화
-    totalPages = Math.ceil(entries.length / itemsPerPage);
-    const startPage = (pageGroup - 1) * maxPageButtons + 1;
-    const endPage = Math.min(startPage + maxPageButtons - 1, totalPages);
-
-    // 이전 버튼 추가 (1페이지 그룹보다 크면 이전 버튼 표시)
-    if (pageGroup > 1) {
-        const prevButton = document.createElement('button');
-        prevButton.textContent = '이전';
-        prevButton.classList.add('page-button', 'nav-button');
-        prevButton.addEventListener('click', function () {
-            pageGroup--;
-            currentPage = (pageGroup - 1) * maxPageButtons + maxPageButtons; // 이전 페이지 그룹의 마지막 페이지로 이동
-            updatePagination();
-        });
-        paginationContainer.appendChild(prevButton);
-    }
-
-    // 현재 페이지 그룹에 해당하는 페이지 번호만 표시
-    for (let i = startPage; i <= endPage; i++) {
-        const pageButton = document.createElement('button');
-        pageButton.textContent = i;
-        pageButton.classList.add('page-button');
-        if (i === currentPage) {
-            pageButton.classList.add('active'); // 현재 페이지 표시
         }
 
-        // 페이지 버튼 클릭 시 해당 페이지로 이동
-        pageButton.addEventListener('click', function () {
-            currentPage = i;
-            updatePagination();
-        });
+        function addReply(button) {
+            var replyContainer = button.closest('.guestbook-entry').querySelector('.reply-container');
+            var replyInput = button.closest('.reply-form').querySelector('.reply-input');
+            var replyText = replyInput.value.trim();
 
-        paginationContainer.appendChild(pageButton);
-    }
+            if (replyText.length > 0) {
+                var replyElement = document.createElement('p');
+                replyElement.className = 'reply-content';
+                replyElement.textContent = '└ 답글: ' + replyText;
 
-    // 다음 버튼 추가 (더 많은 페이지가 있으면 다음 버튼 표시)
-    if (endPage < totalPages) {
-        const nextButton = document.createElement('button');
-        nextButton.textContent = '다음';
-        nextButton.classList.add('page-button', 'nav-button');
-        nextButton.addEventListener('click', function () {
-            pageGroup++;
-            currentPage = (pageGroup - 1) * maxPageButtons + 1; // 다음 페이지 그룹의 첫 번째 페이지로 이동
-            updatePagination();
-        });
-        paginationContainer.appendChild(nextButton);
-    }
-}
-
-
-
+                replyContainer.appendChild(replyElement);
+                replyInput.value = '';
+            } else {
+                alert('답글을 입력하세요.');
+            }
+        }
     </script>
 
 </body>

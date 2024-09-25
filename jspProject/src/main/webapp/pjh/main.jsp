@@ -298,6 +298,7 @@ function clickUser(event){
          <!-- 테두리 없는 상자 -->
          <div class="solid-box">
             <div class="inner-box-1"></div>
+       
             <!-- 이미지가 박스 -->
             <div class="image-box">
                <img src="img/img1.png" alt="Image between boxes 1"

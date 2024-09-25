@@ -2,5 +2,9 @@
 /main/
 /pjh/
 /friend/
+<<<<<<< HEAD
+/guestbook/
+=======
 /item/
 /ItemBean.class
+>>>>>>> branch 'main' of https://github.com/teamDeu/jspProject.git
