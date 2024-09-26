@@ -561,6 +561,7 @@
         var folderName = folderNameInput.value.trim();
 
         if (folderName !== '') {
+        	var userId = '1111'; // 현재 로그인한 사용자의 ID를 변수로 지정
             var folderContainer = document.querySelector('.folder-container');
 
             // 기존 폴더 아이템의 수를 계산하여 새로운 폴더의 top 값을 결정
@@ -584,7 +585,6 @@
             // 삭제 버튼 생성
             var deleteButton = document.createElement('img');
             deleteButton.src = 'img/trashcan.png'; // 쓰레기통 이미지 경로 설정
-            deleteButton.alt = 'Delete';
             deleteButton.classList.add('delete-button');
             deleteButton.onclick = function() {
                 folderItem.remove(); // 폴더 항목 삭제
@@ -605,12 +605,34 @@
             // 폴더 아이템을 컨테이너에 추가
             folderContainer.appendChild(folderItem);
 
+         	// 폴더 추가 후 데이터베이스에 저장
+            saveFolderToDatabase(userId, folderName);
+            
             // 입력 필드 초기화
             folderNameInput.value = '';
         }
     }
 
+	
+    function saveFolderToDatabase(userId, folderName) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'addFolder.jsp', true); // addFolder.jsp로 요청을 보냄
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                if (xhr.responseText.trim() === 'success') {
+                    console.log('Folder added successfully to the database.');
+                } else {
+                    console.log('Failed to add folder to the database.');
+                }
+            }
+        };
+
+        xhr.send('user_id=' + encodeURIComponent(userId) + '&folder_name=' + encodeURIComponent(folderName));
+    }
+    
+    
     function updateFolderPositions() {
         var folderContainer = document.querySelector('.folder-container');
         var folderItems = folderContainer.querySelectorAll('.folder-item');
