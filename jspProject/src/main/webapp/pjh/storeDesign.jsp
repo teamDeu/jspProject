@@ -13,6 +13,7 @@ Vector<ItemBean> Backgroundvlist = mgr.getBackgroundItems();
 
 String user_id = (String) session.getAttribute("idKey");
 System.out.println(user_id);
+
 // 클로버 잔액을 가져오기 위한 변수
 int user_clover = 0;
 DBConnectionMgr pool = null;
@@ -160,12 +161,14 @@ try {
 }
 /* 상품 목록 */
 .items-container {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	gap: 20px;
-	padding: 20px;
-	border: 1px solid #ccc;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    min-height: 300px; /* 최소 높이 설정 */
 }
+
 
 .item {
 	background-color: #FFF;
@@ -230,27 +233,42 @@ let itemsMusic = []; // 음악 아이템 배열
 let itemsCharacter = []; // 캐릭터 아이템 배열
 let itemsBackground = []; // 배경 아이템 배열
 
+
 // 카테고리 타입 변경 시 호출되는 함수
-function changeItemType(event, itemType) {
+        function changeItemType(event, itemType) {
     // 모든 탭의 active 클래스 제거
     document.querySelectorAll('.nav-tabs li').forEach(tab => tab.classList.remove('active'));
     // 클릭된 탭에 active 클래스 추가
     event.target.classList.add('active');
-    // 선택된 카테고리에 따라 아이템 설정
+
+    // 모든 아이템 컨테이너 숨기기
+    document.querySelectorAll('.items-container').forEach(container => container.style.display = 'none');
+
+    // 선택된 카테고리에 따라 아이템 설정 및 표시
     if (itemType === 'all') {
         items = itemsAll;
+        document.getElementById("allItems").style.display = "grid"; // 전체 아이템 보이기
     } else if (itemType === 'music') {
         items = itemsMusic;
+        document.getElementById("musicItems").style.display = "grid"; // 음악 아이템 보이기
     } else if (itemType === 'character') {
         items = itemsCharacter;
+        document.getElementById("characterItems").style.display = "grid"; // 캐릭터 아이템 보이기
     } else if (itemType === 'background') {
         items = itemsBackground;
+        document.getElementById("backgroundItems").style.display = "grid"; // 배경 아이템 보이기
+    } else if (itemType === 'buylist') {
+        document.getElementById("buylistItems").style.display = "grid"; // 구매목록 보이기
+        return; // 구매목록에서는 다른 카테고리를 보여줄 필요 없음
     }
-    
-    // 페이지 초기화
+
+    // 페이지 초기화 및 아이템 표시
     currentPage = 1;
     displayItems();
 }
+
+
+
 
 // 페이지를 변경하는 함수
 function changePage(page) {
@@ -272,13 +290,27 @@ function clickPrev() {
     }
 }
 
-// 아이템을 화면에 보여주는 함수
+
+//아이템을 화면에 보여주는 함수
 function displayItems() {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    console.log(start,end);
     const visibleItems = items.slice(start, end);
-    const itemsContainer = document.querySelector('.items-container'); // 아이템을 넣을 컨테이너
+
+    // 현재 선택된 카테고리의 컨테이너를 명시적으로 설정
+    let itemsContainer;
+    if (items === itemsAll) {
+        itemsContainer = document.getElementById('allItems');
+    } else if (items === itemsMusic) {
+        itemsContainer = document.getElementById('musicItems');
+    } else if (items === itemsCharacter) {
+        itemsContainer = document.getElementById('characterItems');
+    } else if (items === itemsBackground) {
+        itemsContainer = document.getElementById('backgroundItems');
+    } else if (items === document.querySelectorAll('.buyItems')) {
+        itemsContainer = document.getElementById('buylistItems');
+    }
+
     itemsContainer.innerHTML = ''; // 기존 아이템 제거
 
     // 선택된 아이템들을 화면에 추가
@@ -290,7 +322,9 @@ function displayItems() {
     updatePagination();
 }
 
-// 페이지네이션 업데이트 함수
+
+
+//페이지네이션 업데이트 함수
 function updatePagination() {
     const totalPages = Math.ceil(items.length / itemsPerPage);
     const paginationContainer = document.querySelector('.pagination');
@@ -305,17 +339,25 @@ function updatePagination() {
     }
 }
 
+// 페이지를 변경하는 함수
+function changePage(page) {
+    currentPage = page;
+    displayItems();
+}
+
 // DOM이 로드되면 초기화
 document.addEventListener('DOMContentLoaded', function () {
-    itemsAll = Array.from(document.querySelectorAll('.allItems')); // 전체 아이템
-    itemsMusic = Array.from(document.querySelectorAll('.musicItems')); // 음악 아이템
-    itemsCharacter = Array.from(document.querySelectorAll('.characterItems')); // 캐릭터 아이템
-    itemsBackground = Array.from(document.querySelectorAll('.backgroundItems')); // 배경 아이템
+    // 각 카테고리의 아이템을 올바르게 배열에 저장
+    itemsAll = Array.from(document.querySelectorAll('.allItems'));
+    itemsMusic = Array.from(document.querySelectorAll('.musicItems'));
+    itemsCharacter = Array.from(document.querySelectorAll('.characterItems'));
+    itemsBackground = Array.from(document.querySelectorAll('.backgroundItems'));
 
     // 기본적으로 전체 아이템을 선택하고 표시
     items = itemsAll;
-    displayItems();
+    displayItems();  // 첫 로딩 시 전체 아이템을 표시
 });
+
 
 
         
@@ -346,44 +388,37 @@ document.addEventListener('DOMContentLoaded', function () {
             openBox.style.display = "grid";
         }
         
-        
-        function confirmPurchase(itemName, itemPrice, itemNum) {
-            console.log("itemPrice:", itemPrice);  // itemPrice 값 확인
-            const confirmed = confirm(`${itemName}을(를) ${itemPrice} 클로버로 구매하시겠습니까?`);
-            
-            if (confirmed) {
-                // 서버에 구매 요청을 보내는 함수 호출
-                purchaseItem(itemName, itemPrice, itemNum);
+        function buyItem(itemNum, itemPrice) {
+            // 클로버 잔액 체크
+            if (<%= user_clover %> < itemPrice) {
+                alert("클로버가 부족합니다.");
+                return;
             }
-        }
 
-
-        function purchaseItem(itemName, itemPrice, itemNum) {
+            // 구매 처리 AJAX 요청
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'purchaseItem.jsp', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-            // 파라미터 값 디버깅
-            console.log("itemPrice:", itemPrice, "itemNum:", itemNum);  // itemPrice와 itemNum 확인
-
+            xhr.open("POST", "buyItem.jsp", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        const responseText = xhr.responseText.trim();
-                        if (isNaN(responseText)) {
-                            alert(responseText); // 잔액 부족 등 메시지
-                        } else {
-                            alert('구매가 완료되었습니다!');
-                            document.querySelector('.clover-amount').textContent = `${responseText} 클로버`;
-                        }
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    if (xhr.responseText.trim() === 'SUCCESS') {
+                        alert("구매가 완료되었습니다!");
+                        location.reload(); // 페이지 새로고침하여 클로버 업데이트
+                    } else if (xhr.responseText.trim() === 'NOT_ENOUGH_CLOVER') {
+                        alert("클로버가 부족합니다.");
                     } else {
-                        alert('구매에 실패했습니다.');
+                        alert("구매에 실패했습니다. 다시 시도해 주세요.");
                     }
                 }
             };
-
-            xhr.send(`itemName=${itemName}&itemPrice=${itemPrice}&itemNum=${itemNum}`);
+            xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
         }
+
+        
+     
+
+
+
 
 
 
@@ -408,6 +443,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			<li onclick="changeItemType(event, 'music')">음악</li>
 			<li onclick="changeItemType(event, 'character')">캐릭터</li>
 			<li onclick="changeItemType(event, 'background')">배경</li>
+			<li onclick="changeItemType(event, 'buylist')">구매목록</li>
 			
 		</ul>
 
@@ -428,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function () {
     for (int i = 0; i < Allvlist.size(); i++) {
         ItemBean bean = Allvlist.get(i);
     %>
-    <div class="allItems" onclick="confirmPurchase('<%=bean.getItem_name()%>', <%=bean.getItem_price()%>, <%=bean.getItem_num()%>)"> <!-- 전체 아이템 클래스 -->
+    <div class="allItems" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 전체 아이템 클래스 -->
         <jsp:include page="shopItem.jsp">
             <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
             <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -446,7 +482,7 @@ document.addEventListener('DOMContentLoaded', function () {
     for (int i = 0; i < Musicvlist.size(); i++) {
         ItemBean bean = Musicvlist.get(i);
     %>
-    <div class="musicItems"onclick="confirmPurchase('<%=bean.getItem_name()%>', <%=bean.getItem_price()%>, <%=bean.getItem_num()%>)"> <!-- 음악 아이템 클래스 -->
+    <div class="musicItems" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 음악 아이템 클래스 -->
         <jsp:include page="shopItem.jsp">
             <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
             <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -464,7 +500,7 @@ document.addEventListener('DOMContentLoaded', function () {
     for (int i = 0; i < Charactervlist.size(); i++) {
         ItemBean bean = Charactervlist.get(i);
     %>
-    <div class="characterItems"onclick="confirmPurchase('<%=bean.getItem_name()%>', <%=bean.getItem_price()%>, <%=bean.getItem_num()%>)"> <!-- 캐릭터 아이템 클래스 -->
+    <div class="characterItems" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 캐릭터 아이템 클래스 -->
         <jsp:include page="shopItem.jsp">
             <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
             <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -482,7 +518,7 @@ document.addEventListener('DOMContentLoaded', function () {
     for (int i = 0; i < Backgroundvlist.size(); i++) {
         ItemBean bean = Backgroundvlist.get(i);
     %>
-    <div class="backgroundItems"onclick="confirmPurchase('<%=bean.getItem_name()%>', <%=bean.getItem_price()%>, <%=bean.getItem_num()%>)"> <!-- 배경 아이템 클래스 -->
+    <div class="backgroundItems" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 배경 아이템 클래스 -->
         <jsp:include page="shopItem.jsp">
             <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
             <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -493,6 +529,34 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     %>
 </div>
+
+<!-- 구매목록 상품 목록 -->
+<div id="buylistItems" class="items-container" style="display:none;">
+    <%
+    String getUserItemsSQL = "SELECT i.item_name, i.item_image, i.item_price, h.item_num FROM item i JOIN itemhold h ON i.item_num = h.item_num WHERE h.user_Id = ?";
+    pstmt = conn.prepareStatement(getUserItemsSQL);
+    pstmt.setString(1, user_id);
+    rs = pstmt.executeQuery();
+
+    // 구매한 아이템을 루프 돌며 표시
+    while (rs.next()) {
+    %>
+    <div class="item" onclick="refundItem(<%= rs.getInt("item_num") %>, <%= rs.getInt("item_price") %>)">
+        <img src="<%= rs.getString("item_image") %>" alt="<%= rs.getString("item_name") %>" style="width:165px;height:165px;"/>
+        <div class="item-title"><%= rs.getString("item_name") %></div>
+        <div class="item-price">
+            <img src="./img/clover_icon.png" alt="클로버" style="width:20px; height:20px;"> <%= rs.getInt("item_price") %>개
+        </div>
+    </div>
+    <%
+    }
+    rs.close();
+    pstmt.close();
+    %>
+</div>
+
+
+
 
 		<!-- 페이지네이션 -->
 		<div class="pagination"></div>

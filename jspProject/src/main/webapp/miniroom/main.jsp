@@ -348,7 +348,7 @@ function clickUser(event){
                <jsp:include page="../yang/game.jsp"></jsp:include>
             </div>
 	         <div id="store" class="inner-box-2" style="display: none">
-	            <jsp:include page="storeDesign.jsp"></jsp:include>
+	            <jsp:include page="../pjh/storeDesign.jsp"></jsp:include>
 	         </div>          
          </div>
          <!-- 버튼 -->
