@@ -3,113 +3,104 @@ package guestbook;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GuestbookMgr {
     private DBConnectionMgr pool;
 
-    // 생성자
     public GuestbookMgr() {
         pool = DBConnectionMgr.getInstance();
     }
 
-    // 방명록 작성 메서드
-    public boolean writeGuestbook(GuestbookBean g) {
+    // Guestbook entry addition
+    public boolean addGuestbookEntry(GuestbookBean bean) {
         Connection con = null;
         PreparedStatement pstmt = null;
-        String sql = "INSERT INTO guestbook (guestbook_secret, owner_id, writer_id, guestbook_content, written_at, modified_at) "
-                + "VALUES (?, ?, ?, ?, NOW(), NULL)"; // 현재 시간 NOW()로 변경;
-        boolean isWritten = false;
-
-        try { 
-            con = pool.getConnection(); // Connection 객체를 pool에서 가져옴
-            pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, g.getGuestbookSecret()); // 비밀글 여부
-            pstmt.setString(2, g.getOwnerId()); // 방명록 주인의 아이디
-            pstmt.setString(3, g.getWriterId()); // 글쓴이의 아이디
-            pstmt.setString(4, g.getGuestbookContent()); // 방명록 내용
-
-            // 디버깅용 출력 구문
-            System.out.println(pstmt.toString()); // SQL 구문을 출력
-            System.out.println("guestbookSecret: " + g.getGuestbookSecret());
-            System.out.println("ownerId: " + g.getOwnerId());
-            System.out.println("writerId: " + g.getWriterId());
-            System.out.println("guestbookContent: " + g.getGuestbookContent());
-
-            
-            int count = pstmt.executeUpdate(); // 실행
-
-            if (count > 0) {
-                isWritten = true; // 성공적으로 삽입된 경우 true
-            }
-        } catch (Exception e) {
-        	System.out.println("Error in writeGuestbook: " + e.getMessage());
-            e.printStackTrace(); // 에러 로그 출력
-        } finally {
-            pool.freeConnection(con, pstmt); // 연결 종료
-        }
-
-        return isWritten;
-    }
-    
-    // 방명록 삭제 메서드
-    public boolean deleteGuestbook(int guestbookNum) {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        String sql = "DELETE FROM guestbook WHERE guestbook_num = ?";
-        boolean isDeleted = false;
-
+        String sql = "INSERT INTO guestbook (guestbook_secret, owner_id, writer_id, guestbook_content, written_at) VALUES (?, ?, ?, ?, NOW())";
         try {
             con = pool.getConnection();
             pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, guestbookNum);
-
-            int count = pstmt.executeUpdate(); // 삭제된 행의 수를 반환
-            if (count > 0) {
-                isDeleted = true; // 삭제 성공
-            }
+            pstmt.setString(1, bean.getGuestbookSecret());
+            pstmt.setString(2, bean.getOwnerId());
+            pstmt.setString(3, bean.getWriterId());
+            pstmt.setString(4, bean.getGuestbookContent());
+            int count = pstmt.executeUpdate();
+            return count > 0;
         } catch (Exception e) {
-            e.printStackTrace(); // 에러 출력
+            e.printStackTrace();
         } finally {
-            pool.freeConnection(con, pstmt); // 리소스 해제
+            pool.freeConnection(con, pstmt);
         }
-
-        return isDeleted;
+        return false;
     }
 
-    // 특정 사용자의 방명록 항목을 가져오는 메서드
-    public List<GuestbookBean> getGuestbookEntriesByOwner(String ownerId) {
+    // Retrieve guestbook entries for a specific owner
+    public ArrayList<GuestbookBean> getGuestbookEntries(String ownerId) {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        List<GuestbookBean> guestbookList = new ArrayList<>();
+        ArrayList<GuestbookBean> list = new ArrayList<>();
         String sql = "SELECT * FROM guestbook WHERE owner_id = ? ORDER BY written_at DESC";
-
         try {
             con = pool.getConnection();
             pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, ownerId); // 방명록 주인 ID로 필터링
+            pstmt.setString(1, ownerId);
             rs = pstmt.executeQuery();
-
             while (rs.next()) {
-                GuestbookBean guestbook = new GuestbookBean();
-                guestbook.setGuestbookNum(rs.getInt("guestbook_num"));
-                guestbook.setGuestbookSecret(rs.getString("guestbook_secret"));
-                guestbook.setOwnerId(rs.getString("owner_id"));
-                guestbook.setWriterId(rs.getString("writer_id"));
-                guestbook.setGuestbookContent(rs.getString("guestbook_content"));
-                guestbook.setWrittenAt(rs.getTimestamp("written_at"));
-                guestbook.setModifiedAt(rs.getTimestamp("modified_at"));
-                guestbookList.add(guestbook);
+                GuestbookBean bean = new GuestbookBean();
+                bean.setGuestbookNum(rs.getInt("guestbook_num"));
+                bean.setGuestbookSecret(rs.getString("guestbook_secret"));
+                bean.setOwnerId(rs.getString("owner_id"));
+                bean.setWriterId(rs.getString("writer_id"));
+                bean.setGuestbookContent(rs.getString("guestbook_content"));
+                bean.setWrittenAt(rs.getTimestamp("written_at"));
+                bean.setModifiedAt(rs.getTimestamp("modified_at"));
+                list.add(bean);
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            pool.freeConnection(con, pstmt, rs); // 리소스 해제
+            pool.freeConnection(con, pstmt, rs);
         }
+        return list;
+    }
 
-        return guestbookList; // 방명록 목록 반환
+    // Delete guestbook entry
+    public boolean deleteGuestbookEntry(int guestbookNum) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        String sql = "DELETE FROM guestbook WHERE guestbook_num = ?";
+        try {
+            con = pool.getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, guestbookNum);
+            int count = pstmt.executeUpdate();
+            return count > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt);
+        }
+        return false;
+    }
+
+    // Update guestbook entry
+    public boolean updateGuestbookEntry(int guestbookNum, String content) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        String sql = "UPDATE guestbook SET guestbook_content = ?, modified_at = NOW() WHERE guestbook_num = ?";
+        try {
+            con = pool.getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, content);
+            pstmt.setInt(2, guestbookNum);
+            int count = pstmt.executeUpdate();
+            return count > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt);
+        }
+        return false;
     }
 }
