@@ -418,14 +418,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
-        
-        
-        
-
-
-       
-
         // 탭 클릭 시 active 클래스 적용
         function clickOpenType(id, clickedTab) {
             const openBox = document.getElementById(id);
@@ -456,7 +448,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // 구매 처리 AJAX 요청
             const xhr = new XMLHttpRequest();
-            xhr.open("POST", "buyItem.jsp", true);
+            xhr.open("POST", "../pjh/buyItem.jsp", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
@@ -478,7 +470,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (confirm("정말로 환불하시겠습니까?")) {
                 // 환불 처리 AJAX 요청
                 const xhr = new XMLHttpRequest();
-                xhr.open("POST", "refundItem.jsp", true);
+                xhr.open("POST", "../pjh/refundItem.jsp", true);
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4 && xhr.status == 200) {
@@ -532,7 +524,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <span onclick="changeSortMode('price')">가격순</span>
             </div>
             <div class="search">
-                <button onclick="window.open('pay.jsp', '_blank', )">클로버 충전</button>
+                <button onclick="window.open('../pjh/pay.jsp', '_blank', )">클로버 충전</button>
             </div>
         </div>
 
@@ -544,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
             <div class="allItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 전체 아이템 클래스 -->
-                <jsp:include page="shopItem.jsp">
+                <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
                     <jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
@@ -563,7 +555,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
             <div class="musicItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 음악 아이템 클래스 -->
-                <jsp:include page="shopItem.jsp">
+                <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
                     <jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
@@ -582,7 +574,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
             <div class="characterItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 캐릭터 아이템 클래스 -->
-                <jsp:include page="shopItem.jsp">
+                <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
                     <jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
@@ -601,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
             <div class="backgroundItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 배경 아이템 클래스 -->
-                <jsp:include page="shopItem.jsp">
+                <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
                     <jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
