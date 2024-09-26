@@ -252,7 +252,7 @@
         </div>
     </div>
 </div>
-	<form name = "complete" method = "POST" action = "payProc.jsp">
+	<form name = "complete" method = "POST" action = "../pjh/payProc.jsp">
 		<input type = "hidden" name ="totalPrice">
 		<input type = "hidden" name ="cloverAmount">
 	</form>
