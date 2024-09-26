@@ -454,7 +454,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     if (xhr.responseText.trim() === 'SUCCESS') {
                         alert("구매가 완료되었습니다!");
-                        location.reload(); // 페이지 새로고침하여 클로버 업데이트
+
+                        // 클로버 잔액 UI 업데이트
+                        let currentClover = parseInt(document.querySelector('.clover-amount-span').innerText);
+                        currentClover -= itemPrice;
+                        document.querySelector('.clover-amount-span').innerText = currentClover;
+
+                        // 구매한 아이템을 구매 목록에 추가
+                        const buylistContainer = document.getElementById('buylistItems');
+                        const newItem = document.createElement('div');
+                        newItem.classList.add('buylistItems');
+                        newItem.innerHTML = `
+                            <img src="${itemImage}" alt="${itemName}" style="width:186px;height:165px;" />
+                            <div class="item-title">${itemName}</div>
+                            <div class="item-price">
+                                <img src="./img/clover_icon.png" alt="클로버" style="width:20px; height:20px;"> ${itemPrice}개
+                            </div>
+                        `;
+                        buylistContainer.appendChild(newItem);
+
                     } else if (xhr.responseText.trim() === 'NOT_ENOUGH_CLOVER') {
                         alert("클로버가 부족합니다.");
                     } else {
@@ -464,6 +482,7 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
         }
+
 
         
         function refundItem(itemNum, itemPrice) {
@@ -486,12 +505,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-
-
-
-
-
-
     </script>
 </head>
 <div class="store">
@@ -503,7 +516,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		<!-- 클로버 금액 -->
 		<div class="clover-amount">
 			<img src="./img/clover_icon.png" alt="클로버">
+			<span class = "clover-amount-span">
 			<%=user_clover%>
+			</span>
+			
 			<!-- 여기서 클로버 값 출력 -->
 		</div>
 
@@ -628,8 +644,6 @@ document.addEventListener('DOMContentLoaded', function () {
     pstmt.close();
     %>
 </div>
-
-
 		<!-- 페이지네이션 -->
 		<div class="pagination"></div>
 	</div>
