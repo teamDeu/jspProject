@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%
+	String type = request.getParameter("type");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -84,18 +87,16 @@
 }
 </style>
 <script>
-	function clickCancelBtn(){
-		document.getElementById("friend_request_modal").style.display = "none";
+	function frequest_receive_clickCancelBtn(){
+		document.getElementById("friend_request_modal_receive").style.display = "none";
 	}
-	function clickSubmitBtn(){
-		fr_form = document.friend_request_form;
-		fr_form.request_comment.value = document.querySelector(".request_comment").value;
+	function frequest_receive_clickSubmitBtn(){
+		
+		fr_form = document.friend_request_form_receive;
+		console.log(fr_form);
+		fr_form.request_num.value = document.querySelector(".request_num").value;
 		fr_form.submit();
-		document.getElementById("friend_request_modal").style.display = "none";
-	}
-	function changeType(select){
-		fr_form = document.friend_request_form;
-		fr_form.request_type.value = select.value;
+		document.getElementById("friend_request_modal_receive").style.display = "none";
 	}
 </script>
 </head>
@@ -107,21 +108,23 @@
 			</section>
 			<section class="request_title_section">
 				<div>
-					<font class="request_user_name_font"> 신짱구 </font>님께 <br>
+					<font class="request_user_name_font"> 신짱구 </font>님이 <br>
 				</div>
 				<div>
-					<select onchange ="changeType(this)">
-						<option value ="1">일촌</option>
-						<option value ="2">이촌</option>
-					</select> 을 신청합니다.
+					<span class="request_type_span"></span> 을 신청합니다.
 				</div>
 			</section>
 		</div>
 			<input class="request_comment" type="text" placeholder = "친구신청 메시지">
+			<input type ="hidden" class = "request_num" value ="">
 		<div>
-			<button onclick = "clickCancelBtn()" class ="request_button">취소</button>
-			<button onclick = "clickSubmitBtn()" class ="request_button">전송</button>
+			<button onclick = "frequest_receive_clickSubmitBtn()" class ="request_button">수락</button>
+			<button onclick = "frequest_receive_clickCancelBtn()" class ="request_button">거절</button>
 		</div>
 	</div>
+	<form name = "friend_request_form_receive" action = "./friendRequestProc.jsp" target  ="_blank">
+   		<input type ="hidden" name = "request_num" value ="">
+   		<input type ="hidden" name = "type" value ="receive">
+   </form>
 </div>
 </html>

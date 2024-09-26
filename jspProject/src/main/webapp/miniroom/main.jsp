@@ -63,7 +63,7 @@
    align-self:center;
    font-size : 20px;
 }
-#friend_request_modal{
+.friend_request_modal{
 	position:absolute;
 	width : 100%;
 	height : 100%;
@@ -95,6 +95,15 @@ function clickOpenBox(id){
 }
 function clickUser(event){
    console.log(event);
+}
+function clickAlarm(){
+	alarmDiv = document.querySelector(".alarmlist_top_div");
+	if(alarmDiv.style.display == "none"){
+		alarmDiv.style.display = "flex"
+	}
+	else{
+		alarmDiv.style.display = "none"
+	}
 }
 </script>
 <!-- 웹소켓통신 자바스크립트 -->
@@ -207,8 +216,7 @@ function clickUser(event){
           })(informationDiv);
           addFriendBtn.onclick = (function(requestSendUser, requestReciveUser,character,name) {
         	    return function() {
-        	        fr_modal = document.getElementById("friend_request_modal");
-        	        console.log(fr_modal);
+        	        fr_modal = document.getElementById("friend_request_modal_send");
         	        fr_form = document.friend_request_form;
         	        fr_form.request_senduserid.value = requestSendUser;
         	        fr_form.request_receiveuserid.value = requestReciveUser;
@@ -279,7 +287,9 @@ function clickUser(event){
 
           let timeText = year + '.' + month + '.' + day + ' ' + hours + ':' + minutes;
           let newTimeNameText = timeText + "  " + name;
-         
+          console.log(document.getElementById(timeNameText));
+          console.log(timeNameText);
+          console.log(newTimeNameText);
 		  if(document.getElementById(timeNameText) && timeNameText == newTimeNameText){
 			  document.getElementById(timeNameText).remove();
 		  }
@@ -324,7 +334,10 @@ function clickUser(event){
          <!-- 테두리 없는 상자 -->
          <div class="solid-box">
          	<div class ="main_profile_alram">
-         	<img class="main_profile_alram_img" src="./img/alram.png">
+         	<img class="main_profile_alram_img" onclick ="clickAlarm()" src="./img/alram.png">
+         	<jsp:include page="alarmList.jsp">
+         		<jsp:param value="<%=url %>" name="url"/>
+         	</jsp:include>
          	</div>
             <div class="inner-box-1">
             	<jsp:include page="profile.jsp">
@@ -334,7 +347,7 @@ function clickUser(event){
             <!-- 이미지가 박스 -->
             <div class="image-box">
                <img src="img/img1.png" alt="Image between boxes 1"
-                  class="between-image"> <img src="img/img1.png"-
+                  class="between-image"> <img src="img/img1.png"
                   alt="Image between boxes 2" class="between-image">
             </div>
             <div id="chatBox" class="inner-box-2">
@@ -342,7 +355,7 @@ function clickUser(event){
                   <jsp:param value="<%=background%>" name="backgroundImg"/>
                </jsp:include>
             </div>
-            <div id="anotherBox" class="inner-box-2" style="display: none">
+            <div id="profile" class="inner-box-2" style="display: none">
             </div>
             <div id="Box_miniroom_design" class ="inner-box-2" style="display: none" >
                <jsp:include page="miniDesign.jsp"></jsp:include>
@@ -354,34 +367,34 @@ function clickUser(event){
 	            <jsp:include page="storeDesign.jsp"></jsp:include>
 	         </div>
 	         <div id="guestbook" class="inner-box-2" style="display: none">
-	            <jsp:include page="../eunhyo/guestbook.jsp"></jsp:include>
-	         </div>              
+	         </div> 
+	         <div id="board" class="inner-box-2" style="display: none">
+	         </div>
+	         <div id="music" class="inner-box-2" style="display: none">
+	         </div>
          </div>
          <!-- 버튼 -->
          <div class="button-container">
             <button onclick="javascript:clickOpenBox('chatBox')" class="custom-button">홈</button>
-            <button class="custom-button">프로필</button>
+            <button onclick="javascript:clickOpenBox('profile')" class="custom-button">프로필</button>
             <%if(url.equals(id)){ %>
             <button onclick="javascript:clickOpenBox('Box_miniroom_design')" class="custom-button">미니룸</button>
             <%} %>
-            <button class="custom-button">게시판</button>
+            <button onclick = "javascript:clickOpenBox('board')" class="custom-button">게시판</button>
             <button onclick = "javascript:clickOpenBox('guestbook')" class="custom-button">방명록</button>
             <button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
             <button onclick = "javascript:clickOpenBox('game')" class="custom-button">게임</button>
-            <button class="custom-button">음악</button>
+            <button onclick = "javascript:clickOpenBox('music')" class="custom-button">음악</button>
          </div>
   
 
       </div>
    </div>
-   <form name = "friend_request_form" action = "./friendRequestProc.jsp" target  ="_blank">
-   		<input type ="hidden" name = "request_senduserid" value ="">
-   		<input type ="hidden" name = "request_receiveuserid" value ="">
-   		<input type ="hidden" name = "request_type" value ="1">
-   		<input type ="hidden" name ="request_comment" value ="">
-   </form>
-   <div id ="friend_request_modal" style = "display:none">
-   		<jsp:include page="friendRequest.jsp"></jsp:include>
+   <div id = "friend_request_modal_send" class ="friend_request_modal" style = "display:none">
+   		<jsp:include page="friendRequestSend.jsp"></jsp:include>
+   </div>
+   <div id = "friend_request_modal_receive" class ="friend_request_modal" style = "display:none">
+   		<jsp:include page="friendRequestReceive.jsp"></jsp:include>
    </div>
    
 </body>

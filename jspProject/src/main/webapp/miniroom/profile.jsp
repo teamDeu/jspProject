@@ -213,6 +213,21 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 	display: flex;
 	gap: 3px;
 	justify-content: space-between;
+	align-items:center;
+	flex-wrap : nowrap;
+	box-sizing:border-box;
+	width:100%;
+}
+.main_profile_friend_separator{
+	height : 1px;
+	display:flex;
+}
+.main_profile_friend_separator_img{
+	width:100%;
+	object-fit:cover;
+}
+.main_profile_friend_count{
+	width:50px;
 }
 </style>
 </head>
@@ -259,7 +274,11 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 			<div class="main_profile_friends_list_div">
 
 				<div class="main_profile_friends_list_div_header">
-					<span class="main_profile_friend_count">명</span>---------------------
+					<span class="main_profile_friend_count">명</span>
+					<div class ="main_profile_friend_separator">
+						<img class ="main_profile_friend_separator_img" src ="./img/separatorLine.png">
+					</div>
+					
 					<div class="main_profile_frinds_button_div">
 						<button onclick ="clickFriendListPrev()">
 							<img src="./img/left2.png">
