@@ -74,12 +74,12 @@
                 msg += '에러내용 : ' + rsp.error_msg;
                 alert(msg);
                 //실패시 이동할 페이지
-                location.href="<%=request.getContextPath()%>/iamport/payForm.jsp";
+                location.href="<%=request.getContextPath()%>/iamport/../pjh/pay.jsp";
             }
         });
     });
     </script> 
-    <form name = "complete" method = "POST" action = "paymentProc.jsp">
+    <form name = "complete" method = "POST" action = "../pjh/paymentProc.jsp">
 		<input type = "hidden" name ="totalPrice" value ='<%=totalPrice %>'>
 		<input type = "hidden" name ="cloverAmount" value ='<%=cloverAmount %>'>
 	</form>

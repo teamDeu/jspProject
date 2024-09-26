@@ -43,7 +43,7 @@ public class FriendMgr {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "insert friendinfo values(?,?,now(),?)";
+			sql = "insert friendinfo values(null,?,?,now(),?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, bean.getRequest_senduserid());
 			pstmt.setString(2, bean.getRequest_receiveuserid());
@@ -52,7 +52,7 @@ public class FriendMgr {
 				flag = true;
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		} finally {
 			pool.freeConnection(con, pstmt);
 		}
@@ -97,7 +97,7 @@ public class FriendMgr {
 		Vector<FriendRequestBean> vlist = new Vector<FriendRequestBean>();
 		try {
 			con = pool.getConnection();
-			sql = "select * from friendrequest where request_receiveuserid = ?";
+			sql = "select * from friendrequest where request_receiveuserid = ? and request_complete = 0";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, id);
 			rs = pstmt.executeQuery();
@@ -108,6 +108,7 @@ public class FriendMgr {
 				bean.setRequest_receiveuserid(rs.getString(3));
 				bean.setRequest_at(rs.getString(4));
 				bean.setRequest_type(rs.getInt(5));
+				bean.setRequest_comment(rs.getString(7));
 				vlist.add(bean);
 			}
 		} catch (Exception e) {
@@ -118,4 +119,52 @@ public class FriendMgr {
 		return vlist;
 	}
 	
+	public FriendRequestBean getFriendRequestItem(int num) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		FriendRequestBean bean = new FriendRequestBean();
+		try {
+			con = pool.getConnection();
+			sql = "select * from friendrequest where request_num = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				bean.setRequest_num(rs.getInt(1));
+				bean.setRequest_senduserid(rs.getString(2));
+				bean.setRequest_receiveuserid(rs.getString(3));
+				bean.setRequest_at(rs.getString(4));
+				bean.setRequest_type(rs.getInt(5));
+				bean.setRequest_comment(rs.getString(7));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return bean;
+	}
+	
+	public boolean updateFriendRequestComplete(int num) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = "";
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "update friendrequest set request_complete = 1 where request_num = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			if(pstmt.executeUpdate() == 1) {
+				flag = true;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return flag;
+	}
 }
