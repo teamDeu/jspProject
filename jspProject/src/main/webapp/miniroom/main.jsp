@@ -287,11 +287,11 @@ function clickAlarm(){
 
           let timeText = year + '.' + month + '.' + day + ' ' + hours + ':' + minutes;
           let newTimeNameText = timeText + "  " + name;
-          console.log(document.getElementById(timeNameText));
-          console.log(timeNameText);
-          console.log(newTimeNameText);
-		  if(document.getElementById(timeNameText) && timeNameText == newTimeNameText){
-			  document.getElementById(timeNameText).remove();
+          
+          console.log("새로운채팅 : "+newTimeNameText);
+          console.log("이전채팅 : " +timeNameText);
+		  if(timeNameText == newTimeNameText){
+			  document.getElementById(newTimeNameText).remove();
 		  }
 		  else{
 			  timeNameText = newTimeNameText;
