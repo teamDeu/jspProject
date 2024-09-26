@@ -22,7 +22,7 @@ public class GuestbookMgr {
         String sql = null;
         boolean isWritten = false;
 
-        try {
+        try { 
             con = pool.getConnection(); // Connection 객체를 pool에서 가져옴
             sql = "INSERT INTO guestbook (guestbook_secret, owner_id, writer_id, guestbook_content, written_at, modified_at) "
                 + "VALUES (?, ?, ?, ?, NOW(), NULL)"; // 현재 시간 NOW()로 변경
