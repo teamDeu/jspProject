@@ -324,7 +324,10 @@ function clickUser(event){
             </div>
 	         <div id="store" class="inner-box-2" style="display: none">
 	            <jsp:include page="storeDesign.jsp"></jsp:include>
-	         </div>          
+	         </div>
+	         <div id="guestbook" class="inner-box-2" style="display: none">
+	            <jsp:include page="../eunhyo/guestbook.jsp"></jsp:include>
+	         </div>              
          </div>
          <!-- 버튼 -->
          <div class="button-container">
@@ -332,7 +335,7 @@ function clickUser(event){
             <button class="custom-button">프로필</button>
             <button onclick="javascript:clickOpenBox('Box_miniroom_design')" class="custom-button">미니룸</button>
             <button class="custom-button">게시판</button>
-            <button class="custom-button">방명록</button>
+            <button onclick = "javascript:clickOpenBox('guestbook')" class="custom-button">방명록</button>
             <button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
             <button onclick = "javascript:clickOpenBox('game')" class="custom-button">게임</button>
             <button class="custom-button">음악</button>
