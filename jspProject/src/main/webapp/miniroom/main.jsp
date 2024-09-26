@@ -8,6 +8,7 @@
    String id = (String)session.getAttribute("idKey");
 	if(id == null){
 		response.sendRedirect("../pjh/login.jsp");
+		return;
 	}
    String character = iMgr.getUsingCharacter(id).getItem_path();
    String url = request.getParameter("url");
@@ -29,6 +30,7 @@
 <!-- Linking the CSS file -->
 <link rel="stylesheet" type="text/css" href="./css/style.css">
 <style>
+
 @font-face {
     font-family: 'NanumTobak';
     src: url('../나눔손글씨 또박또박.TTF') format('truetype');
@@ -108,7 +110,7 @@ function clickUser(event){
         var name = "<%=userBean.getUser_name()%>";
         var dataSeparator = "㉠"
         var messageSeparator = "㉡";
-        var timeNameText = name+ "  " +timeText;
+        var timeNameText = "";
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
             ws.onopen = function() {
@@ -299,8 +301,7 @@ function clickUser(event){
            }
         
         function disconnect(){
-           var message = "disconnect"+ dataSeparator+ + localId + dataSeparator + name;
-           location.href ="index.jsp";
+           var message = "disconnect"+ dataSeparator + localId + dataSeparator + name;
            ws.send(message);
            ws.close();
         }
@@ -322,7 +323,9 @@ function clickUser(event){
       <div class="dashed-box">
          <!-- 테두리 없는 상자 -->
          <div class="solid-box">
-         	<div class ="main_profile_alram"><img class="main_profile_alram_img" src="./img/alram.png"></div>
+         	<div class ="main_profile_alram">
+         	<img class="main_profile_alram_img" src="./img/alram.png">
+         	</div>
             <div class="inner-box-1">
             	<jsp:include page="profile.jsp">
             		<jsp:param value='<%=url %>' name="url"/>
@@ -349,7 +352,10 @@ function clickUser(event){
             </div>
 	         <div id="store" class="inner-box-2" style="display: none">
 	            <jsp:include page="../pjh/storeDesign.jsp"></jsp:include>
-	         </div>          
+	         </div>
+	         <div id="guestbook" class="inner-box-2" style="display: none">
+	            <jsp:include page="../eunhyo/guestbook.jsp"></jsp:include>
+	         </div>              
          </div>
          <!-- 버튼 -->
          <div class="button-container">
@@ -359,7 +365,7 @@ function clickUser(event){
             <button onclick="javascript:clickOpenBox('Box_miniroom_design')" class="custom-button">미니룸</button>
             <%} %>
             <button class="custom-button">게시판</button>
-            <button class="custom-button onclick ="disconnect()">방명록</button>
+            <button onclick = "javascript:clickOpenBox('guestbook')" class="custom-button">방명록</button>
             <button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
             <button onclick = "javascript:clickOpenBox('game')" class="custom-button">게임</button>
             <button class="custom-button">음악</button>

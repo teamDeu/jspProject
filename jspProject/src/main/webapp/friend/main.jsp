@@ -262,12 +262,15 @@ function clickUser(event){
            }
         
         function disconnect(){
+        	alert("테스트");
            var message = "disconnect;" + localId + ";" + name;
-           location.href ="index.jsp";
            ws.send(message);
            ws.close();
         }
-          window.addEventListener("beforeunload",disconnect);
+        window.addEventListener("beforeunload", function (event) {
+            event.preventDefault(); // 이 호출은 필요 없음
+            event.returnValue = '테스트'; // 사용자에게 확인 메시지를 보여줍니다.
+        });
     </script>
 
 </head>

@@ -6,9 +6,15 @@
 	pageEncoding="UTF-8"%>
 <jsp:useBean id="fMgr" class="friend.FriendMgr" />
 <jsp:useBean id="uMgr" class="pjh.MemberMgr" />
-<jsp:useBean id="iMgr" class="miniroom.ItemMgr"></jsp:useBean>
+<jsp:useBean id="iMgr" class="miniroom.ItemMgr"/>
 <%
-String connect_id = (String) session.getAttribute("idKey");
+
+String connect_id = (String)session.getAttribute("idKey");
+System.out.println(connect_id);
+if(connect_id == null){
+	response.sendRedirect("../pjh/login.jsp");
+	return;
+}
 String user_id = request.getParameter("url");
 MemberBean user = uMgr.getMember(user_id);
 
@@ -140,7 +146,7 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 }
 
 .main_profile_friends_div {
-	width: 25%;
+	width: 22%;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
