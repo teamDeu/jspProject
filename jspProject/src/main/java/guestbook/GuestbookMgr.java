@@ -16,29 +16,27 @@ public class GuestbookMgr {
     }
 
     // 방명록 작성 메서드
-    public boolean writeGuestbook(String guestbookSecret, String ownerId, String writerId, String guestbookContent) {
+    public boolean writeGuestbook(GuestbookBean g) {
         Connection con = null;
         PreparedStatement pstmt = null;
-        String sql = null;
+        String sql = "INSERT INTO guestbook (guestbook_secret, owner_id, writer_id, guestbook_content, written_at, modified_at) "
+                + "VALUES (?, ?, ?, ?, NOW(), NULL)"; // 현재 시간 NOW()로 변경;
         boolean isWritten = false;
 
         try { 
             con = pool.getConnection(); // Connection 객체를 pool에서 가져옴
-            sql = "INSERT INTO guestbook (guestbook_secret, owner_id, writer_id, guestbook_content, written_at, modified_at) "
-                + "VALUES (?, ?, ?, ?, NOW(), NULL)"; // 현재 시간 NOW()로 변경
-
             pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, guestbookSecret); // 비밀글 여부
-            pstmt.setString(2, ownerId); // 방명록 주인의 아이디
-            pstmt.setString(3, writerId); // 글쓴이의 아이디
-            pstmt.setString(4, guestbookContent); // 방명록 내용
+            pstmt.setString(1, g.getGuestbookSecret()); // 비밀글 여부
+            pstmt.setString(2, g.getOwnerId()); // 방명록 주인의 아이디
+            pstmt.setString(3, g.getWriterId()); // 글쓴이의 아이디
+            pstmt.setString(4, g.getGuestbookContent()); // 방명록 내용
 
             // 디버깅용 출력 구문
             System.out.println(pstmt.toString()); // SQL 구문을 출력
-            System.out.println("guestbookSecret: " + guestbookSecret);
-            System.out.println("ownerId: " + ownerId);
-            System.out.println("writerId: " + writerId);
-            System.out.println("guestbookContent: " + guestbookContent);
+            System.out.println("guestbookSecret: " + g.getGuestbookSecret());
+            System.out.println("ownerId: " + g.getOwnerId());
+            System.out.println("writerId: " + g.getWriterId());
+            System.out.println("guestbookContent: " + g.getGuestbookContent());
 
             
             int count = pstmt.executeUpdate(); // 실행

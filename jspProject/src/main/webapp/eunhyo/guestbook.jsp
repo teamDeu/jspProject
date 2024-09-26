@@ -292,13 +292,21 @@ label[for="private"] {
 </style>
 </head>
 <body>
-	
+	<!-- 미니홈피 주인의 ID를 파라미터 또는 세션에서 가져온다 (예시: "aaa") -->
 	<%
-	MemberBean loggedInUserBean = (MemberBean) session.getAttribute("loggedInUser"); // 현재 로그인한 사용자 정보를 가져옴
-	String loggedInUserId = loggedInUserBean != null ? loggedInUserBean.getUser_id() : null; // 사용자 ID 추출
-	String ownerId = request.getParameter("ownerId") != null ? request.getParameter("ownerId") : loggedInUserId; // 미니홈피 주인 ID 가져오기
+	GuestbookBean g = new GuestbookBean();
+	
+	MemberBean loggedInUserBean = (MemberBean) session.getAttribute("loggedInUser"); 
+	if (loggedInUserBean == null) {
+	    System.out.println("loggedInUserBean is null. Session does not contain 'loggedInUser'.");
+	} else {
+	    System.out.println("loggedInUserBean is not null.");
+	    System.out.println("user_id in session: " + loggedInUserBean.getUser_id());
+	}
+	String loggedInUserId = loggedInUserBean != null ? loggedInUserBean.getUser_id() : null;
+	String ownerId = request.getParameter("ownerId") != null ? request.getParameter("ownerId") : loggedInUserId; 
 
-	int itemsPerPage = 3; // 페이지당 항목 수
+	int itemsPerPage = 3; 
 	int currentPage = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
 	int totalEntries = 0;
 
@@ -307,6 +315,47 @@ label[for="private"] {
 	// 방명록 항목 조회 (ownerId로 필터링)
 	List<GuestbookBean> guestbookList = guestbookMgr.getGuestbookEntriesByOwner(ownerId);
 	totalEntries = guestbookList.size();
+
+	// 방명록 작성 처리 (POST 요청 시)
+	if (request.getMethod().equalsIgnoreCase("POST")) {
+		System.out.println("Received guestbookContent: " + request.getParameter("guestbookContent"));
+	    System.out.println("Received guestbookSecret: " + request.getParameter("guestbookSecret"));
+	    
+	 	// guestbookSecret 값이 "Y"로만 처리되는 문제가 있을 수 있으니 수정
+	    String guestbookSecret = "N"; // 기본값 설정
+	    if ("Y".equals(request.getParameter("guestbookSecret"))) {
+	        guestbookSecret = "Y";
+	    }
+	    
+	    String guestbookContent = request.getParameter("guestbookContent");
+
+	    // guestbookContent가 null인지 확인
+	    if (guestbookContent != null) {
+	        guestbookContent = guestbookContent.trim();
+	    } else {
+	        out.println("<p>방명록 내용이 비어 있습니다.</p>");
+	        return;
+	    }
+
+		// 로그인한 사용자의 ID를 writerId로 사용
+		if (loggedInUserId != null && !loggedInUserId.isEmpty() && ownerId != null && !ownerId.isEmpty()) {
+			System.out.println("ownerId: " + ownerId);
+			System.out.println("loggedInUserId: " + loggedInUserId);
+			System.out.println("guestbookContent: " + guestbookContent);
+
+			boolean success = guestbookMgr.writeGuestbook(g);
+			if (success) {
+			    out.print("success"); // AJAX 응답에 "success"를 보냄
+			    out.flush(); // 응답을 즉시 클라이언트로 보냄
+			} else {
+			    out.println("<p>방명록 등록에 실패했습니다.</p>");
+			}
+
+		} else {
+			System.out.println("LoggedInUserId or ownerId is null/empty.");
+			out.println("<p>로그인이 필요하거나 방명록 주인의 정보가 필요합니다.</p>");
+		}
+	}
 	%>
 	<h1 class="guestbook-title">방명록</h1>
 	<div class="guestbook-line"></div>
@@ -461,15 +510,13 @@ document.getElementById('submit-button').addEventListener('click', function subm
 
     var guestbookContent = document.getElementById('guestbook-input').value.trim();
     var guestbookSecret = document.getElementById('private').checked ? 'Y' : 'N'; // 체크박스 상태 확인
-    var ownerId = "<%= ownerId %>";
-    
+
+    console.log("guestbookSecret value:", guestbookSecret); // 값 확인
+
     if (guestbookContent) {
         // AJAX 요청 설정
         var xhr = new XMLHttpRequest();
-
-        xhr.open("POST", "<%=request.getContextPath()%>/eunhyo/guestbookAdd.jsp", true);
-
-
+        xhr.open('POST', '<%= request.getContextPath() %>/eunhyo/guestbookAdd.jsp?ownerId=<%= ownerId %>', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
         xhr.onload = function() {
@@ -482,7 +529,6 @@ document.getElementById('submit-button').addEventListener('click', function subm
                     addGuestbookEntry(guestbookContent, '<%= loggedInUserId %>', guestbookSecret);
                     document.getElementById('guestbook-input').value = ''; // 입력 필드 초기화
                     document.getElementById('private').checked = false; // 체크박스 초기화
-                    // UI로 충분히 표시되므로 alert를 지양합니다.
                 } else {
                     alert('방명록 등록에 실패했습니다. 서버 응답: ' + response);
                 }
@@ -498,13 +544,13 @@ document.getElementById('submit-button').addEventListener('click', function subm
 
         // 요청에 전송할 데이터 구성 (URL-encoded)
         var params = 'guestbookContent=' + encodeURIComponent(guestbookContent) +
-				        '&guestbookSecret=' + encodeURIComponent(guestbookSecret) +
-				        '&ownerId=' + encodeURIComponent(ownerId); // ownerId 추가
-xhr.send(params);
+                     '&guestbookSecret=' + encodeURIComponent(guestbookSecret);
+        xhr.send(params);
     } else {
         alert('내용을 입력해주세요.');
     }
 });
+
 
 
 
