@@ -351,7 +351,10 @@ function clickUser(event){
 	            <jsp:include page="storeDesign.jsp"></jsp:include>
 	         </div>
 	         <div id="guestbook" class="inner-box-2" style="display: none">
-	            <jsp:include page="../eunhyo/guestbook.jsp"></jsp:include>
+	            <jsp:include page="../eunhyo/guestbook.jsp">
+				    <jsp:param name="ownerId" value="<%= url %>"/>
+				</jsp:include>
+
 	         </div>              
          </div>
          <!-- 버튼 -->
