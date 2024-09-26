@@ -54,6 +54,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .solid-box {
@@ -120,13 +121,11 @@ body {
 }
 
 .button-container {
-    position: fixed;  
-    top: 50%;  
-    right: 12.25%;  
-    transform: translateY(-50%); 
-    display: flex;
-    flex-direction: column;  
-    z-index: 3;  
+   position: absolute;
+   right: -90px;
+   display: flex;
+   flex-direction: column;
+   z-index: 3;
 }
 
 /* 버튼 스타일 */

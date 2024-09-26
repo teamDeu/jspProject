@@ -1,88 +1,126 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>사다리게임</title>
     <style>
-    	.wheel-container-wrapper {
-            width: 700px; /* 감싸는 사각형의 크기 */
-            height:500px;
+        .wheel-container-wrapper {
+            width: 700px; 
+            height: 500px;
             padding: 50px;
             margin: 0 auto;
-            margin-bottom: 20px; /* 사각형과 줄 사이의 여백 */
+            margin-bottom: 20px;
             border: 3px solid #BAB9AA; 
-            background-color: #f7f7f7; /* 사각형 배경색 */
-            border-radius: 15px; /* 모서리를 둥글게 만듦 */
+            background-color: #f7f7f7;
+            border-radius: 15px;
+            position: relative; /* 자식 요소들의 절대 위치를 위해 필요 */
         }
-	   .game-title {
-            width: 800px; /* 줄 길이 */
-            height: 2px;  /* 줄의 높이 */
+        .game-title {
+            width: 800px;
+            height: 2px;
             background-color: #BAB9AA;
             margin: 0 auto;
             position: relative;
-            margin-top: 0; /* 위쪽 여백 */
-            margin-bottom: 20px; /* 줄과 사각형 사이에 공간 추가 */
+            margin-top: 0;
+            margin-bottom: 20px;
         }
-        
         .game-title span {
             position: absolute;
-            top: -40px; /* 텍스트를 줄과 멀리 떨어뜨리기 */
-            left: 0; /* 텍스트를 왼쪽 끝으로 이동 */
+            top: -40px;
+            left: 0;
             font-size: 35px;
             color: #80A46F;
         }
-        
         .long-box-container {
             display: flex;
-            justify-content: space-between; /* 박스들이 양쪽에 위치하도록 설정 */
-            align-items: center; /* 박스를 수평으로 맞추기 위해 중앙 정렬 */
-            gap: 200px; /* 두 박스 사이의 간격 설정 */
-            margin-top: -10px; /* 큰 네모박스와의 여백 */
+            justify-content: space-between;
+            align-items: center;
+            gap: 200px;
+            margin-top: -10px;
         }
-        
         .long-box {
-            width: 250px; /* 긴 네모의 너비 */
-            height: 30px; /* 긴 네모의 높이 */
-            background-color: white; /* 긴 네모의 배경색 */
-            border: 2px solid #BAB9AA; /* 테두리 */
-            border-radius: 10px; /* 모서리를 둥글게 */
-            display: flex;
-            justify-content: center; /* 수평으로 가운데 정렬 */
-            align-items: center; /* 수직으로 가운데 정렬 */
-        }
-        
-        .long-box-with-image {
-            display: flex;
-            align-items: center; /* 이미지와 박스가 수직으로 가운데 정렬되도록 */
-            gap: 10px; /* 이미지와 박스 사이의 간격 */
-        }
-        
-        .box-image1 {
-            width: 60px; /* 이미지의 너비 */
-            height: 60px; /* 이미지의 높이 */
-            object-fit: cover; /* 이미지의 크기를 박스에 맞춤 */
-        }
-        
-        .input-box {
-            width: 90%; /* 입력 필드가 박스 내에 맞도록 너비 설정 */
-            height: 100%; /* 입력 필드 높이를 박스에 맞춤 */
-            border: none;
-            resize: none; /* 입력 필드 크기 조정 불가능하게 설정 */
-            background-color: transparent; /* 배경색 투명 */
-            font-size: 24px; /* 글자 크기 */
-            outline: none; /* 입력할 때 테두리 제거 */
-            text-align: center; /* 텍스트를 수평으로 가운데 정렬 */
+            width: 250px;
+            height: 30px;
+            background-color: white;
+            border: 2px solid #BAB9AA;
+            border-radius: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 5px; /* 입력 필드 안쪽 여백 */
         }
-
+        .long-box-with-image {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .box-image1 {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+        }
+        .input-box {
+            width: 90%;
+            height: 100%;
+            border: none;
+            resize: none;
+            background-color: transparent;
+            font-size: 24px;
+            outline: none;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+        }
+        /* 세로줄을 위한 스타일 */
+        .vertical-line {
+            width: 5px;
+            background-color: #BAB9AA;
+            position: absolute;
+            top: 100px; /* 세로줄의 시작점 */
+            bottom: 100px; /* 세로줄의 끝점 */
+        }
+        /* 버튼 컨테이너 */
+        .button1-container {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            top: 30px; /* 위쪽 버튼 위치 */
+            left: 50px;
+            right: 50px;
+        }
+        /* 각 버튼 */
+        .button1-container button {
+            width: 85px;
+            height: 60px;
+            border: none;
+            background-color: transparent;
+        }
+        .button1-container img {
+		    width: 100%; /* 이미지가 버튼 크기에 맞게 채워지도록 설정 */
+		    height: 100%;
+		    object-fit: cover; /* 이미지가 버튼 크기에 맞게 비율을 유지하며 채워지도록 설정 */
+		}
+        /* 아래 이미지 컨테이너 */
+        .bottom1-image-container {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            bottom: 30px; /* 아래쪽 이미지 위치 */
+            left: 50px;
+            right: 50px;
+        }
+        /* 아래 이미지 */
+        .bottom1-image-container img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+        }
         /* 게임 룰 박스 */
-        .game-rules-box {
+        .game1-rules-box {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -96,8 +134,7 @@
             cursor: pointer;
             font-size: 30px;
         }
-
-        .clickable-box {
+        .game1-clickable-box {
             width: 30px;
             height: 30px;
             background-color: #BAB9AA;
@@ -110,25 +147,22 @@
             right: 10px;
             top: 5px;
         }
-
-        .triangle {
+        .game1-triangle {
             width: 0;
             height: 0;
             border-left: 10px solid transparent;
             border-right: 10px solid transparent;
-            border-bottom: 15px solid black; /* 기본적으로 똑바로 된 삼각형 */
-            transition: transform 0.3s ease; /* 회전 애니메이션 추가 */
+            border-bottom: 15px solid black;
+            transition: transform 0.3s ease;
         }
-
-        .triangle.rotate {
-            transform: rotate(180deg); /* 역삼각형으로 회전 */
+        .game1-triangle.rotate {
+            transform: rotate(180deg);
         }
-
         /* 게임 룰 설명 박스 */
-        .game-rules-detail {
-            display: none; /* 초기 상태는 숨김 */
+        .game1-rules-detail {
+            display: none;
             position: absolute;
-            top: -326px; /* '게임 룰' 박스 바로 위에 위치 */
+            top: -326px;
             left: 0;
             width: 250px;
             height: 300px;
@@ -137,9 +171,8 @@
             border-radius: 10px;
             padding: 10px;
         }
-
-        .game-rules-detail img {
-            width: 230px; /* 이미지 크기 */
+        .game1-rules-detail img {
+            width: 230px;
             height: 280px;
             object-fit: cover;
             margin-bottom: 10px;
@@ -148,26 +181,48 @@
 </head>
 <body>
 
-    <!-- div에 직접 style 적용 -->
     <div style="text-align: center; margin-top: 50px;">
         <div class="game-title">
             <span>사다리게임</span>
         </div>
 		
 		<div class="wheel-container-wrapper">
-            
+            <!-- 윗부분 버튼 -->
+            <div class="button1-container">
+                <button><img src="img/choice.png" alt="Button 1"></button>
+                <button><img src="img/choice.png" alt="Button 2"></button>
+                <button><img src="img/choice.png" alt="Button 3"></button>
+                <button><img src="img/choice.png" alt="Button 4"></button>
+                <button><img src="img/choice.png" alt="Button 5"></button>
+            </div>
+
+            <!-- 세로줄 5개 -->
+            <div class="vertical-line" style="left: 95px;"></div>
+            <div class="vertical-line" style="left: 250px;"></div>
+            <div class="vertical-line" style="left: 405px;"></div>
+            <div class="vertical-line" style="left: 560px;"></div>
+            <div class="vertical-line" style="left: 715px;"></div>
+
+            <!-- 아래 이미지 -->
+            <div class="bottom1-image-container">
+                <img src="img/bomb.png" alt="Bottom Image 1">
+                <img src="img/clover3.png" alt="Bottom Image 2">
+                <img src="img/clover2.png" alt="Bottom Image 3">
+                <img src="img/bomb.png" alt="Bottom Image 4">
+                <img src="img/clover1.png" alt="Bottom Image 5">
+            </div>
         </div>
 		
         <div class="long-box-container">
             <!-- 게임 룰 박스 -->
-            <div class="game-rules-box">
+            <div class="game1-rules-box">
                 <span>게임 룰</span>
-                <div class="clickable-box">
-                    <div class="triangle"></div>
+                <div class="game1-clickable-box">
+                    <div class="game1-triangle"></div>
                 </div>
                 <!-- 숨겨진 룰 설명 박스 -->
-                <div class="game-rules-detail">
-                    <img src="img/gamerule.png" alt="New Image"> <!-- 새로운 이미지 경로로 수정 -->
+                <div class="game1-rules-detail">
+                    <img src="img/gamerule1.png" alt="New Image">
                 </div>
             </div>
 
@@ -175,28 +230,30 @@
             <div class="long-box-with-image">
                 <img src="img/clover1.png" alt="Sample Image" class="box-image1">
                 <div class="long-box">
-                    <textarea class="input-box" id="betAmount" placeholder="배팅 금액"></textarea>
+                    <textarea class="input-box" id="betAmount" placeholder="배팅 금액" oninput="checkMaxValue(this)"></textarea>
                 </div>
             </div>
         </div>
     </div>
 	
 	<script>
-		const clickableBox = document.querySelector(".clickable-box");
-	    const gameRulesDetail = document.querySelector(".game-rules-detail");
-	    
-		// 네모 박스 클릭 시 룰 표시/숨기기 및 삼각형 회전 처리
-        clickableBox.addEventListener("click", () => {
-            // 룰 박스 표시/숨기기
-            if (gameRulesDetail.style.display === "none" || gameRulesDetail.style.display === "") {
-                gameRulesDetail.style.display = "block";
+		function checkMaxValue(element) {
+	        let max = 100;
+	        if (parseInt(element.value) > max) {
+	          element.value = max;
+	        }
+	      }
+        // 버튼 클릭 시 게임 룰 표시/숨기기
+        document.querySelector('.game1-clickable-box').addEventListener('click', function() {
+            const detailBox = document.querySelector('.game1-rules-detail');
+            const triangle = document.querySelector('.game1-triangle');
+            if (detailBox.style.display === 'none' || !detailBox.style.display) {
+                detailBox.style.display = 'block';
+                triangle.classList.add('rotate');
             } else {
-                gameRulesDetail.style.display = "none";
+                detailBox.style.display = 'none';
+                triangle.classList.remove('rotate');
             }
-
-            // 삼각형 회전 처리
-            const triangle = document.querySelector(".triangle");
-            triangle.classList.toggle("rotate"); // rotate 클래스를 추가하거나 제거
         });
 	</script>
     

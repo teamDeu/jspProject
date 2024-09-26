@@ -12,8 +12,9 @@
 	        document.getElementById("main").style.display = "none";
 	        document.getElementById("game1-container").style.display = "block";
 	        document.getElementById("game2-container").style.display = "none";
+	
+	        
 	    }
-
         function game2show() {
             document.getElementById("main").style.display = "none";
             document.getElementById("game1-container").style.display = "none";
@@ -86,7 +87,7 @@
 
 		.box-button {
 		    padding: 5px 20px;
-		    font-size: 20px;
+		    font-size: 30px;
 		    background-color: white;
 		    color: black;
 		    border: 1px solid #c1c1c1; /* 테두리 빨간색 */
