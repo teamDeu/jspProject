@@ -4,6 +4,7 @@
 <%
 	String profileImg = request.getParameter("profileImg");
 	String profileName = request.getParameter("profileName");
+	String profileId = request.getParameter("profileId");
 	String type = null;
 	if(UtilMgr.parseInt(request, "type") == 2){
 		type = "friends_type_second";
@@ -13,6 +14,6 @@
 	}
 %>
 
-<div class ="main_profile_friends_div <%=type%>">
+<div onclick = "location.href = 'main.jsp?url=<%=profileId%>'" class ="main_profile_friends_div <%=type%>">
 	<img class ="main_profile_friends" src="<%=profileImg%>"> <span><%=profileName%></span>
 </div>

@@ -19,9 +19,8 @@ public class ChatServer {
     private static HashMap<String,String> userId = new HashMap<String,String>();
     private static HashMap<String,String> userUrl = new HashMap<String,String>();
     private static HashMap<String,String> userName = new HashMap<String,String>();
+    private static String dataSeparator = "㉠";
     @OnOpen
-    
-    
     public void onOpen(Session session) {
         clients.add(session);
         
@@ -32,7 +31,7 @@ public class ChatServer {
     public void onMessage(String message, Session session) throws IOException {
         System.out.println("받은 메시지: " + message);
         // 모든 클라이언트에게 메시지 전송
-        String[] rawData = message.split(";");
+        String[] rawData = message.split(dataSeparator);
         String command = rawData[0];
         String data = rawData[1];
         if(command.equals("connect")) {
@@ -52,10 +51,8 @@ public class ChatServer {
                 		if(session.getId() == client.getId()) {
                 			continue;
                 		}
-                		System.out.println("접속된사람의 URL : " + userUrl.get(client.getId()));
-                		System.out.println("방금접속한 사람의 URL : "  + userUrl.get(session.getId()));
                 		if(userUrl.get(client.getId()).equals(userUrl.get(session.getId()))){
-                			session.getBasicRemote().sendText("init;" +userIdValue +";" + userCharacterValue +";" +userNameValue);
+                			session.getBasicRemote().sendText("init"+ dataSeparator +userIdValue + dataSeparator + userCharacterValue +dataSeparator +userNameValue);
                 		}
                 		
     				} catch (Exception e) {
