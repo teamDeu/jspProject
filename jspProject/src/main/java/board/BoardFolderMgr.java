@@ -2,7 +2,11 @@ package board;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 import miniroom.DBConnectionMgr;
 
@@ -35,7 +39,7 @@ public class BoardFolderMgr {
 	}
 	
 	
-	// 폴더 삭제 메서드
+	// 폴더 삭제
     public boolean deleteFolder(int folderNum) {
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -55,4 +59,33 @@ public class BoardFolderMgr {
         }
         return result;
     }
+    
+
+    // 사용자 ID로 폴더 목록 
+    public Vector<BoardFolderBean> getFolderList(String userId) {
+        Vector<BoardFolderBean> folderList = new Vector<>();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT folder_num, folder_name FROM boardfolder WHERE user_id = ? ORDER BY folder_num";
+
+        try {
+            con = pool.getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, userId);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                BoardFolderBean folder = new BoardFolderBean();
+                folder.setFolder_num(rs.getInt("folder_num"));
+                folder.setFolder_name(rs.getString("folder_name"));
+                folderList.add(folder);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return folderList;
+    }
+    
 }

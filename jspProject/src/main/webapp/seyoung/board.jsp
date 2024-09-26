@@ -670,12 +670,7 @@
 		        answerItem.parentNode.insertBefore(replyItem, answerItem.nextSibling);
 		    }
 		}
-
-
-
-
 	
-		
     </script>
 </body>
 </html>
