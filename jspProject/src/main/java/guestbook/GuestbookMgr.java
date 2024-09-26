@@ -47,7 +47,7 @@ public class GuestbookMgr {
                 isWritten = true; // 성공적으로 삽입된 경우 true
             }
         } catch (Exception e) {
-        	System.out.println("Error: " + e.getMessage());
+        	System.out.println("Error in writeGuestbook: " + e.getMessage());
             e.printStackTrace(); // 에러 로그 출력
         } finally {
             pool.freeConnection(con, pstmt); // 연결 종료
@@ -81,13 +81,13 @@ public class GuestbookMgr {
         return isDeleted;
     }
 
-    // 방명록 목록을 가져오는 메서드
-    public List<GuestbookBean> getGuestbookEntries(String ownerId) {
+    // 특정 사용자의 방명록 항목을 가져오는 메서드
+    public List<GuestbookBean> getGuestbookEntriesByOwner(String ownerId) {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         List<GuestbookBean> guestbookList = new ArrayList<>();
-        String sql = "SELECT * FROM guestbook WHERE owner_id = ? ORDER BY written_at DESC"; // 방명록 목록을 시간순으로 가져옴
+        String sql = "SELECT * FROM guestbook WHERE owner_id = ? ORDER BY written_at DESC";
 
         try {
             con = pool.getConnection();
@@ -98,8 +98,12 @@ public class GuestbookMgr {
             while (rs.next()) {
                 GuestbookBean guestbook = new GuestbookBean();
                 guestbook.setGuestbookNum(rs.getInt("guestbook_num"));
-                guestbook.setGuestbookContent(rs.getString("guestbook_content"));
+                guestbook.setGuestbookSecret(rs.getString("guestbook_secret"));
+                guestbook.setOwnerId(rs.getString("owner_id"));
                 guestbook.setWriterId(rs.getString("writer_id"));
+                guestbook.setGuestbookContent(rs.getString("guestbook_content"));
+                guestbook.setWrittenAt(rs.getTimestamp("written_at"));
+                guestbook.setModifiedAt(rs.getTimestamp("modified_at"));
                 guestbookList.add(guestbook);
             }
         } catch (Exception e) {
