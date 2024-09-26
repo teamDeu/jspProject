@@ -217,7 +217,7 @@ function clickAlarm(){
           addFriendBtn.onclick = (function(requestSendUser, requestReciveUser,character,name) {
         	    return function() {
         	        fr_modal = document.getElementById("friend_request_modal_send");
-        	        fr_form = document.friend_request_form;
+        	        fr_form = document.friend_request_form_send;
         	        fr_form.request_senduserid.value = requestSendUser;
         	        fr_form.request_receiveuserid.value = requestReciveUser;
         	        fr_modal.style.display = "flex";
