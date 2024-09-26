@@ -1,11 +1,18 @@
 package friend;
 
 public class FriendInfoBean {
+	private int friend_num;
 	private String user_id1;
 	private String user_id2;
 	private String friend_at;
 	private int friend_type;
 	
+	public int getFriend_num() {
+		return friend_num;
+	}
+	public void setFriend_num(int friend_num) {
+		this.friend_num = friend_num;
+	}
 	public String getUser_id1() {
 		return user_id1;
 	}

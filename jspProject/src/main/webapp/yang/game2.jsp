@@ -207,6 +207,17 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             z-index: 100;
         }
+        
+        #popup-title {
+		    font-size: 40px;
+		    margin: 0;
+		}
+		
+		#title-image {
+		    margin-left: 10px;
+		    width: 50px;
+		    height: 50px;
+		}
 
         #popup h2 {
             margin-top: 20px;
@@ -275,28 +286,38 @@
             <div class="long-box-with-image">
                 <img src="img/clover1.png" alt="Sample Image" class="box-image1">
                 <div class="long-box">
-                    <textarea class="input-box" id="betAmount" placeholder="배팅 금액"></textarea>
+                    <textarea class="input-box" id="betAmount" placeholder="배팅 금액" oninput="checkMaxValue(this)"></textarea>
                 </div>
             </div>
         </div>
     </div>
 
 	<div id="popup">
-	    <h2 id="popup-title"></h2>
+	    <div style="display: flex; align-items: center; justify-content: center;">
+        	<h2 id="popup-title" style="font-size: 40px; margin: 0;">당첨</h2> <!-- 텍스트 (예: 당첨) -->
+        	<img id="title-image" src="" alt="Title Image" class="title-image"> <!-- 텍스트 옆에 표시될 이미지 -->
+    	</div>
 	    <div class="popup-content">
 	        <img id="popup-image" src="" alt="Winning Image" class="popup-image">
 	        <span class="popup-multiplier">x <span id="popup-multiplier"></span></span>
 	    </div>
-	    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px;">
-	        <img src="img/clover1.png" alt="Clover Image" style="width: 50px; height: 50px;">
-	        <div style="border: 2px solid #BAB9AA; border-radius: 10px; width: 100px; height: 30px; display: flex; align-items: center; justify-content: center;">
-	            <span id="popup-total-amount" style="font-size : 30pt;"></span>
-	        </div>
-	    </div>
-	    <button id="confirm-button">확인</button>
+		<div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px;">
+		    <img src="img/clover1.png" alt="Clover Image" style="width: 50px; height: 50px; object-fit: contain;"> <!-- 이미지 수직 중앙 정렬 -->
+		    <div style="border: 2px solid #BAB9AA; border-radius: 10px; width: 100px; height: 30px; display: flex; align-items: center; justify-content: center;"> <!-- 높이를 이미지에 맞춰 30px로 수정 -->
+		        <span id="popup-total-amount" style="font-size: 30pt; line-height: 1;">0</span> <!-- 텍스트 크기를 이미지 크기에 맞춰서 수정 -->
+		    </div>
+		</div>
+
+	    <button id="confirm-button" >확인</button>
 	</div>
 
     <script>
+	    function checkMaxValue(element) {
+	        let max = 100;
+	        if (parseInt(element.value) > max) {
+	          element.value = max;
+	        }
+	      }
         const wheelCanvas = document.getElementById('wheel');
         const ctx = wheelCanvas.getContext('2d');
         const startButton = document.getElementById('start-button');
@@ -453,16 +474,24 @@
         });
 
         function showPopup(result, picture, multiplier, totalAmount) {
-            // 결과에 따라 다른 이미지를 설정
-            if (result === "당첨") {
-                popupImage.src = picture;  // 당첨 이미지
-            } else if (result === "실패") {
-                popupImage.src = "img/clover1.png";  // 실패 이미지 경로
-            }
+            // 당첨/실패 텍스트와 팝업 이미지
+            popupTitle.textContent = result;  // "당첨" 또는 "실패" 텍스트 설정
+            popupImage.src = picture;  // 팝업 이미지 설정 (당첨/실패 이미지)
+
+            // 텍스트 옆에 보여줄 이미지 설정
+            const titleImage = document.getElementById('title-image');
             
-            popupTitle.textContent = result;
+            if (result === "당첨") {
+                titleImage.src = "img/wow.png";  // 당첨일 때의 이미지
+            } else if (result === "실패") {
+                titleImage.src = "img/sad.png";  // 실패일 때의 이미지
+            }
+
+            // 배수와 총 금액 설정
             popupMultiplier.textContent = multiplier;
             popupTotalAmount.textContent = totalAmount;
+
+            // 팝업 보이기
             popup.style.display = 'block';
         }
 

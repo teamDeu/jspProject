@@ -4,7 +4,12 @@
 <jsp:useBean id="iMgr" class ="miniroom.ItemMgr"/>
 <jsp:useBean id="mMgr" class ="pjh.MemberMgr"/>
 <%
+	
    String id = (String)session.getAttribute("idKey");
+	if(id == null){
+		response.sendRedirect("../pjh/login.jsp");
+		return;
+	}
    String character = iMgr.getUsingCharacter(id).getItem_path();
    String url = request.getParameter("url");
    if(url == null){
@@ -25,6 +30,7 @@
 <!-- Linking the CSS file -->
 <link rel="stylesheet" type="text/css" href="./css/style.css">
 <style>
+
 @font-face {
     font-family: 'NanumTobak';
     src: url('../나눔손글씨 또박또박.TTF') format('truetype');
@@ -78,6 +84,7 @@ function loadContent(url) {
     xhr.open("GET", url, true);
     xhr.send();
 }
+
 function clickOpenBox(id){
    openBox = document.getElementById(id);
    anotherBox = document.querySelectorAll(".inner-box-2");
@@ -91,36 +98,39 @@ function clickUser(event){
 }
 </script>
 <!-- 웹소켓통신 자바스크립트 -->
+
 <script type="text/javascript">
         var ws;
         var sayBoxId = 0;
+        var chatBoxId = 0;
         let userNum = 0;
         var localId = "<%=userBean.getUser_id()%>";
         var character = "<%=character%>"
         var url = "<%=url%>";
         var name = "<%=userBean.getUser_name()%>";
+        var dataSeparator = "㉠"
+        var messageSeparator = "㉡";
+        var timeNameText = "";
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
             ws.onopen = function() {
                 document.getElementById("status").textContent = "서버와 연결됨";
                 if(localId == "null") localId = "비회원";
                 if(character == "null") character = "character1.png"
-                message = "connect;"+ localId +";" + character +";" + url +";" + name;
+                message = "connect"+ dataSeparator + localId +dataSeparator + character +dataSeparator + url +dataSeparator + name;
                 ws.send(message);
             };
-
             ws.onmessage = function(event) {
-                 rawdata = event.data.split(";");
+                 rawdata = event.data.split(dataSeparator);
                  command = rawdata[0];
                  data = rawdata[1];
                  if(command == ("sendMessage")){
-                    comment = data.split(":")[1];
-                    user = data.split(":")[0];
-                    name = data.split(":")[2];
-                    if(comment == "") return;
-                    printSayBox(user);
+                    comment = data.split(messageSeparator)[1];
+                    user = data.split(messageSeparator)[0];
+                    name = data.split(messageSeparator)[2];
+                 if(comment == "") return;
+                  printSayBox(user);
                   printChatBox(user,comment,"chat",name);
-                    
                  }
                  else if(command == ("init")){
                     userNum ++;
@@ -139,6 +149,8 @@ function clickUser(event){
                     
                  }
                  else if(command == ("disconnect")){
+                	data = rawdata[1];
+                	name = rawdata[2];
                     printChatBox(data,name+"님이 퇴장하셨습니다.","notice",name);
                     user = document.getElementById(data);
                     user.remove();
@@ -150,11 +162,10 @@ function clickUser(event){
             };
         }
         function sendMessage() {
-            var message = "sendMessage;" + localId + ":" + document.getElementById("messageInput").value + ":" + name;
+            var message = "sendMessage" + dataSeparator +  localId + messageSeparator + document.getElementById("messageInput").value + messageSeparator + '<%=userBean.getUser_name()%>';
             if (message.trim() !== "") {
                 ws.send(message);
                 document.getElementById("messageInput").value = '';
-                
             }
         }
         
@@ -210,7 +221,7 @@ function clickUser(event){
           goHomepageBtn.onclick = (function(id) {
               return function() {
                  console.log(id);
-                 location.href = "http://localhost/jspProject/miniroom/main.jsp?url=" + id;   
+                 location.href = "http://"+location.host+"/jspProject/miniroom/main.jsp?url=" + id;   
               };
           })(id);
           newDiv.appendChild(informationDiv);
@@ -239,16 +250,19 @@ function clickUser(event){
         }
         
         function printChatBox(id,comment,type,name){
+        	
            chatArea2 = document.getElementById("chatArea2");
            chatBoxDiv = document.createElement("div");
            newContent = document.createTextNode(comment);
            chatDiv = document.createElement("div");
            chatDiv.appendChild(newContent);
            chatBoxDiv.appendChild(chatDiv);
+           
            if(id == localId){
               chatDiv.classList.add("myChat");
               chatBoxDiv.classList.add("myChatBox");
            }
+           
            else{
               chatDiv.classList.add("otherChat");
               chatBoxDiv.classList.add("otherChatBox");
@@ -257,8 +271,23 @@ function clickUser(event){
            chatDiv.classList.add(type);
            userNameDiv = document.createElement("div");
            let today = new Date();
-          userNameContent = document.createTextNode(today.toLocaleString() + "  " + name);
-          
+           let year = today.getFullYear();
+           let month = String(today.getMonth() + 1).padStart(2, '0'); // 2자리로 포맷
+           let day = String(today.getDate()).padStart(2, '0'); // 2자리로 포맷
+           let hours = String(today.getHours()).padStart(2, '0'); // 2자리로 포맷
+           let minutes = String(today.getMinutes()).padStart(2, '0'); // 2자리로 포맷
+
+          let timeText = year + '.' + month + '.' + day + ' ' + hours + ':' + minutes;
+          let newTimeNameText = timeText + "  " + name;
+         
+		  if(document.getElementById(timeNameText) && timeNameText == newTimeNameText){
+			  document.getElementById(timeNameText).remove();
+		  }
+		  else{
+			  timeNameText = newTimeNameText;
+		  }
+          userNameContent = document.createTextNode(timeNameText);
+          userNameDiv.id = timeNameText;
           userNameDiv.appendChild(userNameContent);
           userNameDiv.classList.add("chatName");
           chatBoxDiv.appendChild(userNameDiv);
@@ -272,12 +301,12 @@ function clickUser(event){
            }
         
         function disconnect(){
-           var message = "disconnect;" + localId + ";" + name;
-           location.href ="index.jsp";
+           var message = "disconnect"+ dataSeparator + localId + dataSeparator + name;
            ws.send(message);
            ws.close();
         }
           window.addEventListener("beforeunload",disconnect);
+        
     </script>
 
 </head>
@@ -294,7 +323,14 @@ function clickUser(event){
       <div class="dashed-box">
          <!-- 테두리 없는 상자 -->
          <div class="solid-box">
-            <div class="inner-box-1"></div>
+         	<div class ="main_profile_alram">
+         	<img class="main_profile_alram_img" src="./img/alram.png">
+         	</div>
+            <div class="inner-box-1">
+            	<jsp:include page="profile.jsp">
+            		<jsp:param value='<%=url %>' name="url"/>
+            	</jsp:include>
+            </div>
             <!-- 이미지가 박스 -->
             <div class="image-box">
                <img src="img/img1.png" alt="Image between boxes 1"
@@ -315,16 +351,21 @@ function clickUser(event){
                <jsp:include page="../yang/game.jsp"></jsp:include>
             </div>
 	         <div id="store" class="inner-box-2" style="display: none">
-	            <jsp:include page="storeDesign.jsp"></jsp:include>
-	         </div>          
+	            <jsp:include page="../pjh/storeDesign.jsp"></jsp:include>
+	         </div>
+	         <div id="guestbook" class="inner-box-2" style="display: none">
+	            <jsp:include page="../eunhyo/guestbook.jsp"></jsp:include>
+	         </div>              
          </div>
          <!-- 버튼 -->
          <div class="button-container">
             <button onclick="javascript:clickOpenBox('chatBox')" class="custom-button">홈</button>
             <button class="custom-button">프로필</button>
+            <%if(url.equals(id)){ %>
             <button onclick="javascript:clickOpenBox('Box_miniroom_design')" class="custom-button">미니룸</button>
+            <%} %>
             <button class="custom-button">게시판</button>
-            <button class="custom-button">방명록</button>
+            <button onclick = "javascript:clickOpenBox('guestbook')" class="custom-button">방명록</button>
             <button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
             <button onclick = "javascript:clickOpenBox('game')" class="custom-button">게임</button>
             <button class="custom-button">음악</button>
