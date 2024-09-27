@@ -10,6 +10,7 @@ public class BoardWriteBean {
     private String board_content; // 게시물 내용
     private String board_at; // 작성 시간
     private String board_image; // 이미지 경로
+    private int board_views;
     
     
     public BoardWriteBean(){}
@@ -99,6 +100,15 @@ public class BoardWriteBean {
     public void setBoard_image(String board_image) {
         this.board_image = board_image;
     }
+
+	public int getBoard_views() {
+		return board_views;
+	}
+
+	public void setBoard_views(int board_views) {
+		this.board_views = board_views;
+	}
+    
     
     
 }
