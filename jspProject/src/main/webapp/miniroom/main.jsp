@@ -161,6 +161,11 @@ function clickUser(event){
                 document.getElementById("status").textContent = "서버 연결 끊김";
             };
         }
+        function gamemainshow() {
+        	document.getElementById("main").style.display = "block";
+            document.getElementById("game1-container").style.display = "none";
+            document.getElementById("game2-container").style.display = "none";
+        }
         function sendMessage() {
             var message = "sendMessage" + dataSeparator +  localId + messageSeparator + document.getElementById("messageInput").value + messageSeparator + '<%=userBean.getUser_name()%>';
             if (message.trim() !== "") {
@@ -367,7 +372,7 @@ function clickUser(event){
             <button class="custom-button">게시판</button>
             <button onclick = "javascript:clickOpenBox('guestbook')" class="custom-button">방명록</button>
             <button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
-            <button onclick = "javascript:clickOpenBox('game')" class="custom-button">게임</button>
+            <button onclick = "javascript:clickOpenBox('game'); gamemainshow();" class="custom-button">게임</button>
             <button class="custom-button">음악</button>
          </div>
   
