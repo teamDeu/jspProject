@@ -17,6 +17,7 @@
             font-family: 'NanumTobak';
             background-color: #F8F6E3;
             text-align: center;
+            zoom:1.15;
         }
 
         .container {
