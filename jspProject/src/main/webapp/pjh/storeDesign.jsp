@@ -481,6 +481,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
         function buyItem(itemNum, itemPrice, itemName, itemImage) {
+            // 구매 확인 메시지 추가
+            if (!confirm("정말로 구매하시겠습니까?")) {
+                return; // 취소하면 함수 종료
+            }
+
             console.log("Item Name: ", itemName);
             console.log("Item Image: ", itemImage);
             console.log("Item Price: ", itemPrice);
@@ -515,6 +520,7 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
         }
+
 		
         function loadBuylist() {
             const xhr = new XMLHttpRequest();
@@ -578,17 +584,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             currentClover += itemPrice; // 환불된 클로버 금액 더하기
                             document.querySelector('.clover-amount-span').innerText = currentClover;
 
-                            // 환불된 아이템을 화면에서 제거
-                            const refundedItem = document.querySelector(`[onclick="refundItem(${itemNum}, ${itemPrice})"]`);
-                            if (refundedItem) {
-                                refundedItem.remove();
-                            }
-
-                            // 아이템 배열에서도 제거 (페이징 적용 시 반영을 위해)
-                            itemsBuylist = itemsBuylist.filter(item => item.getAttribute('onclick') !== `refundItem(${itemNum}, ${itemPrice})`);
-
-                            // 페이지네이션 및 화면 업데이트
-                            displayItems();
+                            // 구매 목록을 즉시 업데이트
+                            loadBuylist();  // 환불 후 즉시 구매 목록을 새로고침
                         } else {
                             alert("환불에 실패했습니다. 다시 시도해 주세요.");
                         }
@@ -597,6 +594,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
             }
         }
+
 
 
     </script>
