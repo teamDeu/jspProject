@@ -16,7 +16,7 @@
             border: 3px solid #BAB9AA;
             background-color: #f7f7f7;
             border-radius: 15px;
-            position: relative; /* 자식 요소들의 절대 위치를 위해 필요 */
+            position: relative;
         }
         .game-title {
             width: 800px;
@@ -75,29 +75,26 @@
             align-items: center;
             padding: 5px;
         }
-        /* 세로줄을 위한 스타일 */
         .vertical-line {
             width: 5px;
             background-color: #BAB9AA;
             position: absolute;
-            top: 100px; /* 세로줄의 시작점 */
-            bottom: 100px; /* 세로줄의 끝점 */
+            top: 100px;
+            bottom: 100px;
         }
         .horizontal-line {
             height: 5px;
             background-color: #BAB9AA;
             position: absolute;
         }
-        /* 버튼 컨테이너 */
         .button1-container {
             display: flex;
             justify-content: space-between;
             position: absolute;
-            top: 30px; /* 위쪽 버튼 위치 */
+            top: 30px;
             left: 50px;
             right: 50px;
         }
-        /* 각 버튼 */
         .button1-container button {
             width: 85px;
             height: 60px;
@@ -105,26 +102,23 @@
             background-color: transparent;
         }
         .button1-container img {
-		    width: 100%; /* 이미지가 버튼 크기에 맞게 채워지도록 설정 */
-		    height: 100%;
-		    object-fit: cover; /* 이미지가 버튼 크기에 맞게 비율을 유지하며 채워지도록 설정 */
-		}
-        /* 아래 이미지 컨테이너 */
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
         .bottom1-image-container {
             display: flex;
             justify-content: space-between;
             position: absolute;
-            bottom: 30px; /* 아래쪽 이미지 위치 */
+            bottom: 30px;
             left: 50px;
             right: 50px;
         }
-        /* 아래 이미지 */
         .bottom1-image-container img {
             width: 60px;
             height: 60px;
             object-fit: cover;
         }
-        /* 게임 룰 박스 */
         .game1-rules-box {
             display: flex;
             align-items: center;
@@ -163,7 +157,6 @@
         .game1-triangle.rotate {
             transform: rotate(180deg);
         }
-        /* 게임 룰 설명 박스 */
         .game1-rules-detail {
             display: none;
             position: absolute;
@@ -182,6 +175,70 @@
             object-fit: cover;
             margin-bottom: 10px;
         }
+        /* 팝업창 스타일 */
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 300px;
+            background-color: white;
+            border: 2px solid #BAB9AA;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        #popup-title {
+		    font-size: 40px;
+		    margin: 0;
+		}
+		
+		#title-image {
+		    margin-left: 10px;
+		    width: 50px;
+		    height: 50px;
+		}
+
+        #popup h2 {
+            margin-top: 20px;
+            font-size:40px;
+        }
+
+        #popup img {
+            margin-top: 10px;
+        }
+
+        #popup button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid black;
+            background-color: #FFFECC;
+            font-size: 18px;
+            cursor: pointer;
+        }
+		.popup-content {
+		    display: flex;
+		    justify-content: center;
+		    align-items: center;
+		    margin-top: 20px;
+		    gap: 10px; /* 이미지와 배수 사이 간격 설정 */
+		    font-size:40px;
+		}
+		
+		.popup-image {
+		    width: 60px;
+		    height: 60px;
+		}
+		
+		.popup-multiplier {
+		    font-size: 40px;
+		    font-weight: bold;
+		}
     </style>
 </head>
 <body>
@@ -190,8 +247,8 @@
         <div class="game-title">
             <span>사다리게임</span>
         </div>
-		
-		<div class="wheel-container-wrapper" id="gameContainer">
+        
+        <div class="wheel-container-wrapper" id="gameContainer">
             <div class="button1-container">
                 <button onclick="startGame(0)"><img src="img/choice.png" alt="Button 1"></button>
                 <button onclick="startGame(1)"><img src="img/choice.png" alt="Button 2"></button>
@@ -214,21 +271,18 @@
                 <img src="img/clover1.png" alt="Bottom Image 5">
             </div>
         </div>
-		
+        
         <div class="long-box-container">
-            <!-- 게임 룰 박스 -->
             <div class="game1-rules-box">
                 <span>게임 룰</span>
                 <div class="game1-clickable-box">
                     <div class="game1-triangle"></div>
                 </div>
-                <!-- 숨겨진 룰 설명 박스 -->
                 <div class="game1-rules-detail">
                     <img src="img/gamerule1.png" alt="New Image">
                 </div>
             </div>
 
-            <!-- 배팅 금액 입력 부분 -->
             <div class="long-box-with-image">
                 <img src="img/clover1.png" alt="Sample Image" class="box-image1">
                 <div class="long-box">
@@ -236,130 +290,192 @@
                 </div>
             </div>
         </div>
+        <div id="popup">
+		    <h2 id="popup-title"></h2>
+		    <img id="popup-image" src="" alt="Popup Image" />
+		    <div>
+		        <span>배수: </span><span id="popup-multiplier"></span>
+		    </div>
+		    <div>
+		        <span>총 금액: </span><span id="popup-total-amount"></span>
+		    </div>
+		    <button id="confirmButton">확인</button>
+		</div>
     </div>
-	
-	<script>
-	    function generateLines() {
-	        const container = document.getElementById('gameContainer');
-	        const verticalLinePositions = [95, 250, 405, 560, 715]; // 각 세로줄의 x 좌표
-	
-	        // 고정된 가로줄의 y 좌표를 배열로 설정, 높이를 다르게 배치
-	        const fixedTops = [
-	            110, 200, 300, 400,
-	            130, 220, 320, 420,
-	            150, 240, 340, 440,
-	            170, 260, 360, 460
-	        ];
-	
-	        // 각 세로줄 사이에 고르게 분포시킴
-	        const lineDistribution = [
-	            [0, 1, 2, 3],  // 첫 번째 세로줄 사이 (1번과 2번)
-	            [0, 2, 4, 6],  // 두 번째 세로줄 사이 (2번과 3번)
-	            [1, 3, 5, 7],  // 세 번째 세로줄 사이 (3번과 4번)
-	            [0, 2, 4, 6]   // 네 번째 세로줄 사이 (4번과 5번)
-	        ];
-	
-	        // 이전에 생성된 가로줄이 있으면 모두 삭제
-	        const existingLines = document.querySelectorAll('.horizontal-line');
-	        existingLines.forEach(line => line.remove());
-	
-	        let counter = 0;
-	        const generatedLines = [];
-	
-	        // 각 세로줄 사이에서 최소 1개의 가로줄을 생성
-	        for (let j = 0; j < lineDistribution.length; j++) {
-	            // 각 세로줄 사이에서 고정적으로 하나의 가로줄을 생성
-	            const randomIndex = Math.floor(Math.random() * lineDistribution[j].length);
-	            const selectedTop = fixedTops[counter + randomIndex];
-	            
-	            const horizontalLine = document.createElement('div');
-	            horizontalLine.classList.add('horizontal-line');
-	            horizontalLine.style.top = selectedTop + 'px';
-	            horizontalLine.style.left = verticalLinePositions[j] + 'px';
-	            horizontalLine.style.width = (verticalLinePositions[j + 1] - verticalLinePositions[j]) + 'px';
-	
-	            container.appendChild(horizontalLine);
-	            generatedLines.push({
-	                top: selectedTop,
-	                left: verticalLinePositions[j],
-	                width: verticalLinePositions[j + 1] - verticalLinePositions[j]
-	            });
-	            counter += lineDistribution[j].length;
-	        }
-	
-	        // 총 10개의 가로줄을 생성하기 위해 나머지 6개의 가로줄을 랜덤으로 선택
-	        while (generatedLines.length < 10) {
-	            const randomIndex = Math.floor(Math.random() * fixedTops.length);
-	            if (!generatedLines.some(line => line.top === fixedTops[randomIndex])) { // 중복 방지
-	                const j = Math.floor(randomIndex / 4); // 세로줄 구간 계산
-	                const horizontalLine = document.createElement('div');
-	                horizontalLine.classList.add('horizontal-line');
-	                horizontalLine.style.top = fixedTops[randomIndex] + 'px';
-	                horizontalLine.style.left = verticalLinePositions[j] + 'px';
-	                horizontalLine.style.width = (verticalLinePositions[j + 1] - verticalLinePositions[j]) + 'px';
-	
-	                container.appendChild(horizontalLine);
-	                generatedLines.push({
-	                    top: fixedTops[randomIndex],
-	                    left: verticalLinePositions[j],
-	                    width: verticalLinePositions[j + 1] - verticalLinePositions[j]
-	                });
-	            }
-	        }
-	        return generatedLines;
-	    }
-	
-	    function startGame(buttonIndex) {
-	        const container = document.getElementById('gameContainer');
-	        const verticalLinePositions = [95, 250, 405, 560, 715]; // 각 세로줄의 x 좌표
-	        const horizontalLines = generateLines(); // 가로줄 생성 후 위치 정보 저장
-	
-	        let topPosition = 30; // 이미지 시작 위치
-	        let currentXPosition = verticalLinePositions[buttonIndex]; // 시작 세로줄의 x 좌표
-	        let currentVerticalLineIndex = buttonIndex; // 현재 세로줄 인덱스
-	        
-	        const topImage = document.createElement('img');
-	        topImage.src = './img/character1.png'; // 표시할 이미지 경로
-	        topImage.classList.add('top-image');
-	        topImage.style.position = 'absolute';
-	        topImage.style.width = '60px';
-	        topImage.style.height = '60px';
-	        topImage.style.left = currentXPosition - 30 + 'px'; // 중앙에 맞추기 위해 x 좌표 조정
-	        topImage.style.top = topPosition + 'px'; // 이미지 초기 위치 설정
-	        container.appendChild(topImage);
-	
-	        // 이미지가 세로줄을 타고 내려가는 함수
-	        const intervalId = setInterval(() => {
-	            topPosition += 5; // 5px씩 내려감
-	            topImage.style.top = topPosition + 'px';
-	            
-	            // 가로줄과 충돌했는지 확인
-	            horizontalLines.forEach((line) => {
-	                if (topPosition >= line.top && topPosition <= line.top + 5 && currentXPosition === line.left) {
-	                    // 가로줄을 타고 오른쪽으로 이동
-	                    currentXPosition = line.left + line.width;
-	                    topImage.style.left = currentXPosition - 30 + 'px'; // 이미지의 x 좌표 업데이트
-	                    currentVerticalLineIndex++;
-	                    topPosition += 5; // 이동 후 다시 세로줄 타고 내려가게끔 함
-	                } else if (topPosition >= line.top && topPosition <= line.top + 5 && currentXPosition === line.left + line.width) {
-	                    // 가로줄을 타고 왼쪽으로 이동
-	                    currentXPosition = line.left;
-	                    topImage.style.left = currentXPosition - 30 + 'px'; // 이미지의 x 좌표 업데이트
-	                    currentVerticalLineIndex--;
-	                    topPosition += 5; // 이동 후 다시 세로줄 타고 내려가게끔 함
-	                }
-	            });
-	
-	            // 이미지가 맨 아래에 도달하면 게임 종료
-	            if (topPosition >= 480) { // 끝 지점 y 좌표 (아래 세로줄 끝)
-	                clearInterval(intervalId); // 애니메이션 정지
-	                const resultImage = document.querySelectorAll('.bottom1-image-container img')[currentVerticalLineIndex];
-	                alert(`게임 종료! 결과: ${resultImage.alt}`); // 결과를 alert로 출력
-	            }
-	        }, 20); // 20ms마다 실행
-	    }
+    
+    <script>
+        function generateLines() {
+            const container = document.getElementById('gameContainer');
+            const verticalLinePositions = [95, 250, 405, 560, 715]; 
 
-	</script>
+            const fixedTops = [
+                110, 200, 300, 400,
+                130, 220, 320, 420,
+                150, 240, 340, 440,
+                170, 260, 360, 460
+            ];
+
+            const lineDistribution = [
+                [0, 1, 2, 3],  
+                [0, 2, 4, 6],  
+                [1, 3, 5, 7],  
+                [0, 2, 4, 6]   
+            ];
+
+            const existingLines = document.querySelectorAll('.horizontal-line');
+            existingLines.forEach(line => line.remove());
+
+            let counter = 0;
+            const generatedLines = [];
+
+            for (let j = 0; j < lineDistribution.length; j++) {
+                const randomIndex = Math.floor(Math.random() * lineDistribution[j].length);
+                const selectedTop = fixedTops[counter + randomIndex];
+                
+                const horizontalLine = document.createElement('div');
+                horizontalLine.classList.add('horizontal-line');
+                horizontalLine.style.top = selectedTop + 'px';
+                horizontalLine.style.left = verticalLinePositions[j] + 'px';
+                horizontalLine.style.width = (verticalLinePositions[j + 1] - verticalLinePositions[j]) + 'px';
+
+                container.appendChild(horizontalLine);
+                generatedLines.push({
+                    top: selectedTop,
+                    left: verticalLinePositions[j],
+                    width: verticalLinePositions[j + 1] - verticalLinePositions[j]
+                });
+                counter += lineDistribution[j].length;
+            }
+
+            while (generatedLines.length < 10) {
+                const randomIndex = Math.floor(Math.random() * fixedTops.length);
+                if (!generatedLines.some(line => line.top === fixedTops[randomIndex])) { 
+                    const j = Math.floor(randomIndex / 4); 
+                    const horizontalLine = document.createElement('div');
+                    horizontalLine.classList.add('horizontal-line');
+                    horizontalLine.style.top = fixedTops[randomIndex] + 'px';
+                    horizontalLine.style.left = verticalLinePositions[j] + 'px';
+                    horizontalLine.style.width = (verticalLinePositions[j + 1] - verticalLinePositions[j]) + 'px';
+
+                    container.appendChild(horizontalLine);
+                    generatedLines.push({
+                        top: fixedTops[randomIndex],
+                        left: verticalLinePositions[j],
+                        width: verticalLinePositions[j + 1] - verticalLinePositions[j]
+                    });
+                }
+            }
+            return generatedLines;
+        }
+
+        function startGame(buttonIndex) {
+            const container = document.getElementById('gameContainer');
+            const verticalLinePositions = [95, 250, 405, 560, 715]; 
+            const horizontalLines = generateLines(); 
+
+            let topPosition = 30; 
+            let currentXPosition = verticalLinePositions[buttonIndex]; 
+            let currentVerticalLineIndex = buttonIndex; 
+            let isOnHorizontalLine = false; 
+            let lastPassedLine = null; 
+
+            const topImage = document.createElement('img');
+            topImage.src = './img/character1.png'; 
+            topImage.style.position = 'absolute';
+            topImage.style.width = '60px'; 
+            topImage.style.height = '60px';
+            topImage.style.left = currentXPosition - 30 + 'px'; 
+            topImage.style.top = (topPosition - 30) + 'px'; 
+            container.appendChild(topImage);
+
+            function moveDown() {
+                topPosition += 5;
+                topImage.style.top = (topPosition - 30) + 'px'; 
+
+                horizontalLines.forEach((line) => {
+                    const tolerance = 3; 
+                    if (lastPassedLine !== line && topPosition >= line.top && topPosition <= line.top + 5 && Math.abs(currentXPosition - line.left) <= tolerance) {
+                        isOnHorizontalLine = true; 
+                        lastPassedLine = line; 
+                        clearInterval(intervalId); 
+
+                        let horizontalMoveId = setInterval(() => {
+                            currentXPosition += 5; 
+                            topImage.style.left = currentXPosition - 30 + 'px'; 
+
+                            if (currentXPosition >= line.left + line.width) {
+                                clearInterval(horizontalMoveId); 
+                                currentVerticalLineIndex++;
+                                isOnHorizontalLine = false; 
+                                intervalId = setInterval(moveDown, 20); 
+                            }
+                        }, 20);
+                    } else if (lastPassedLine !== line && topPosition >= line.top && topPosition <= line.top + 5 && Math.abs(currentXPosition - (line.left + line.width)) <= tolerance) {
+                        isOnHorizontalLine = true; 
+                        lastPassedLine = line; 
+                        clearInterval(intervalId); 
+
+                        let horizontalMoveId = setInterval(() => {
+                            currentXPosition -= 5; 
+                            topImage.style.left = currentXPosition - 30 + 'px'; 
+
+                            if (currentXPosition <= line.left) {
+                                clearInterval(horizontalMoveId); 
+                                currentVerticalLineIndex--;
+                                isOnHorizontalLine = false; 
+                                intervalId = setInterval(moveDown, 20); 
+                            }
+                        }, 20);
+                    }
+                });
+                
+                let multiplier = 0;
+                const betAmount = parseInt(document.getElementById('betAmount').value) || 0; // 배팅 금액 가져오기
+                
+                if (topPosition >= 510) { // 바닥에 도달하면 게임 종료
+                    clearInterval(intervalId);
+                    
+                    if (currentVerticalLineIndex == 0 || currentVerticalLineIndex == 3) {
+                        multiplier = 0;
+                        showPopup("실패", "img/bomb.png", 0, betAmount * multiplier);
+                    } else if (currentVerticalLineIndex == 1) {
+                        multiplier = 3;
+                        showPopup("당첨", "img/clover3.png", 3, betAmount * multiplier);
+                    } else if (currentVerticalLineIndex == 2) {
+                        multiplier = 2;
+                        showPopup("당첨", "img/clover2.png", 2, betAmount * multiplier);
+                    } else if (currentVerticalLineIndex == 4) {
+                        multiplier = 1;
+                        showPopup("당첨", "img/clover1.png", 1, betAmount * multiplier);
+                    }
+                    
+                    topImage.remove();
+                }
+            }
+
+            let intervalId = setInterval(moveDown, 20);
+        }
+
+        function showPopup(result, picture, multiplier, totalAmount) {
+            const popup = document.getElementById('popup');
+            const popupTitle = document.getElementById('popup-title');
+            const popupImage = document.getElementById('popup-image');
+            const popupMultiplier = document.getElementById('popup-multiplier');
+            const popupTotalAmount = document.getElementById('popup-total-amount');
+
+            popupTitle.textContent = result;
+            popupImage.src = picture;
+            popupMultiplier.textContent = multiplier;
+            popupTotalAmount.textContent = totalAmount;
+
+            popup.style.display = 'block';
+        }
+
+        document.getElementById('confirmButton').addEventListener('click', () => {
+            document.getElementById('popup').style.display = 'none';
+        });
+
+    </script>
 
 </body>
 </html>
