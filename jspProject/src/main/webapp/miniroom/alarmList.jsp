@@ -6,9 +6,10 @@
 <jsp:useBean id="fMgr" class ="friend.FriendMgr"/>
 <jsp:useBean id="uMgr" class ="pjh.MemberMgr"/>
 <%
-	String id = (String)session.getAttribute("id");
+	String id = (String)session.getAttribute("idKey");
 	String url = request.getParameter("url");
-	Vector<FriendRequestBean> vlist = fMgr.getFriendRequest(url);
+	System.out.println("AlarmList ID:" +id);
+	Vector<FriendRequestBean> vlist = fMgr.getFriendRequest(id);
 %>
 <head>
 	<style>
