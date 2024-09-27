@@ -95,11 +95,6 @@
 		fr_form.request_comment.value = document.querySelector(".request_comment").value;
 		fr_form.submit();
 		document.getElementById("friend_request_modal_send").style.display = "none";
-		if(fr_form.request_senduserid.value == fr_form.request_receiveuserid){
-			alert("본인에게 친구요청 할 수 없습니다.")
-			return;
-		}
-		alert("친구 요청 성공!");
 	}
 	function changeType(select){
 		fr_form = document.friend_request_form_send;
@@ -138,6 +133,6 @@
    		<input type ="hidden" name ="request_comment" value ="">
    		<input type ="hidden" name ="type" value ="send">
    </form>
-       <iframe name='blankifr' style='display:none;'></iframe>
+       <iframe name='blankifr' style = "display :none"></iframe>
 </div>
 </html>

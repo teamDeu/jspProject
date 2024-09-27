@@ -149,6 +149,7 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 	width: 22%;
 	height: 100%;
 	display: flex;
+	position:relative;
 	flex-direction: column;
 	align-items: center;
 	justify-content: space-between;

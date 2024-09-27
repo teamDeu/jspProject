@@ -146,7 +146,44 @@ public class FriendMgr {
 		}
 		return bean;
 	}
-	
+	public boolean checkDuplicateFriendRequest(String senduserid,String receiveuserid) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "SELECT * FROM friendrequest WHERE (request_senduserid = ? AND request_receiveuserid = ?) OR (request_senduserid = ? AND request_receiveuserid = ?)";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, senduserid);
+			pstmt.setString(2,receiveuserid);
+			pstmt.setString(3, receiveuserid);
+			pstmt.setString(4, senduserid);
+			rs = pstmt.executeQuery();
+			if(rs.next()){
+				sql = "SELECT * FROM friendinfo WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?)";
+				pstmt = con.prepareStatement(sql);
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, senduserid);
+				pstmt.setString(2,receiveuserid);
+				pstmt.setString(3, receiveuserid);
+				pstmt.setString(4, senduserid);
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					flag = true;
+				}
+			}
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		
+		return flag;
+	}
 	public boolean updateFriendRequestComplete(int num) {
 		Connection con = null;
 		PreparedStatement pstmt = null;

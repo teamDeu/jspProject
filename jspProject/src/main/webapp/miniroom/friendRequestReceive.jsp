@@ -108,7 +108,6 @@
 		fr_form.receive_type.value = "accept";
 		fr_form.submit();
 		document.getElementById("friend_request_modal_receive").style.display = "none";
-		alert("친구가 추가되었습니다.");
 		
 		alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != fr_form.request_num.value);
 		displayalarm_items();

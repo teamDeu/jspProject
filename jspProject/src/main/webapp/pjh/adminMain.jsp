@@ -33,13 +33,10 @@
 			<!-- 버튼 --> 
 			<div class="button-container">
 				<button class="custom-button">홈</button>
-				<button class="custom-button">프로필</button>
-				<button class="custom-button">미니룸</button>
-				<button class="custom-button">게시판</button>
-				<button class="custom-button">방명록</button>
+				<button class="custom-button">회원</button>
 				<button class="custom-button">상점</button>
-				<button class="custom-button">게임</button>
-				<button class="custom-button">음악</button>
+		
+			
 			</div>
 
 
