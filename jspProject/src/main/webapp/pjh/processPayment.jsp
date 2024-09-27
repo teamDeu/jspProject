@@ -46,7 +46,7 @@
             pstmt.executeUpdate();
 
             // 결제 성공 페이지로 이동
-            response.sendRedirect("pay.jsp");
+            response.sendRedirect("../pjh/pay.jsp");
         } catch (Exception e) {
             e.printStackTrace();
             out.print("ERROR");

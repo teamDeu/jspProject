@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+
 <%
     String id = (String)session.getAttribute("idKey");
 
@@ -46,7 +47,7 @@
             
         }
         input[type="button"] {
-            background-color: #90EE90;
+            background-color: #C0E5AF;
             border: none;
             color: white;
             padding: 10px 120px;
@@ -90,7 +91,7 @@
 <body>
 <div class="container">
     <div class="logo">
-        <img src="logo2.png" style="width:200px; height:80px;">
+        <img src="logo2.png" style="width:200px; height:100px;">
  
     </div>
     <br/><br/>
