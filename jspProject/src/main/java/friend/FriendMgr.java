@@ -97,7 +97,7 @@ public class FriendMgr {
 		Vector<FriendRequestBean> vlist = new Vector<FriendRequestBean>();
 		try {
 			con = pool.getConnection();
-			sql = "select * from friendrequest where request_receiveuserid = ? and request_complete = 0";
+			sql = "select * from friendrequest where request_receiveuserid = ? and request_complete = 0 order by request_at desc";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, id);
 			rs = pstmt.executeQuery();
