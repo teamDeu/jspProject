@@ -21,20 +21,27 @@
 	}
 	else if(type.equals("receive")){
 		msg = "친구 추가에 실패하였습니다.";
+		String receive_type = request.getParameter("receive_type");
 		System.out.println(bean.getRequest_num());
 		bean = mgr.getFriendRequestItem(bean.getRequest_num());
-		if(mgr.insertFriendInfo(bean)){
+		System.out.println("여기는 옴");
+		if(receive_type.equals("accept")){
+			if(mgr.insertFriendInfo(bean)){
+				msg ="친구 추가 성공!";
+				mgr.updateFriendRequestComplete(bean.getRequest_num());
+			}
+			else{
+				msg ="친구 추가 실패!";
+			}
+		}
+		else if(receive_type.equals("reject")){
 			mgr.updateFriendRequestComplete(bean.getRequest_num());
-			msg ="친구 추가 성공!";
 		}
-		else{
-			msg ="친구 추가 실패!";
-		}
+		
 	}
 	
 %>
 <script>
-	alert('<%=msg%>');
-	self.close();
+	
 </script>
 

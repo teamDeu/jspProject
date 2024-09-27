@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%
-	String type = request.getParameter("type");
 %>
 <!DOCTYPE html>
 <html>
@@ -19,6 +18,7 @@
 }
 .request_main_div {
 	display:flex;
+	
 	align-items:center;
 	width: 360px;
 	height: 300px;
@@ -34,6 +34,7 @@
 }
 .request_div{
 	display:flex;
+	position:relative;
 	width : 100%;
 	align-items:center;
 	flex-direction:column;
@@ -46,6 +47,7 @@
 	gap:10px;
 }
 .request_header {
+	position : relative;
 	display: flex;
 	align-items: center;
 	gap:20px;
@@ -89,19 +91,39 @@
 <script>
 	function frequest_receive_clickCancelBtn(){
 		document.getElementById("friend_request_modal_receive").style.display = "none";
+		fr_form = document.friend_request_form_receive;
+		fr_form.request_num.value = document.querySelector(".request_num").value;
+		fr_form.receive_type.value = "reject";
+		fr_form.submit();
+		alert("친구요청을 거절했습니다.");
+		
+		alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != fr_form.request_num.value);
+		displayalarm_items();
+	    alarm_updatePagination();
 	}
 	function frequest_receive_clickSubmitBtn(){
 		
 		fr_form = document.friend_request_form_receive;
-		console.log(fr_form);
 		fr_form.request_num.value = document.querySelector(".request_num").value;
+		fr_form.receive_type.value = "accept";
 		fr_form.submit();
+		document.getElementById("friend_request_modal_receive").style.display = "none";
+		alert("친구가 추가되었습니다.");
+		
+		alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != fr_form.request_num.value);
+		displayalarm_items();
+	    alarm_updatePagination();
+	}
+	
+	function frequest_receive_clickCloseBtn(){
 		document.getElementById("friend_request_modal_receive").style.display = "none";
 	}
 </script>
 </head>
 <div class ="request_main_div">
+	
 	<div class="request_div">
+	<button style = "position:absolute; right : 0px ; top: 0px ; font-size : 10px;" onclick ="frequest_receive_clickCloseBtn()">X</button>
 		<div class="request_header">
 			<section class="request_profile_section">
 				<img src="./img/character1.png" class="request_profile_img">
@@ -122,9 +144,11 @@
 			<button onclick = "frequest_receive_clickCancelBtn()" class ="request_button">거절</button>
 		</div>
 	</div>
-	<form name = "friend_request_form_receive" action = "./friendRequestProc.jsp" target  ="_blank">
+	<form name = "friend_request_form_receive" target = "blankifr" action = "./friendRequestProc.jsp">
    		<input type ="hidden" name = "request_num" value ="">
+   		<input type ="hidden" name = "receive_type" value ="">
    		<input type ="hidden" name = "type" value ="receive">
    </form>
+       <iframe name='blankifr' style='display:none;'></iframe>
 </div>
 </html>

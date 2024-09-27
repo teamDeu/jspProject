@@ -334,12 +334,15 @@ function clickAlarm(){
       <div class="dashed-box">
          <!-- 테두리 없는 상자 -->
          <div class="solid-box">
+         	<%if(url.equals(id)){ %>
             <div class ="main_profile_alram">
             <img class="main_profile_alram_img" onclick ="clickAlarm()" src="./img/alram.png">
             <jsp:include page="alarmList.jsp">
                <jsp:param value="<%=url %>" name="url"/>
             </jsp:include>
             </div>
+            <%} %>
+            
             <div class="inner-box-1">
                <jsp:include page="profile.jsp">
                   <jsp:param value='<%=url %>' name="url"/>
@@ -397,6 +400,7 @@ function clickAlarm(){
    <div id = "friend_request_modal_send" class ="friend_request_modal" style = "display:none">
          <jsp:include page="friendRequestSend.jsp"></jsp:include>
    </div>
+   
    <div id = "friend_request_modal_receive" class ="friend_request_modal" style = "display:none">
          <jsp:include page="friendRequestReceive.jsp"></jsp:include>
    </div>
