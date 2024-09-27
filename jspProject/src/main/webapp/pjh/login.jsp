@@ -14,7 +14,7 @@
             src: url('나눔손글씨 또박또박.TTF') format('truetype');
         }
         body {
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
             font-family: 'NanumTobak';
         }
         .container {
@@ -27,7 +27,7 @@
             font-family: 'NanumTobak';
         }
         .login-box {
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
             border-radius: 10px;
             padding: 30px;
             width: 300px;
@@ -64,7 +64,12 @@
             text-decoration: none;
             color: #333;
             margin: 0 10px;
-        } 
+        }
+        /* 관리자 로그인 체크박스 왼쪽 배치 */
+        .admin-checkbox {
+            text-align: left;
+            padding-left: 5%;
+        }
     </style>
     <script type="text/javascript">
         function loginCheck() {
@@ -95,7 +100,7 @@
 <body>
 <div class="container">
     <div class="logo">
-        <img src="logo2.png" style="width:200px; height:100px;">
+        <img src="mainlogo.jpg" style="width:320px; height:100px;">
     </div>
     <br/><br/>
     <div class="login-box">
@@ -103,9 +108,11 @@
             <input type="text" name="user_id" placeholder="아이디">
             <input type="password" name="user_pwd" placeholder="비밀번호">
             <br/>
-            <label>
-                <input type="checkbox" name="isAdmin" value="yes"> 관리자 로그인
-            </label>
+            <div class="admin-checkbox">
+                <label>
+                    <input type="checkbox" name="isAdmin" value="yes"> 관리자 로그인
+                </label>
+            </div>
             <br/><br/>
             <input type="button" value="로그인" onclick="loginCheck()" style="width: 290px;">
         </form>
