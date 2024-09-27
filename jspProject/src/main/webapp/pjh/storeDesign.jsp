@@ -1,9 +1,9 @@
 <%@page import="java.util.HashMap"%>
 <%@page import="item.ItemBean"%>
 <%@page import="java.util.Vector"%>
-<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
-<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" 
+                  pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
 <jsp:useBean id="mgr" class="item.ItemMgr" />
 <%
@@ -242,6 +242,43 @@ try {
 	color: #FFF;
 	border-color: green;
 }
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+.popup-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.popup-info {
+    font-family: 'NanumTobak';
+}
+
+.popup-info h2 {
+    font-size: 20px;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.popup-info p {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -439,21 +476,24 @@ document.addEventListener('DOMContentLoaded', function () {
             openBox.style.display = "grid";
         }
         
-        function buyItem(itemNum, itemPrice) {
-            // 클로버 잔액 체크
+        function buyItem(itemNum, itemPrice, itemName, itemImage) {
+            console.log("Item Name: ", itemName); // 이름 확인
+            console.log("Item Image: ", itemImage); // 이미지 경로 확인
+            console.log("Item Price: ", itemPrice); // 가격 확인
+
             if (<%= user_clover %> < itemPrice) {
                 alert("클로버가 부족합니다.");
                 return;
             }
 
-            // 구매 처리 AJAX 요청
             const xhr = new XMLHttpRequest();
             xhr.open("POST", "../pjh/buyItem.jsp", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     if (xhr.responseText.trim() === 'SUCCESS') {
-                        alert("구매가 완료되었습니다!");
+                        // 구매 완료 팝업 표시
+                        showPurchaseCompletePopup(itemName, itemImage, itemPrice);
 
                         // 클로버 잔액 UI 업데이트
                         let currentClover = parseInt(document.querySelector('.clover-amount-span').innerText);
@@ -461,17 +501,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.querySelector('.clover-amount-span').innerText = currentClover;
 
                         // 구매한 아이템을 구매 목록에 추가
-                        const buylistContainer = document.getElementById('buylistItems');
-                        const newItem = document.createElement('div');
-                        newItem.classList.add('buylistItems');
-                        newItem.innerHTML = `
-                            <img src="${itemImage}" alt="${itemName}" style="width:186px;height:165px;" />
-                            <div class="item-title">${itemName}</div>
-                            <div class="item-price">
-                                <img src="./img/clover_icon.png" alt="클로버" style="width:20px; height:20px;"> ${itemPrice}개
-                            </div>
-                        `;
-                        buylistContainer.appendChild(newItem);
+                        
 
                     } else if (xhr.responseText.trim() === 'NOT_ENOUGH_CLOVER') {
                         alert("클로버가 부족합니다.");
@@ -482,6 +512,30 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
         }
+
+        function showPurchaseCompletePopup(itemName, itemImage, itemPrice) {
+            console.log("Popup Item Name: ", itemName); // 이름 확인
+            console.log("Popup Item Image: ", itemImage); // 이미지 경로 확인
+            console.log("Popup Item Price: ", itemPrice); // 가격 확인
+
+            const popupHTML = 
+                '<div id="purchasePopup" class="popup">' +
+                    '<img src="' + itemImage + '" alt="' + itemName + '" class="popup-image" />' +
+                    '<div class="popup-info">' +
+                        '<h2>' + itemName + '</h2>' +
+                        '<p>클로버: ' + itemPrice + '개</p>' +
+                        '<p>구매가 완료되었습니다!</p>' +
+                    '</div>' +
+                '</div>';
+            document.body.insertAdjacentHTML('beforeend', popupHTML);
+
+            // 팝업이 3초 후에 자동으로 사라지도록 설정
+            setTimeout(() => {
+                document.getElementById('purchasePopup').remove();
+            }, 3000); // 3초 후에 팝업 제거
+        }
+
+
 
 
         
@@ -551,7 +605,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 ItemBean bean = Allvlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="allItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 전체 아이템 클래스 -->
+            <div class="allItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')">
+ <!-- 전체 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -570,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ItemBean bean = Musicvlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="musicItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 음악 아이템 클래스 -->
+            <div class="musicItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 음악 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -589,7 +644,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ItemBean bean = Charactervlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="characterItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 캐릭터 아이템 클래스 -->
+            <div class="characterItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 캐릭터 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -608,7 +663,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ItemBean bean = Backgroundvlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="backgroundItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 배경 아이템 클래스 -->
+            <div class="backgroundItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 배경 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
