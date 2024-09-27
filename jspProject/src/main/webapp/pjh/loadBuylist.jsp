@@ -1,20 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@page import="java.sql.*, pjh.DBConnectionMgr"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*, pjh.DBConnectionMgr"%>
+
 <%
-String user_id = request.getParameter("user_id");
-DBConnectionMgr pool = null;
+String user_id = (String) session.getAttribute("idKey");
 Connection conn = null;
 PreparedStatement pstmt = null;
 ResultSet rs = null;
+DBConnectionMgr pool = DBConnectionMgr.getInstance();
 
 try {
-    pool = DBConnectionMgr.getInstance();
     conn = pool.getConnection();
-
-    String getUserItemsSQL = "SELECT i.item_name, i.item_image, i.item_price, h.item_num " +
-                             "FROM item i JOIN itemhold h ON i.item_num = h.item_num " +
-                             "WHERE h.user_Id = ?";
+    String getUserItemsSQL = "SELECT i.item_name, i.item_image, i.item_price, h.item_num FROM item i JOIN itemhold h ON i.item_num = h.item_num WHERE h.user_Id = ?";
     pstmt = conn.prepareStatement(getUserItemsSQL);
     pstmt.setString(1, user_id);
     rs = pstmt.executeQuery();
