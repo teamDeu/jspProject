@@ -1,9 +1,9 @@
 <%@page import="java.util.HashMap"%>
 <%@page import="item.ItemBean"%>
 <%@page import="java.util.Vector"%>
-<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
-<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" 
+                  pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
 <jsp:useBean id="mgr" class="item.ItemMgr" />
 <%
@@ -242,6 +242,49 @@ try {
 	color: #FFF;
 	border-color: green;
 }
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+.popup-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.popup-info {
+    font-family: 'NanumTobak';
+}
+
+.popup-info h2 {
+    font-size: 20px;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.popup-info p {
+    font-size: 16px;
+    margin: 5px 0;
+}
+/* 배경 모자이크 효과를 위한 클래스 */
+.mosaic-background {
+    filter: blur(8px); /* 모자이크처럼 보이도록 blur 효과 적용 */
+    transition: filter 0.3s ease; /* 부드럽게 효과 적용 */
+}
+
+
 </style>
 
 <script type="text/javascript">
@@ -281,7 +324,8 @@ function changeItemType(event, itemType) {
         items = itemsBackground;
         document.getElementById("backgroundItems").style.display = "grid";
     } else if (itemType === 'buylist') {
-        items = itemsBuylist;
+        // 여기서 구매 목록을 클릭했을 때 서버에서 구매 목록을 가져오도록 처리
+        loadBuylist();  // 구매 목록을 새로고침 없이 업데이트
         document.getElementById("buylistItems").style.display = "grid";
     }
 
@@ -289,6 +333,7 @@ function changeItemType(event, itemType) {
     currentPage = 1;
     displayItems(); // 아이템을 다시 렌더링
 }
+
 //정렬 모드를 변경하는 함수
 function changeSortMode(mode) {
     if (sortMode === mode) {
@@ -378,6 +423,7 @@ function displayItems() {
 }
 
 
+ 
 
 
 
@@ -395,6 +441,7 @@ function updatePagination() {
         paginationContainer.appendChild(pageSpan);
     }
 }
+
 
 // 페이지를 변경하는 함수
 function changePage(page) {
@@ -439,40 +486,37 @@ document.addEventListener('DOMContentLoaded', function () {
             openBox.style.display = "grid";
         }
         
-        function buyItem(itemNum, itemPrice) {
-            // 클로버 잔액 체크
+        function buyItem(itemNum, itemPrice, itemName, itemImage) {
+            // 구매 확인 메시지 추가
+            if (!confirm("정말로 구매하시겠습니까?")) {
+                return; // 취소하면 함수 종료
+            }
+
+            console.log("Item Name: ", itemName);
+            console.log("Item Image: ", itemImage);
+            console.log("Item Price: ", itemPrice);
+
             if (<%= user_clover %> < itemPrice) {
                 alert("클로버가 부족합니다.");
                 return;
             }
 
-            // 구매 처리 AJAX 요청
             const xhr = new XMLHttpRequest();
             xhr.open("POST", "../pjh/buyItem.jsp", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     if (xhr.responseText.trim() === 'SUCCESS') {
-                        alert("구매가 완료되었습니다!");
+                        // 구매 완료 팝업 표시
+                        showPurchaseCompletePopup(itemName, itemImage, itemPrice);
 
                         // 클로버 잔액 UI 업데이트
                         let currentClover = parseInt(document.querySelector('.clover-amount-span').innerText);
                         currentClover -= itemPrice;
                         document.querySelector('.clover-amount-span').innerText = currentClover;
 
-                        // 구매한 아이템을 구매 목록에 추가
-                        const buylistContainer = document.getElementById('buylistItems');
-                        const newItem = document.createElement('div');
-                        newItem.classList.add('buylistItems');
-                        newItem.innerHTML = `
-                            <img src="${itemImage}" alt="${itemName}" style="width:186px;height:165px;" />
-                            <div class="item-title">${itemName}</div>
-                            <div class="item-price">
-                                <img src="./img/clover_icon.png" alt="클로버" style="width:20px; height:20px;"> ${itemPrice}개
-                            </div>
-                        `;
-                        buylistContainer.appendChild(newItem);
-
+                        // 구매한 아이템을 구매 목록에 즉시 추가
+                        addToBuylist(itemNum, itemPrice, itemName, itemImage);
                     } else if (xhr.responseText.trim() === 'NOT_ENOUGH_CLOVER') {
                         alert("클로버가 부족합니다.");
                     } else {
@@ -482,6 +526,56 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
         }
+
+		
+        function loadBuylist() {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "../pjh/loadBuylist.jsp", true);  // loadBuylist.jsp는 구매 목록을 불러오는 서버 스크립트
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    const buylistContainer = document.getElementById("buylistItems");
+                    buylistContainer.innerHTML = xhr.responseText;  // 구매 목록을 업데이트
+                    
+                    // 구매 목록 아이템을 배열로 저장 (페이징 처리를 위해)
+                    itemsBuylist = Array.from(document.querySelectorAll('.buylistItems'));
+
+                    // 구매 목록을 페이지로 나눠서 보여줌
+                    items = itemsBuylist; // 현재 카테고리를 구매 목록으로 설정
+                    displayItems();  // 구매 목록 렌더링
+                }
+            };
+            xhr.send();
+        }
+
+
+        function showPurchaseCompletePopup(itemName, itemImage, itemPrice) {
+            console.log("Popup Item Name: ", itemName); // 이름 확인
+            console.log("Popup Item Image: ", itemImage); // 이미지 경로 확인
+            console.log("Popup Item Price: ", itemPrice); // 가격 확인
+
+            // 페이지 전체에 모자이크 효과 적용
+            document.querySelector('.storecontainer').classList.add('mosaic-background');
+
+            const popupHTML = 
+                '<div id="purchasePopup" class="popup">' +
+                    '<img src="' + itemImage + '" alt="' + itemName + '" class="popup-image" />' +
+                    '<div class="popup-info">' +
+                        '<h2>' + itemName + '</h2>' +
+                        '<p>클로버: ' + itemPrice + '개</p>' +
+                        '<p>구매가 완료되었습니다!</p>' +
+                    '</div>' +
+                '</div>';
+            document.body.insertAdjacentHTML('beforeend', popupHTML);
+
+            // 팝업이 2초 후에 자동으로 사라지고 배경의 모자이크 효과를 제거
+            setTimeout(() => {
+                document.getElementById('purchasePopup').remove();
+                // 배경에서 모자이크 효과 제거
+                document.querySelector('.storecontainer').classList.remove('mosaic-background');
+            }, 2000); // 2초 후에 팝업 제거 및 모자이크 해제
+        }
+
+
 
 
         
@@ -495,7 +589,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         if (xhr.responseText.trim() === 'SUCCESS') {
                             alert("환불이 완료되었습니다!");
-                            location.reload(); // 페이지 새로고침하여 클로버 업데이트
+
+                            // 클로버 잔액 업데이트
+                            let currentClover = parseInt(document.querySelector('.clover-amount-span').innerText);
+                            currentClover += itemPrice; // 환불된 클로버 금액 더하기
+                            document.querySelector('.clover-amount-span').innerText = currentClover;
+
+                            // 구매 목록을 즉시 업데이트
+                            loadBuylist();  // 환불 후 즉시 구매 목록을 새로고침
                         } else {
                             alert("환불에 실패했습니다. 다시 시도해 주세요.");
                         }
@@ -504,6 +605,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
             }
         }
+
+
 
     </script>
 </head>
@@ -551,7 +654,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 ItemBean bean = Allvlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="allItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 전체 아이템 클래스 -->
+            <div class="allItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')">
+ <!-- 전체 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -570,7 +674,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ItemBean bean = Musicvlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="musicItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 음악 아이템 클래스 -->
+            <div class="musicItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 음악 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -589,7 +693,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ItemBean bean = Charactervlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="characterItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 캐릭터 아이템 클래스 -->
+            <div class="characterItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 캐릭터 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -608,7 +712,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ItemBean bean = Backgroundvlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="backgroundItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>)"> <!-- 배경 아이템 클래스 -->
+            <div class="backgroundItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 배경 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />

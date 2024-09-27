@@ -6,9 +6,10 @@
 <jsp:useBean id="fMgr" class ="friend.FriendMgr"/>
 <jsp:useBean id="uMgr" class ="pjh.MemberMgr"/>
 <%
-	String id = (String)session.getAttribute("id");
+	String id = (String)session.getAttribute("idKey");
 	String url = request.getParameter("url");
-	Vector<FriendRequestBean> vlist = fMgr.getFriendRequest(url);
+	System.out.println("AlarmList ID:" +id);
+	Vector<FriendRequestBean> vlist = fMgr.getFriendRequest(id);
 %>
 <head>
 	<style>
@@ -183,11 +184,21 @@ function clickAlarmItem(event){
 	if(commentInput.value =="null"){
 		commentInput.value ="";
 	}
+	
     // 값을 가져와서 modal에 설정
     fr_modal.querySelector(".request_user_name_font").innerText = nameInput.value;
     fr_modal.querySelector(".request_type_span").innerText = typeInput.value == 1 ? "일촌" : "이촌";
     fr_modal.querySelector(".request_comment").value = commentInput.value;
     fr_modal.querySelector(".request_num").value = numInput.value;
+    
+    fr_form.querySelector(".alarmlist_main_div_item_readbool").style.color = "rgba(0,0,0,0.2)"
+    
+    //alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != numInput.value);
+    console.log(alarm_items);
+    
+    
+    displayalarm_items();
+    alarm_updatePagination();
     // 모달을 표시
     fr_modal.style.display = "flex";
 }

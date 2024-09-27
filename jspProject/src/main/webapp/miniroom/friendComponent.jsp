@@ -15,5 +15,5 @@
 %>
 
 <div onclick = "location.href = 'main.jsp?url=<%=profileId%>'" class ="main_profile_friends_div <%=type%>">
-	<img class ="main_profile_friends" src="<%=profileImg%>"> <span><%=profileName%></span>
+	<img class ="main_profile_friends" src="<%=profileImg%>"> <span class ="main_profile_friends_name"><%=profileName%></span>
 </div>

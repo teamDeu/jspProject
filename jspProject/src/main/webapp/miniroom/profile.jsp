@@ -264,8 +264,8 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 		<div class="main_profile_music">music</div>
 		<div class="main_profile_friends_main_div">
 			<div class="main_profile_friends_search_div">
-				<input type="text" placeholder="닉네임을 입력해주세요.">
-				<button>검색</button>
+				<input class ="main_profile_friends_search_text" type="text" placeholder="닉네임을 입력해주세요.">
+				<button onclick = "friendSearchClick()">검색</button>
 			</div>
 			<div class="main_profile_friends_list_friendtype_btns">
 				<button style = "background-color : #C0E5AF" class ="main_profile_friendtype_btn" onclick = "changeFriendType(event,1)">일촌</button>
@@ -320,6 +320,16 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 	let friend_items_second = [];
 	let friend_items = [];
 	
+	function friendSearchClick(){
+		console.log("friendSearchClick");
+		searchValue = document.querySelector(".main_profile_friends_search_text").value;
+		tempFriend = friend_items;
+		friend_items = friend_items.filter((e) => e.querySelector(".main_profile_friends_name").innerText.includes(searchValue));
+		console.log(friend_items);
+		friend_displayItems();
+		friend_currentPage = 1;
+		friend_items = tempFriend;
+	}
 	function clickFriendListNext(){
 		if(friend_items.length > friend_currentPage * friend_itemsPerPage)
 		friend_changePage(friend_currentPage+1)
