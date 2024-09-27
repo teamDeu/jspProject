@@ -318,7 +318,8 @@ function changeItemType(event, itemType) {
         items = itemsBackground;
         document.getElementById("backgroundItems").style.display = "grid";
     } else if (itemType === 'buylist') {
-        items = itemsBuylist;
+        // 여기서 구매 목록을 클릭했을 때 서버에서 구매 목록을 가져오도록 처리
+        loadBuylist();  // 구매 목록을 새로고침 없이 업데이트
         document.getElementById("buylistItems").style.display = "grid";
     }
 
@@ -326,6 +327,7 @@ function changeItemType(event, itemType) {
     currentPage = 1;
     displayItems(); // 아이템을 다시 렌더링
 }
+
 //정렬 모드를 변경하는 함수
 function changeSortMode(mode) {
     if (sortMode === mode) {
@@ -418,6 +420,7 @@ function displayItems() {
 
 
 
+
 //페이지네이션 업데이트 함수
 function updatePagination() {
     const totalPages = Math.ceil(items.length / itemsPerPage);
@@ -432,6 +435,7 @@ function updatePagination() {
         paginationContainer.appendChild(pageSpan);
     }
 }
+
 
 // 페이지를 변경하는 함수
 function changePage(page) {
@@ -477,9 +481,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
         function buyItem(itemNum, itemPrice, itemName, itemImage) {
-            console.log("Item Name: ", itemName); // 이름 확인
-            console.log("Item Image: ", itemImage); // 이미지 경로 확인
-            console.log("Item Price: ", itemPrice); // 가격 확인
+            console.log("Item Name: ", itemName);
+            console.log("Item Image: ", itemImage);
+            console.log("Item Price: ", itemPrice);
 
             if (<%= user_clover %> < itemPrice) {
                 alert("클로버가 부족합니다.");
@@ -500,9 +504,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         currentClover -= itemPrice;
                         document.querySelector('.clover-amount-span').innerText = currentClover;
 
-                        // 구매한 아이템을 구매 목록에 추가
-                        
-
+                        // 구매한 아이템을 구매 목록에 즉시 추가
+                        addToBuylist(itemNum, itemPrice, itemName, itemImage);
                     } else if (xhr.responseText.trim() === 'NOT_ENOUGH_CLOVER') {
                         alert("클로버가 부족합니다.");
                     } else {
@@ -512,6 +515,26 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
         }
+		
+        function loadBuylist() {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "../pjh/loadBuylist.jsp", true);  // loadBuylist.jsp는 구매 목록을 불러오는 서버 스크립트
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    const buylistContainer = document.getElementById("buylistItems");
+                    buylistContainer.innerHTML = xhr.responseText;  // 구매 목록을 업데이트
+                    
+                    // 구매 목록 아이템을 배열로 저장 (페이징 처리를 위해)
+                    itemsBuylist = Array.from(document.querySelectorAll('.buylistItems'));
+
+                    // 구매 목록을 페이지로 나눠서 보여줌
+                    items = itemsBuylist; // 현재 카테고리를 구매 목록으로 설정
+                    displayItems();  // 구매 목록 렌더링
+                }
+            };
+            xhr.send();
+        }
+
 
         function showPurchaseCompletePopup(itemName, itemImage, itemPrice) {
             console.log("Popup Item Name: ", itemName); // 이름 확인
@@ -549,7 +572,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         if (xhr.responseText.trim() === 'SUCCESS') {
                             alert("환불이 완료되었습니다!");
-                            location.reload(); // 페이지 새로고침하여 클로버 업데이트
+
+                            // 클로버 잔액 업데이트
+                            let currentClover = parseInt(document.querySelector('.clover-amount-span').innerText);
+                            currentClover += itemPrice; // 환불된 클로버 금액 더하기
+                            document.querySelector('.clover-amount-span').innerText = currentClover;
+
+                            // 환불된 아이템을 화면에서 제거
+                            const refundedItem = document.querySelector(`[onclick="refundItem(${itemNum}, ${itemPrice})"]`);
+                            if (refundedItem) {
+                                refundedItem.remove();
+                            }
+
+                            // 아이템 배열에서도 제거 (페이징 적용 시 반영을 위해)
+                            itemsBuylist = itemsBuylist.filter(item => item.getAttribute('onclick') !== `refundItem(${itemNum}, ${itemPrice})`);
+
+                            // 페이지네이션 및 화면 업데이트
+                            displayItems();
                         } else {
                             alert("환불에 실패했습니다. 다시 시도해 주세요.");
                         }
@@ -558,6 +597,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
             }
         }
+
 
     </script>
 </head>
