@@ -1,5 +1,7 @@
-@charset "UTF-8";
-
+@font-face {
+    font-family: 'NanumTobak';
+    src: url('../나눔손글씨 또박또박.TTF') format('truetype');
+}
 .board-title {
     color: #80A46F; 
     text-align: center; 
@@ -28,4 +30,74 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+} 
+
+.board-box {
+    background-color: #F7F7F7;
+    border: 1px solid #BAB9AA;
+    width: 820px;
+    height: 570px; 
+    margin-top:20px;
+    
 }
+
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* 테이블 헤더와 바디의 스타일 */
+.board-table th{
+    border-bottom: 1px dotted #BAB9AA;
+    padding: 10px;
+    text-align: center;
+    font-size: 25px; 
+    background-color: #F7F7F7;
+    border-bottom: 1px solid #BAB9AA;
+}
+
+.board-table th:nth-child(2) { /* 두 번째 <th>에만 적용 */
+    padding-right: 100px; /* 작성자 열 앞에 간격 추가 */
+}
+
+
+
+input[type="checkbox"] {
+    transform: scale(1.5); /* 체크박스 크기 */
+}
+
+/* 체크박스 체크 표시 색상 */
+input[type="checkbox"]:checked {
+    accent-color: #545454; /* 체크된 상태에서 체크 표시의 색상 */
+}
+
+/* 버튼 그룹에 절대 위치 적용 */
+.button-group {
+    position: absolute; /* 절대 위치 */
+    top: 35px; /* 원하는 상단 위치 */
+    right: 30px; /* 오른쪽에서 30px 떨어진 위치 */
+    display: flex; /* 버튼 간 간격을 줄 수 있음 */
+    gap: 10px; /* 버튼 간의 간격 */
+}
+
+/* 버튼 스타일 */
+.button-group button {
+    background-color: #FFFFFF; /* 버튼 배경색 */
+    color: #808080; 
+    border: 1px solid #DCDCDC;
+    font-family: 'NanumTobak';
+    font-size: 20px; 
+    cursor: pointer;
+    border-radius: 5px; 
+    width: 70px; 
+    height: 30px;
+    
+}
+/* 삭제 버튼 스타일 */
+.button-group .delete-button {
+    color: #FF5A5A; /* 삭제 버튼의 폰트 색상 */
+} 
+
+
+
