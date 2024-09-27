@@ -12,7 +12,7 @@
             src: url('나눔손글씨 또박또박.TTF') format('truetype');
         }
         body {
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
             font-family: 'NanumTobak', sans-serif;
         }
         .container {
@@ -20,7 +20,7 @@
             margin-top: 50px;
         }
         .form-box {
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
             border-radius: 10px;
             padding: 30px;
             width: 350px;
@@ -134,7 +134,7 @@
 <body onLoad="regFrm.id.focus()">
     <div class="container">
         <div class="logo">
-            <img src="logo2.png" align="center" style="width:200px; height:100px;">
+            <img src="mainlogo.jpg" align="center" style="width:320px; height:80px;">
         </div>
         <h1>회원가입</h1>
         <div class="form-box">
