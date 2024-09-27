@@ -82,7 +82,7 @@ function loadContent(url) {
         }
     };
     xhr.open("GET", url, true);
-    xhr.send();
+    xhr.send(); 
 }
 
 function clickOpenBox(id){
@@ -363,15 +363,18 @@ function clickAlarm(){
             <div id="game" class ="inner-box-2" style="display: none" >
                <jsp:include page="../yang/game.jsp"></jsp:include>
             </div>
-            <div id="store" class="inner-box-2" style="display: none">
-               <jsp:include page="../pjh/storeDesign.jsp"></jsp:include>
-            </div>
-            <div id="guestbook" class="inner-box-2" style="display: none">
-            </div> 
-            <div id="board" class="inner-box-2" style="display: none">
-            </div>
-            <div id="music" class="inner-box-2" style="display: none">
-            </div>
+	         <div id="store" class="inner-box-2" style="display: none">
+	            <jsp:include page="../pjh/storeDesign.jsp"></jsp:include>
+	         </div>
+	         <div id="guestbook" class="inner-box-2" style="display: none">
+               <jsp:include page="../eunhyo/guestbook.jsp">
+                <jsp:param name="ownerId" value="<%= url %>"/>
+                </jsp:include>
+	         </div> 
+	         <div id="board" class="inner-box-2" style="display: none">
+	         </div>
+	         <div id="music" class="inner-box-2" style="display: none">
+	         </div>
          </div>
          <!-- 버튼 -->
          <div class="button-container">

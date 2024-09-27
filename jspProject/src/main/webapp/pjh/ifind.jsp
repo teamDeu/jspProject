@@ -136,7 +136,7 @@
             <input type="text" name="phone" placeholder="전화번호" required>
             <div class="verification-container">
                 <input style ="margin:0px;"type="text" name="verificationCode" placeholder="인증번호" required>
-                <button type="button" class="btn-resend" id="resendBtn" style = "background-color: #90EE90;">전송</button>
+                <button type="button" class="btn-resend" id="resendBtn" style = "background-color: #C0E5AF;">전송</button>
             </div>
             <br>
             <input type="submit"  class="btn" value="아이디 찾기" style = "width :270px;">

@@ -42,7 +42,7 @@
             font-family: 'NanumTobak', sans-serif; /* 입력칸 안의 텍스트 폰트 적용 */
         }
         .form-group .button-small {
-            background-color: #90EE90;
+            background-color: #C0E5AF;
             border: 1px solid #CCCCCC;
             padding: 5px 15px;
             font-size: 20px;
@@ -63,7 +63,7 @@
             font-family: 'NanumTobak', sans-serif;
         }
         input[type="submit"], input[type="reset"] {
-            background-color: #90EE90;
+            background-color: #C0E5AF;
             border: none;
             color: white;
             padding: 10px 20px;
