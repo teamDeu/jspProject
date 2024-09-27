@@ -82,7 +82,7 @@ function loadContent(url) {
         }
     };
     xhr.open("GET", url, true);
-    xhr.send();
+    xhr.send(); 
 }
 
 function clickOpenBox(id){
@@ -110,7 +110,7 @@ function clickAlarm(){
 
 <script type="text/javascript">
         var ws;
-        var sayBoxId = 0;
+        var sayBoxId = 0; // 지역 변수로 선언
         var chatBoxId = 0;
         let userNum = 0;
         var localId = "<%=userBean.getUser_id()%>";
@@ -242,8 +242,15 @@ function clickAlarm(){
             }
         }
         
-        function printSayBox(id){
+        function printSayBox(id) {
+            
             miniroom = document.getElementById("miniroom");
+            sayBoxId = "sayBoxId" + id;
+            console.log(sayBoxId);
+            if(document.getElementById(sayBoxId))
+            {
+            	document.getElementById(sayBoxId).remove();
+            }
             newDiv = document.createElement("div");
             newContent = document.createTextNode(comment);
             newDiv.appendChild(newContent);
@@ -252,9 +259,7 @@ function clickAlarm(){
             newDiv.classList.add("sayBox");
             newDiv.id = sayBoxId;
             userDiv.appendChild(newDiv);
-            newDiv.style.top = -newDiv.offsetHeight+"px";
-            newDiv.style.left = 0 +"px";
-              sleep(5000).then(() => document.getElementById(sayBoxId).remove());
+            newDiv.style.top = -newDiv.offsetHeight + "px";
         }
         
         function printChatBox(id,comment,type,name){
@@ -287,17 +292,14 @@ function clickAlarm(){
 
           let timeText = year + '.' + month + '.' + day + ' ' + hours + ':' + minutes;
           let newTimeNameText = timeText + "  " + name;
+          timeTextClass = name+year+month+day+hours+minutes;
           
-          console.log("새로운채팅 : "+newTimeNameText);
-          console.log("이전채팅 : " +timeNameText);
-        if(timeNameText == newTimeNameText){
-           document.getElementById(newTimeNameText).remove();
-        }
-        else{
-           timeNameText = newTimeNameText;
-        }
+          if(document.querySelectorAll("."+timeTextClass)){
+        	  Array.from(document.querySelectorAll("."+timeTextClass)).forEach((e) => e.remove());
+          }
+          timeNameText = newTimeNameText;
           userNameContent = document.createTextNode(timeNameText);
-          userNameDiv.id = timeNameText;
+          userNameDiv.classList.add(timeTextClass);
           userNameDiv.appendChild(userNameContent);
           userNameDiv.classList.add("chatName");
           chatBoxDiv.appendChild(userNameDiv);
@@ -306,9 +308,8 @@ function clickAlarm(){
            chatArea2.appendChild(chatBoxDiv);
            chatArea2.scrollTop = chatArea2.scrollHeight;
         }
-        function sleep(ms) {
-             return new Promise((r) => setTimeout(r, ms));
-           }
+        
+        
         
         function disconnect(){
            var message = "disconnect"+ dataSeparator + localId + dataSeparator + name;
@@ -333,12 +334,14 @@ function clickAlarm(){
       <div class="dashed-box">
          <!-- 테두리 없는 상자 -->
          <div class="solid-box">
+
             <div class ="main_profile_alram">
             <img class="main_profile_alram_img" onclick ="clickAlarm()" src="./img/alram.png">
             <jsp:include page="alarmList.jsp">
                <jsp:param value="<%=url %>" name="url"/>
             </jsp:include>
             </div>
+            
             <div class="inner-box-1">
                <jsp:include page="profile.jsp">
                   <jsp:param value='<%=url %>' name="url"/>
@@ -396,6 +399,7 @@ function clickAlarm(){
    <div id = "friend_request_modal_send" class ="friend_request_modal" style = "display:none">
          <jsp:include page="friendRequestSend.jsp"></jsp:include>
    </div>
+   
    <div id = "friend_request_modal_receive" class ="friend_request_modal" style = "display:none">
          <jsp:include page="friendRequestReceive.jsp"></jsp:include>
    </div>

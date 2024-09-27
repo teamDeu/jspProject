@@ -60,15 +60,14 @@ body {
 
 .sayBox {
 	position: absolute;
-	max-width: 200px;
 	border: 1px solid black;
 	background-color: white;
 	padding: 5px;
 	border-radius: 5px;
-	animation: fadeout 3s;
-	-moz-animation: fadeout 3s; /* Firefox */
-	-webkit-animation: fadeout 3s; /* Safari and Chrome */
-	-o-animation: fadeout 3s; /* Opera */
+	animation: fadeout 1.5s;
+	-moz-animation: fadeout 1.5s; /* Firefox */
+	-webkit-animation: fadeout 1.5s; /* Safari and Chrome */
+	-o-animation: fadeout 1.5s; /* Opera */
 	animation-fill-mode: forwards;
 	overflow-x: hidden;
 	word-break: break-all;
@@ -85,37 +84,31 @@ body {
 	box-sizing: border-box;
 }
 
-@keyframes fadeout {from { opacity:1;
-	
-}
+@keyframes fadeout {
 
 to {
-	opacity: 0;
+	display:none;
 }
 
 }
-@-moz-keyframes fadeout { /* Firefox */ from { opacity:1;
-	
-}
+@-moz-keyframes fadeout {
 
 to {
-	opacity: 0;
+	display:none;
 }
 
 }
-@-webkit-keyframes fadeout { /* Safari and Chrome */ from { opacity:1;
-	
-}
+@-webkit-keyframes fadeout { 
 
 to {
-	opacity: 0;
+	display:none;
 }
 
 }
-@-o-keyframes fadeout { /* Opera */ from { opacity:1;}
+@-o-keyframes fadeout {
 
 to {
-	opacity: 0;
+	display:none;
 }
 
 }

@@ -15,8 +15,9 @@
         }
         body {
             font-family: 'NanumTobak';
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
             text-align: center;
+            zoom:1.15;
         }
 
         .container {
@@ -28,7 +29,7 @@
             padding: 40px;
             border: 1px solid #ccc;
             border-radius: 10px;
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
         }
 
         .box input {
@@ -124,7 +125,7 @@
 
 <div class="container">
     <div class="header-logo">
-        <img src="logo2.png" alt="CloverStory 로고" style="width:200px; height:100px;">
+        <img src="mainlogo.jpg" alt="CloverStory 로고" style="width:320px; height:100px;">
     </div>
 
     <div class="box">

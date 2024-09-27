@@ -9,7 +9,6 @@
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <link rel="stylesheet" type="text/css" href="css/boardWrite.css">
 
-
 <style>
 /* inner-box-2의 게시판 텍스트 스타일 */
 .board-title {
@@ -37,7 +36,7 @@
     align-items: flex-start;
     padding: 10px;
     position: absolute;
-    top: 55px; 
+    top: 60px; 
 	width: 780px; /* 너비 조정 */
 	border: 1px solid #BAB9AA;
 	padding: 20px; /* 내부 여백 */
@@ -72,7 +71,7 @@
     padding: 0;
     background: none;
     border: none;
-    font-size: 28px;
+    font-size: 26px;
     cursor: pointer;
     color: #f46a6a;
     
@@ -82,12 +81,12 @@
 
 .list-button {
     position: absolute; 
-    top: 25px; 
-    right: 30px; 
+    top: 35px; 
+    right: 45px; 
     background: none; 
     border: none; /* 테두리 색상 */
     font-family: 'NanumTobak', sans-serif;
-    font-size: 30px; 
+    font-size: 28px; 
     cursor: pointer; 
     text-decoration: none; 
     color: black; 
@@ -353,8 +352,8 @@
 
 .folder-item .delete-button {
     cursor: pointer; /* 커서 변경 */
-    width: 24px; /* 쓰레기통 아이콘 크기 */
-    height: 24px; 
+    width: 16px; /* 쓰레기통 아이콘 크기 */
+    height: 16px; 
 }
 
 
@@ -399,15 +398,17 @@
 
 </style>
 
+
+
 <script>
-	//현재 선택된 이미지 컨테이너
-	let currentSelected = null;
+    let currentSelected = null;
+
     // 파일 선택 창 열기 및 파일 선택 시 이미지 삽입
     function handleFileSelect() {
         document.getElementById('file-input').click(); // 숨겨진 파일 입력 필드를 클릭
     }
 
-	 // 파일 업로드 및 이미지 미리보기 설정
+    // 파일 업로드 및 이미지 미리보기 설정
     function previewImage(event) {
         const file = event.target.files[0];
         if (file && file.type.match('image.*')) {
@@ -415,7 +416,6 @@
             reader.onload = function(e) {
                 const boardContentDiv = document.getElementById('board-content');
                 if (boardContentDiv) {
-                    // 현재 커서 위치 가져오기
                     const selection = window.getSelection();
                     if (!selection.rangeCount) return;
                     const range = selection.getRangeAt(0);
@@ -440,14 +440,14 @@
                     // 이미지에 mousedown 이벤트 추가
                     imgElement.addEventListener('mousedown', function(e) {
                         e.preventDefault();
-                        selectImage(imgContainer);
-                        startResizing(e, imgContainer);
+                        selectImage(imgContainer); // 이미지 선택 함수 호출
+                        startResizing(e, imgContainer); // 크기 조절 시작
                     });
 
                     // 이미지에 클릭 이벤트 추가 (선택 토글)
                     imgElement.addEventListener('click', function(e) {
                         e.stopPropagation();
-                        selectImage(imgContainer);
+                        selectImage(imgContainer); // 이미지 선택 함수 호출
                     });
 
                     // 이미지 컨테이너에 이미지 삽입
@@ -466,22 +466,22 @@
                     const br = document.createElement('br');
                     range.insertNode(br);
 
-                    boardContentDiv.classList.remove('empty');
+                    boardContentDiv.classList.remove('empty'); // 빈 내용 클래스 제거
                 }
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(file); // 파일 내용을 읽어 URL로 변환
         } else {
-            alert("이미지 파일만 업로드할 수 있습니다.");
+            alert("이미지 파일만 업로드할 수 있습니다."); // 유효하지 않은 파일에 대한 경고
         }
     }
-    
- 	// 이미지 선택 함수
+
+    // 이미지 선택 함수
     function selectImage(container) {
         if (currentSelected && currentSelected !== container) {
-            currentSelected.classList.remove('selected');
+            currentSelected.classList.remove('selected'); // 이전 선택 해제
         }
-        currentSelected = container;
-        container.classList.toggle('selected');
+        currentSelected = container; // 새로운 선택 설정
+        container.classList.toggle('selected'); // 선택 상태 토글
     }
 
     // 크기 조절 시작
@@ -510,125 +510,65 @@
     // 클릭 시 이미지 선택 해제
     document.addEventListener('click', function(e) {
         if (currentSelected) {
-            currentSelected.classList.remove('selected');
-            currentSelected = null;
+            currentSelected.classList.remove('selected'); // 현재 선택 해제
+            currentSelected = null; // 선택 상태 초기화
         }
     });
-	// div가 비어 있는지 확인하고 placeholder를 보여주는 함수
-    function checkPlaceholder() {
-        var boardContentDiv = document.getElementById('board-content');
-        if (boardContentDiv) {
-            if (boardContentDiv.innerHTML.trim() === '') {
-                boardContentDiv.classList.add('empty'); // 내용이 비어 있으면 클래스 추가
-            } else {
-                boardContentDiv.classList.remove('empty'); // 내용이 있으면 클래스 제거
-            }
+
+    // 폴더 선택 시 히든 필드에 폴더 번호 저장
+    function selectFolder(folderNum) {
+        var boardFolderInput = document.getElementById('board-folder');
+        if (boardFolderInput) {
+            boardFolderInput.value = folderNum;
         }
     }
 
-    // contenteditable div 내용 변경 시 호출
+    // 폴더 관리 창에서 폴더를 선택했을 때
+    function onFolderSelected(folderNum) {
+        selectFolder(folderNum);
+    }
+
+    // 폼 제출 전에 게시글 내용을 textarea에 복사하여 전송
+    function copyContentToTextarea() {
+        var boardContentTextarea = document.getElementById('board-content-text');
+        var boardContentDiv = document.getElementById('board-content');
+        if (boardContentTextarea && boardContentDiv) {
+            boardContentTextarea.value = boardContentDiv.innerHTML; // textarea에 내용 복사
+        }
+    }
+
+    // 폼 제출 시 폴더 번호가 있는지 확인
+    function validateForm() {
+        var boardFolderInput = document.getElementById('board-folder');
+        if (!boardFolderInput.value) {
+            alert('폴더를 선택해 주세요.');
+            return false;
+        }
+        return true;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
-        var boardContentDiv = document.getElementById('board-content');
-        boardContentDiv.addEventListener('input', checkPlaceholder);
-        checkPlaceholder(); // 초기 상태 확인
-    });
-    
-    
-    function toggleFolderInput() {
-	    var inputContainer = document.getElementById('folderInputContainer');
-	    var deleteButtons = document.querySelectorAll('.delete-button');
-
-	    if (inputContainer.style.display === 'flex') {
-	        inputContainer.style.display = 'none';
-	        
-	        // 삭제 버튼 숨기기
-	        deleteButtons.forEach(function(button) {
-	            button.style.display = 'none';
-	        });
-	    } else {
-	        inputContainer.style.display = 'flex';
-	        
-	        // 삭제 버튼 보이기
-	        deleteButtons.forEach(function(button) {
-	            button.style.display = 'inline-block';
-	        });
-	    }
-	}
-
-    
-    function addFolder() {
-        var folderNameInput = document.getElementById('folderNameInput');
-        var folderName = folderNameInput.value.trim();
-
-        if (folderName !== '') {
-            var folderContainer = document.querySelector('.folder-container');
-
-            // 기존 폴더 아이템의 수를 계산하여 새로운 폴더의 top 값을 결정
-            var folderItems = folderContainer.querySelectorAll('.folder-item');
-            var baseTop = 13; // 첫 번째 폴더 아이템의 기본 top 값 (상단에서 10px 아래)
-            var folderHeight = 27; // 폴더 아이템의 높이
-            var folderGap = 7; // 폴더 아이템 간의 간격
-            var newTop = baseTop + folderItems.length * (folderHeight + folderGap); // 새로운 폴더의 top 값
-
-            // 새로운 폴더 아이템 생성
-            var folderItem = document.createElement('div');
-            folderItem.classList.add('folder-item');
-
-            var folderIcon = document.createElement('img');
-            folderIcon.src = 'img/folder.png';
-            folderIcon.alt = 'Folder Icon';
-
-            var folderNameSpan = document.createElement('span');
-            folderNameSpan.textContent = folderName;
-
-            // 삭제 버튼 생성
-            var deleteButton = document.createElement('img');
-            deleteButton.src = 'img/trashcan.png'; // 쓰레기통 이미지 경로 설정
-            deleteButton.alt = 'Delete';
-            deleteButton.classList.add('delete-button');
-            deleteButton.onclick = function() {
-                folderItem.remove(); // 폴더 항목 삭제
-                updateFolderPositions(); // 폴더 위치 재조정
-            };
-
-            // 폴더 아이템에 요소 추가
-            folderItem.appendChild(folderIcon);
-            folderItem.appendChild(folderNameSpan);
-            folderItem.appendChild(deleteButton);
-
-            // 폴더 아이템의 위치를 컨테이너의 (newLeft, newTop)으로 설정
-            var newLeft = 20; // 폴더 아이템을 오른쪽으로 20px 이동
-            folderItem.style.position = 'absolute'; // 절대 위치 지정
-            folderItem.style.top = newTop + 'px'; // 위쪽 위치
-            folderItem.style.left = newLeft + 'px'; // 왼쪽 위치 (오른쪽으로 이동)
-
-            // 폴더 아이템을 컨테이너에 추가
-            folderContainer.appendChild(folderItem);
-
-            // 입력 필드 초기화
-            folderNameInput.value = '';
+        // 폼 제출 시 폴더 번호와 내용 복사
+        var form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                if (!validateForm()) {
+                    event.preventDefault(); // 폴더가 선택되지 않았으면 제출 중단
+                }
+                copyContentToTextarea(); // 게시글 내용을 textarea에 복사
+            });
         }
-    }
 
-
-    function updateFolderPositions() {
-        var folderContainer = document.querySelector('.folder-container');
-        var folderItems = folderContainer.querySelectorAll('.folder-item');
-        var baseTop = 13; // 첫 번째 폴더 아이템의 기본 top 값 (상단에서 10px 아래)
-        var folderHeight = 27; // 폴더 아이템의 높이
-        var folderGap = 7; // 폴더 아이템 간의 간격
-        var newLeft = 20; // 폴더 아이템을 오른쪽으로 20px 이동
-        
-        folderItems.forEach(function(folderItem, index) {
-            var newTop = baseTop + index * (folderHeight + folderGap); // 새로운 top 계산
-            folderItem.style.top = newTop + 'px';
-            folderItem.style.left = newLeft + 'px'; // 위치 조정
+        // 폴더 선택 시 이벤트 핸들러 추가
+        var folderItems = document.querySelectorAll('.folder-item');
+        folderItems.forEach(function(folderItem) {
+            folderItem.addEventListener('click', function() {
+                var folderNum = folderItem.getAttribute('data-folder-num');
+                selectFolder(folderNum); // 폴더 선택 시 폴더 번호 설정
+            });
         });
-    }
-
+    });
 </script>
-
-
 
 </head>
 <body>
@@ -640,36 +580,25 @@
             <a href="#">로그아웃</a>
         </div>
     </div>
-    <!-- 큰 점선 테두리 상자 -->
     <div class="dashed-box">
-        <!-- 테두리 없는 상자 -->
         <div class="solid-box">
             <div class="inner-box-1">
-            	<!-- 폴더 관리하기 섹션 -->
-                <div class="folder-container">
-                      	
-                	<div class="folder-input-container" id="folderInputContainer">
-                    	<img src="img/folder.png" alt="Folder Icon">
-                        <input type="text" id="folderNameInput" placeholder="폴더명을 입력하세요.">
-                        <button onclick="addFolder()">
-                        	<img src="img/plus.png">
-                        </button>
-                    </div>
-                      	
-                    <button class="folder-manage-button" onclick="toggleFolderInput()">폴더 관리 하기</button>
-				</div>	        
+                <!-- 폴더 관리하기 섹션 -->
+                <jsp:include page="bInnerbox1.jsp"/>	        
             </div>
-            <!-- 이미지가 박스 -->
             <div class="image-box">
                 <img src="img/img1.png" alt="Image between boxes 1" class="between-image"> 
                 <img src="img/img1.png" alt="Image between boxes 2" class="between-image">
             </div>
             <div align="center" class="inner-box-2">
                 <!-- 게시글 작성 폼 -->
-                <form >
+                <form action="bWriteAddProc.jsp" method="post" enctype="multipart/form-data">
                     <h1 class="board-title">게시판</h1>
-                    <button type="button" class="list-button">목록</button>
-
+                    <button type="button" class="list-button" onclick="location.href='boardList.jsp'">목록</button>
+					
+                    <!-- 폴더 선택 시 폴더 번호 저장 -->
+                    <input type="hidden" name="board_folder" id="board-folder" value="">
+                    
                     <div class="board-form">
                         <div class="title-container">
                             <!-- 게시글 제목 입력 -->
@@ -680,23 +609,24 @@
 
                         <!-- 게시글 내용 입력 -->
                         <div name="board_content" id="board-content" class="board_content empty" data-placeholder=" 내용을 입력해주세요." contenteditable="true"></div>
+                        <textarea name="board_content_text" id="board-content-text" style="display:none;"></textarea>
 
                         <!-- 파일 입력 필드 -->
-                        <input type="file" id="file-input" name="image-file" style="display:none;" accept="image/*" onchange="previewImage(event)">
+                        <input type="file" id="file-input" name="image_file" style="display:none;" accept="image/*" onchange="previewImage(event)">
                         
                         <!-- 하단 옵션 -->
                         <div class="button-options">
                             <!-- 공개 설정 -->
                             <div class="options-group">
                                 <label>공개 설정 |</label>
-                                <input type="radio" name="board_visibility" value="0" required> 전체
+                                <input type="radio" name="board_visibility" value="0"> 전체
                                 <input type="radio" name="board_visibility" value="1"> 일촌
                             </div>
 
                             <!-- 댓글 허용 여부 -->
                             <div class="options-group2">
                                 <label>댓글 |</label>
-                                <input type="radio" name="board_answertype" value="1" required> 허용
+                                <input type="radio" name="board_answertype" value="1"> 허용
                                 <input type="radio" name="board_answertype" value="0"> 비허용
                             </div>
 
@@ -713,12 +643,11 @@
         </div>
     </div>
     
-    <!-- 버튼 -->
     <div class="button-container">
         <button class="custom-button">홈</button>
         <button class="custom-button">프로필</button>
         <button class="custom-button">미니룸</button>
-        <button class="custom-button" style="background-color: #F7F7F7; font-weight: 600;">게시판</button>
+        <button class="custom-button">게시판</button>
         <button class="custom-button">방명록</button>
         <button class="custom-button">상점</button>
         <button class="custom-button">게임</button>
@@ -726,6 +655,4 @@
     </div>
 </div>
 </body>
-
-
 </html>

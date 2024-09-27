@@ -1,6 +1,8 @@
 <%@page import="java.util.TimeZone"%>
 <%@page import="guestbook.GuestbookMgr"%>
 <%@page import="guestbook.GuestbookBean"%>
+<%@page import="guestbook.GuestbookanswerMgr"%>
+<%@page import="guestbook.GuestbookanswerBean"%>
 <%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html; charset=UTF-8"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -14,7 +16,7 @@
 %>
 <%
    String cPath = request.getContextPath();
-
+ 
     String ownerId = request.getParameter("ownerId");
     ArrayList<GuestbookBean> entries = mgr.getGuestbookEntries(ownerId);
     
@@ -159,8 +161,8 @@
 	font-size:25px;
 }
 .date {
-	margin-left:600px;
-	margin-top:-85px;
+	margin-left:630px;
+	margin-top:-88px;
 	font-size:20px;
 }
 
@@ -194,6 +196,16 @@ label[for="secretCheckbox"] {
     
 }
 
+/* 비밀글 아이콘 스타일 */
+.secret-icon {
+    width: 12px;
+    height: 15px;
+    position: absolute;
+    top: 20px;
+    right: 50px;
+}
+
+
 </style>
     <meta charset="UTF-8">
     <title>Guestbook</title>
@@ -218,7 +230,13 @@ label[for="secretCheckbox"] {
                 // guestbookNum이 0이 아니면 성공으로 처리
                 if (response.guestbookNum !== 0) {
                     alert("방명록이 작성되었습니다.");
-                    appendGuestbookEntry(response.guestbookNum, response.writerId, response.content, response.writtenAt);
+                    appendGuestbookEntry(
+                        response.guestbookNum, 
+                        response.writerId, 
+                        response.content, 
+                        response.writtenAt, 
+                        isSecret // 비밀글 여부 전달
+                    );
                     // 입력 필드 비우기
                     document.getElementById("guestbookContent").value = '';
                     document.getElementById("secretCheckbox").checked = false; // 체크박스 초기화
@@ -235,9 +253,10 @@ label[for="secretCheckbox"] {
 }
 
 
+
      
      // 새 방명록 항목을 페이지에 추가하는 함수
-           function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt) {
+function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecret) {
     var ul = document.getElementById("guestbookList");
     if (!ul) {
         console.error("guestbookList가 존재하지 않습니다.");
@@ -279,6 +298,14 @@ label[for="secretCheckbox"] {
     deleteIcon.onclick = function() {
         deleteGuestbookEntry(guestbookNum);
     };
+    
+ 	// 비밀글 아이콘 생성 및 추가
+    if (isSecret) {
+        var secretIcon = document.createElement("img");
+        secretIcon.src = 'img/secret.png';
+        secretIcon.classList.add('secret-icon');
+        li.appendChild(secretIcon);
+    }
 
     // `li` 요소에 모든 생성한 요소 추가
     authorContainer.appendChild(author);
@@ -326,7 +353,10 @@ label[for="secretCheckbox"] {
                </div>
                <p class="content"> <%= entry.getGuestbookContent() %></p>
                <p class="date"> <%= entry.getWrittenAt() != null ? dateFormat.format(entry.getWrittenAt()) : "" %></p>
-
+				<!-- 비밀글이면 secret.png 아이콘 표시 -->
+	            <% if ("1".equals(entry.getGuestbookSecret())) { %>
+	                <img src="img/secret.png" class="secret-icon" alt="비밀글">
+	            <% } %>
                <img src="img/bin.png" class="delete-icon" onclick="deleteGuestbookEntry(<%= entry.getGuestbookNum() %>)" alt="삭제">
            </li>
        <% } %>
