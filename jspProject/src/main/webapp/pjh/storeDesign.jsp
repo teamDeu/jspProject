@@ -278,6 +278,12 @@ try {
     font-size: 16px;
     margin: 5px 0;
 }
+/* 배경 모자이크 효과를 위한 클래스 */
+.mosaic-background {
+    filter: blur(8px); /* 모자이크처럼 보이도록 blur 효과 적용 */
+    transition: filter 0.3s ease; /* 부드럽게 효과 적용 */
+}
+
 
 </style>
 
@@ -547,6 +553,9 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("Popup Item Image: ", itemImage); // 이미지 경로 확인
             console.log("Popup Item Price: ", itemPrice); // 가격 확인
 
+            // 페이지 전체에 모자이크 효과 적용
+            document.querySelector('.storecontainer').classList.add('mosaic-background');
+
             const popupHTML = 
                 '<div id="purchasePopup" class="popup">' +
                     '<img src="' + itemImage + '" alt="' + itemName + '" class="popup-image" />' +
@@ -558,10 +567,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 '</div>';
             document.body.insertAdjacentHTML('beforeend', popupHTML);
 
-            // 팝업이 3초 후에 자동으로 사라지도록 설정
+            // 팝업이 2초 후에 자동으로 사라지고 배경의 모자이크 효과를 제거
             setTimeout(() => {
                 document.getElementById('purchasePopup').remove();
-            }, 3000); // 3초 후에 팝업 제거
+                // 배경에서 모자이크 효과 제거
+                document.querySelector('.storecontainer').classList.remove('mosaic-background');
+            }, 2000); // 2초 후에 팝업 제거 및 모자이크 해제
         }
 
 
