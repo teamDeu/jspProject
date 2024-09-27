@@ -82,7 +82,7 @@ function loadContent(url) {
         }
     };
     xhr.open("GET", url, true);
-    xhr.send();
+    xhr.send(); 
 }
 
 function clickOpenBox(id){
