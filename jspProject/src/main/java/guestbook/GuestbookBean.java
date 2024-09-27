@@ -11,21 +11,6 @@ public class GuestbookBean {
     private Timestamp writtenAt;
     private Timestamp modifiedAt;
 
-    // 기본 생성자
-    public GuestbookBean() {}
-
-    // 모든 필드를 포함한 생성자
-    public GuestbookBean(int guestbookNum, String guestbookSecret, String ownerId, String writerId, String guestbookContent, Timestamp writtenAt, Timestamp modifiedAt) {
-        this.guestbookNum = guestbookNum;
-        this.guestbookSecret = guestbookSecret;
-        this.ownerId = ownerId;
-        this.writerId = writerId;
-        this.guestbookContent = guestbookContent;
-        this.writtenAt = writtenAt;
-        this.modifiedAt = modifiedAt;
-    }
-
-    // Getter 및 Setter 메서드
     public int getGuestbookNum() {
         return guestbookNum;
     }
@@ -81,19 +66,4 @@ public class GuestbookBean {
     public void setModifiedAt(Timestamp modifiedAt) {
         this.modifiedAt = modifiedAt;
     }
-
-    // toString 메서드 (디버깅 용도)
-    @Override
-    public String toString() {
-        return "GuestbookBean{" +
-                "guestbookNum=" + guestbookNum +
-                ", guestbookSecret='" + guestbookSecret + '\'' +
-                ", ownerId='" + ownerId + '\'' +
-                ", writerId='" + writerId + '\'' +
-                ", guestbookContent='" + guestbookContent + '\'' +
-                ", writtenAt=" + writtenAt +
-                ", modifiedAt=" + modifiedAt +
-                '}';
-    }
 }
-

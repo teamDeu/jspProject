@@ -1,15 +1,13 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="guestbook.GuestbookMgr" %>
+<%@page import="guestbook.GuestbookMgr"%>
+<%@page contentType="text/html; charset=UTF-8"%>
 
+<jsp:useBean id="mgr" class="guestbook.GuestbookMgr" />
 <%
-    int guestbookNum = Integer.parseInt(request.getParameter("guestbook_num")); // 삭제할 방명록의 guestbook_num
-
-    GuestbookMgr guestbookMgr = new GuestbookMgr();
-    boolean isDeleted = guestbookMgr.deleteGuestbook(guestbookNum); // DB에서 삭제 수행
-
-    if (isDeleted) {
-        out.println("success"); // 성공 시 응답
-    } else {
-        out.println("failure"); // 실패 시 응답
-    }
+    int guestbookNum = Integer.parseInt(request.getParameter("guestbookNum"));
+    boolean deleted = mgr.deleteGuestbookEntry(guestbookNum);
+    String message = deleted ? "방명록이 삭제되었습니다." : "방명록 삭제에 실패하였습니다.";
+    
+    // 결과를 출력 (AJAX 응답)
+    out.print(message);
 %>
+

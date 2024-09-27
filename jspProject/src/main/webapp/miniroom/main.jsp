@@ -4,12 +4,12 @@
 <jsp:useBean id="iMgr" class ="miniroom.ItemMgr"/>
 <jsp:useBean id="mMgr" class ="pjh.MemberMgr"/>
 <%
-	
+   
    String id = (String)session.getAttribute("idKey");
-	if(id == null){
-		response.sendRedirect("../pjh/login.jsp");
-		return;
-	}
+   if(id == null){
+      response.sendRedirect("../pjh/login.jsp");
+      return;
+   }
    String character = iMgr.getUsingCharacter(id).getItem_path();
    String url = request.getParameter("url");
    if(url == null){
@@ -64,13 +64,13 @@
    font-size : 20px;
 }
 .friend_request_modal{
-	position:absolute;
-	width : 100%;
-	height : 100%;
-	display:flex;
-	align-items : center;
-	justify-content : center;
-	z-index : 11;
+   position:absolute;
+   width : 100%;
+   height : 100%;
+   display:flex;
+   align-items : center;
+   justify-content : center;
+   z-index : 11;
 }
 </style>
 <script>
@@ -97,13 +97,13 @@ function clickUser(event){
    console.log(event);
 }
 function clickAlarm(){
-	alarmDiv = document.querySelector(".alarmlist_top_div");
-	if(alarmDiv.style.display == "none"){
-		alarmDiv.style.display = "flex"
-	}
-	else{
-		alarmDiv.style.display = "none"
-	}
+   alarmDiv = document.querySelector(".alarmlist_top_div");
+   if(alarmDiv.style.display == "none"){
+      alarmDiv.style.display = "flex"
+   }
+   else{
+      alarmDiv.style.display = "none"
+   }
 }
 </script>
 <!-- 웹소켓통신 자바스크립트 -->
@@ -158,8 +158,8 @@ function clickAlarm(){
                     
                  }
                  else if(command == ("disconnect")){
-                	data = rawdata[1];
-                	name = rawdata[2];
+                   data = rawdata[1];
+                   name = rawdata[2];
                     printChatBox(data,name+"님이 퇴장하셨습니다.","notice",name);
                     user = document.getElementById(data);
                     user.remove();
@@ -215,17 +215,17 @@ function clickAlarm(){
               };
           })(informationDiv);
           addFriendBtn.onclick = (function(requestSendUser, requestReciveUser,character,name) {
-        	    return function() {
-        	        fr_modal = document.getElementById("friend_request_modal_send");
-        	        fr_form = document.friend_request_form_send;
-        	        fr_form.request_senduserid.value = requestSendUser;
-        	        fr_form.request_receiveuserid.value = requestReciveUser;
-        	        fr_modal.style.display = "flex";
-        	        fr_modal.querySelector(".request_comment").value = "";
-        	        fr_modal.querySelector(".request_user_name_font").innerText = name;
-        	        fr_modal.querySelector(".request_profile_img").src = character;
-        	    };
-        	})(localId, id,character,name);
+               return function() {
+                   fr_modal = document.getElementById("friend_request_modal_send");
+                   fr_form = document.friend_request_form_send;
+                   fr_form.request_senduserid.value = requestSendUser;
+                   fr_form.request_receiveuserid.value = requestReciveUser;
+                   fr_modal.style.display = "flex";
+                   fr_modal.querySelector(".request_comment").value = "";
+                   fr_modal.querySelector(".request_user_name_font").innerText = name;
+                   fr_modal.querySelector(".request_profile_img").src = character;
+               };
+           })(localId, id,character,name);
           goHomepageBtn.onclick = (function(id) {
               return function() {
                  console.log(id);
@@ -258,7 +258,7 @@ function clickAlarm(){
         }
         
         function printChatBox(id,comment,type,name){
-        	
+           
            chatArea2 = document.getElementById("chatArea2");
            chatBoxDiv = document.createElement("div");
            newContent = document.createTextNode(comment);
@@ -290,12 +290,12 @@ function clickAlarm(){
           
           console.log("새로운채팅 : "+newTimeNameText);
           console.log("이전채팅 : " +timeNameText);
-		  if(timeNameText == newTimeNameText){
-			  document.getElementById(newTimeNameText).remove();
-		  }
-		  else{
-			  timeNameText = newTimeNameText;
-		  }
+        if(timeNameText == newTimeNameText){
+           document.getElementById(newTimeNameText).remove();
+        }
+        else{
+           timeNameText = newTimeNameText;
+        }
           userNameContent = document.createTextNode(timeNameText);
           userNameDiv.id = timeNameText;
           userNameDiv.appendChild(userNameContent);
@@ -333,16 +333,16 @@ function clickAlarm(){
       <div class="dashed-box">
          <!-- 테두리 없는 상자 -->
          <div class="solid-box">
-         	<div class ="main_profile_alram">
-         	<img class="main_profile_alram_img" onclick ="clickAlarm()" src="./img/alram.png">
-         	<jsp:include page="alarmList.jsp">
-         		<jsp:param value="<%=url %>" name="url"/>
-         	</jsp:include>
-         	</div>
+            <div class ="main_profile_alram">
+            <img class="main_profile_alram_img" onclick ="clickAlarm()" src="./img/alram.png">
+            <jsp:include page="alarmList.jsp">
+               <jsp:param value="<%=url %>" name="url"/>
+            </jsp:include>
+            </div>
             <div class="inner-box-1">
-            	<jsp:include page="profile.jsp">
-            		<jsp:param value='<%=url %>' name="url"/>
-            	</jsp:include>
+               <jsp:include page="profile.jsp">
+                  <jsp:param value='<%=url %>' name="url"/>
+               </jsp:include>
             </div>
             <!-- 이미지가 박스 -->
             <div class="image-box">
@@ -394,10 +394,10 @@ function clickAlarm(){
       </div>
    </div>
    <div id = "friend_request_modal_send" class ="friend_request_modal" style = "display:none">
-   		<jsp:include page="friendRequestSend.jsp"></jsp:include>
+         <jsp:include page="friendRequestSend.jsp"></jsp:include>
    </div>
    <div id = "friend_request_modal_receive" class ="friend_request_modal" style = "display:none">
-   		<jsp:include page="friendRequestReceive.jsp"></jsp:include>
+         <jsp:include page="friendRequestReceive.jsp"></jsp:include>
    </div>
    
 </body>
