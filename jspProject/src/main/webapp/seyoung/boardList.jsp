@@ -150,8 +150,8 @@
 
 .folder-item .delete-button {
     cursor: pointer;
-    width: 16px;
-    height: 16px; 
+    width: 14px;
+    height: 14px; 
 }
 
 .board-table th {
