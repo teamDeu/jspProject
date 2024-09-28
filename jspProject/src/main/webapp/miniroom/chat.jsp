@@ -1,8 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	String character = request.getParameter("character");
-	String id = request.getParameter("id");
+	String backgroundImg = request.getParameter("backgroundImg");
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -159,7 +158,7 @@
     	<hr color = "#BAB9AA" width = "100%">
 	</div>
     <div id = "miniroom">
-    	<img id ="miniroom_background" src="img/backgroundImg.png">
+    	<img id ="miniroom_background" src="<%=backgroundImg%>">
     </div>
     <div class ="setting">
     	<button>미니룸 설정</button>

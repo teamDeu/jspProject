@@ -15,8 +15,9 @@
         }
         body {
             font-family: 'NanumTobak';
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
             text-align: center;
+            zoom:1.15;
         }
 
         .container {
@@ -28,7 +29,7 @@
             padding: 40px;
             border: 1px solid #ccc;
             border-radius: 10px;
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
         }
 
         .box input {
@@ -46,7 +47,7 @@
             display: inline-block;
             padding: 10px 0;
             width: 250px;
-            background-color: #90EE90;
+            background-color: #C0E5AF;
             color: white;
             text-decoration: none;
             border-radius: 5px;
@@ -124,7 +125,7 @@
 
 <div class="container">
     <div class="header-logo">
-        <img src="logo2.png" alt="CloverStory 로고" style="width:200px; height:100px;">
+        <img src="mainlogo.jpg" alt="CloverStory 로고" style="width:320px; height:100px;">
     </div>
 
     <div class="box">
@@ -136,7 +137,7 @@
             <input type="text" name="phone" placeholder="전화번호" required>
             <div class="verification-container">
                 <input style ="margin:0px;"type="text" name="verificationCode" placeholder="인증번호" required>
-                <button type="button" class="btn-resend" id="resendBtn" style = "background-color: #90EE90;">전송</button>
+                <button type="button" class="btn-resend" id="resendBtn" style = "background-color: #C0E5AF;">전송</button>
             </div>
             <br>
             <input type="submit"  class="btn" value="비밀번호찾기" style = "width :270px;">

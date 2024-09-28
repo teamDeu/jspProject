@@ -12,8 +12,8 @@
 		msg ="업데이트에 성공하였습니다.";
 	}
 %>
-
 <script>
-	alert("<%=msg%>");
-	location.href = "miniDesign.jsp";
+	alert('<%=msg%>');
+	// 새 창을 자동으로 닫음
+	window.close();
 </script>

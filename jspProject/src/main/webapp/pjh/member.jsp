@@ -12,7 +12,7 @@
             src: url('나눔손글씨 또박또박.TTF') format('truetype');
         }
         body {
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
             font-family: 'NanumTobak', sans-serif;
         }
         .container {
@@ -20,7 +20,7 @@
             margin-top: 50px;
         }
         .form-box {
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
             border-radius: 10px;
             padding: 30px;
             width: 350px;
@@ -42,7 +42,7 @@
             font-family: 'NanumTobak', sans-serif; /* 입력칸 안의 텍스트 폰트 적용 */
         }
         .form-group .button-small {
-            background-color: #90EE90;
+            background-color: #C0E5AF;
             border: 1px solid #CCCCCC;
             padding: 5px 15px;
             font-size: 20px;
@@ -63,7 +63,7 @@
             font-family: 'NanumTobak', sans-serif;
         }
         input[type="submit"], input[type="reset"] {
-            background-color: #90EE90;
+            background-color: #C0E5AF;
             border: none;
             color: white;
             padding: 10px 20px;
@@ -134,7 +134,7 @@
 <body onLoad="regFrm.id.focus()">
     <div class="container">
         <div class="logo">
-            <img src="logo2.png" align="center" style="width:200px; height:100px;">
+            <img src="mainlogo.jpg" align="center" style="width:320px; height:80px;">
         </div>
         <h1>회원가입</h1>
         <div class="form-box">

@@ -3,12 +3,13 @@ package pjh;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Random;
 import java.util.Vector;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import net.nurigo.sdk.NurigoApp;
-import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
+import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException; 
 
 public class MemberMgr {
 
@@ -244,5 +245,92 @@ public boolean updatePassword(String id, String newPassword) {
 }
 
 
+//DB에서 사용자 정보를 가져오는 메소드
+public MemberBean getMemberById(String userId) throws Exception {
+    MemberBean member = null;
+    Connection conn = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+
+    try {
+        // DBConnectionMgr를 이용하여 DB 연결
+        DBConnectionMgr dbMgr = DBConnectionMgr.getInstance();
+        conn = dbMgr.getConnection();
+
+        // SQL 쿼리: user_id로 사용자 정보 조회
+        String sql = "SELECT user_id, user_clover FROM user WHERE user_id = ?";
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, userId);
+        
+        rs = pstmt.executeQuery();
+
+        // 조회 결과가 있을 경우 MemberBean 객체에 저장
+        if (rs.next()) {
+            member = new MemberBean();
+            member.setUser_id(rs.getString("user_id"));
+            member.setUser_clover(rs.getInt("user_clover"));  // DB에서 가져온 클로버 수 설정
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();  // 오류 출력
+    } finally {
+        // 자원 해제
+        if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+        if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+        if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    return member;  // 사용자의 정보를 반환
+}
+//결제 후 클로버 업데이트 메소드
+public boolean updateCloverBalance(String userId, int cloverAmount) throws Exception {
+ Connection con = null;
+ PreparedStatement pstmt = null;
+ boolean isUpdated = false;
+ 
+ try {
+     con = pool.getConnection();  // DB 연결
+     String sql = "UPDATE user SET user_clover = user_clover + ? WHERE user_id = ?";
+     pstmt = con.prepareStatement(sql);
+     pstmt.setInt(1, cloverAmount);  // 충전할 클로버 양
+     pstmt.setString(2, userId);
+
+     int result = pstmt.executeUpdate();
+     if (result == 1) {
+         isUpdated = true;  // 업데이트 성공
+     }
+ } catch (SQLException e) {
+     e.printStackTrace();  // 오류 출력
+ } finally {
+     pool.freeConnection(con, pstmt);
+ }
+
+ return isUpdated;
+}
+
+//특정 사용자의 클로버 잔액 가져오기 메소드
+public int getCloverBalance(String userId) throws Exception {
+ Connection con = null;
+ PreparedStatement pstmt = null;
+ ResultSet rs = null;
+ int cloverBalance = 0;
+ 
+ try {
+     con = pool.getConnection();  // DB 연결
+     String sql = "SELECT user_clover FROM user WHERE user_id = ?";
+     pstmt = con.prepareStatement(sql);
+     pstmt.setString(1, userId);
+
+     rs = pstmt.executeQuery();
+     if (rs.next()) {
+         cloverBalance = rs.getInt("user_clover");  // 클로버 잔액 조회
+     }
+ } catch (SQLException e) {
+     e.printStackTrace();  // 오류 출력
+ } finally {
+     pool.freeConnection(con, pstmt, rs);
+ }
+
+ return cloverBalance;
+}
 }
 

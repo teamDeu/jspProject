@@ -1,0 +1,369 @@
+@font-face {
+	font-family: 'NanumTobak';
+	src: url('../나눔손글씨 또박또박.TTF') format('truetype');
+}
+
+/* inner-box-2의 게시판 텍스트 스타일 */
+.board-title {
+	color: #80A46F;
+	text-align: center;
+	font-size: 36px;
+	font-weight: 600;
+	position: absolute;
+	top: 0px;
+	left: 30px;
+	display: inline-block;
+}
+
+/* inner-box-2의 내용이 가운데 정렬*/
+.inner-box-2 {
+	display: flex;
+	justify-content: left;
+	align-items: center;
+}
+
+.board-form {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 10px;
+	position: absolute;
+	top: 55px;
+	width: 780px; /* 너비 조정 */
+	border: 1px solid #BAB9AA;
+	padding: 20px; /* 내부 여백 */
+	background-color: #F7F7F7; /* 배경 색상 */
+	margin: 20px 32px; /* 위아래 간격 및 중앙 정렬 */
+	height: 610px;
+}
+
+.board-form input[type="text"] {
+	font-family: 'NanumTobak', sans-serif;
+	width: 530px;
+	height: 30px;
+	margin: 1px 220px 1px 0;
+	border: 1.5px solid #ccc;
+	font-size: 20px;
+	background-color: #fff;
+	box-sizing: border-box; /* padding과 border를 포함하여 요소 크기 계산 */
+}
+
+.board-form input[type="text"]::placeholder, .board-form textarea::placeholder
+	{
+	font-family: 'NanumTobak', sans-serif;
+	font-size: 20px;
+	color: #999;
+}
+
+.board-form .register-button {
+	font-family: 'NanumTobak', sans-serif;
+	height: 36px;
+	padding: 0;
+	background: none;
+	border: none;
+	font-size: 28px;
+	cursor: pointer;
+	color: #f46a6a;
+}
+
+.list-button {
+	position: absolute;
+	top: 25px;
+	right: 30px;
+	background: none;
+	border: none; /* 테두리 색상 */
+	font-family: 'NanumTobak', sans-serif;
+	font-size: 30px;
+	cursor: pointer;
+	text-decoration: none;
+	color: black;
+}
+
+.board-form .title-container {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	margin-bottom: 10px; /* 제목과 하단 요소 사이의 간격 설정 */
+	padding-bottom: 10px; /* 제목 박스 하단 여백 설정 */
+	border-bottom: 1px solid #BAB9AA; /* 하단 테두리 추가 */
+}
+
+.board_content {
+	font-family: 'NanumTobak', sans-serif;
+	width: 765px;
+	margin: 10px 0;
+	border: 1.5px solid #ccc;
+	font-size: 20px;
+	background-color: #fff;
+	padding: 5px;
+	resize: none; /* 사용자가 크기 조절하지 못하도록 설정 */
+	height: 460px; /* 텍스트 에어리어 높이 설정 */
+	overflow-y: auto;
+	text-align: left;
+	position: relative;
+}
+
+.board_content.empty:before {
+	content: attr(data-placeholder); /* data-placeholder 속성 값으로 대체 */
+	font-family: 'NanumTobak', sans-serif;
+	font-size: 20px;
+	color: #999;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	pointer-events: none; /* 마우스 이벤트 무시 */
+}
+
+.image-preview {
+	width: 100%;
+	height: auto;
+	max-width: 200px;
+	display: none;
+	margin-bottom: 10px;
+}
+
+/* 하단 버튼 및 설정 스타일 */
+.button-options {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	background-color: #F7F7F7; /* 배경색 */
+	padding: 10px 20px;
+	box-sizing: border-box;
+	border-top: 1px solid #BAB9AA;
+	margin: 5px 0;
+	color: #424242; /* 폰트 컬러 추가 */
+}
+
+.button-options .options-group {
+	display: flex;
+	align-items: center;
+	width: 180px;
+	color: #424242; /* 폰트 컬러 추가 */
+	border: 1px solid #ccc;
+	height: 35px;
+	background-color: #fff;
+	margin: 0 0 0 -20px;
+}
+
+.button-options .options-group2 {
+	display: flex;
+	align-items: center;
+	width: 160px;
+	color: #424242;
+	border: 1px solid #ccc;
+	height: 35px;
+	background-color: #fff;
+	margin: 0 40px 0 -200px;
+}
+
+.button-options .options-group label, .button-options .options-group2 label
+	{
+	font-size: 21px;
+	margin-right: 10px;
+	margin-left: 10px;
+	color: #424242; /* 폰트 컬러 추가 */
+}
+
+.button-options .options-group input[type="checkbox"], .button-options .options-group2 input[type="checkbox"]
+	{
+	border: 1px solid #424242;
+	margin: 0 7px 0 7px;
+	color: #424242; /* 폰트 컬러 추가 */
+}
+
+.button-options .button-group {
+	display: flex;
+	color: #424242; /* 폰트 컬러 추가 */
+	margin: 0 -20px 0 0;
+}
+
+.button-options .button-group button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100px;
+	height: 35px;
+	margin-left: 10px;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	cursor: pointer;
+	font-size: 20px;
+	font-family: 'NanumTobak', sans-serif;
+	color: #424242;
+}
+
+.button-options .button-group button img {
+	margin-right: 5px;
+	width: 20px;
+	height: 20px;
+}
+
+/* 이미지 컨테이너 스타일 */
+.img-container {
+	position: relative;
+	display: inline-block;
+	overflow: hidden;
+	/* 초기 너비 설정 */
+	width: 200px;
+	/* 최소 너비 설정 */
+	min-width: 50px;
+	/* 커서 변경 */
+	cursor: nwse-resize;
+	/* 선택 방지 */
+	user-select: none;
+	/* 테두리 없애기 */
+	border: none;
+}
+
+/* 선택 시 컨테이너에 테두리 추가 */
+.img-container.selected {
+	border: 2px dashed #007BFF;
+}
+
+/* 이미지 스타일 */
+.img-container img {
+	display: block;
+	width: 100%;
+	height: auto;
+	object-fit: contain;
+}
+
+/* 콘텐츠 에디터 스타일 */
+.board_content.empty::before {
+	content: attr(data-placeholder);
+	color: #aaa;
+	pointer-events: none;
+	display: block;
+}
+
+
+/*폴더*/
+.folder-input-container input {
+    width: 70%;
+    padding: 5px;
+    border: none;
+    outline: none;
+}
+
+.board-recentpost {
+    color: black; 
+    text-align: center; 
+    font-size: 24px; 
+    font-weight: 300; 
+    position: absolute; 
+    top: 15px; 
+    left: 100px;
+    display: inline-block; 
+}
+
+.board-line {
+    border-bottom: 1px solid #BAB9AA; /* 실선 색상 및 두께 */
+    width: calc(100% - 55px); /* 실선의 너비 */
+    position: absolute; 
+    top: 80px; 
+    left: 25px; 
+}
+
+.folder-container {
+    width: 230px;
+    height: 700px;
+    margin: 10px 11px 100px 10px;
+    padding: 20px;
+    border: 2px dashed #bbb;  
+    border-radius: 30px;      
+    background-color: #F7F7F7; 
+    flex-direction: column-reverse; /* 아래에서 위로 정렬 */
+    align-items: flex-start; /* 좌측 정렬 */ 
+    position: relative;
+    
+}
+
+.folder-manage-button {
+	font-family: 'NanumTobak', sans-serif;
+    font-size: 22px;
+    width: 85%;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border: 1.5px solid #ddd;
+    text-align: center;
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+	left: 0;
+	border-radius: 10px;
+}
+
+.folder-input-container {
+    display: flex; /* 처음에는 숨겨져 있도록 설정 */
+    align-items: center; 
+    width: 80%;
+    /* padding: 5px; */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;    
+  	position: absolute; /* 요소를 부모 기준으로 절대 위치에 배치 */
+    top: 615px; /* 하단에서 40px 위로 */
+ 	left: 49%; 
+    
+}
+
+.folder-input-container img {
+    width: 27px; 
+    height: 27px;
+    margin-right: 10px; 
+    border: none;
+    outline: none;
+}
+
+
+.folder-input-container input {
+	font-family: 'NanumTobak', sans-serif;
+	font-size: 18px;
+}
+
+.folder-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 폴더명과 삭제 버튼 사이의 간격 조정 */    
+    margin-bottom: 8px;
+    margin-right: -120px;
+    width: 80%;
+    padding: 5px; /* 폴더 항목 여백 */
+    border: none;  
+}
+
+.folder-item img {
+    width: 27px; /* 아이콘 크기 조정 */
+    height: 27px; /* 아이콘 크기 조정 */
+    margin-right: 7px; /* 폴더명과 간격 */
+}
+
+.folder-item span {
+    font-size: 20px;
+    font-weight: 500;
+    text-align: left; 
+    flex: 2;
+}
+
+.folder-input-container button {
+    background: none; 
+    border: none; 
+    padding: 0;
+    cursor: pointer; 
+}
+
+.folder-input-container button img {
+	top: 5px;
+    width: 25px; 
+    height: 25px; 
+}
+
+
+.folder-item .delete-button {
+    cursor: pointer; /* 커서 변경 */
+    width: 24px; /* 쓰레기통 아이콘 크기 */
+    height: 24px; 
+}

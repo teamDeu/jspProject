@@ -9,13 +9,14 @@
     <title>Clover Story Login</title>
     <link href="style.css" rel="stylesheet" type="text/css">
     <style>
-    @font-face {
-    font-family: 'NanumTobak';
-    src: url('나눔손글씨 또박또박.TTF') format('truetype');
-		}
+        @font-face {
+            font-family: 'NanumTobak'; 
+            src: url('나눔손글씨 또박또박.TTF') format('truetype');
+        }
         body {
-            background-color: #FFFAF0; /* 이미지와 같은 배경색 */
+            background-color: #F8F6E3;
             font-family: 'NanumTobak';
+            zoom:1.15;
         }
         .container {
             text-align: center;
@@ -24,15 +25,14 @@
         .logo {
             font-size: 36px;
             font-weight: bold;
-            font-family: 'NanumTobak'
+            font-family: 'NanumTobak';
         }
         .login-box {
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
             border-radius: 10px;
             padding: 30px;
             width: 300px;
-            margin: 0 auto;
-			
+            margin: 0 auto; 
         }
         input[type="text"], input[type="password"] {
             width: 90%;
@@ -41,33 +41,35 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 24px;
-            font-family: 'NanumTobak'
-            
+            font-family: 'NanumTobak';
         }
         input[type="button"] {
-            background-color: #90EE90;
+            background-color: #C0E5AF;
             border: none;
             color: white;
             padding: 10px 120px;
             text-align: center;
-            text-decoration: none;
             display: inline-block;
             font-size: 24px;
             margin: 10px 2px;
             cursor: pointer;
             border-radius: 5px;
-            font-family: 'NanumTobak'
+            font-family: 'NanumTobak';
         }
         .links {
             margin-top: 10px;
             font-size: 25px;
-            font-family: 'NanumTobak'
+            font-family: 'NanumTobak';
         }
         .links a {
             text-decoration: none;
             color: #333;
             margin: 0 10px;
-            font-family: 'NanumTobak'
+        }
+        /* 관리자 로그인 체크박스 왼쪽 배치 */
+        .admin-checkbox {
+            text-align: left;
+            padding-left: 5%;
         }
     </style>
     <script type="text/javascript">
@@ -82,6 +84,16 @@
                 document.loginFrm.user_pwd.focus();
                 return;
             }
+            
+            // 관리자 체크박스 체크 여부 확인
+            if (document.loginFrm.isAdmin.checked) {
+                // 관리자인 경우 adminProc.jsp로 전송
+                document.loginFrm.action = "adminProc.jsp";
+            } else {
+                // 일반 사용자인 경우 loginProc.jsp로 전송
+                document.loginFrm.action = "loginProc.jsp";
+            }
+            
             document.loginFrm.submit();
         }
     </script>
@@ -89,15 +101,21 @@
 <body>
 <div class="container">
     <div class="logo">
-        <img src="logo2.png" style="width:200px; height:80px;">
- 
+        <img src="mainlogo.jpg" style="width:320px; height:100px;">
     </div>
     <br/><br/>
     <div class="login-box">
-        <form name="loginFrm" method="post" action="loginProc.jsp">
-            <input type="text" name="user_id" placeholder="아이디" value="">
-            <input type="password" name="user_pwd" placeholder="비밀번호" value="">
-            <input type="button" value="로그인" onclick="loginCheck()" style = "width : 290px;">
+        <form name="loginFrm" method="post">
+            <input type="text" name="user_id" placeholder="아이디">
+            <input type="password" name="user_pwd" placeholder="비밀번호">
+            <br/>
+            <div class="admin-checkbox">
+                <label>
+                    <input type="checkbox" name="isAdmin" value="yes"> 관리자 로그인
+                </label>
+            </div>
+            <br/><br/>
+            <input type="button" value="로그인" onclick="loginCheck()" style="width: 290px;">
         </form>
     </div>
     <div class="links">
