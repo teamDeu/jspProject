@@ -134,7 +134,7 @@
 <body onLoad="regFrm.id.focus()">
     <div class="container">
         <div class="logo">
-            <img src="mainlogo.jpg" align="center" style="width:320px; height:80px;">
+            <img src="./img/mainlogo.jpg" align="center" style="width:320px; height:80px;">
         </div>
         <h1>회원가입</h1>
         <div class="form-box">

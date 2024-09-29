@@ -101,7 +101,7 @@
 <body>
 <div class="container">
     <div class="logo">
-        <img src="mainlogo.jpg" style="width:320px; height:100px;">
+        <img src="./img/mainlogo.jpg" style="width:320px; height:100px;">
     </div>
     <br/><br/>
     <div class="login-box">
