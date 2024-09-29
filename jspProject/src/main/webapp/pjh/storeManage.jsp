@@ -166,9 +166,7 @@
         <h2>관리자 패널</h2>
         <ul>
             <li onclick="showDashboard()" class="active"><i class="fa fa-home"></i> 대시보드</li>
-            <li><i class=fa-member></i>사용자 관리</li>
             <li onclick="showStore()"><i class="fa fa-store"></i> 상점</li>
-            
             <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
         </ul>
     </div>
@@ -240,7 +238,7 @@
                             <th>상품 이름</th>
                             <th>상품 가격</th>
                             <th>상품 타입</th>
-                            <th>상품 파일</th>
+                            <th>상품 경로</th>
                             <th>삭제</th>
                         </tr>
                     </thead>
