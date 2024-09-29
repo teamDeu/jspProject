@@ -9,6 +9,9 @@ import java.util.ArrayList;
 public class GuestbookMgr {
     private DBConnectionMgr pool;
 
+ // 작성자의 프로필 정보를 가져오기 위해 profileMgr 인스턴스 생성
+    private GuestbookprofileMgr profileMgr = new GuestbookprofileMgr();
+    
     public GuestbookMgr() {
         pool = DBConnectionMgr.getInstance();
     }
@@ -69,6 +72,12 @@ public class GuestbookMgr {
                 bean.setGuestbookContent(rs.getString("guestbook_content"));
                 bean.setWrittenAt(rs.getTimestamp("written_at"));
                 bean.setModifiedAt(rs.getTimestamp("modified_at"));
+                
+                GuestbookprofileBean profile = profileMgr.getProfileByUserId(bean.getWriterId());
+                if (profile != null) {
+                    bean.setProfileName(profile.getProfileName());
+                    bean.setProfilePicture(profile.getProfilePicture());
+                }
                 list.add(bean);
             }
         } catch (Exception e) {
@@ -142,4 +151,5 @@ public class GuestbookMgr {
         }
         return writtenAt; // 가져온 written_at 반환
     }
+    
 }
