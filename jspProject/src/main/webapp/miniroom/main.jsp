@@ -332,7 +332,7 @@ function clickAlarm(){
       <div class="header">
          <img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
          <div class="settings">
-            <span></span> <a href="#">설정</a> <a href="#">로그아웃</a>
+            <span></span> <a href="#">설정</a> <a href="../pjh/logout.jsp">로그아웃</a>
          </div>
       </div>
       <!-- 큰 점선 테두리 상자 -->
