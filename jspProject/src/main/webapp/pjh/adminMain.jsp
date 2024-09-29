@@ -59,6 +59,7 @@
             background-color: #fff;
             height: 100vh;
             overflow-y: auto;
+            position: relative;
         }
         .main-content h1 {
             font-size: 28px;
@@ -119,42 +120,21 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        /* 상품 추가 폼 스타일 */
-        .form-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .form-group input[type="text"],
-        .form-group input[type="number"],
-        .form-group input[type="file"],
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .form-group button {
-            width: 100%;
-            padding: 10px;
+        /* 상품 추가 버튼 스타일 */
+        .add-product-btn {
+            margin-top: 20px;
+            padding: 15px 20px;
             background-color: #2ecc71;
-            color: #fff;
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            display: block;
+            width: 150px;
+            text-align: center;
         }
-        .form-group button:hover {
+        .add-product-btn:hover {
             background-color: #27ae60;
         }
     </style>
@@ -165,14 +145,13 @@
     <div class="sidebar">
         <h2>관리자 패널</h2>
         <ul>
-            <li onclick="showDashboard()" class="active"><i class="fa fa-home"></i> 대시보드</li>
-            <li><i class=fa-member></i>사용자 관리</li>
-            <li onclick="showStore()"><i class="fa fa-store"></i> 상점</li>
-            
+            <li onclick="showDashboard()"><i class="fa fa-home"></i> 대시보드</li>
+            <li><i class="fa fa-users"></i> 사용자 관리</li>
+            <li onclick="showStore()"><i class="fa fa-store"></i> 상점 관리</li>
             <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
         </ul>
     </div>
-
+	
     <!-- 메인 콘텐츠 -->
     <div class="main-content">
         <!-- 기본 대시보드 콘텐츠 -->
@@ -197,39 +176,6 @@
         <!-- 상점 관리 콘텐츠 -->
         <div id="store" class="content-container">
             <h1>상점 관리</h1>
-
-            <!-- 상품 추가 폼 -->
-            <div class="form-container">
-                <form>
-                    <div class="form-group">
-                        <label for="item_name">상품 이름:</label>
-                        <input type="text" id="item_name" name="item_name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="item_price">상품 가격:</label>
-                        <input type="number" id="item_price" name="item_price" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="item_image">파일 (이미지):</label>
-                        <input type="file" id="item_image" name="item_image" accept="image/*" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="item_type">상품 타입:</label>
-                        <select id="item_type" name="item_type" required>
-                            <option value="music">음악</option>
-                            <option value="character">캐릭터</option>
-                            <option value="background">배경</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="item_path">경로:</label>
-                        <input type="text" id="item_path" name="item_path" required>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit">상품 추가</button>
-                    </div>
-                </form>
-            </div>
 
             <!-- 상품 리스트 -->
             <div class="product-list">
@@ -262,7 +208,10 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
+
+                <!-- 상품 추가 버튼 -->
+                <button class="add-product-btn" onclick="openStoreManage()">상품 추가</button>
+            </div>   
         </div>
     </div>
 
@@ -285,6 +234,11 @@
         function showStore() {
             document.getElementById('dashboard').style.display = 'none';
             document.getElementById('store').style.display = 'block';
+        }
+
+        // 상품 추가 페이지를 새창으로 열기
+        function openStoreManage() {
+            window.open('storeManage.jsp', '_blank', 'width=600,height=600');
         }
     </script>
 </body>
