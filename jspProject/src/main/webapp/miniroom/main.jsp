@@ -323,6 +323,11 @@ function clickAlarm(){
         }
           window.addEventListener("beforeunload",disconnect);
         
+        function logout() {
+            if (confirm('정말로 로그아웃 하시겠습니까?')) {
+                window.location.href = 'logout.jsp';
+            }
+        }
     </script>
 
 </head>

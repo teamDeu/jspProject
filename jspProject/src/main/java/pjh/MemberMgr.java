@@ -48,32 +48,67 @@ public class MemberMgr {
     // 회원가입
     public boolean insertMember(MemberBean bean) {
         Connection con = null;
-        PreparedStatement pstmt = null;
-        String sql = null;
+        PreparedStatement pstmt1 = null;
+        PreparedStatement pstmt2 = null;
+        String sql1 = null;
+        String sql2 = null;
         boolean flag = false;
+        
         try {
             con = pool.getConnection();
-            // 비밀번호 확인은 따로 저장하지 않고, 비밀번호와 일치 여부만 클라이언트에서 처리
-            sql = "insert into user(user_id, user_pwd, user_name, user_birth, user_phone, user_email, user_clover, user_character)"
-                    + "values(?, ?, ?, ?, ?, ?, ?, ?)";
-            pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, bean.getUser_id());
-            pstmt.setString(2, bean.getUser_pwd());
-            pstmt.setString(3, bean.getUser_name());
-            pstmt.setString(4, bean.getUser_birth());
-            pstmt.setString(5, bean.getUser_phone());
-            pstmt.setString(6, bean.getUser_email());
-            pstmt.setInt(7, bean.getUser_clover());
-            pstmt.setInt(8, 1);
-            if (pstmt.executeUpdate() == 1)
-                flag = true;
+            con.setAutoCommit(false); // 트랜잭션 시작
+            
+            // 회원 정보를 user 테이블에 저장
+            sql1 = "INSERT INTO user(user_id, user_pwd, user_name, user_birth, user_phone, user_email, user_clover, user_character) "
+                    + "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+            pstmt1 = con.prepareStatement(sql1);
+            pstmt1.setString(1, bean.getUser_id());
+            pstmt1.setString(2, bean.getUser_pwd());
+            pstmt1.setString(3, bean.getUser_name());
+            pstmt1.setString(4, bean.getUser_birth());
+            pstmt1.setString(5, bean.getUser_phone());
+            pstmt1.setString(6, bean.getUser_email());
+            pstmt1.setInt(7, bean.getUser_clover());
+            pstmt1.setInt(8, 1); // 기본 캐릭터 설정
+            
+            if (pstmt1.executeUpdate() == 1) {
+                // 회원가입이 성공하면 miniroom 테이블에도 user_id를 저장
+                sql2 = "INSERT INTO miniroom(user_id) VALUES(?)";
+                pstmt2 = con.prepareStatement(sql2);
+                pstmt2.setString(1, bean.getUser_id());
+                
+                
+                if (pstmt2.executeUpdate() == 1) {
+                    flag = true;
+                    con.commit(); // 트랜잭션 성공 시 커밋
+                } else {
+                    con.rollback(); // miniroom 저장 실패 시 롤백
+                }
+            } else {
+                con.rollback(); // 회원가입 실패 시 롤백
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
+            try {
+                if (con != null) {
+                    con.rollback(); // 예외 발생 시 롤백
+                }
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         } finally {
-            pool.freeConnection(con, pstmt);
+            try {
+                if (con != null) con.setAutoCommit(true); // 자동 커밋 모드로 복원
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            pool.freeConnection(con, pstmt1);
+            pool.freeConnection(con, pstmt2);
         }
         return flag;
     }
+
     
     
     

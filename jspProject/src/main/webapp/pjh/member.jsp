@@ -121,7 +121,7 @@
                 return;
             }
             url = "idCheck.jsp?id=" + id;
-            window.open(url, "ID 중복체크", "width=300, height=150, top=100, left=100");
+            window.open(url, "ID 중복체크", "width=470, height=150, top=100, left=700");
         }
 
         function inputCheck() {
