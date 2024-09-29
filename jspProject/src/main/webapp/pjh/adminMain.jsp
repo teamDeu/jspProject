@@ -109,23 +109,26 @@
             text-align: center;
         }
         .product-list table th {
-            background-color: #2ecc71;
-            color: #fff;
+            background-color: #A9D18E; /* 테이블 헤더 배경색 - 사이드바 색상과 조화 */
+            color: #333; /* 글자색 */
         }
         .product-list table td button {
             padding: 5px 10px;
-            background-color: #e74c3c;
+            background-color: #FF6B6B;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
+        .product-list table td button:hover {
+            background-color: #FF4D4D;
+        }
         /* 상품 추가 버튼 스타일 */
         .add-product-btn {
             margin-top: 20px;
             padding: 15px 20px;
-            background-color: #2ecc71;
-            color: white;
+            background-color: #A9D18E; /* 상품 추가 버튼 배경색 - 사이드바 색상과 조화 */
+            color: #333;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -135,7 +138,7 @@
             text-align: center;
         }
         .add-product-btn:hover {
-            background-color: #27ae60;
+            background-color: #8DB369; /* 버튼 호버 시 더 진한 녹색 */
         }
     </style>
 </head>
