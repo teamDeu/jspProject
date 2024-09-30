@@ -79,7 +79,7 @@
             <!-- 상품 가격 -->
             <div class="form-group">
                 <label for="item_price">상품 가격:</label>
-                <input type="number" id="item_price" name="item_price" required>
+                <input type="number" id="item_price" name="item_price" required>원
             </div>
 
 
@@ -88,9 +88,9 @@
             <div class="form-group">
                 <label for="item_type">상품 타입:</label>
                 <select id="item_type" name="item_type" required>
-                    <option value="music">음악</option>
-                    <option value="character">캐릭터</option>
-                    <option value="background">배경</option>
+                    <option value="음악">음악</option>
+                    <option value="캐릭터">캐릭터</option>
+                    <option value="배경화면">배경</option>
                 </select>
             </div>
 
