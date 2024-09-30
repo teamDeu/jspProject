@@ -229,7 +229,7 @@
 				<button onclick ="clickNextIndex('background')" class ="index_button index_button_right"><img class ="index_button_img" src ="./img/Right.png"></button>
 			</div>
 		</section>
-		<form name = "frm" action = "miniroomDesignProc.jsp" method = "post"  target="_blank">
+		<form name = "frm" action = "miniroomDesignProc.jsp" method = "post"  target="blankifr">
 			<input type ="hidden" name ="user_id" value = "<%=user_id %>">
 			<input type = "hidden" name = "character" value ="<%=usingCharacter.getItem_num()%>">
 			<input type = "hidden" name = "background" value ="<%=usingBackground.getItem_num()%>">
