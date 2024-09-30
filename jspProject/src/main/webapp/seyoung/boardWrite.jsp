@@ -352,8 +352,8 @@
 
 .folder-item .delete-button {
     cursor: pointer; /* 커서 변경 */
-    width: 16px; /* 쓰레기통 아이콘 크기 */
-    height: 16px; 
+    width: 14px; /* 쓰레기통 아이콘 크기 */
+    height: 14px; 
 }
 
 

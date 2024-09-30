@@ -399,6 +399,7 @@ function clickAlarm(){
                 </jsp:include>
 	         </div> 
 	         <div id="board" class="inner-box-2" style="display: none">
+	         
 	         </div>
 	         <div id="music" class="inner-box-2" style="display: none">
 	         </div>
