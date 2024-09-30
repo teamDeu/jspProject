@@ -2,7 +2,7 @@
 <%@ page import="pjh.ItemBean, pjh.AItemMgr" %>
 <%@ page import="java.util.List" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
-
+<% String type = request.getParameter("type"); %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -169,9 +169,11 @@
     <div class="sidebar">
         <h2>관리자 패널</h2>
         <ul>
-            <li onclick="showDashboard()" id="dashboardTab" class="active"><i class="fa fa-home"></i> 대시보드</li>
-            <li onclick="showStore()" id="storeTab"><i class="fa fa-store"></i> 상점 관리</li>
+            <li onclick="showCategory('dashboard')" id="dashboardTab" class="active"><i class="fa fa-home"></i> 대시보드</li>
+            <li onclick="showCategory('user')">유저</li>
+            <li onclick="showCategory('store')" id="storeTab"><i class="fa fa-store"></i> 상점 관리</li>
             <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
+            
         </ul>
     </div>
 
@@ -193,7 +195,9 @@
             </div>
         </div>
     </div>
-
+	<div id = "user" class ="main-content" style ="display:none">
+		<jsp:include page="adminUser.jsp"></jsp:include>
+	</div>
     <!-- 상점 관리 섹션 -->
     <div id="store" class="main-content" style="display: none;">
         <h1>상점 관리</h1>
@@ -207,7 +211,7 @@
             <input type="text" name="keyWord" placeholder="검색어 입력" />
             <input type="submit" value="검색" />
         </form>
-
+		
         <!-- 상품 목록 출력 및 페이징 -->
         <div class="product-list">
             <h2>상품 목록</h2>
@@ -284,7 +288,7 @@
                 <%
                     for (int i = 1; i <= totalPages; i++) {
                 %>
-                <a href="adminMain.jsp?page=<%= i %>&keyField=<%= keyField != null ? keyField : "" %>&keyWord=<%= keyWord != null ? keyWord : "" %>"
+                <a href="adminMain.jsp?page=<%= i %>&keyField=<%= keyField != null ? keyField : "" %>&keyWord=<%= keyWord != null ? keyWord : "" %>&type=store"
                    class="<%= (i == currentPage) ? "current-page" : "" %>">
                     <%= i %>
                 </a>
@@ -305,17 +309,10 @@
                 window.location.href = 'logout.jsp';
             }
         }
-
-        function showDashboard() {
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('store').style.display = 'none';
-        }
-
-        function showStore() {
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('store').style.display = 'block';
-        }
-
+		function showCategory(id){
+			document.querySelectorAll('.main-content').forEach((e) => e.style.display = "none");
+			document.getElementById(id).style.display ="block";
+		}
         // 상품 추가 페이지를 새창으로 열기
         function openStoreManage() {
             window.open('storeManage.jsp', '_blank', 'width=600,height=600');
@@ -325,9 +322,14 @@
         window.onload = function () {
             var urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('keyWord') || urlParams.has('page')) {
-                showStore();
+            	type = <%=type%>
+            	if(type == store)
+                	showCategory('store');
+            	else if(type == user)
+            		showCategory('user');
             } else {
-                showDashboard();
+            	
+                showCategory('dashboard');
             }
         };
     </script>

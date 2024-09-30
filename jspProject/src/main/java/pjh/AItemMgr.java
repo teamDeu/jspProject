@@ -76,9 +76,7 @@ public class AItemMgr {
                 pstmt = con.prepareStatement(sql);
                 pstmt.setString(1, "%" + keyWord + "%");
             }
-
             rs = pstmt.executeQuery();
-
             if (rs.next()) {
                 totalCount = rs.getInt(1);  // 총 상품 수를 가져옴
             }
