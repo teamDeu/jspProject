@@ -9,7 +9,6 @@
 Vector<ItemBean> vlist = mgr.getAllItems();
 
 String user_id = (String) session.getAttribute("idKey");
-System.out.println(user_id);
 // 클로버 잔액을 가져오기 위한 변수
 int user_clover = 0;
 DBConnectionMgr pool = null;

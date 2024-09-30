@@ -10,7 +10,6 @@
 <%
 
 String connect_id = (String)session.getAttribute("idKey");
-System.out.println(connect_id);
 if(connect_id == null){
 	response.sendRedirect("../pjh/login.jsp");
 	return;
@@ -379,5 +378,10 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 		friend_displayItems();
 	})
 	</script>
+	<form name ="friend_delete_form" action = "./friendRequestProc.jsp" target ="blankifr">
+		<input type = "hidden" name = "request_senduserid" value = "">
+		<input type = "hidden" name = "request_receiveuserid" value = "">
+		<input type = "hidden" name = "type" value = "delete">
+	</form>
 </body>
 </html>

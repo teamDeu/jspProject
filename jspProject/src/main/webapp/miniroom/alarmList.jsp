@@ -10,7 +10,6 @@
 <%
 	String id = (String)session.getAttribute("idKey");
 	String url = request.getParameter("url");
-	System.out.println("AlarmList ID:" +id);
 	Vector<FriendRequestBean> vlist = fMgr.getFriendRequest(id);
 	ItemMgr iMgr = new ItemMgr();
 %>
@@ -102,7 +101,7 @@
 				MemberBean user = uMgr.getMember(bean.getRequest_senduserid());
 				%>
 				<li class ="alarmlist_main_div_item">
-					<input type = "hidden" name = "character" value ="<%=iMgr.getUsingCharacter(bean.getRequest_senduserid())%>">
+					<input type = "hidden" name = "character" value ="<%=iMgr.getUsingCharacter(bean.getRequest_senduserid()).getItem_path()%>">
 					<input type = "hidden" name = "name" value ="<%=user.getUser_name()%>">
 					<input type = "hidden" name = "type" value ="<%=bean.getRequest_type()%>">
 					<input type = "hidden" name = "comment" value ="<%=bean.getRequest_comment() %>">
@@ -170,9 +169,6 @@ function alarm_updatePagination() {
         if(i != totalPages){
         	paginationContainer.appendChild(separatorSpan);
         }
-        
-        
-        
     }
 }
 function openRequestModalReceive(character,name,type,comment,num){

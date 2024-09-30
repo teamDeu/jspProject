@@ -35,16 +35,26 @@
             fr_modal.querySelector(".request_profile_img").src = character;
         };
   function onclickGoHomePage(id){
-          console.log(id);
           location.href = "http://"+location.host+"/jspProject/miniroom/main.jsp?url=" + id;   
      };
+  function onclickDeleteFriend(senduserid,receiveuserid,name){
+	  	fr_form = document.friend_delete_form;
+	  	console.log(fr_form);
+	  	fr_form.request_senduserid.value = senduserid;
+	  	fr_form.request_receiveuserid.value = receiveuserid;
+	  	fr_form.submit();
+	  	friend_items = friend_items.filter((e) => e.querySelector(".main_profile_friends_name").innerText != name);
+	  	friend_displayItems();
+  }
 	</script>
 <style>
 .profile_function_div_main{
 	display:none;
+	
 }
 .profile_function_div {
 	display: flex;
+	z-index:3;
 	flex-direction: column;
 	position: absolute;
 	width: 120px;
@@ -76,7 +86,7 @@
 	<div class="profile_function_div">
 		<span><%=name%></span>
 		<%if(fmgr.isFriend(connectId,userId)){ %>
-			<button onclick = onclickDeleteFriend('<%=connectId %>','<%=userId%>') >친구삭제</button>
+			<button onclick = "onclickDeleteFriend('<%=connectId %>','<%=userId%>','<%=name%>')">친구삭제</button>
 		<%}else{ %>
 		<button onclick="onclickAddFriend('<%=connectId%>','<%=userId%>','<%=userCharacter%>','<%=name%>')">친구추가</button>
 		<%} %>
