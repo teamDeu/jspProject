@@ -1,3 +1,4 @@
+<%@page import="miniroom.UtilMgr"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <jsp:useBean id="mgr" class ="friend.FriendMgr"/>
@@ -6,8 +7,16 @@
 <%
 	String type = request.getParameter("type");
 	String msg = null;
+	String receiveuserId = null;
+	int num = 0;
+	if(request.getParameter("request_num").equals("")){
+		num = mgr.getLastFriendRequest().getRequest_num();
+	}
+	else{
+		num = UtilMgr.parseInt(request, "request_num");
+	}
 	if(type.equals("send")){
-		String receiveuserId = bean.getRequest_receiveuserid();
+		receiveuserId = bean.getRequest_receiveuserid();
 		String senduserId = bean.getRequest_senduserid();
 		msg = "본인에게 친구요청 할 수 없습니다.";
 		if(!(receiveuserId.equals(senduserId))){
@@ -25,18 +34,18 @@
 	else if(type.equals("receive")){
 		msg = "친구 추가에 실패하였습니다.";
 		String receive_type = request.getParameter("receive_type");
-		bean = mgr.getFriendRequestItem(bean.getRequest_num());
+		bean = mgr.getFriendRequestItem(num);
 		if(receive_type.equals("accept")){
 			if(mgr.insertFriendInfo(bean)){
 				msg ="친구 추가 성공!";
-				mgr.updateFriendRequestComplete(bean.getRequest_num());
+				mgr.updateFriendRequestComplete(num);
 			}
 			else{
 				msg ="친구 추가 실패!";
 			}
 		}
 		else if(receive_type.equals("reject")){
-			mgr.updateFriendRequestComplete(bean.getRequest_num());
+			mgr.updateFriendRequestComplete(num);
 		}
 	}
 %>

@@ -165,6 +165,17 @@ function clickAlarm(){
                     user.remove();
                     userNum --;
                  }
+                 else if(command == ("sendFriendRequest")){
+                	 sendUserName = rawdata[1];
+                	 sendUserCharacter = rawdata[2];
+                	 receiveId = rawdata[3];
+                	 requestType = rawdata[4];
+                	 comment = rawdata[5];
+                	 if(localId == receiveId){
+                		 openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"");
+                	 }
+                	 
+                 }
             };
             ws.onclose = function() {
                 document.getElementById("status").textContent = "서버 연결 끊김";
@@ -175,6 +186,10 @@ function clickAlarm(){
 	        document.getElementById("game1-container").style.display = "none";
 	        document.getElementById("game2-container").style.display = "none";        
 	    }
+        function sendFriendRequest(receiveId , request_type,comment){
+        	var message = "sendFriendRequest" + dataSeparator + name + dataSeparator + character + dataSeparator + receiveId + dataSeparator + request_type + dataSeparator + comment
+        	ws.send(message);
+        }
         function sendMessage() {
             var message = "sendMessage" + dataSeparator +  localId + messageSeparator + document.getElementById("messageInput").value + messageSeparator + '<%=userBean.getUser_name()%>';
             if (message.trim() !== "") {

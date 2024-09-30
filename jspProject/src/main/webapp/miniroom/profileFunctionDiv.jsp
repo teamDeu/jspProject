@@ -1,3 +1,4 @@
+<%@page import="friend.FriendMgr"%>
 <%@page import="miniroom.ItemMgr"%>
 <%@page import="pjh.MemberBean"%>
 <%@page import="pjh.MemberMgr"%>
@@ -5,18 +6,19 @@
 	pageEncoding="UTF-8"%>
 
 <%
-String connectId = (String) session.getAttribute("idKey");
-if (connectId == null) {
-	response.sendRedirect("../pjh/login.jsp");
-	return;
-}
-MemberMgr mgr = new MemberMgr();
-ItemMgr imgr = new ItemMgr();
-String profileId = request.getParameter("profileId");
-MemberBean user = mgr.getMember(profileId);
-String name = user.getUser_name();
-String userId = user.getUser_id();
-String userCharacter = imgr.getUsingCharacter(userId).getItem_path();
+	String connectId = (String) session.getAttribute("idKey");
+	if (connectId == null) {
+		response.sendRedirect("../pjh/login.jsp");
+		return;
+	}
+	MemberMgr mgr = new MemberMgr();
+	ItemMgr imgr = new ItemMgr();
+	FriendMgr fmgr = new FriendMgr();
+	String profileId = request.getParameter("profileId");
+	MemberBean user = mgr.getMember(profileId);
+	String name = user.getUser_name();
+	String userId = user.getUser_id();
+	String userCharacter = imgr.getUsingCharacter(userId).getItem_path();
 %>
 <!DOCTYPE html>
 <html>
@@ -73,8 +75,11 @@ String userCharacter = imgr.getUsingCharacter(userId).getItem_path();
 <div class="profile_function_div_main" style ="display : none">
 	<div class="profile_function_div">
 		<span><%=name%></span>
-		<button
-			onclick="onclickAddFriend('<%=connectId%>','<%=userId%>','<%=userCharacter%>','<%=name%>')">친구추가</button>
+		<%if(fmgr.isFriend(connectId,userId)){ %>
+			<button onclick = onclickDeleteFriend('<%=connectId %>','<%=userId%>') >친구삭제</button>
+		<%}else{ %>
+		<button onclick="onclickAddFriend('<%=connectId%>','<%=userId%>','<%=userCharacter%>','<%=name%>')">친구추가</button>
+		<%} %>
 		<button onclick="onclickGoHomePage('<%=userId%>')">미니룸 구경가기</button>
 	</div>
 </div>

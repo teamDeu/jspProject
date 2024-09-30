@@ -95,6 +95,7 @@
 		fr_form.request_comment.value = document.querySelector(".request_comment").value;
 		fr_form.submit();
 		document.getElementById("friend_request_modal_send").style.display = "none";
+	    sendFriendRequest(fr_form.request_receiveuserid.value,fr_form.request_type.value,fr_form.request_comment.value);
 	}
 	function changeType(select){
 		fr_form = document.friend_request_form_send;

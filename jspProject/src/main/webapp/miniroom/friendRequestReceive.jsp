@@ -120,7 +120,6 @@
 </script>
 </head>
 <div class ="request_main_div">
-	
 	<div class="request_div">
 	<button style = "position:absolute; right : 0px ; top: 0px ; font-size : 10px;" onclick ="frequest_receive_clickCloseBtn()">X</button>
 		<div class="request_header">
