@@ -10,8 +10,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Clover Story</title>
-<link rel="stylesheet" type="text/css" href="css/style.css">
-<link rel="stylesheet" type="text/css" href="css/boardList.css">
+<link rel="stylesheet" type="text/css" href="../seyoung/css/boardList.css">
 
 <style>
 @font-face {
@@ -104,19 +103,6 @@
     bottom: 0;
     left: 0;
     border-radius: 10px;
-}
-
-.folder-input-container {
-    display: none;
-    align-items: center; 
-    width: 80%;
-    padding: 5px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;    
-    position: absolute;
-    top: 622px;
-    left: 8%; 
 }
 
 .folder-input-container input {
@@ -225,19 +211,6 @@ td a {
     
 }
 
-.folder-input-container {
-    display: none; /* 처음에는 숨겨져 있도록 설정 */
-    align-items: center; 
-    width: 80%;
-    padding: 5px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;    
-  	position: absolute; /* 요소를 부모 기준으로 절대 위치에 배치 */
-    top: 622px; /* 하단에서 40px 위로 */
- 	left: 8%; 
-    
-}
 
 .folder-input-container img {
     width: 27px; 
@@ -268,32 +241,11 @@ td a {
 }
 </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
-            <div class="settings">
-            <span></span>
-                <a href="#">설정</a> <a href="#">로그아웃</a>
-            </div>
-        </div>
-        <div class="dashed-box">
-            <div class="solid-box">
-                <div class="inner-box-1">
-                    <jsp:include page="bInnerbox1.jsp"/>
-                </div>
-                <div class="image-box">
-                    <img src="img/img1.png" alt="Image between boxes 1"
-                        class="between-image"> <img src="img/img1.png"
-                        alt="Image between boxes 2" class="between-image">
-                </div>
-                <div align="center" class="inner-box-2">
-                    <form action="bDelProc.jsp" method="post">
+<form action="../seyoung/bDelProc.jsp" method="post">
                     <h1 class="board-title">게시판</h1>
                     <div class="button-group">
                         <button type="submit" class="delete-button2">삭제</button>
-                        <a href="boardWrite.jsp">
-                         <button type="button" class="write-button">작성</button>
+                         <button onclick ="clickOpenBox('boardWrite')" type="button" class="write-button">작성</button>
                         </a>
                     </div>
                     <div class="boardlist-line"></div>
@@ -316,22 +268,6 @@ td a {
                         </table>
                     </div>
                     </form>                           
-                </div>
-            </div>
-            <div class="button-container">
-                <button class="custom-button">홈</button>
-                <button class="custom-button">프로필</button>
-                <button class="custom-button">미니룸</button>
-                <button class="custom-button" style="background-color: #F7F7F7; font-weight: 600;" >게시판</button>
-                <a href="../eunhyo/guestbook.jsp"><button class="custom-button">방명록</button></a>
-                <button class="custom-button">상점</button>
-                <button class="custom-button">게임</button>
-                <button class="custom-button">음악</button>
-            </div>
-        </div>
-    </div>
-</body>
-
 <script>
     document.getElementById("checkAll").onclick = function() {
         var checkboxes = document.getElementsByName("boardNum");
@@ -340,47 +276,10 @@ td a {
         }
     }
 
-    // 폴더를 선택할 때마다 게시판 목록을 업데이트
-    function selectFolder(folderItem) {
-        var folderIcon = folderItem.querySelector('img');
-        var folderNum = folderItem.getAttribute('data-folder-num');
-
-        if (!folderNum || isNaN(folderNum)) {
-            console.error("폴더 번호가 유효하지 않습니다.");
-            return;
-        }
-
-        // 선택되지 않은 상태일 때 (img/folder.png)
-        if (folderIcon.src.includes('folder.png')) {
-            if (selectedFolderItem) {
-                // 이전에 선택된 폴더가 있으면 아이콘과 스타일 원래대로
-                selectedFolderItem.querySelector('img').src = 'img/folder.png';
-                selectedFolderItem.querySelector('span').style.fontWeight = 'normal';
-            }
-
-            // 현재 폴더를 선택된 상태로 변경
-            folderIcon.src = 'img/folder2.png'; // 아이콘 변경
-            folderItem.querySelector('span').style.fontWeight = 'bold'; // 글자 굵기 변경
-            selectedFolderItem = folderItem; // 현재 선택된 폴더 갱신
-
-            // AJAX 요청을 통해 서버에서 게시물 목록 가져오기
-            loadBoardList(folderNum); // 게시물 목록 업데이트
-
-        } else if (folderIcon.src.includes('folder2.png')) {
-            // 선택된 상태일 때 다시 클릭하면 선택 해제
-            folderIcon.src = 'img/folder.png'; // 아이콘 원래대로
-            folderItem.querySelector('span').style.fontWeight = 'normal'; // 글자 굵기 원래대로
-            selectedFolderItem = null; // 선택 해제
-
-            // 폴더 선택 해제 시 게시물 목록 비우기
-            clearBoardList();
-        }
-    }
-
     // 게시물 목록을 로드하는 함수
     function loadBoardList(folderNum) {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'getBoardList.jsp?folderNum=' + encodeURIComponent(folderNum), true);
+        xhr.open('GET', '../seyoung/getBoardList.jsp?folderNum=' + encodeURIComponent(folderNum), true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 document.getElementById('board-list-body').innerHTML = xhr.responseText;

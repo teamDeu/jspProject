@@ -17,7 +17,7 @@
     }
 
     if (isDeleted) {
-        out.println("<script>alert('게시물이 성공적으로 삭제되었습니다.'); location.href='boardList.jsp';</script>");
+        out.println("<script>alert('게시물이 성공적으로 삭제되었습니다.'); location.href='../seyoung/boardList.jsp';</script>");
     } else {
         out.println("<script>alert('게시물 삭제에 실패하였습니다. 다시 시도해주세요.'); history.back();</script>");
     }

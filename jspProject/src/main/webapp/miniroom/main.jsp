@@ -144,6 +144,15 @@ function clickOpenBox(id){
       anotherBox[i].style.display ="none";
    }
    openBox.style.display = "flex";
+   
+   if(id.includes("board")){
+	   document.getElementById("boardInnerBox").style.display = "block";
+	   document.getElementById("normalInnerBox").style.display = "none";
+   }
+   else{
+	   document.getElementById("boardInnerBox").style.display = "none";
+	   document.getElementById("normalInnerBox").style.display = "block";
+   }
 }
 function clickUser(event){
    console.log(event);
@@ -459,10 +468,13 @@ function clickAlarm(){
             </jsp:include>
             </div>
             
-            <div class="inner-box-1">
+            <div id = "normalInnerBox" class="inner-box-1">
                <jsp:include page="profile.jsp">
                   <jsp:param value='<%=url %>' name="url"/>
                </jsp:include>
+            </div>
+            <div id = "boardInnerBox" class="inner-box-1" style = "display :none">
+               <jsp:include page="../seyoung/bInnerbox1.jsp"></jsp:include>
             </div>
             <!-- 이미지가 박스 -->
             <div class="image-box">
@@ -492,7 +504,13 @@ function clickAlarm(){
                 </jsp:include>
 	         </div> 
 	         <div id="board" class="inner-box-2" style="display: none">
-	         
+	         	<jsp:include page ="../seyoung/board.jsp"></jsp:include>
+	         </div>
+	         <div id="boardList" class ="inner-box-2" style="display:none">
+	         	<jsp:include page ="../seyoung/boardList.jsp"></jsp:include>
+	         </div>
+	         <div id="boardWrite" class ="inner-box-2" style="display:none">
+	         	<jsp:include page ="../seyoung/boardWrite.jsp"></jsp:include>
 	         </div>
 	         <div id="music" class="inner-box-2" style="display: none">
 	         </div>
