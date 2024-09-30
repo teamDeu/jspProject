@@ -1,3 +1,4 @@
+<%@page import="pjh.VisitCountBean"%>
 <%@page import="pjh.MemberBean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
    pageEncoding="UTF-8"%>
@@ -5,12 +6,31 @@
 <jsp:useBean id="mMgr" class ="pjh.MemberMgr"/>
 <jsp:useBean id="fMgr" class ="friend.FriendMgr"/>
 <%
-   
+   // 세션에서 idKey 가져오기
    String id = (String)session.getAttribute("idKey");
    if(id == null){
       response.sendRedirect("../pjh/login.jsp");
       return;
    }
+
+// 페이지 소유자의 ID 가져오기
+   String pageOwnerId = request.getParameter("url");
+
+   // 만약 url 파라미터가 없으면 페이지 소유자는 방문자(id)
+   if(pageOwnerId == null || pageOwnerId.trim().isEmpty()) {
+      pageOwnerId = id;
+   }
+
+   // 방문자 수 업데이트 (방문자가 페이지 소유자와 다를 때만 카운트)
+   if (!pageOwnerId.equals(id)) {
+       mMgr.updateVisitCount(pageOwnerId, id);
+   }
+
+   // 방문자 수 가져오기
+   VisitCountBean visitCount = mMgr.getVisitCount(pageOwnerId);
+
+
+   // 캐릭터 및 배경 이미지 설정
    String character = iMgr.getUsingCharacter(id).getItem_path();
    String url = request.getParameter("url");
    if(url == null){
@@ -20,8 +40,11 @@
    if(background == null){
       background = "./img/backgroundImg.png";
    }
+
+   // 사용자 정보 가져오기
    MemberBean userBean = mMgr.getMember(id);
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -83,6 +106,24 @@
 	top:0px;
 	border-radius : 10px;
 }
+.visitor-stats {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        text-align: left;
+        font-size: 16px;
+        font-weight: bold;
+        display: flex;
+        gap: 20px; /* TODAY와 TOTAL 간의 간격을 조정 */
+    }
+
+    .visitor-stats .today {
+        color: #FF6347; /* 오늘 방문자수는 눈에 띄게 빨간색 */
+    }
+
+    .visitor-stats .total {
+        color: #4682B4; /* 총 방문자수는 파란색 */
+    }
 </style>
 <script>
 function loadContent(url) {
@@ -400,6 +441,15 @@ function clickAlarm(){
       <div class="dashed-box">
          <!-- 테두리 없는 상자 -->
          <div class="solid-box">
+         <!-- 방문자 수 표시 -->
+            <div class="visitor-stats">
+                <div class="today">
+                    TODAY: <%= visitCount.getVisit_today() %>
+                </div>
+                <div class="total">
+                    TOTAL: <%= visitCount.getVisit_all() %>
+                </div>
+            </div>
 
             <div class ="main_profile_alram">
             <img class="main_profile_alram_img" onclick ="clickAlarm()" src="./img/alram.png">

@@ -3,10 +3,7 @@ package guestbook;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.sql.Statement;
-
 
 public class GuestbookanswerMgr {
     private DBConnectionMgr pool;
@@ -15,42 +12,82 @@ public class GuestbookanswerMgr {
         pool = DBConnectionMgr.getInstance();
     }
 
-    // 답글 추가
-    public int addAnswer(GuestbookanswerBean answer) {
+    // Add a new reply to a guestbook entry
+ // GuestbookanswerMgr.java
+    public boolean addGuestbookAnswer(GuestbookanswerBean bean) {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        int ganswerNum = 0;
         String sql = "INSERT INTO guestbookanswer (guestbook_num, ganswer_comment, ganswer_id, ganswer_at) VALUES (?, ?, ?, NOW())";
+        boolean isSuccess = false;
 
         try {
             con = pool.getConnection();
-            pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setInt(1, answer.getGuestbookNum());
-            pstmt.setString(2, answer.getGanswerComment());
-            pstmt.setString(3, answer.getGanswerId());
-            pstmt.executeUpdate();
+            pstmt = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            pstmt.setInt(1, bean.getGuestbookNum());
+            pstmt.setString(2, bean.getGanswerComment());
+            pstmt.setString(3, bean.getGanswerId());
+            int count = pstmt.executeUpdate();
 
-            // 생성된 키 가져오기
-            rs = pstmt.getGeneratedKeys();
-            if (rs.next()) {
-                ganswerNum = rs.getInt(1);
+            // 추가된 답글의 ID를 가져옴
+            if (count > 0) {
+                rs = pstmt.getGeneratedKeys();
+                if (rs.next()) {
+                    int answerNum = rs.getInt(1); // 생성된 답글 ID 가져오기
+                    bean.setGanswerNum(answerNum); // 생성된 ID를 bean에 설정
+                    isSuccess = true;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             pool.freeConnection(con, pstmt, rs);
         }
-        return ganswerNum;
+        return isSuccess;
+    }
+
+ // Get all replies for a specific guestbook entry, including profile information
+    public ArrayList<GuestbookanswerBean> getAnswersForGuestbook(int guestbookNum) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        ArrayList<GuestbookanswerBean> list = new ArrayList<>();
+        // 수정된 쿼리: 'profile' 테이블로 변경
+        String sql = "SELECT ga.*, p.profile_name, p.profile_picture FROM guestbookanswer ga " +
+                     "LEFT JOIN profile p ON ga.ganswer_id = p.user_id " +
+                     "WHERE ga.guestbook_num = ? ORDER BY ga.ganswer_at ASC";
+        try {
+            con = pool.getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, guestbookNum);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                GuestbookanswerBean bean = new GuestbookanswerBean();
+                bean.setGanswerNum(rs.getInt("ganswer_num"));
+                bean.setGuestbookNum(rs.getInt("guestbook_num"));
+                bean.setGanswerComment(rs.getString("ganswer_comment"));
+                bean.setGanswerId(rs.getString("ganswer_id"));
+                bean.setGanswerAt(rs.getDate("ganswer_at"));
+                // 프로필 정보 추가
+                bean.setProfileName(rs.getString("profile_name"));
+                bean.setProfilePicture(rs.getString("profile_picture"));
+                list.add(bean);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return list;
     }
 
 
-    // 답글 삭제
-    public boolean deleteAnswer(int ganswerNum) {
+
+    // Delete a specific reply
+    public boolean deleteGuestbookAnswer(int ganswerNum) {
         Connection con = null;
         PreparedStatement pstmt = null;
         String sql = "DELETE FROM guestbookanswer WHERE ganswer_num = ?";
-        
         try {
             con = pool.getConnection();
             pstmt = con.prepareStatement(sql);
@@ -65,35 +102,22 @@ public class GuestbookanswerMgr {
         return false;
     }
 
-    // 특정 guestbook_num에 해당하는 답글 조회
-    public ArrayList<GuestbookanswerBean> getAnswers(int guestbookNum) {
+    // Delete all replies for a specific guestbook entry
+    public boolean deleteAllAnswersForGuestbook(int guestbookNum) {
         Connection con = null;
         PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        ArrayList<GuestbookanswerBean> answerList = new ArrayList<>();
-        String sql = "SELECT * FROM guestbookanswer WHERE guestbook_num = ? ORDER BY ganswer_at ASC";
-        
+        String sql = "DELETE FROM guestbookanswer WHERE guestbook_num = ?";
         try {
             con = pool.getConnection();
             pstmt = con.prepareStatement(sql);
             pstmt.setInt(1, guestbookNum);
-            rs = pstmt.executeQuery();
-            while (rs.next()) {
-                GuestbookanswerBean answer = new GuestbookanswerBean();
-                answer.setGanswerNum(rs.getInt("ganswer_num"));
-                answer.setGuestbookNum(rs.getInt("guestbook_num"));
-                answer.setGanswerComment(rs.getString("ganswer_comment"));
-                answer.setGanswerId(rs.getString("ganswer_id"));
-                answer.setGanswerAt(rs.getTimestamp("ganswer_at"));
-                answerList.add(answer);
-            }
+            int count = pstmt.executeUpdate();
+            return count > 0;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            pool.freeConnection(con, pstmt, rs);
+            pool.freeConnection(con, pstmt);
         }
-        
-        return answerList;
+        return false;
     }
-
 }

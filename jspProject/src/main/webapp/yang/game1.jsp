@@ -1,5 +1,23 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="item.ItemBean"%>
+<%@page import="java.util.Vector"%>
+<%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
+<%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
+<jsp:useBean id="mgr" class="pjh.MemberMgr" />
+<%
+String user_id = (String) session.getAttribute("idKey");
+int user_clover = 0;
+
+if (user_id != null) {
+    try {
+        // 사용자의 현재 클로버 잔액 가져오기
+        user_clover = mgr.getCloverBalance(user_id);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -175,15 +193,14 @@
             object-fit: cover;
             margin-bottom: 10px;
         }
-        /* 팝업창 스타일 */
-        #popup {
+        #popup1 {
             display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 400px;
-            height: 300px;
+            height: 340px;
             background-color: white;
             border: 2px solid #BAB9AA;
             border-radius: 15px;
@@ -191,28 +208,26 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             z-index: 100;
         }
-        
-        #popup-title {
-		    font-size: 40px;
-		    margin: 0;
-		}
-		
-		#title-image {
-		    margin-left: 10px;
-		    width: 50px;
-		    height: 50px;
-		}
-
-        #popup h2 {
+        #popup-title1 {
+            font-size: 40px;
+            margin: 0;
+        }
+        #popup-image1 {
+            margin-top: 10px;
+        }
+        #popup1 h21 {
             margin-top: 20px;
             font-size:40px;
         }
-
-        #popup img {
+        #title-image1 {
+            margin-left: 10px;
+            width: 50px;
+            height: 50px;
+        }
+        #popup1 img {
             margin-top: 10px;
         }
-
-        #popup button {
+        #popup1 button {
             margin-top: 20px;
             padding: 10px 20px;
             border-radius: 10px;
@@ -221,31 +236,43 @@
             font-size: 18px;
             cursor: pointer;
         }
-		.popup-content {
-		    display: flex;
-		    justify-content: center;
-		    align-items: center;
-		    margin-top: 20px;
-		    gap: 10px; /* 이미지와 배수 사이 간격 설정 */
-		    font-size:40px;
-		}
-		
-		.popup-image {
-		    width: 60px;
-		    height: 60px;
-		}
-		
-		.popup-multiplier {
-		    font-size: 40px;
-		    font-weight: bold;
-		}
+        .popup-content1 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+            font-size:40px;
+        }
+        .popup-image1 {
+            width: 60px;
+            height: 60px;
+        }
+        .popup-multiplier1 {
+            font-size: 40px;
+            font-weight: bold;
+        }
+        /* 클로버 금액 */
+        .clover-amount1 {
+            font-size: 30px;
+            color: green;
+            position: absolute;
+            top: 20px;
+            right: 60px;
+        }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
 
     <div style="text-align: center; margin-top: 50px;">
         <div class="game-title">
             <span>사다리게임</span>
+        </div>
+        <!-- 클로버 금액 -->
+        <div class="clover-amount1">
+            <img src="./img/clover_icon.png" alt="클로버">
+            <span class="clover-amount-span" id="cloverAmountDisplay"><%=user_clover%></span>
         </div>
         
         <div class="wheel-container-wrapper" id="gameContainer">
@@ -286,41 +313,37 @@
             <div class="long-box-with-image">
                 <img src="img/clover1.png" alt="Sample Image" class="box-image1">
                 <div class="long-box">
-                    <textarea class="input-box" id="betAmount" placeholder="배팅 금액" oninput="checkMaxValue(this)"></textarea>
+                    <textarea class="input-box" id="betAmount1" placeholder="배팅 금액" oninput="checkMaxValue(this)"></textarea>
                 </div>
             </div>
         </div>
-        <div id="popup">
-		    <h2 id="popup-title"></h2>
-		    <img id="popup-image" src="" alt="Popup Image" />
-		    <div>
-		        <span>배수: </span><span id="popup-multiplier"></span>
-		    </div>
-		    <div>
-		        <span>총 금액: </span><span id="popup-total-amount"></span>
-		    </div>
-		    <button id="confirmButton">확인</button>
-		</div>
+    </div>
+    
+    <div id="popup1">
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <h2 id="popup-title1" style="font-size: 40px; margin: 0;">당첨</h2>
+            <img id="title-image1" src="" alt="Title Image" class="title-image1">
+        </div>
+        <div class="popup-content">
+            <img id="popup-image1" src="" alt="Winning Image" class="popup-image">
+            <span class="popup-multiplier">x <span id="popup-multiplier1"></span></span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px;">
+            <img src="img/clover1.png" alt="Clover Image" style="width: 50px; height: 50px; object-fit: contain;">
+            <div style="border: 2px solid #BAB9AA; border-radius: 10px; width: 100px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                <span id="popup-total-amount1" style="font-size: 30pt; line-height: 1;">0</span>
+            </div>
+        </div>
+
+        <button id="confirm-button1">확인</button>
     </div>
     
     <script>
         function generateLines() {
             const container = document.getElementById('gameContainer');
             const verticalLinePositions = [95, 250, 405, 560, 715]; 
-
-            const fixedTops = [
-                110, 200, 300, 400,
-                130, 220, 320, 420,
-                150, 240, 340, 440,
-                170, 260, 360, 460
-            ];
-
-            const lineDistribution = [
-                [0, 1, 2, 3],  
-                [0, 2, 4, 6],  
-                [1, 3, 5, 7],  
-                [0, 2, 4, 6]   
-            ];
+            const fixedTops = [110, 200, 300, 400, 130, 220, 320, 420, 150, 240, 340, 440, 170, 260, 360, 460];
+            const lineDistribution = [[0, 1, 2, 3], [0, 2, 4, 6], [1, 3, 5, 7], [0, 2, 4, 6]];
 
             const existingLines = document.querySelectorAll('.horizontal-line');
             existingLines.forEach(line => line.remove());
@@ -368,7 +391,42 @@
             return generatedLines;
         }
 
+        // 게임 시작 시 배팅 금액에 따른 클로버 잔액 차감 및 게임 진행
         function startGame(buttonIndex) {
+            const betAmount = parseInt(document.getElementById('betAmount1').value) || 0;
+
+            if (betAmount > 0) {
+                // 클로버 차감 후 게임 시작
+                $.ajax({
+                    url: '../yang/updateClover.jsp',  // AJAX 요청 경로
+                    type: 'POST',
+                    data: {
+                        userId: '<%= user_id %>',
+                        cloverAmount: -betAmount  // 배팅 금액만큼 클로버 차감
+                    },
+                    success: function(response) {
+                        const newCloverAmount = parseInt(response);
+                        $('#cloverAmountDisplay').text(newCloverAmount);  // 새로운 클로버 잔액 업데이트
+                        // 사다리 게임 진행
+                        playGame(buttonIndex);  // 클로버 업데이트 후 게임 진행
+                    },
+                    error: function() {
+                        alert('클로버 잔액 업데이트 중 오류가 발생했습니다.');
+                    }
+                });
+            } else {
+                alert('배팅 금액을 입력하세요.');
+            }
+        }
+
+        function playGame(buttonIndex) {
+            const betAmount = parseInt(document.getElementById('betAmount1').value) || 0; // 배팅 금액
+
+            if (betAmount <= 0) {
+                alert('유효한 배팅 금액을 입력하세요.');
+                return;
+            }
+
             const container = document.getElementById('gameContainer');
             const verticalLinePositions = [95, 250, 405, 560, 715]; 
             const horizontalLines = generateLines(); 
@@ -428,27 +486,27 @@
                         }, 20);
                     }
                 });
-                
+
                 let multiplier = 0;
-                const betAmount = parseInt(document.getElementById('betAmount').value) || 0; // 배팅 금액 가져오기
-                
-                if (topPosition >= 510) { // 바닥에 도달하면 게임 종료
+
+                // 게임이 끝났을 때 승리 여부에 따른 multiplier 설정
+                if (topPosition >= 510) {
                     clearInterval(intervalId);
-                    
+
                     if (currentVerticalLineIndex == 0 || currentVerticalLineIndex == 3) {
                         multiplier = 0;
-                        showPopup("실패", "img/bomb.png", 0, betAmount * multiplier);
+                        showPopup1("실패", "img/bomb.png", 0, betAmount * multiplier);
                     } else if (currentVerticalLineIndex == 1) {
                         multiplier = 3;
-                        showPopup("당첨", "img/clover3.png", 3, betAmount * multiplier);
+                        showPopup1("당첨", "img/clover3.png", 3, betAmount * multiplier);
                     } else if (currentVerticalLineIndex == 2) {
                         multiplier = 2;
-                        showPopup("당첨", "img/clover2.png", 2, betAmount * multiplier);
+                        showPopup1("당첨", "img/clover2.png", 2, betAmount * multiplier);
                     } else if (currentVerticalLineIndex == 4) {
                         multiplier = 1;
-                        showPopup("당첨", "img/clover1.png", 1, betAmount * multiplier);
+                        showPopup1("당첨", "img/clover1.png", 1, betAmount * multiplier);
                     }
-                    
+
                     topImage.remove();
                 }
             }
@@ -456,25 +514,87 @@
             let intervalId = setInterval(moveDown, 20);
         }
 
-        function showPopup(result, picture, multiplier, totalAmount) {
-            const popup = document.getElementById('popup');
-            const popupTitle = document.getElementById('popup-title');
-            const popupImage = document.getElementById('popup-image');
-            const popupMultiplier = document.getElementById('popup-multiplier');
-            const popupTotalAmount = document.getElementById('popup-total-amount');
+        function showPopup1(result, picture, multiplier, totalAmount) {
+            const popup = document.getElementById('popup1');
+            const popupTitle = document.getElementById('popup-title1');
+            const popupImage = document.getElementById('popup-image1');
+            const popupMultiplier = document.getElementById('popup-multiplier1');
+            const popupTotalAmount = document.getElementById('popup-total-amount1');
+            const titleImage1 = document.getElementById('title-image1');
+
+            if (result === "당첨") {
+                titleImage1.src = "img/wow.png";
+            } else if (result === "실패") {
+                titleImage1.src = "img/sad.png";
+            }
 
             popupTitle.textContent = result;
             popupImage.src = picture;
             popupMultiplier.textContent = multiplier;
-            popupTotalAmount.textContent = totalAmount;
+
+            // totalAmount가 NaN일 경우 0으로 처리
+            const validTotalAmount = Number.isNaN(totalAmount) ? 0 : totalAmount;
+            popupTotalAmount.textContent = validTotalAmount;
 
             popup.style.display = 'block';
-        }
 
-        document.getElementById('confirmButton').addEventListener('click', () => {
-            document.getElementById('popup').style.display = 'none';
+            // 확인 버튼에 이벤트 중복 등록 방지
+            $('#confirm-button1').off('click').on('click', function () {
+                // 팝업창 닫기
+                popup.style.display = 'none';
+
+                // totalAmount를 클로버 잔액에 더하기
+                const currentCloverAmount = parseInt($('#cloverAmountDisplay').text()) || 0;
+                const newCloverAmount = currentCloverAmount + validTotalAmount;
+
+                // 클라이언트 화면에 클로버 잔액 업데이트
+                $('#cloverAmountDisplay').text(newCloverAmount);
+
+                // 서버에 클로버 잔액 업데이트 요청
+                if (validTotalAmount > 0) {
+                    $.ajax({
+                        url: '../yang/updateClover.jsp',  // 클로버 업데이트 경로
+                        type: 'POST',
+                        data: {
+                            userId: '<%= user_id %>',
+                            cloverAmount: validTotalAmount  // 승리 금액 더하기
+                        },
+                        success: function(response) {
+                            const updatedCloverAmount = parseInt(response);
+                            $('#cloverAmountDisplay').text(updatedCloverAmount);  // 서버에서 받은 최종 잔액 표시
+                        },
+                        error: function() {
+                            alert('클로버 잔액 업데이트 중 오류가 발생했습니다.');
+                        }
+                    });
+                }
+
+                // 팝업 닫기
+                popup.style.display = 'none';
+            });
+        }
+        
+        document.querySelector('.game1-clickable-box').addEventListener('click', function() {
+            const detailBox = document.querySelector('.game1-rules-detail');
+            const triangle = document.querySelector('.game1-triangle');
+            if (detailBox.style.display === 'none' || !detailBox.style.display) {
+                detailBox.style.display = 'block';
+                triangle.classList.add('rotate');
+            } else {
+                detailBox.style.display = 'none';
+                triangle.classList.remove('rotate');
+            }
         });
 
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById('confirm-button1').addEventListener('click', () => {
+                document.getElementById('popup1').style.display = 'none';
+                
+                // 가로줄을 모두 제거하여 세로줄만 남기기
+                const horizontalLines = document.querySelectorAll('.horizontal-line');
+                horizontalLines.forEach(line => line.remove());
+            });
+        });
     </script>
 
 </body>
