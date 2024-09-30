@@ -1,5 +1,23 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="item.ItemBean"%>
+<%@page import="java.util.Vector"%>
+<%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
+<%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
+<jsp:useBean id="mgr" class="pjh.MemberMgr" />
+<%
+String user_id = (String) session.getAttribute("idKey");
+int user_clover = 0;
+
+if (user_id != null) {
+    try {
+        // 사용자의 현재 클로버 잔액 가져오기
+        user_clover = mgr.getCloverBalance(user_id);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -199,7 +217,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 400px;
-            height: 300px;
+            height: 340px;
             background-color: white;
             border: 2px solid #BAB9AA;
             border-radius: 15px;
@@ -255,14 +273,28 @@
 		    font-size: 40px;
 		    font-weight: bold;
 		}
+		/* 클로버 금액 */
+		.clover-amount1 {
+			font-size: 30px;
+			color: green;
+			position: absolute;
+			top: 20px;
+			right: 60px;
+		}
 
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
     <div style="text-align: center; margin-top: 50px;">
         <div class="game-title">
             <span>돌림판게임</span>
         </div>
+        <!-- 클로버 금액 -->
+		<div class="clover-amount1">
+			<img src="./img/clover_icon.png" alt="클로버">
+			<span class="clover-amount-span" id="cloverAmountDisplay1"><%=user_clover%></span>
+		</div>
 
         <div class="wheel-container-wrapper">
             <div class="wheel-container">
@@ -336,6 +368,7 @@
         let isSpinning = false;
         let currentAngle = 0;
         let spinSpeed = 0;
+        
 
         const images = [
             "img/bomb.png",
@@ -447,17 +480,76 @@
 
                 let totalAmount = betAmount * multiplier;
 
+
                 showPopup(result, picture, multiplier, totalAmount);
             }
         }
 
+        // 클로버 잔액 차감 및 디비 업데이트 함수
+        function updateCloverAmount(amount) {
+		    const currentCloverAmount = parseInt($('#cloverAmountDisplay1').text()) || 0;
+		    const newCloverAmount = currentCloverAmount + amount;
+		    $('#cloverAmountDisplay1').text(newCloverAmount);
+		
+		    $.ajax({
+		        url: '../yang/updateClover.jsp',
+		        type: 'POST',
+		        data: {
+		            userId: '<%= user_id %>',
+		            cloverAmount: amount
+		        },
+		        success: function(response) {
+		            console.log('DB 업데이트 성공:', response);
+		        },
+		        error: function() {
+		            alert('클로버 잔액 업데이트 중 오류가 발생했습니다.');
+		        }
+		    });
+		}
+
+
         startButton.addEventListener('click', () => {
             if (!isSpinning) {
-                isSpinning = true;
-                spinSpeed = Math.random() * 0.5 + 0.2;
-                rotateWheel();
+                let betAmount = parseInt(betAmountInput.value) || 0;
+
+                if (betAmount > 0) {
+                    const currentCloverAmount = parseInt($('#cloverAmountDisplay1').text()) || 0;
+                    const newCloverAmount = currentCloverAmount - betAmount;
+
+                    if (newCloverAmount < 0) {
+                        alert('클로버 잔액이 부족합니다.');
+                        return; // 잔액이 부족하면 게임을 시작하지 않음
+                    }
+
+                    // 클로버 잔액 차감: 화면에 즉시 반영
+                    $('#cloverAmountDisplay1').text(newCloverAmount);
+
+                    // 클로버 잔액을 디비에 업데이트
+                    $.ajax({
+                        url: '../yang/updateClover.jsp',  // 서버에 클로버 잔액 업데이트 요청
+                        type: 'POST',
+                        data: {
+                            userId: '<%= user_id %>',
+                            cloverAmount: -betAmount  // 차감할 금액을 보냄
+                        },
+                        success: function(response) {
+                            console.log('DB 업데이트 성공:', response);
+                        },
+                        error: function() {
+                            alert('클로버 잔액 업데이트 중 오류가 발생했습니다.');
+                        }
+                    });
+
+                    // 게임 회전 시작
+                    isSpinning = true;
+                    spinSpeed = Math.random() * 0.5 + 0.2;
+                    rotateWheel();
+                } else {
+                    alert('배팅 금액을 입력하세요.');
+                }
             }
         });
+
 
         loadImages(() => {
             drawWheel();
@@ -495,8 +587,16 @@
             popup.style.display = 'block';
         }
 
-
+        // 팝업의 확인 버튼을 눌렀을 때
         confirmButton.addEventListener('click', () => {
+            const totalAmount = parseInt(popupTotalAmount.textContent) || 0;
+
+            // 총 금액 만큼 클로버 잔액 더하기
+            if (totalAmount > 0) {
+                updateCloverAmount(totalAmount);
+            }
+
+            // 팝업 닫기
             popup.style.display = 'none';
         });
     </script>

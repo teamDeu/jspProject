@@ -64,7 +64,19 @@ public class UtilMgr {
 			String name) {
 		return Integer.parseInt(multi.getParameter(name));
 	}
+	public static String phoneFormat(String phone) {
+		String returnValue = "";
+		for(int i = 0 ; i < phone.length(); i++) {
+			returnValue += phone.charAt(i);
+			if(i == 2 || i == 6) {
+				returnValue += "-";
+			}
+		}
+		return returnValue;
+	}
 }
+
+
 
 
 

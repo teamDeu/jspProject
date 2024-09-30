@@ -10,7 +10,6 @@
 <%
 	String id = (String)session.getAttribute("idKey");
 	String url = request.getParameter("url");
-	System.out.println("AlarmList ID:" +id);
 	Vector<FriendRequestBean> vlist = fMgr.getFriendRequest(id);
 	ItemMgr iMgr = new ItemMgr();
 %>
@@ -102,11 +101,12 @@
 				MemberBean user = uMgr.getMember(bean.getRequest_senduserid());
 				%>
 				<li class ="alarmlist_main_div_item">
-					<input type = "hidden" name = "character" value ="<%=iMgr.getUsingCharacter(bean.getRequest_senduserid())%>">
+					<input type = "hidden" name = "character" value ="<%=iMgr.getUsingCharacter(bean.getRequest_senduserid()).getItem_path()%>">
 					<input type = "hidden" name = "name" value ="<%=user.getUser_name()%>">
 					<input type = "hidden" name = "type" value ="<%=bean.getRequest_type()%>">
 					<input type = "hidden" name = "comment" value ="<%=bean.getRequest_comment() %>">
 					<input type = "hidden" name = "num" value ="<%=bean.getRequest_num() %>">
+					<input type = "hidden" name = "request_senduserid" value ="<%=bean.getRequest_senduserid() %>">
 					<span class ="alarmlist_main_div_item_readbool">읽음</span>
 					<span onclick = "clickAlarmItem(event)" class ="alarmlist_main_div_item_title"><%=user.getUser_name() %>님이 <%=bean.getRequest_type()== 1 ? "일촌" : "이촌" %> 요청을 보냈습니다.</span>
 					<span class ="alarmlist_main_div_item_requestAt"><%=bean.getRequest_at() %></span>
@@ -139,7 +139,13 @@ function displayalarm_items() {
     const alarm_itemsContainer = document.querySelector(".alarmlist_main_div_list");
     alarm_itemsContainer.innerHTML = ''; // 기존 아이템 제거
 	
-    
+    if(alarm_items.length){
+    	document.querySelector(".main_profile_alarm_isalarm").style.display = "block";
+    }
+    else{
+    	
+    	document.querySelector(".main_profile_alarm_isalarm").style.display = "none";
+    }
     visiblealarm_items.forEach(item => {
         alarm_itemsContainer.appendChild(item);
         const separatorDiv = document.createElement("div");
@@ -170,12 +176,9 @@ function alarm_updatePagination() {
         if(i != totalPages){
         	paginationContainer.appendChild(separatorSpan);
         }
-        
-        
-        
     }
 }
-function openRequestModalReceive(character,name,type,comment,num){
+function openRequestModalReceive(character,name,type,comment,num,id){
     let fr_modal = document.getElementById("friend_request_modal_receive");
 	
     // 값을 가져와서 modal에 설정
@@ -184,6 +187,7 @@ function openRequestModalReceive(character,name,type,comment,num){
     fr_modal.querySelector(".request_comment").value = comment;
     fr_modal.querySelector(".request_num").value = num;
     fr_modal.querySelector(".request_profile_img").src = character;
+    fr_modal.querySelector(".request_senduserid").value = id;
  	// 모달을 표시
     fr_modal.style.display = "flex";
 }
@@ -196,12 +200,13 @@ function clickAlarmItem(event){
     let commentInput = fr_form.querySelector('input[name="comment"]');
     let numInput = fr_form.querySelector('input[name="num"]');
     let characterInput = fr_form.querySelector('input[name="character"]');
+    let idInput = fr_form.querySelector('input[name="request_senduserid"]')
 	if(commentInput.value =="null"){
 		commentInput.value ="";
 	}
 	
     // 값을 가져와서 modal에 설정
-    openRequestModalReceive(characterInput.value,nameInput.value,typeInput.value,commentInput.value,numInput.value);
+    openRequestModalReceive(characterInput.value,nameInput.value,typeInput.value,commentInput.value,numInput.value,idInput.value);
     fr_form.querySelector(".alarmlist_main_div_item_readbool").style.color = "rgba(0,0,0,0.2)"
     //alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != numInput.value);
     console.log(alarm_items);

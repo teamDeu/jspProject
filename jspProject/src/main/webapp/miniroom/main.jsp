@@ -1,15 +1,36 @@
+<%@page import="pjh.VisitCountBean"%>
 <%@page import="pjh.MemberBean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
    pageEncoding="UTF-8"%>
 <jsp:useBean id="iMgr" class ="miniroom.ItemMgr"/>
 <jsp:useBean id="mMgr" class ="pjh.MemberMgr"/>
+<jsp:useBean id="fMgr" class ="friend.FriendMgr"/>
 <%
-   
+   // 세션에서 idKey 가져오기
    String id = (String)session.getAttribute("idKey");
    if(id == null){
       response.sendRedirect("../pjh/login.jsp");
       return;
    }
+
+// 페이지 소유자의 ID 가져오기
+   String pageOwnerId = request.getParameter("url");
+
+   // 만약 url 파라미터가 없으면 페이지 소유자는 방문자(id)
+   if(pageOwnerId == null || pageOwnerId.trim().isEmpty()) {
+      pageOwnerId = id;
+   }
+
+   // 방문자 수 업데이트 (방문자가 페이지 소유자와 다를 때만 카운트)
+   if (!pageOwnerId.equals(id)) {
+       mMgr.updateVisitCount(pageOwnerId, id);
+   }
+
+   // 방문자 수 가져오기
+   VisitCountBean visitCount = mMgr.getVisitCount(pageOwnerId);
+
+
+   // 캐릭터 및 배경 이미지 설정
    String character = iMgr.getUsingCharacter(id).getItem_path();
    String url = request.getParameter("url");
    if(url == null){
@@ -19,9 +40,11 @@
    if(background == null){
       background = "./img/backgroundImg.png";
    }
-   System.out.println(background);
+
+   // 사용자 정보 가져오기
    MemberBean userBean = mMgr.getMember(id);
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -72,6 +95,35 @@
    justify-content : center;
    z-index : 11;
 }
+.main_profile_alarm_isalarm{
+	
+	background-color : red;
+	position:absolute;
+	display:none;
+	width : 5px;
+	height : 5px;
+	right:0px;
+	top:0px;
+	border-radius : 10px;
+}
+.visitor-stats {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        text-align: left;
+        font-size: 16px;
+        font-weight: bold;
+        display: flex;
+        gap: 20px; /* TODAY와 TOTAL 간의 간격을 조정 */
+    }
+
+    .visitor-stats .today {
+        color: #FF6347; /* 오늘 방문자수는 눈에 띄게 빨간색 */
+    }
+
+    .visitor-stats .total {
+        color: #4682B4; /* 총 방문자수는 파란색 */
+    }
 </style>
 <script>
 function loadContent(url) {
@@ -114,9 +166,9 @@ function clickAlarm(){
         var chatBoxId = 0;
         let userNum = 0;
         var localId = "<%=userBean.getUser_id()%>";
-        var character = "<%=character%>"
+        var localCharacter = "<%=character%>"
         var url = "<%=url%>";
-        var name = "<%=userBean.getUser_name()%>";
+        var localName = "<%=userBean.getUser_name()%>";
         var dataSeparator = "㉠"
         var messageSeparator = "㉡";
         var timeNameText = "";
@@ -125,8 +177,8 @@ function clickAlarm(){
             ws.onopen = function() {
                 document.getElementById("status").textContent = "서버와 연결됨";
                 if(localId == "null") localId = "비회원";
-                if(character == "null") character = "character1.png"
-                message = "connect"+ dataSeparator + localId +dataSeparator + character +dataSeparator + url +dataSeparator + name;
+                if(localCharacter == "null") localCharacter = "character1.png"
+                message = "connect"+ dataSeparator + localId + dataSeparator + localCharacter +dataSeparator + url +dataSeparator + localName;
                 ws.send(message);
             };
             ws.onmessage = function(event) {
@@ -171,10 +223,33 @@ function clickAlarm(){
                 	 receiveId = rawdata[3];
                 	 requestType = rawdata[4];
                 	 comment = rawdata[5];
+                	 sendUserId = rawdata[6];
                 	 if(localId == receiveId){
-                		 openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"");
+                		 openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"",sendUserId);
                 	 }
-                	 
+                 }
+                 else if(command == ("submitFriendRequest")){
+                	 flag = false;
+                	 userId = rawdata[1];
+                	 userName = rawdata[2];
+                	 userCharacter = rawdata[3];
+                	 flag = isFriend(localId,userId);
+                	 const profileDiv = 
+             	    	'<div onclick="onclickMainProfileFriendsDiv(this)" class="main_profile_friends_div friends_type_first">'+
+             	        '<div class="profile_function_div_main" style="display : none">' +
+             	            '<div class="profile_function_div">' +
+             	                '<span>'+userName+'</span>' +
+             	                (flag ? "<button onclick = 'onclickDeleteFriend("+localId+","+userId+","+userName+")'>친구삭제</button>" :
+             	                	"<button onclick='onclickAddFriend("+localId+","+userId+","+userCharacter+","+userName+")''>친구추가</button>")
+             	                +
+             	                '<button onclick="onclickGoHomePage('+userId+')">미니룸 구경가기</button>' +
+             	            '</div>' +
+             	        '</div>' +
+             	        '<img class="main_profile_friends" src="'+userCharacter+'">' +
+             	        '<span class="main_profile_friends_name">'+userName+'</span>'+
+             	        '</div>'+
+             	        '</div>';
+             	    document.querySelector('.main_profile_friends_list').innerHTML += profileDiv;
                  }
             };
             ws.onclose = function() {
@@ -187,7 +262,14 @@ function clickAlarm(){
 	        document.getElementById("game2-container").style.display = "none";        
 	    }
         function sendFriendRequest(receiveId , request_type,comment){
-        	var message = "sendFriendRequest" + dataSeparator + name + dataSeparator + character + dataSeparator + receiveId + dataSeparator + request_type + dataSeparator + comment
+        	var message = "sendFriendRequest" + dataSeparator + localName +
+        	dataSeparator + localCharacter + dataSeparator + receiveId + 
+        	dataSeparator + request_type + dataSeparator + comment +
+        	dataSeparator + localId;
+        	ws.send(message);
+        }
+        function submitFriendRequest(username,userid,usercharacter){
+        	var message = "submitFriendRequest" + dataSeparator + username + dataSeparator + userid + dataSeparator + usercharacter;
         	ws.send(message);
         }
         function sendMessage() {
@@ -332,7 +414,7 @@ function clickAlarm(){
         
         
         function disconnect(){
-           var message = "disconnect"+ dataSeparator + localId + dataSeparator + name;
+           var message = "disconnect"+ dataSeparator + localId + dataSeparator + localName;
            ws.send(message);
            ws.close();
         }
@@ -359,9 +441,19 @@ function clickAlarm(){
       <div class="dashed-box">
          <!-- 테두리 없는 상자 -->
          <div class="solid-box">
+         <!-- 방문자 수 표시 -->
+            <div class="visitor-stats">
+                <div class="today">
+                    TODAY: <%= visitCount.getVisit_today() %>
+                </div>
+                <div class="total">
+                    TOTAL: <%= visitCount.getVisit_all() %>
+                </div>
+            </div>
 
             <div class ="main_profile_alram">
             <img class="main_profile_alram_img" onclick ="clickAlarm()" src="./img/alram.png">
+            <div class ="main_profile_alarm_isalarm"></div>
             <jsp:include page="alarmList.jsp">
                <jsp:param value="<%=url %>" name="url"/>
             </jsp:include>

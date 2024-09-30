@@ -26,6 +26,8 @@
         }
         .form-group {
             margin-bottom: 15px;
+            width: 95%
+            text-align: center;
         }
         .form-group label {
             display: block;
@@ -36,15 +38,15 @@
         .form-group input[type="number"],
         .form-group input[type="file"],
         .form-group select {
-            width: 100%;
+            width: 95%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
         .form-group button {
-            width: 100%;
+            width: 99%;
             padding: 10px;
-            background-color: #2ecc71;
+            background-color: #C0E5AF;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -55,6 +57,20 @@
         }
     </style>
 </head>
+<script>
+	function changeItemType(select){
+		value = select.value;
+		itemPathInput = document.getElementById("item_path")
+		if(value == "음악"){
+			itemPathInput.required = true;
+			itemPathInput.disabled = false;
+		}
+		else{
+			itemPathInput.required = false;
+			itemPathInput.disabled = true;
+		}
+	}
+</script>
 <body>
 
     <h1>상품 관리</h1>
@@ -67,32 +83,35 @@
                 <input type="text" id="item_name" name="item_name" required>
             </div>
 
-            <!-- 상품 가격 -->
-            <div class="form-group">
-                <label for="item_price">상품 가격:</label>
-                <input type="number" id="item_price" name="item_price" required>
-            </div>
-
             <!-- 파일 업로드 -->
             <div class="form-group">
                 <label for="item_image">이미지:</label>
                 <input type="file" id="item_image" name="item_image" accept="image/*" required>
             </div>
+            
+            
+            <!-- 상품 가격 -->
+            <div class="form-group">
+                <label for="item_price">상품 가격:</label>
+                <input type="number" id="item_price" name="item_price" required>원
+            </div>
+
+
 
             <!-- 상품 타입 선택 -->
             <div class="form-group">
                 <label for="item_type">상품 타입:</label>
-                <select id="item_type" name="item_type" required>
-                    <option value="music">음악</option>
-                    <option value="character">캐릭터</option>
-                    <option value="background">배경</option>
+                <select onchange = "changeItemType(this)" id="item_type" name="item_type" required>
+                    <option value="음악">음악</option>
+                    <option value="캐릭터">캐릭터</option>
+                    <option value="배경화면">배경</option>
                 </select>
             </div>
 
-            <!-- 경로 입력 -->
+            <!-- 파일 입력 -->
             <div class="form-group">
-                <label for="item_image">파일 :</label>
-                <input type="file" id="item_image" name="item_image" accept="image/*" required>
+                <label for="item_path">파일 :</label>
+                <input type="file" id="item_path" name="item_path" accept="image/*">
             </div>
 
             <!-- 제출 버튼 -->

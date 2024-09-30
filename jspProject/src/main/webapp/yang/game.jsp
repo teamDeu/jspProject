@@ -1,5 +1,62 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="item.ItemBean"%>
+<%@page import="java.util.Vector"%>
+<%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" 
+                  pageEncoding="UTF-8" isELIgnored="false" %>
+<%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
+<jsp:useBean id="mgr" class="pjh.MemberMgr" />
+<%
+
+String user_id = (String) session.getAttribute("idKey");
+System.out.println(user_id);
+
+// 클로버 잔액을 가져오기 위한 변수
+int user_clover = 0;
+DBConnectionMgr pool = null;
+Connection conn = null;
+PreparedStatement pstmt = null;
+ResultSet rs = null;
+
+//아이템별 구매 횟수를 저장하는 맵
+HashMap<Integer, Integer> purchaseCountMap = new HashMap<>();
+
+try {
+    if (user_id != null) {
+        pool = DBConnectionMgr.getInstance();
+        conn = pool.getConnection(); // Connection 가져오기
+
+        if (conn != null) {
+            String sql = "SELECT user_clover FROM user WHERE user_id = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, user_id);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                user_clover = rs.getInt("user_clover");
+            }
+            rs.close();
+            pstmt.close();
+
+        } else {
+            throw new Exception("DB 연결에 실패하였습니다.");
+        }
+    }
+} catch (Exception e) {
+    e.printStackTrace(); // 오류 로그 출력
+} finally {
+    try {
+        if (rs != null)
+            rs.close();
+        if (pstmt != null)
+            pstmt.close();
+        if (conn != null)
+            pool.freeConnection(conn); // Connection 반환
+    } catch (SQLException e) {
+        e.printStackTrace(); // 오류 로그 출력
+    }
+}
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -104,6 +161,14 @@
         #game-container {
             display: none; /* 처음에는 숨겨진 상태 */
         }
+        /* 클로버 금액 */
+		.clover-amount1 {
+			font-size: 30px;
+			color: green;
+			position: absolute;
+			top: 20px;
+			right: 60px;
+		}
     </style>
 </head>
 <body>
@@ -113,6 +178,15 @@
         <div class="game-title">
             <span>게임</span> <!-- 가로줄 위의 텍스트 -->
         </div>
+        <!-- 클로버 금액 -->
+		<div class="clover-amount1">
+			<img src="./img/clover_icon.png" alt="클로버">
+			<span class = "clover-amount-span">
+			<%=user_clover%>
+			</span>
+			
+			<!-- 여기서 클로버 값 출력 -->
+		</div>
 
         <!-- 첫 번째 큰 네모 박스 -->
         <div class="box-container">

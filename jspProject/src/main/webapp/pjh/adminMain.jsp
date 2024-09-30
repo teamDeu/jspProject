@@ -1,5 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*" %>
+<%@ page import="java.util.Vector"%>
+<%@ page import="pjh.ItemBean, pjh.AItemMgr" %>
+<%@ page import="java.util.List" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<% String type = request.getParameter("type"); %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -18,9 +21,8 @@
             height: 100vh;
             background-color: #f5f5f5;
         }
-        /* 사이드바 스타일 */
         .sidebar {
-            background-color: #C0E5AF; /* 녹색 베이스 */
+            background-color: #C0E5AF;
             width: 250px;
             height: 100vh;
             position: fixed;
@@ -51,7 +53,6 @@
         .sidebar ul li.active {
             background-color: #1abc9c;
         }
-        /* 메인 콘텐츠 스타일 */
         .main-content {
             margin-left: 250px;
             padding: 20px;
@@ -91,12 +92,11 @@
             color: #666;
             font-size: 14px;
         }
-        .content-container {
-            display: none;
-        }
-        /* 상품 리스트 스타일 */
         .product-list {
             margin-top: 30px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .product-list table {
             width: 100%;
@@ -109,8 +109,8 @@
             text-align: center;
         }
         .product-list table th {
-            background-color: #A9D18E; /* 테이블 헤더 배경색 - 사이드바 색상과 조화 */
-            color: #333; /* 글자색 */
+            background-color: #C0E5AF;
+            color: #333;
         }
         .product-list table td button {
             padding: 5px 10px;
@@ -123,22 +123,43 @@
         .product-list table td button:hover {
             background-color: #FF4D4D;
         }
-        /* 상품 추가 버튼 스타일 */
         .add-product-btn {
             margin-top: 20px;
             padding: 15px 20px;
-            background-color: #A9D18E; /* 상품 추가 버튼 배경색 - 사이드바 색상과 조화 */
+            background-color: #C0E5AF;
             color: #333;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
             display: block;
-            width: 150px;
             text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            width: 150px;
         }
         .add-product-btn:hover {
-            background-color: #8DB369; /* 버튼 호버 시 더 진한 녹색 */
+            background-color: #8DB369;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #333;
+            background-color: #eee;
+            border-radius: 5px;
+        }
+        .pagination a.current-page {
+            background-color: #C0E5AF;
+            color: white;
+        }
+        .pagination a:hover {
+            background-color: #8DB369;
+            color: white;
         }
     </style>
 </head>
@@ -148,73 +169,133 @@
     <div class="sidebar">
         <h2>관리자 패널</h2>
         <ul>
-            <li onclick="showDashboard()"><i class="fa fa-home"></i> 대시보드</li>
-            <li><i class="fa fa-users"></i> 사용자 관리</li>
-            <li onclick="showStore()"><i class="fa fa-store"></i> 상점 관리</li>
+            <li onclick="showCategory('dashboard')" id="dashboardTab" class="active"><i class="fa fa-home"></i> 대시보드</li>
+            <li onclick="showCategory('user')">유저</li>
+            <li onclick="showCategory('store')" id="storeTab"><i class="fa fa-store"></i> 상점 관리</li>
             <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
+            
         </ul>
     </div>
-	
-    <!-- 메인 콘텐츠 -->
-    <div class="main-content">
-        <!-- 기본 대시보드 콘텐츠 -->
-        <div id="dashboard" class="content-container" style="display: block;">
-            <h1>대시보드</h1>
-            <div class="content-cards">
-                <div class="card">
-                    <h3>사용자 수</h3>
-                    <p>총 1,234명</p>
-                </div>
-                <div class="card">
-                    <h3>오늘 접속자</h3>
-                    <p>총 567명</p>
-                </div>
-                <div class="card">
-                    <h3>신규 가입자</h3>
-                    <p>총 78명</p>
-                </div>
+
+    <!-- 대시보드 섹션 -->
+    <div id="dashboard" class="main-content">
+        <h1>대시보드</h1>
+        <div class="content-cards">
+            <div class="card">
+                <h3>사용자 수</h3>
+                <p>총 1,234명</p>
+            </div>
+            <div class="card">
+                <h3>오늘 접속자</h3>
+                <p>총 567명</p>
+            </div>
+            <div class="card">
+                <h3>신규 가입자</h3>
+                <p>총 78명</p>
             </div>
         </div>
+    </div>
+	<div id = "user" class ="main-content" style ="display:none">
+		<jsp:include page="adminUser.jsp"></jsp:include>
+	</div>
+    <!-- 상점 관리 섹션 -->
+    <div id="store" class="main-content" style="display: none;">
+        <h1>상점 관리</h1>
 
-        <!-- 상점 관리 콘텐츠 -->
-        <div id="store" class="content-container">
-            <h1>상점 관리</h1>
+        <!-- 검색 폼 -->
+        <form method="get" action="adminMain.jsp">
+            <select name="keyField">
+                <option value="item_name">상품 이름</option>
+                <option value="item_type">상품 타입</option>
+            </select>
+            <input type="text" name="keyWord" placeholder="검색어 입력" />
+            <input type="submit" value="검색" />
+        </form>
+		
+        <!-- 상품 목록 출력 및 페이징 -->
+        <div class="product-list">
+            <h2>상품 목록</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>상품 번호</th>
+                        <th>상품 이름</th>
+                        <th>상품 이미지</th>
+                        <th>상품 가격</th>
+                        <th>상품 타입</th>
+                        <th>상품 파일</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%
+                        // 현재 페이지와 검색 조건을 받아옴
+                        String pageStr = request.getParameter("page");
+                        int currentPage = (pageStr != null) ? Integer.parseInt(pageStr) : 1;
+                        int itemsPerPage = 10;
+                        int start = (currentPage - 1) * itemsPerPage;
 
-            <!-- 상품 리스트 -->
-            <div class="product-list">
-                <h2>상품 목록</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>상품 이름</th>
-                            <th>상품 가격</th>
-                            <th>상품 타입</th>
-                            <th>상품 파일</th>
-                            <th>삭제</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- 예시 상품 리스트 -->
-                        <tr>
-                            <td>Example Product 1</td>
-                            <td>1000원</td>
-                            <td>음악</td>
-                            <td>/music/product1</td>
-                            <td><button>삭제</button></td>
-                        </tr>
-                        <tr>
-                            <td>Example Product 2</td>
-                            <td>2000원</td>
-                            <td>캐릭터</td>
-                            <td>/character/product2</td>
-                            <td><button>삭제</button></td>
-                        </tr>
-                    </tbody>
-                </table>
+                        // 검색어와 검색 필드를 받아옴
+                        String keyField = request.getParameter("keyField");
+                        String keyWord = request.getParameter("keyWord");
 
-                <!-- 상품 추가 버튼 -->
-                <button class="add-product-btn" onclick="openStoreManage()">상품 추가</button>
-            </div>   
+                        // 총 상품 수 계산
+                        AItemMgr itemMgr = new AItemMgr();
+                        int totalItems = itemMgr.getTotalItemCount(keyField, keyWord);
+
+                        // 상품 목록 가져오기 (start와 itemsPerPage 적용)
+                        Vector<ItemBean> items = itemMgr.getItemList(keyField, keyWord, start, itemsPerPage);
+
+                        // 총 페이지 수 계산
+                        int totalPages = (int) Math.ceil(totalItems / (double) itemsPerPage);
+
+                        if (items.size() > 0) {
+                            for (ItemBean item : items) {
+                    %>
+                    <tr>
+                        <td><%= item.getItem_num() %></td>
+                        <td><%= item.getItem_name() %></td>
+                        <td><%= item.getItem_image() %></td>
+                        <td><%= item.getItem_price() %>원</td>
+                        <td><%= item.getItem_type() %></td>
+                        <td><%= item.getItem_path() %></td>
+                        <td>
+                            <!-- 삭제 버튼 -->
+                            <form action="deleteItem.jsp" method="post" onsubmit="return confirm('정말로 이 상품을 삭제하시겠습니까?');">
+                                <input type="hidden" name="item_num" value="<%= item.getItem_num() %>">
+                                <button type="submit" style="padding: 5px 10px; background-color: #FF6B6B; color: white; border: none; border-radius: 5px; cursor: pointer;">삭제</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <%
+                            }
+                        } else {
+                    %>
+                    <tr>
+                        <td colspan="7">표시할 항목이 없습니다.</td>
+                    </tr>
+                    <%
+                        }
+                    %>
+                </tbody>
+            </table>
+
+            <!-- 상품 추가 버튼 -->
+            <button class="add-product-btn" onclick="openStoreManage()">상품 추가</button>
+
+            <!-- 페이징 처리 -->
+            <div class="pagination">
+                <%
+                    for (int i = 1; i <= totalPages; i++) {
+                %>
+                <a href="adminMain.jsp?page=<%= i %>&keyField=<%= keyField != null ? keyField : "" %>&keyWord=<%= keyWord != null ? keyWord : "" %>&type=store"
+                   class="<%= (i == currentPage) ? "current-page" : "" %>">
+                    <%= i %>
+                </a>
+                <%
+                    }
+                %>
+            </div>
         </div>
     </div>
 
@@ -228,21 +309,29 @@
                 window.location.href = 'logout.jsp';
             }
         }
-
-        function showDashboard() {
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('store').style.display = 'none';
-        }
-
-        function showStore() {
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('store').style.display = 'block';
-        }
-
+		function showCategory(id){
+			document.querySelectorAll('.main-content').forEach((e) => e.style.display = "none");
+			document.getElementById(id).style.display ="block";
+		}
         // 상품 추가 페이지를 새창으로 열기
         function openStoreManage() {
             window.open('storeManage.jsp', '_blank', 'width=600,height=600');
         }
+
+        // 페이지 로드 시 대시보드 표시
+        window.onload = function () {
+            var urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('keyWord') || urlParams.has('page')) {
+            	type = <%=type%>
+            	if(type == store)
+                	showCategory('store');
+            	else if(type == user)
+            		showCategory('user');
+            } else {
+            	
+                showCategory('dashboard');
+            }
+        };
     </script>
 </body>
 </html>
