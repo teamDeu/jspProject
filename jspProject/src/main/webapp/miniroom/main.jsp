@@ -165,10 +165,30 @@ function clickAlarm(){
                     user.remove();
                     userNum --;
                  }
+                 else if(command == ("sendFriendRequest")){
+                	 sendUserName = rawdata[1];
+                	 sendUserCharacter = rawdata[2];
+                	 receiveId = rawdata[3];
+                	 requestType = rawdata[4];
+                	 comment = rawdata[5];
+                	 if(localId == receiveId){
+                		 openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"");
+                	 }
+                	 
+                 }
             };
             ws.onclose = function() {
                 document.getElementById("status").textContent = "서버 연결 끊김";
             };
+        }
+        function gamemainshow() {
+	        document.getElementById("main").style.display = "block";
+	        document.getElementById("game1-container").style.display = "none";
+	        document.getElementById("game2-container").style.display = "none";        
+	    }
+        function sendFriendRequest(receiveId , request_type,comment){
+        	var message = "sendFriendRequest" + dataSeparator + name + dataSeparator + character + dataSeparator + receiveId + dataSeparator + request_type + dataSeparator + comment
+        	ws.send(message);
         }
         function sendMessage() {
             var message = "sendMessage" + dataSeparator +  localId + messageSeparator + document.getElementById("messageInput").value + messageSeparator + '<%=userBean.getUser_name()%>';
@@ -318,6 +338,11 @@ function clickAlarm(){
         }
           window.addEventListener("beforeunload",disconnect);
         
+        function logout() {
+            if (confirm('정말로 로그아웃 하시겠습니까?')) {
+                window.location.href = 'logout.jsp';
+            }
+        }
     </script>
 
 </head>
@@ -327,7 +352,7 @@ function clickAlarm(){
       <div class="header">
          <img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
          <div class="settings">
-            <span></span> <a href="#">설정</a> <a href="#">로그아웃</a>
+            <span></span> <a href="#">설정</a> <a href="../pjh/logout.jsp">로그아웃</a>
          </div>
       </div>
       <!-- 큰 점선 테두리 상자 -->
@@ -390,7 +415,7 @@ function clickAlarm(){
             <button onclick = "javascript:clickOpenBox('board')" class="custom-button">게시판</button>
             <button onclick = "javascript:clickOpenBox('guestbook')" class="custom-button">방명록</button>
             <button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
-            <button onclick = "javascript:clickOpenBox('game')" class="custom-button">게임</button>
+            <button onclick = "javascript:clickOpenBox('game'); gamemainshow();" class="custom-button">게임</button>
             <button onclick = "javascript:clickOpenBox('music')" class="custom-button">음악</button>
          </div>
   

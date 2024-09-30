@@ -121,7 +121,7 @@
                 return;
             }
             url = "idCheck.jsp?id=" + id;
-            window.open(url, "ID 중복체크", "width=300, height=150, top=100, left=100");
+            window.open(url, "ID 중복체크", "width=470, height=150, top=100, left=700");
         }
 
         function inputCheck() {
@@ -134,7 +134,7 @@
 <body onLoad="regFrm.id.focus()">
     <div class="container">
         <div class="logo">
-            <img src="mainlogo.jpg" align="center" style="width:320px; height:80px;">
+            <img src="./img/mainlogo.jpg" align="center" style="width:320px; height:80px;">
         </div>
         <h1>회원가입</h1>
         <div class="form-box">

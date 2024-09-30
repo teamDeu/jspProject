@@ -11,6 +11,9 @@ public class GuestbookBean {
     private Timestamp writtenAt;
     private Timestamp modifiedAt;
 
+    private String profileName;
+    private String profilePicture;
+    
     public int getGuestbookNum() {
         return guestbookNum;
     }
@@ -65,5 +68,21 @@ public class GuestbookBean {
 
     public void setModifiedAt(Timestamp modifiedAt) {
         this.modifiedAt = modifiedAt;
+    }
+    
+    public String getProfileName() {
+        return profileName;
+    }
+
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

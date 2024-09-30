@@ -13,7 +13,24 @@
 		type = "friends_type_first";
 	}
 %>
-
-<div onclick = "location.href = 'main.jsp?url=<%=profileId%>'" class ="main_profile_friends_div <%=type%>">
+<script>
+	function onclickMainProfileFriendsDiv(event){
+		let profileFunctionMain = event.querySelector(".profile_function_div_main")
+		console.log(profileFunctionMain);
+		if(profileFunctionMain.style.display == "none"){
+			profileFunctionMain.style.display = "flex";
+		}
+		else{
+			profileFunctionMain.style.display = "none";
+		}
+	}
+</script>
+<div onclick = "onclickMainProfileFriendsDiv(this)" class ="main_profile_friends_div <%=type%>">
+	<div>
+		<jsp:include page="profileFunctionDiv.jsp">
+			<jsp:param value="<%=profileId%>" name="profileId"/>
+		</jsp:include>
+	</div>
 	<img class ="main_profile_friends" src="<%=profileImg%>"> <span class ="main_profile_friends_name"><%=profileName%></span>
 </div>
+</body>
