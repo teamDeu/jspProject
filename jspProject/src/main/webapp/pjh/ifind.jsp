@@ -126,7 +126,7 @@
 
 <div class="container">
     <div class="header-logo">
-        <img src="mainlogo.jpg" alt="CloverStory 로고" style="width:320px; height:100px;">
+        <img src="./img/mainlogo.jpg" alt="CloverStory 로고" style="width:320px; height:100px;">
     </div>
 
     <div class="box">
