@@ -119,15 +119,15 @@
     </style>
 </head>
 <body>
-	<div id="store" class="main-content">
+	<div>
 		<h1>유저 관리</h1>
 		<!-- 검색 폼 -->
 		<form method="get" action="adminUser.jsp">
-			<select name="keyField">
+			<select name="user_keyField">
 				<option value="user_id">유저 ID</option>
 				<option value="user_name">유저 이름</option>
 				<option value="user_phone">유저 번호</option>
-			</select> <input type="text" name="keyWord" placeholder="검색어 입력" /> <input
+			</select> <input type="text" name="user_keyWord" placeholder="검색어 입력" /> <input
 				type="submit" value="검색" />
 		</form>
 
@@ -153,12 +153,12 @@
 					// 현재 페이지와 검색 조건을 받아옴
 					String pageStr = request.getParameter("page");
 					int currentPage = (pageStr != null) ? Integer.parseInt(pageStr) : 1;
-					int itemsPerPage = 5;
+					int itemsPerPage = 4;
 					int start = (currentPage - 1) * itemsPerPage;
 
 					// 검색어와 검색 필드를 받아옴
-					String keyField = request.getParameter("keyField");
-					String keyWord = request.getParameter("keyWord");
+					String keyField = request.getParameter("user_keyField");
+					String keyWord = request.getParameter("user_keyWord");
 
 					// 총 상품 수 계산
 					MemberMgr userMgr = new MemberMgr();
@@ -221,7 +221,7 @@
 				for (int i = 1; i <= totalPages; i++) {
 				%>
 				<a
-					href="adminUser.jsp?page=<%=i%>&keyField=<%=keyField != null ? keyField : ""%>&keyWord=<%=keyWord != null ? keyWord : ""%>"
+					href="adminMain.jsp?page=<%=i%>&keyField=<%=keyField != null ? keyField : ""%>&keyWord=<%=keyWord != null ? keyWord : ""%>&type=user"
 					class="<%=(i == currentPage) ? "current-page" : ""%>"> <%=i%>
 				</a>
 				<%

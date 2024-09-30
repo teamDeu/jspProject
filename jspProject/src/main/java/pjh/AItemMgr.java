@@ -3,8 +3,18 @@ package pjh;
 import java.sql.*;
 import java.util.Vector;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+
+import miniroom.UtilMgr;
+
 public class AItemMgr {
 
+	public static final String  SAVEFOLDER = "C:/Jsp/jspProject/jspProject/jspProject/src/main/webapp/miniroom/img";
+	public static final String ENCTYPE = "UTF-8";
+	public static int MAXSIZE = 50*1024*1024;//50mb
     // DBConnectionMgr을 사용하여 데이터베이스 연결
     private DBConnectionMgr pool = DBConnectionMgr.getInstance();
 
@@ -76,9 +86,7 @@ public class AItemMgr {
                 pstmt = con.prepareStatement(sql);
                 pstmt.setString(1, "%" + keyWord + "%");
             }
-
             rs = pstmt.executeQuery();
-
             if (rs.next()) {
                 totalCount = rs.getInt(1);  // 총 상품 수를 가져옴
             }
@@ -90,4 +98,32 @@ public class AItemMgr {
 
         return totalCount;  // 총 상품 수 반환
     }
+    
+    public boolean insertProduct(HttpServletRequest req) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        String sql = null;
+        boolean flag = false;
+        try {
+           MultipartRequest multi = new MultipartRequest(req,SAVEFOLDER,MAXSIZE,ENCTYPE,new DefaultFileRenamePolicy());
+           con = pool.getConnection();
+           sql = "INSERT INTO item (item_name, item_image, item_price, item_type, item_path) VALUES (?, ?, ?, ?, ?)";
+           pstmt = con.prepareStatement(sql);
+           pstmt.setString(1, multi.getParameter("item_name"));
+           pstmt.setString(2, "./img/" + multi.getFilesystemName("item_image"));
+           pstmt.setInt(3, UtilMgr.parseInt(multi, "item_price"));
+           pstmt.setString(4, multi.getParameter("item_type"));
+           if(multi.getParameter("item_type") == "음악") {
+        	   pstmt.setString(5, "./img/" + multi.getFilesystemName("item_path"));
+           }
+           else {
+        	   pstmt.setString(5, "./img/" + multi.getFilesystemName("item_image"));
+           }
+           if(pstmt.executeUpdate() == 1) flag = true;
+        } catch (Exception e) {
+        } finally {
+           pool.freeConnection(con, pstmt);
+        }
+        return flag;
+     }
 }

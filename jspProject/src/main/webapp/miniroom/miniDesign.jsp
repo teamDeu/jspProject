@@ -313,7 +313,7 @@
 		div.innerHTML = "";
 		div.appendChild(indexLeft);
 		div.appendChild(indexRight);
-		for(i = index*8 ; i < (index+1)*8; i++){
+		for(i = index*4 ; i < (index+1)*4; i++){
 			if(i == characterArray.length){
 				break;
 			}
@@ -358,7 +358,7 @@
 	
 	function clickNextIndex(type){
 		if(type == "character"){
-			if(characterIndex+1 < characterArray.length / 8){
+			if(characterIndex+1 < characterArray.length / 4){
 				console.log(characterIndex , characterArray.length);
 				characterIndex ++;
 				printCharacter(characterIndex);
@@ -370,7 +370,7 @@
 				printBackground(backgroundIndex);
 			}
 		}
-		console.log(backgroundIndex);
+		console.log(characterIndex);
 	}
 	</script>
 </body>
