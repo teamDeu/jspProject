@@ -43,6 +43,7 @@
 	  	fr_form.request_senduserid.value = senduserid;
 	  	fr_form.request_receiveuserid.value = receiveuserid;
 	  	fr_form.submit();
+	  	FriendInfo = FriendInfo.filter((e) => !((e.userId1 == senduserid && e.userId2 == receiveuserid) || (e.userId1 == receiveuserid && e.userId2 == senduserid)))
 	  	friend_items = friend_items.filter((e) => e.querySelector(".main_profile_friends_name").innerText != name);
 	  	friend_displayItems();
   }

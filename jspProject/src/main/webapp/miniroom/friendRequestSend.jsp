@@ -125,6 +125,16 @@ Vector<FriendInfoBean> fivlist = fmgr.getALLFriendList();
 	function clickCancelBtn(){
 		document.getElementById("friend_request_modal_send").style.display = "none";
 	}
+	function isFriend(sendId,receiveId){
+		let flag = false;
+		FriendInfo.forEach((e) => {
+			if((e.userId1 == sendId && e.userId2 == receiveId) || (e.userId1 == receiveId && e.userId2 == sendId)){
+				flag = true;
+				console.log(e.userId1 , sendId , e.userId2,receiveId);
+			} 
+		})
+		return flag;
+	}
 	function clickSubmitBtn(){
 		fr_form = document.friend_request_form_send;
 		fr_form.request_comment.value = document.querySelector(".request_comment").value;
@@ -136,15 +146,9 @@ Vector<FriendInfoBean> fivlist = fmgr.getALLFriendList();
 		FriendRequest.forEach((e) => {
 			if((e.sendId == sendId && e.receiveId == receiveId) || (e.sendId == receiveId && e.receiveId == sendId)){
 				flag = true;
-				console.log(e.sendId , sendId , e.receiveId,receiveId);
 			} 
 		})
-		FriendInfo.forEach((e) => {
-			if((e.userId1 == sendId && e.userId2 == receiveId) || (e.userId1 == receiveId && e.userId2 == sendId)){
-				flag = true;
-				console.log(e.userId1 , sendId , e.userId2,receiveId);
-			} 
-		})
+		if(isFriend(sendId,receiveId)) flag = true;
 		if(sendId == receiveId) flag = true;
 		if(!flag){
 			sendFriendRequest(receiveId,fr_form.request_type.value,fr_form.request_comment.value);

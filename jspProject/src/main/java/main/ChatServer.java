@@ -20,6 +20,7 @@ public class ChatServer {
     private static HashMap<String,String> userUrl = new HashMap<String,String>();
     private static HashMap<String,String> userName = new HashMap<String,String>();
     private static String dataSeparator = "㉠";
+    boolean flag;
     @OnOpen
     public void onOpen(Session session) {
         clients.add(session);
@@ -29,6 +30,7 @@ public class ChatServer {
     
     @OnMessage
     public void onMessage(String message, Session session) throws IOException {
+    	flag = true;
         System.out.println("받은 메시지: " + message);
         // 모든 클라이언트에게 메시지 전송
         String[] rawData = message.split(dataSeparator);
@@ -62,13 +64,24 @@ public class ChatServer {
                 }
             }
         }
-    	synchronized (clients) {
-            for (Session client : clients) {
-            	if(userUrl.get(client.getId()).equals(userUrl.get(session.getId()))){
-            		client.getBasicRemote().sendText(message);
-        		}
+        else if(command.equals("sendFriendRequest")) {
+        	synchronized (clients) {
+                for (Session client : clients) {
+                		client.getBasicRemote().sendText(message);	
+                }
+            }
+        	flag = false;
+        }
+        if(flag) {
+        	synchronized (clients) {
+                for (Session client : clients) {
+                	if(userUrl.get(client.getId()).equals(userUrl.get(session.getId()))){
+                		client.getBasicRemote().sendText(message);
+            		}
+                }
             }
         }
+    	
         
     }
 

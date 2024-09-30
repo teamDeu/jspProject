@@ -3,6 +3,7 @@
    pageEncoding="UTF-8"%>
 <jsp:useBean id="iMgr" class ="miniroom.ItemMgr"/>
 <jsp:useBean id="mMgr" class ="pjh.MemberMgr"/>
+<jsp:useBean id="fMgr" class ="friend.FriendMgr"/>
 <%
    
    String id = (String)session.getAttribute("idKey");
@@ -70,6 +71,17 @@
    align-items : center;
    justify-content : center;
    z-index : 11;
+}
+.main_profile_alarm_isalarm{
+	
+	background-color : red;
+	position:absolute;
+	display:none;
+	width : 5px;
+	height : 5px;
+	right:0px;
+	top:0px;
+	border-radius : 10px;
 }
 </style>
 <script>
@@ -170,10 +182,33 @@ function clickAlarm(){
                 	 receiveId = rawdata[3];
                 	 requestType = rawdata[4];
                 	 comment = rawdata[5];
+                	 sendUserId = rawdata[6];
                 	 if(localId == receiveId){
-                		 openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"");
+                		 openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"",sendUserId);
                 	 }
-                	 
+                 }
+                 else if(command == ("submitFriendRequest")){
+                	 flag = false;
+                	 userId = rawdata[1];
+                	 userName = rawdata[2];
+                	 userCharacter = rawdata[3];
+                	 flag = isFriend(localId,userId);
+                	 const profileDiv = 
+             	    	'<div onclick="onclickMainProfileFriendsDiv(this)" class="main_profile_friends_div friends_type_first">'+
+             	        '<div class="profile_function_div_main" style="display : none">' +
+             	            '<div class="profile_function_div">' +
+             	                '<span>'+userName+'</span>' +
+             	                (flag ? "<button onclick = 'onclickDeleteFriend("+localId+","+userId+","+userName+")'>친구삭제</button>" :
+             	                	"<button onclick='onclickAddFriend("+localId+","+userId+","+userCharacter+","+userName+")''>친구추가</button>")
+             	                +
+             	                '<button onclick="onclickGoHomePage('+userId+')">미니룸 구경가기</button>' +
+             	            '</div>' +
+             	        '</div>' +
+             	        '<img class="main_profile_friends" src="'+userCharacter+'">' +
+             	        '<span class="main_profile_friends_name">'+userName+'</span>'+
+             	        '</div>'+
+             	        '</div>';
+             	    document.querySelector('.main_profile_friends_list').innerHTML += profileDiv;
                  }
             };
             ws.onclose = function() {
@@ -186,7 +221,14 @@ function clickAlarm(){
 	        document.getElementById("game2-container").style.display = "none";        
 	    }
         function sendFriendRequest(receiveId , request_type,comment){
-        	var message = "sendFriendRequest" + dataSeparator + localName + dataSeparator + localCharacter + dataSeparator + receiveId + dataSeparator + request_type + dataSeparator + comment
+        	var message = "sendFriendRequest" + dataSeparator + localName +
+        	dataSeparator + localCharacter + dataSeparator + receiveId + 
+        	dataSeparator + request_type + dataSeparator + comment +
+        	dataSeparator + localId;
+        	ws.send(message);
+        }
+        function submitFriendRequest(username,userid,usercharacter){
+        	var message = "submitFriendRequest" + dataSeparator + username + dataSeparator + userid + dataSeparator + usercharacter;
         	ws.send(message);
         }
         function sendMessage() {
@@ -361,6 +403,7 @@ function clickAlarm(){
 
             <div class ="main_profile_alram">
             <img class="main_profile_alram_img" onclick ="clickAlarm()" src="./img/alram.png">
+            <div class ="main_profile_alarm_isalarm"></div>
             <jsp:include page="alarmList.jsp">
                <jsp:param value="<%=url %>" name="url"/>
             </jsp:include>
