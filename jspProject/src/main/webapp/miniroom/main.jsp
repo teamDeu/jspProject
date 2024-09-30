@@ -19,7 +19,6 @@
    if(background == null){
       background = "./img/backgroundImg.png";
    }
-   System.out.println(background);
    MemberBean userBean = mMgr.getMember(id);
 %>
 <!DOCTYPE html>
@@ -114,9 +113,9 @@ function clickAlarm(){
         var chatBoxId = 0;
         let userNum = 0;
         var localId = "<%=userBean.getUser_id()%>";
-        var character = "<%=character%>"
+        var localCharacter = "<%=character%>"
         var url = "<%=url%>";
-        var name = "<%=userBean.getUser_name()%>";
+        var localName = "<%=userBean.getUser_name()%>";
         var dataSeparator = "㉠"
         var messageSeparator = "㉡";
         var timeNameText = "";
@@ -125,8 +124,8 @@ function clickAlarm(){
             ws.onopen = function() {
                 document.getElementById("status").textContent = "서버와 연결됨";
                 if(localId == "null") localId = "비회원";
-                if(character == "null") character = "character1.png"
-                message = "connect"+ dataSeparator + localId +dataSeparator + character +dataSeparator + url +dataSeparator + name;
+                if(localCharacter == "null") localCharacter = "character1.png"
+                message = "connect"+ dataSeparator + localId + dataSeparator + localCharacter +dataSeparator + url +dataSeparator + localName;
                 ws.send(message);
             };
             ws.onmessage = function(event) {
@@ -165,6 +164,17 @@ function clickAlarm(){
                     user.remove();
                     userNum --;
                  }
+                 else if(command == ("sendFriendRequest")){
+                	 sendUserName = rawdata[1];
+                	 sendUserCharacter = rawdata[2];
+                	 receiveId = rawdata[3];
+                	 requestType = rawdata[4];
+                	 comment = rawdata[5];
+                	 if(localId == receiveId){
+                		 openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"");
+                	 }
+                	 
+                 }
             };
             ws.onclose = function() {
                 document.getElementById("status").textContent = "서버 연결 끊김";
@@ -175,6 +185,10 @@ function clickAlarm(){
 	        document.getElementById("game1-container").style.display = "none";
 	        document.getElementById("game2-container").style.display = "none";        
 	    }
+        function sendFriendRequest(receiveId , request_type,comment){
+        	var message = "sendFriendRequest" + dataSeparator + localName + dataSeparator + localCharacter + dataSeparator + receiveId + dataSeparator + request_type + dataSeparator + comment
+        	ws.send(message);
+        }
         function sendMessage() {
             var message = "sendMessage" + dataSeparator +  localId + messageSeparator + document.getElementById("messageInput").value + messageSeparator + '<%=userBean.getUser_name()%>';
             if (message.trim() !== "") {
@@ -317,7 +331,7 @@ function clickAlarm(){
         
         
         function disconnect(){
-           var message = "disconnect"+ dataSeparator + localId + dataSeparator + name;
+           var message = "disconnect"+ dataSeparator + localId + dataSeparator + localName;
            ws.send(message);
            ws.close();
         }
@@ -385,6 +399,7 @@ function clickAlarm(){
                 </jsp:include>
 	         </div> 
 	         <div id="board" class="inner-box-2" style="display: none">
+	         
 	         </div>
 	         <div id="music" class="inner-box-2" style="display: none">
 	         </div>

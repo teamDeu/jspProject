@@ -14,7 +14,6 @@
    if(background == null){
       background = "./img/backgroundImg.png";
    }
-   System.out.println(background);
    MemberBean userBean = mMgr.getMember(id);
 %>
 <!DOCTYPE html>

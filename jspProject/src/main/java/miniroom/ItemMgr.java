@@ -116,7 +116,6 @@ public class ItemMgr {
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, background);
 			pstmt.setString(2, user_id);
-			System.out.println("updateMiniroom");
 			if(pstmt.executeUpdate() == 1) flag = true;
 			else flag = false;
 		} catch (Exception e) {

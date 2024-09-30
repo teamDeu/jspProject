@@ -1,3 +1,5 @@
+
+<%@page import="miniroom.ItemMgr"%>
 <%@page import="pjh.MemberBean"%>
 <%@page import="friend.FriendRequestBean"%>
 <%@page import="java.util.Vector"%>
@@ -8,8 +10,8 @@
 <%
 	String id = (String)session.getAttribute("idKey");
 	String url = request.getParameter("url");
-	System.out.println("AlarmList ID:" +id);
 	Vector<FriendRequestBean> vlist = fMgr.getFriendRequest(id);
+	ItemMgr iMgr = new ItemMgr();
 %>
 <head>
 	<style>
@@ -99,6 +101,7 @@
 				MemberBean user = uMgr.getMember(bean.getRequest_senduserid());
 				%>
 				<li class ="alarmlist_main_div_item">
+					<input type = "hidden" name = "character" value ="<%=iMgr.getUsingCharacter(bean.getRequest_senduserid()).getItem_path()%>">
 					<input type = "hidden" name = "name" value ="<%=user.getUser_name()%>">
 					<input type = "hidden" name = "type" value ="<%=bean.getRequest_type()%>">
 					<input type = "hidden" name = "comment" value ="<%=bean.getRequest_comment() %>">
@@ -166,41 +169,43 @@ function alarm_updatePagination() {
         if(i != totalPages){
         	paginationContainer.appendChild(separatorSpan);
         }
-        
-        
-        
     }
 }
-
+function openRequestModalReceive(character,name,type,comment,num){
+    let fr_modal = document.getElementById("friend_request_modal_receive");
+	
+    // 값을 가져와서 modal에 설정
+    fr_modal.querySelector(".request_user_name_font").innerText = name
+    fr_modal.querySelector(".request_type_span").innerText = type == 1 ? "일촌" : "이촌";
+    fr_modal.querySelector(".request_comment").value = comment;
+    fr_modal.querySelector(".request_num").value = num;
+    fr_modal.querySelector(".request_profile_img").src = character;
+ 	// 모달을 표시
+    fr_modal.style.display = "flex";
+}
 function clickAlarmItem(event){
 	 // fr_form은 <li> 요소
     let fr_form = event.target.parentElement;
-    let fr_modal = document.getElementById("friend_request_modal_receive");
     // <input> 요소를 선택
     let nameInput = fr_form.querySelector('input[name="name"]');
     let typeInput = fr_form.querySelector('input[name="type"]');
     let commentInput = fr_form.querySelector('input[name="comment"]');
     let numInput = fr_form.querySelector('input[name="num"]');
+    let characterInput = fr_form.querySelector('input[name="character"]');
 	if(commentInput.value =="null"){
 		commentInput.value ="";
 	}
 	
     // 값을 가져와서 modal에 설정
-    fr_modal.querySelector(".request_user_name_font").innerText = nameInput.value;
-    fr_modal.querySelector(".request_type_span").innerText = typeInput.value == 1 ? "일촌" : "이촌";
-    fr_modal.querySelector(".request_comment").value = commentInput.value;
-    fr_modal.querySelector(".request_num").value = numInput.value;
-    
+    openRequestModalReceive(characterInput.value,nameInput.value,typeInput.value,commentInput.value,numInput.value);
     fr_form.querySelector(".alarmlist_main_div_item_readbool").style.color = "rgba(0,0,0,0.2)"
-    
     //alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != numInput.value);
     console.log(alarm_items);
     
     
     displayalarm_items();
     alarm_updatePagination();
-    // 모달을 표시
-    fr_modal.style.display = "flex";
+    
 }
 
 // 페이지가 로드될 때 초기화
