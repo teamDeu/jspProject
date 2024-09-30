@@ -4,6 +4,8 @@
 <%
 	BoardFolderMgr mgr = new BoardFolderMgr();
 	int latestNum = mgr.getLatestBoardFolder().getFolder_num();
+	String id = (String)session.getAttribute("idKey");
+	
 %>
 <!-- bInnerbox1.jsp -->
 <div class="folder-container">
@@ -18,7 +20,7 @@
 </div>
 
 <script>
-    var userId = 'als981209'; // 실제로는 세션에서 사용자 ID를 가져와야 합니다.
+    var userId = '<%=id%>'; // 실제로는 세션에서 사용자 ID를 가져와야 합니다.
     var selectedFolderItem = null; // 현재 선택된 폴더를 저장할 변수
 	var latestNum = <%=latestNum%>;
     function toggleFolderInput() {
@@ -208,9 +210,6 @@
 	                    folderContainer.appendChild(folderItem);
 	
 	                    // 첫 번째 폴더를 자동으로 선택
-	                    if (index === 0) {
-	                        selectFolder(folderItem); // 첫 번째 폴더를 자동 선택
-	                    }
 	                });
 	
 	                updateFolderPositions(); 
