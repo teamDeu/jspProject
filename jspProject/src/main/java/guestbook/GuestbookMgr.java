@@ -89,10 +89,17 @@ public class GuestbookMgr {
     }
 
     // Delete guestbook entry
+ // Delete guestbook entry and its replies
     public boolean deleteGuestbookEntry(int guestbookNum) {
         Connection con = null;
         PreparedStatement pstmt = null;
+        GuestbookanswerMgr answerMgr = new GuestbookanswerMgr(); // 답글 매니저 인스턴스 생성
+
+        // 먼저 해당 방명록의 모든 답글 삭제
+        answerMgr.deleteAllAnswersForGuestbook(guestbookNum);
+        
         String sql = "DELETE FROM guestbook WHERE guestbook_num = ?";
+        
         try {
             con = pool.getConnection();
             pstmt = con.prepareStatement(sql);
@@ -106,6 +113,7 @@ public class GuestbookMgr {
         }
         return false;
     }
+
 
     // Update guestbook entry
     public boolean updateGuestbookEntry(int guestbookNum, String content) {
@@ -151,5 +159,6 @@ public class GuestbookMgr {
         }
         return writtenAt; // 가져온 written_at 반환
     }
+    
     
 }
