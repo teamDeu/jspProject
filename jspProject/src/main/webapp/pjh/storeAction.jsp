@@ -1,31 +1,35 @@
 <%@ page import="com.oreilly.servlet.MultipartRequest" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" autoFlush="true" %>
 <%@ page import="java.sql.*, pjh.DBConnectionMgr" %>
-<%@ page import="java.io.File" %>
+<%@ page import="java.io.File, java.nio.file.Files, java.nio.file.StandardCopyOption" %>
 <html>
 <body>
 <%
-    String savePath = application.getRealPath("/uploads");
+    // 파일 저장 경로 설정
+    String uploadRoot = application.getRealPath("/uploads");
+    String imgPath = application.getRealPath("/img");
+    String pathFolder = application.getRealPath("/path");
+
     int maxSize = 1024 * 1024 * 10;  // 10MB 제한
 
     // 디렉토리 존재 여부 확인 및 생성
-    File uploadDir = new File(savePath);
-    if (!uploadDir.exists()) {
-        boolean dirCreated = uploadDir.mkdirs();
-        if (!dirCreated) {
-            out.println("<script>alert('업로드 디렉토리 생성에 실패했습니다. 관리자에게 문의하세요.'); history.back();</script>");
-            return;
-        }
-    }
+    File uploadDir = new File(uploadRoot);
+    File imgDir = new File(imgPath);
+    File pathDir = new File(pathFolder);
+
+    if (!uploadDir.exists()) uploadDir.mkdirs();
+    if (!imgDir.exists()) imgDir.mkdirs();
+    if (!pathDir.exists()) pathDir.mkdirs();
 
     String itemName = null;
     String itemImage = null;
+    String itemPath = null;
     int itemPrice = 0;
     String itemType = null;
-    String itemPath = null;
 
     try {
-        MultipartRequest multi = new MultipartRequest(request, savePath, maxSize, "UTF-8");
+        // 파일 업로드 처리
+        MultipartRequest multi = new MultipartRequest(request, uploadRoot, maxSize, "UTF-8");
 
         itemName = multi.getParameter("item_name");
         itemImage = multi.getFilesystemName("item_image");
@@ -37,8 +41,19 @@
             throw new Exception("파일 업로드 실패");
         }
 
+        // 파일 복사 작업 (item_image -> img 폴더, item_path -> path 폴더)
+        File sourceImage = new File(uploadRoot, itemImage);
+        File destinationImage = new File(imgDir, itemImage);
+        Files.copy(sourceImage.toPath(), destinationImage.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        File sourcePath = new File(uploadRoot, itemPath);
+        File destinationPath = new File(pathDir, itemPath);
+        Files.copy(sourcePath.toPath(), destinationPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        out.println("파일 업로드 및 복사 성공<br>");
+
     } catch (Exception e) {
-        e.printStackTrace();  // 콘솔에 출력
+        e.printStackTrace();
         out.println("<script>alert('데이터 처리 중 오류가 발생했습니다: " + e.getMessage() + "'); history.back();</script>");
         return;
     }
@@ -50,30 +65,24 @@
 
     try {
         conn = pool.getConnection();
-
         String sql = "INSERT INTO item (item_name, item_image, item_price, item_type, item_path) VALUES (?, ?, ?, ?, ?)";
 
         pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, itemName);
-        pstmt.setString(2, "/uploads/" + itemImage);
+        pstmt.setString(2, "./img/" + itemImage);  // img 폴더에 저장된 경로
         pstmt.setInt(3, itemPrice);
         pstmt.setString(4, itemType);
-        pstmt.setString(5, "/uploads/" + itemPath);
+        pstmt.setString(5, "./path/" + itemPath);  // path 폴더에 저장된 경로
 
         int result = pstmt.executeUpdate();
 
         if (result > 0) {
-            // 성공적으로 추가된 경우, 창을 닫고 부모 창을 새로고침
-            out.println("<script>");
-            out.println("alert('상품이 성공적으로 추가되었습니다.');");
-            out.println("window.opener.location.reload();");  // 부모 창 새로고침
-            out.println("window.close();");  // 현재 창 닫기
-            out.println("</script>");
+            out.println("<script>alert('상품이 성공적으로 추가되었습니다.'); window.opener.location.reload(); window.close();</script>");
         } else {
             out.println("<script>alert('상품 추가에 실패했습니다.'); history.back();</script>");
         }
     } catch (Exception e) {
-        e.printStackTrace();  // 콘솔에 출력
+        e.printStackTrace();
         out.println("<script>alert('오류가 발생했습니다. 관리자에게 문의하세요.'); history.back();</script>");
     } finally {
         try {

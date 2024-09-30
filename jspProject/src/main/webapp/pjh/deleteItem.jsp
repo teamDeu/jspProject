@@ -15,7 +15,7 @@
         pstmt.setInt(1, item_num);
         int result = pstmt.executeUpdate();
 
-        if (result > 0) {
+        if (result > 0) {	
             // 성공적으로 삭제되었을 경우 알림을 띄우고, 상점 관리 페이지로 리다이렉트
             out.println("<script>alert('상품이 성공적으로 삭제되었습니다.'); location.href='adminMain.jsp';</script>");
         } else {
