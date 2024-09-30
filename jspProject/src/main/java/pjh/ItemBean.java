@@ -4,8 +4,9 @@ public class ItemBean {
 	private int item_num;
 	private String item_name;
 	private String item_image;
-	private String item_type;
 	private int item_price;
+	private String item_type;
+	private String item_path;
 	
 	public int getItem_num() {
 		return item_num;
@@ -43,7 +44,7 @@ public class ItemBean {
 	public void setItem_path(String item_path) {
 		this.item_path = item_path;
 	}
-	private String item_path;
+	
 	
 	
 }
