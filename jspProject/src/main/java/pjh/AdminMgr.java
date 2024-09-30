@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import miniroom.DBConnectionMgr;
+
 public class AdminMgr {
     private DBConnectionMgr pool;
 

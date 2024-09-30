@@ -305,55 +305,13 @@ td a {
                                     <th>제목</th>
                                     <th>작성자</th>
                                     <th>작성일</th>
-                                    <th>조회</th>
+                                    <th>조회수</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <%
-                                    // BoardWriteMgr 인스턴스 생성
-                                    BoardWriteMgr boardMgr = new BoardWriteMgr();
-                                    int folderNum = 30;
-
-                                    if (folderNum > 0) {
-                                        Vector<BoardWriteBean> boardList = boardMgr.getBoardList(folderNum);
-
-                                        if (boardList != null && boardList.size() > 0) {
-                                            for (BoardWriteBean board : boardList) {
-                                                // 시간 데이터를 원하는 형식으로 변환
-                                                String formattedDate = "";
-									            try {
-									                // getBoard_at()이 String 타입이 아니라면 변환 필요
-									                Timestamp timestamp = Timestamp.valueOf(board.getBoard_at());
-									                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-									                formattedDate = sdf.format(timestamp);
-									            } catch (Exception e) {
-									                formattedDate = board.getBoard_at(); // getBoard_at()이 이미 String이라면 그대로 사용
-									            }
-                                %>
-                                                <tr>
-                                                    <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
-                                                    <td><a href="boardDetail.jsp?boardNum=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
-                                                    <td><%= board.getBoard_id() %></td>
-                                                    <td><%= formattedDate %></td> <!-- 변환된 시간 출력 -->
-                                                    <td><%= board.getBoard_views() %></td>
-                                                </tr>
-                                <%
-                                            }
-                                        } else {
-                                %>
-                                            <tr>
-                                                <td colspan="5" style="text-align: center;">등록된 게시물이 없습니다.</td>
-                                            </tr>
-                                <%
-                                        }
-                                    } else {
-                                %>
-                                    <tr>
-                                        <td colspan="5" style="text-align: center;">유효한 폴더를 선택하세요.</td>
-                                    </tr>
-                                <%
-                                    }
-                                %>
+                            <tbody id="board-list-body">
+                                <tr>
+                                    <td colspan="5" style="text-align: center;">폴더를 선택하세요.</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -373,12 +331,71 @@ td a {
         </div>
     </div>
 </body>
+
 <script>
     document.getElementById("checkAll").onclick = function() {
         var checkboxes = document.getElementsByName("boardNum");
         for (var checkbox of checkboxes) {
             checkbox.checked = this.checked;
         }
+    }
+
+    // 폴더를 선택할 때마다 게시판 목록을 업데이트
+    function selectFolder(folderItem) {
+        var folderIcon = folderItem.querySelector('img');
+        var folderNum = folderItem.getAttribute('data-folder-num');
+
+        if (!folderNum || isNaN(folderNum)) {
+            console.error("폴더 번호가 유효하지 않습니다.");
+            return;
+        }
+
+        // 선택되지 않은 상태일 때 (img/folder.png)
+        if (folderIcon.src.includes('folder.png')) {
+            if (selectedFolderItem) {
+                // 이전에 선택된 폴더가 있으면 아이콘과 스타일 원래대로
+                selectedFolderItem.querySelector('img').src = 'img/folder.png';
+                selectedFolderItem.querySelector('span').style.fontWeight = 'normal';
+            }
+
+            // 현재 폴더를 선택된 상태로 변경
+            folderIcon.src = 'img/folder2.png'; // 아이콘 변경
+            folderItem.querySelector('span').style.fontWeight = 'bold'; // 글자 굵기 변경
+            selectedFolderItem = folderItem; // 현재 선택된 폴더 갱신
+
+            // AJAX 요청을 통해 서버에서 게시물 목록 가져오기
+            loadBoardList(folderNum); // 게시물 목록 업데이트
+
+        } else if (folderIcon.src.includes('folder2.png')) {
+            // 선택된 상태일 때 다시 클릭하면 선택 해제
+            folderIcon.src = 'img/folder.png'; // 아이콘 원래대로
+            folderItem.querySelector('span').style.fontWeight = 'normal'; // 글자 굵기 원래대로
+            selectedFolderItem = null; // 선택 해제
+
+            // 폴더 선택 해제 시 게시물 목록 비우기
+            clearBoardList();
+        }
+    }
+
+    // 게시물 목록을 로드하는 함수
+    function loadBoardList(folderNum) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'getBoardList.jsp?folderNum=' + encodeURIComponent(folderNum), true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                document.getElementById('board-list-body').innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send(); // 요청 전송
+    }
+
+    // 게시물 목록을 비우는 함수
+    function clearBoardList() {
+        document.getElementById('board-list-body').innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align: center;">폴더를 선택하세요.</td>
+            </tr>
+        `;
     }
 </script>
 
