@@ -220,6 +220,7 @@
                         <th>상품 가격</th>
                         <th>상품 타입</th>
                         <th>상품 파일</th>
+                        <th>관리</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -254,13 +255,20 @@
                         <td><%= item.getItem_price() %>원</td>
                         <td><%= item.getItem_type() %></td>
                         <td><%= item.getItem_path() %></td>
+                        <td>
+                            <!-- 삭제 버튼 -->
+                            <form action="deleteItem.jsp" method="post" onsubmit="return confirm('정말로 이 상품을 삭제하시겠습니까?');">
+                                <input type="hidden" name="item_num" value="<%= item.getItem_num() %>">
+                                <button type="submit" style="padding: 5px 10px; background-color: #FF6B6B; color: white; border: none; border-radius: 5px; cursor: pointer;">삭제</button>
+                            </form>
+                        </td>
                     </tr>
                     <%
                             }
                         } else {
                     %>
                     <tr>
-                        <td colspan="6">표시할 항목이 없습니다.</td>
+                        <td colspan="7">표시할 항목이 없습니다.</td>
                     </tr>
                     <%
                         }
