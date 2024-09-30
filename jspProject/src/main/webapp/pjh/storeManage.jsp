@@ -57,6 +57,20 @@
         }
     </style>
 </head>
+<script>
+	function changeItemType(select){
+		value = select.value;
+		itemPathInput = document.getElementById("item_path")
+		if(value == "음악"){
+			itemPathInput.required = true;
+			itemPathInput.disabled = false;
+		}
+		else{
+			itemPathInput.required = false;
+			itemPathInput.disabled = true;
+		}
+	}
+</script>
 <body>
 
     <h1>상품 관리</h1>
@@ -87,7 +101,7 @@
             <!-- 상품 타입 선택 -->
             <div class="form-group">
                 <label for="item_type">상품 타입:</label>
-                <select id="item_type" name="item_type" required>
+                <select onchange = "changeItemType(this)" id="item_type" name="item_type" required>
                     <option value="음악">음악</option>
                     <option value="캐릭터">캐릭터</option>
                     <option value="배경화면">배경</option>
@@ -97,7 +111,7 @@
             <!-- 파일 입력 -->
             <div class="form-group">
                 <label for="item_path">파일 :</label>
-                <input type="file" id="item_path" name="item_path" accept="image/*" required>
+                <input type="file" id="item_path" name="item_path" accept="image/*">
             </div>
 
             <!-- 제출 버튼 -->
