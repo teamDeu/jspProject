@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%
+	String connectId = (String)session.getAttribute("idKey");
+	
 %>
 <!DOCTYPE html>
 <html>
@@ -89,18 +91,18 @@
 }
 </style>
 <script>
-	function frequest_receive_clickCancelBtn(){
-		document.getElementById("friend_request_modal_receive").style.display = "none";
-		fr_form = document.friend_request_form_receive;
-		fr_form.request_num.value = document.querySelector(".request_num").value;
-		fr_form.receive_type.value = "reject";
-		fr_form.submit();
-		alert("친구요청을 거절했습니다.");
-		
-		alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != fr_form.request_num.value);
-		displayalarm_items();
-	    alarm_updatePagination();
-	}
+function frequest_receive_clickCancelBtn(){
+	document.getElementById("friend_request_modal_receive").style.display = "none";
+	fr_form = document.friend_request_form_receive;
+	fr_form.request_num.value = document.querySelector(".request_num").value;
+	fr_form.receive_type.value = "reject";
+	fr_form.submit();
+	alert("친구요청을 거절했습니다.");
+	
+	alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != fr_form.request_num.value);
+	displayalarm_items();
+    alarm_updatePagination();
+}
 	function frequest_receive_clickSubmitBtn(){
 		
 		fr_form = document.friend_request_form_receive;
@@ -112,6 +114,17 @@
 		alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != fr_form.request_num.value);
 		displayalarm_items();
 	    alarm_updatePagination();
+	    fr_modal = document.getElementById("friend_request_modal_receive");
+	    
+	   	userId = fr_modal.querySelector(".request_senduserid").value;
+	   	userName = fr_modal.querySelector(".request_user_name_font").innerText;
+	   	userCharacter = fr_modal.querySelector(".request_profile_img").src;
+	   	connectId = '<%=connectId%>'
+	   	console.log(userId,connectId);
+		if(!isFriend(connectId,userId)){
+			submitFriendRequest(userId,userName,userCharacter);
+		}
+	    
 	}
 	
 	function frequest_receive_clickCloseBtn(){
@@ -137,6 +150,7 @@
 		</div>
 			<input class="request_comment" type="text" placeholder = "친구신청 메시지">
 			<input type ="hidden" class = "request_num" value ="">
+			<input type ="hidden" class ="request_senduserid" value ="">
 		<div>
 			<button onclick = "frequest_receive_clickSubmitBtn()" class ="request_button">수락</button>
 			<button onclick = "frequest_receive_clickCancelBtn()" class ="request_button">거절</button>
