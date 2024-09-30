@@ -1,5 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<jsp:useBean id="mgr" class="board.BoardWriteMgr" />
+
+<%
+    // 현재 로그인한 사용자 ID를 세션에서 가져옴
+    String sessionUserId = (String) session.getAttribute("idKey");
+	if (sessionUserId == null) {
+	    sessionUserId = "1111"; // 디버깅 용도로 기본값 설정
+	}
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -515,59 +524,65 @@
         }
     });
 
-    // 폴더 선택 시 히든 필드에 폴더 번호 저장
+ 	// 폴더 선택 시 폴더 번호를 hidden input에 저장
     function selectFolder(folderNum) {
         var boardFolderInput = document.getElementById('board-folder');
         if (boardFolderInput) {
-            boardFolderInput.value = folderNum;
+            boardFolderInput.value = folderNum; // 폴더 번호를 hidden input에 저장
         }
     }
 
-    // 폴더 관리 창에서 폴더를 선택했을 때
-    function onFolderSelected(folderNum) {
-        selectFolder(folderNum);
-    }
+    function submitBoard() {
+        var boardTitle = document.querySelector('input[name="board_title"]').value;
+        var boardContent = document.getElementById('board-content').innerText; // contenteditable에서 텍스트 가져오기
+        var boardVisibility = document.querySelector('input[name="board_visibility"]:checked').value;
+        var boardAnswerType = document.querySelector('input[name="board_answertype"]:checked').value;
+        var boardFolder = document.getElementById('board-folder').value;
+        var boardId = "<%= sessionUserId %>";
 
-    // 폼 제출 전에 게시글 내용을 textarea에 복사하여 전송
-    function copyContentToTextarea() {
-        var boardContentTextarea = document.getElementById('board-content-text');
-        var boardContentDiv = document.getElementById('board-content');
-        if (boardContentTextarea && boardContentDiv) {
-            boardContentTextarea.value = boardContentDiv.innerHTML; // textarea에 내용 복사
+        // 데이터 검증
+        if (!boardTitle.trim()) {
+            alert("제목을 입력해주세요.");
+            return;
         }
-    }
-
-    // 폼 제출 시 폴더 번호가 있는지 확인
-    function validateForm() {
-        var boardFolderInput = document.getElementById('board-folder');
-        if (!boardFolderInput.value) {
-            alert('폴더를 선택해 주세요.');
-            return false;
+        if (!boardContent.trim()) {
+            alert("내용을 입력해주세요.");
+            return;
         }
-        return true;
-    }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // 폼 제출 시 폴더 번호와 내용 복사
-        var form = document.querySelector('form');
-        if (form) {
-            form.addEventListener('submit', function(event) {
-                if (!validateForm()) {
-                    event.preventDefault(); // 폴더가 선택되지 않았으면 제출 중단
+        // FormData 객체 생성 (이미지 업로드를 위해 사용)
+        var formData = new FormData();
+        formData.append("board_title", boardTitle);
+        formData.append("board_content", boardContent);
+        formData.append("board_visibility", boardVisibility);
+        formData.append("board_answertype", boardAnswerType);
+        formData.append("board_folder", boardFolder);
+        formData.append("board_id", boardId);
+
+        var fileInput = document.getElementById('file-input');
+        if (fileInput.files.length > 0) {
+            formData.append("image_file", fileInput.files[0]);
+        }
+
+        // AJAX 요청 보내기
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "bWriteAddProc.jsp", true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var response = xhr.responseText.trim();
+                if (response === 'success') {
+                    alert("게시글이 성공적으로 작성되었습니다.");
+                    location.href = 'boardList.jsp'; // 성공 시 목록 페이지로 이동
+                } else {
+                    alert("게시글 작성에 실패했습니다. 다시 시도해주세요.");
                 }
-                copyContentToTextarea(); // 게시글 내용을 textarea에 복사
-            });
-        }
-
-        // 폴더 선택 시 이벤트 핸들러 추가
-        var folderItems = document.querySelectorAll('.folder-item');
-        folderItems.forEach(function(folderItem) {
-            folderItem.addEventListener('click', function() {
-                var folderNum = folderItem.getAttribute('data-folder-num');
-                selectFolder(folderNum); // 폴더 선택 시 폴더 번호 설정
-            });
-        });
-    });
+            } else {
+                alert("서버 오류가 발생했습니다.");
+            }
+        };
+        xhr.send(formData); // 폼 데이터 전송
+    }
+    
 </script>
 
 </head>
@@ -596,13 +611,16 @@
                     <h1 class="board-title">게시판</h1>
                     <button type="button" class="list-button" onclick="location.href='boardList.jsp'">목록</button>
 					
+					<!-- 현재 로그인한 사용자 ID를 숨겨서 폼에 추가 -->
+                    <input type="hidden" name="board_id" value="<%= sessionUserId %>">
+					
                     <!-- 폴더 선택 시 폴더 번호 저장 -->
                     <input type="hidden" name="board_folder" id="board-folder" value="">
                     
                     <div class="board-form">
                         <div class="title-container">
                             <!-- 게시글 제목 입력 -->
-                            <input type="text" name="board_title" placeholder=" 제목을 입력해주세요." required>
+                            <input type="text" name="board_title" placeholder=" 제목을 입력해주세요.">
                             <!-- 등록 버튼 -->
                             <button type="submit" class="register-button">등록</button>
                         </div>          

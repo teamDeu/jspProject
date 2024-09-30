@@ -17,35 +17,40 @@ public class BoardWriteMgr {
 	}
 	
 	public boolean addBoard(BoardWriteBean boardBean) {
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		String sql = "";
-		boolean flag = false;
-		try {
-			con = pool.getConnection();
-			sql = "insert into board (board_visibility, board_answertype, board_folder, board_id, board_title, board_content, board_at, board_image) VALUES (?, ?, ?, ?, ?, ?, now(), ?) ";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, boardBean.getBoard_visibility());
-            pstmt.setInt(2, boardBean.getBoard_answertype());
-            pstmt.setInt(3, boardBean.getBoard_folder());
-            pstmt.setString(4, boardBean.getBoard_id());
-            pstmt.setString(5, boardBean.getBoard_title());
-            pstmt.setString(6, boardBean.getBoard_content());     
-            pstmt.setString(7, boardBean.getBoard_image());
-			int rs = pstmt.executeUpdate();
-			
-			if (rs > 0) { // 쿼리 실행 결과가 0보다 크면 성공
-                flag = true;
-            }
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			pool.freeConnection(con, pstmt);
-		}
-		return flag;
-		
-		
-		
+	    Connection con = null;
+	    PreparedStatement pstmt = null;
+	    String sql = "";
+	    boolean flag = false;
+	    try {
+	        con = pool.getConnection();
+	        // INSERT 쿼리 (이미지 처리 부분 포함)
+	        sql = "INSERT INTO board (board_visibility, board_answertype, board_folder, board_id, board_title, board_content, board_at, board_image) " +
+	              "VALUES (?, ?, ?, ?, ?, ?, now(), ?)";
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setInt(1, boardBean.getBoard_visibility());
+	        pstmt.setInt(2, boardBean.getBoard_answertype());
+	        pstmt.setInt(3, boardBean.getBoard_folder());
+	        pstmt.setString(4, boardBean.getBoard_id());
+	        pstmt.setString(5, boardBean.getBoard_title());
+	        pstmt.setString(6, boardBean.getBoard_content());
+
+	        // 이미지 경로 설정 (null 또는 파일 경로)
+	        if (boardBean.getBoard_image() != null && !boardBean.getBoard_image().isEmpty()) {
+	            pstmt.setString(7, boardBean.getBoard_image());
+	        } else {
+	            pstmt.setNull(7, java.sql.Types.VARCHAR);
+	        }
+
+	        int rs = pstmt.executeUpdate();
+	        if (rs > 0) {
+	            flag = true;
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        pool.freeConnection(con, pstmt);
+	    }
+	    return flag;
 	}
 	
 	
@@ -206,4 +211,37 @@ public class BoardWriteMgr {
         }
         return isUpdated;
     }
+    
+    //최근 게시물 불러오는 메서드
+    public BoardWriteBean getLatestBoard() {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        BoardWriteBean board = null;
+        try {
+            con = pool.getConnection();
+            String sql = "SELECT * FROM board ORDER BY board_at DESC LIMIT 1"; // 최근 게시된 글 1개 가져오기
+            pstmt = con.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                board = new BoardWriteBean();
+                board.setBoard_num(rs.getInt("board_num"));
+                board.setBoard_visibility(rs.getInt("board_visibility"));
+                board.setBoard_answertype(rs.getInt("board_answertype"));
+                board.setBoard_folder(rs.getInt("board_folder"));
+                board.setBoard_id(rs.getString("board_id"));
+                board.setBoard_title(rs.getString("board_title"));
+                board.setBoard_content(rs.getString("board_content"));
+                board.setBoard_at(rs.getTimestamp("board_at").toString());
+                board.setBoard_image(rs.getString("board_image"));
+                board.setBoard_views(rs.getInt("board_views"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return board;
+    }
+    
 }

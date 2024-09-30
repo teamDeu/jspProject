@@ -372,6 +372,7 @@ function clickAlarm(){
                   <jsp:param value='<%=url %>' name="url"/>
                </jsp:include>
             </div>
+            
             <!-- 이미지가 박스 -->
             <div class="image-box">
                <img src="img/img1.png" alt="Image between boxes 1"
