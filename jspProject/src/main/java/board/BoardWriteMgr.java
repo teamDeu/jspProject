@@ -137,7 +137,11 @@ public class BoardWriteMgr {
         return boardList;
     }
 	
- // 특정 board_num에 해당하는 게시글을 삭제하는 메서드
+    
+    
+    
+    
+    // 특정 board_num에 해당하는 게시글을 삭제하는 메서드
     public boolean deleteBoard(int boardNum) {
         Connection con = null;
         PreparedStatement pstmt = null;

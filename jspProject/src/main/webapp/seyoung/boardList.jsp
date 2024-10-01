@@ -5,6 +5,7 @@
 <%@page import="java.sql.Timestamp"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -268,7 +269,7 @@ td a {
                         </table>
                     </div>
                     </form>                           
-<script>
+	<script>
     document.getElementById("checkAll").onclick = function() {
         var checkboxes = document.getElementsByName("boardNum");
         for (var checkbox of checkboxes) {
@@ -297,7 +298,7 @@ td a {
             </tr>
         `;
     }
-</script>
+	</script>
 
 
 </html>
