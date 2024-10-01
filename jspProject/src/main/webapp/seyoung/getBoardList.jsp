@@ -28,6 +28,7 @@
                 } catch (Exception e) {
                     formattedDate = board.getBoard_at(); // 이미 String이라면 그대로 사용
                 }
+                
 %>
                 <tr>
                     <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>

@@ -550,6 +550,7 @@
     });
 </script>
 
+
 </head>
 <!-- 게시글 작성 폼 -->
                 <form action="../seyoung/bWriteAddProc.jsp" method="post" enctype="multipart/form-data">

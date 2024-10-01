@@ -139,6 +139,7 @@
             folderItem.querySelector('span').style.fontWeight = 'bold'; // 글자 굵기 변경
             selectedFolderItem = folderItem; // 현재 선택된 폴더 갱신
 			clickOpenBox('boardList');
+			loadBoardList(folderNum);
 			document.getElementById("board-folder").value = selectedFolderItem;
             // AJAX 요청을 통해 서버에서 폴더 정보 가져오기
             var xhr = new XMLHttpRequest();
@@ -218,9 +219,6 @@
 	    };
 	    xhr.send();
 	}
-
-
-
 
     // 폴더 삭제 함수
     function deleteFolder(folderNum, folderItem) {

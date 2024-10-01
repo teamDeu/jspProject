@@ -41,6 +41,7 @@
     align-items: flex-start; /* 좌측 정렬 */ 
     position: relative;
     
+    
 }
 
 

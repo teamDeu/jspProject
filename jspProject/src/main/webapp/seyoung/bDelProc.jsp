@@ -22,3 +22,4 @@
         out.println("<script>alert('게시물 삭제에 실패하였습니다. 다시 시도해주세요.'); history.back();</script>");
     }
 %>
+

@@ -274,6 +274,7 @@ td a {
         for (var checkbox of checkboxes) {
             checkbox.checked = this.checked;
         }
+        
     }
 
     // 게시물 목록을 로드하는 함수
