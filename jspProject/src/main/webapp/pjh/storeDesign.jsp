@@ -81,7 +81,7 @@ try {
 
 .store {
 	font-family: 'NanumTobak';
-	background-color: #F5F5F5;
+	background-color: #F7F7F7;
 	text-align: center;
 	min-height: 80vh; /* 전체 화면을 차지하도록 설정 */
 	margin: 0;

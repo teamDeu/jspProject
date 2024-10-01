@@ -53,34 +53,6 @@
 	display:none;
 	
 }
-.profile_function_div {
-	display: flex;
-	z-index:3;
-	flex-direction: column;
-	position: absolute;
-	width: 120px;
-	padding: 10px;
-	gap: 10px;
-	border-radius: 10px;
-	box-sizing: border-box;
-	background-color: #FFFEF3;
-	left:0px;
-	top: -120px;
-	border: 2px solid #BAB9AA;
-}
-
-.profile_function_div button {
-	padding: 2px 10px;
-	border: 1px solid #DCDCDC;
-	background-color: #FFFFFF;
-	font-size: 16px;
-	border-radius: 10px;
-}
-
-.profile_function_div span {
-	align-self: center;
-	font-size: 20px;
-}
 </style>
 </head>
 <div class="profile_function_div_main" style ="display : none">
