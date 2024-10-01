@@ -169,11 +169,11 @@
     }
 
     .visitor-stats .today {
-        color: #FF6347; /* 오늘 방문자수는 눈에 띄게 빨간색 */
+        color: #000000; /* 오늘 방문자수는 눈에 띄게 빨간색 */
     }
 
     .visitor-stats .total {
-        color: #4682B4; /* 총 방문자수는 파란색 */
+        color: #000000; /* 총 방문자수는 파란색 */
     }
 </style>
 <script>
