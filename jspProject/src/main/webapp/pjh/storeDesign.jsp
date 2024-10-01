@@ -87,6 +87,7 @@ try {
 	margin: 0;
 	padding: 0;
 	overflow: scroll;
+	border-radius:30px;
 }
 
 .storecontainer {
@@ -100,6 +101,7 @@ try {
     height: 80vh; /* 고정된 높이 설정 */
     max-height: 80vh; /* 최대 높이 설정 */
     overflow-y: auto; /* 콘텐츠가 넘칠 경우 스크롤 표시 */
+    border-radius:30px;
 }
 /* 상점 제목 */
 .store-title {
