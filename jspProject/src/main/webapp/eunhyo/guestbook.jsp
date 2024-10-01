@@ -97,7 +97,7 @@ dateFormat.setTimeZone(seoulTimeZone);
    cursor: pointer;
    font-size: 20px;
    position: absolute;
-   right: 10px;
+   right: 10px; 
    bottom: 7px;
 }
 /* 방명록 전체 container */
