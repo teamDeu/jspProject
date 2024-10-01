@@ -116,7 +116,28 @@ public class BoardFolderMgr {
         }
         return folder;
     }
-    
+    public BoardFolderBean getLatestBoardFolder() {
+    	Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        BoardFolderBean bean = new BoardFolderBean();
+        try {
+            con = pool.getConnection();
+            String sql = "SELECT * FROM boardfolder order by folder_num desc Limit 1";
+            pstmt = con.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+            	bean.setUser_id(rs.getString(1));
+            	bean.setFolder_num(rs.getInt(2));                
+            	bean.setFolder_name(rs.getString(3));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return bean;
+    }
     
     
     

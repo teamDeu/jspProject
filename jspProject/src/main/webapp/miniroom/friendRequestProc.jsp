@@ -1,9 +1,12 @@
+<%@page import="alarm.AlarmBean"%>
+<%@page import="friend.FriendRequestBean"%>
 <%@page import="miniroom.UtilMgr"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <jsp:useBean id="mgr" class ="friend.FriendMgr"/>
 <jsp:useBean id="bean" class ="friend.FriendRequestBean"/>
 <jsp:setProperty property="*" name="bean"/>
+<jsp:useBean id="aMgr" class ="alarm.AlarmMgr"/>
 <%
 	String type = request.getParameter("type");
 	String msg = null;
@@ -35,6 +38,14 @@
 			}
 			else{
 				msg ="친구요청에 성공하였습니다.";
+				AlarmBean aBean = new AlarmBean();
+				FriendRequestBean fBean = mgr.getLastFriendRequest();
+				aBean.setAlarm_content_num(fBean.getRequest_num());
+				aBean.setAlarm_type("친구요청");
+				aBean.setAlarm_user_id(fBean.getRequest_receiveuserid());
+				System.out.println("fBean ID" + fBean.getRequest_receiveuserid());
+				System.out.println("aBean ID" + aBean.getAlarm_user_id());
+				aMgr.insertAlarm(aBean);
 			}
 		}
 	}

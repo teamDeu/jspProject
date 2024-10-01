@@ -1,3 +1,4 @@
+<%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="java.util.TimeZone"%>
 <%@page import="guestbook.GuestbookBean"%>
 <%@page import="guestbook.GuestbookMgr"%>
@@ -6,14 +7,15 @@
 <%@page contentType="text/html; charset=UTF-8"%>
 
 <jsp:useBean id="mgr" class="guestbook.GuestbookMgr" />
+<jsp:useBean id="profileMgr" class="guestbook.GuestbookprofileMgr" />
 <%
-	TimeZone seoulTimeZone = TimeZone.getTimeZone("Asia/Seoul");
-	TimeZone.setDefault(seoulTimeZone);
+   TimeZone seoulTimeZone = TimeZone.getTimeZone("Asia/Seoul");
+   TimeZone.setDefault(seoulTimeZone);
 %>
 <%
 
-	out.clear();
-	response.setContentType("application/json; charset=UTF-8");
+   out.clear();
+   response.setContentType("application/json; charset=UTF-8");
 
     String content = request.getParameter("content");
     String ownerId = request.getParameter("ownerId");
@@ -39,16 +41,24 @@
         entry.setWrittenAt(mgr.getWrittenAt(guestbookNum));
 
      // SimpleDateFormat 인스턴스 생성 및 시간대 설정
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
         dateFormat.setTimeZone(seoulTimeZone);
+        
+        // 프로필 정보 가져오기
+        GuestbookprofileBean profile = profileMgr.getProfileByUserId(writerId);
+        String profileName = profile != null ? profile.getProfileName() : "";
+        String profilePicture = profile != null ? profile.getProfilePicture() : "";
         
         // JSON 형태로 응답을 반환
         String jsonResponse = String.format(
-            "{\"guestbookNum\": %d, \"writerId\": \"%s\", \"content\": \"%s\", \"writtenAt\": \"%s\"}",
+            "{\"guestbookNum\": %d, \"writerId\": \"%s\", \"content\": \"%s\", \"writtenAt\": \"%s\", \"profileName\": \"%s\", \"profilePicture\": \"%s\"}",
             guestbookNum,
             writerId,
             content,
-            dateFormat.format(entry.getWrittenAt()) // DB에서 가져온 날짜를 사용
+            dateFormat.format(entry.getWrittenAt()), // DB에서 가져온 날짜를 사용
+            profileName,
+            profilePicture
         );
         out.print(jsonResponse);
     } else {

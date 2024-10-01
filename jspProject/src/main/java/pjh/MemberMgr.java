@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 import java.util.Vector;
 import net.nurigo.sdk.message.model.Message;
@@ -460,90 +462,105 @@ public class MemberMgr {
 
 	        return totalCount;  // 총 상품 수 반환
 	    }
-	 // 방문자 수 업데이트 메서드
-	    public boolean updateVisitCount(String pageOwnerId, String visitorId) {
+	 // 페이지 소유자별 방문자 수 업데이트
+	    public void updateVisitorCount(String pageOwnerId, String visitorId) {
 	        Connection con = null;
-	        PreparedStatement pstmt1 = null;
-	        PreparedStatement pstmt2 = null;
-	        boolean flag = false;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+	        String sql;
+	        String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
 	        try {
 	            con = pool.getConnection();
 
-	            // 방문자가 페이지 소유자와 다를 경우에만 카운트
-	            if (!pageOwnerId.equals(visitorId)) {
-	                // 오늘 해당 페이지 소유자에 대한 방문 기록이 있는지 확인
-	                String sql1 = "SELECT COUNT(*) FROM visitcount WHERE user_id = ? AND visitor_id = ? AND visit_today = CURDATE()";
-	                pstmt1 = con.prepareStatement(sql1);
-	                pstmt1.setString(1, pageOwnerId);
-	                pstmt1.setString(2, visitorId);
-	                ResultSet rs = pstmt1.executeQuery();
+	            // 오늘의 방문자 수를 조회
+	            sql = "SELECT * FROM visitCount WHERE visit_date = ? AND page_owner_id = ? AND visitor_id = ?";
+	            pstmt = con.prepareStatement(sql);
+	            pstmt.setString(1, today);
+	            pstmt.setString(2, pageOwnerId);
+	            pstmt.setString(3, visitorId);
+	            rs = pstmt.executeQuery();
 
-	                int count = 0;
-	                if (rs.next()) {
-	                    count = rs.getInt(1);
-	                }
-
-	                // 오늘 방문 기록이 없으면 새로 추가
-	                if (count == 0) {
-	                    String sql2 = "INSERT INTO visitcount (user_id, visitor_id, visit_today) VALUES (?, ?, CURDATE())";
-	                    pstmt2 = con.prepareStatement(sql2);
-	                    pstmt2.setString(1, pageOwnerId);
-	                    pstmt2.setString(2, visitorId);
-	                    int result = pstmt2.executeUpdate();
-	                    if (result == 1) {
-	                        flag = true; // 성공적으로 업데이트된 경우
-	                    }
-	                }
+	            if (rs.next()) {
+	                // 이미 방문한 경우 visit_count 증가
+	                sql = "UPDATE visitCount SET visit_count = visit_count + 1 WHERE visit_date = ? AND page_owner_id = ? AND visitor_id = ?";
+	                pstmt = con.prepareStatement(sql);
+	                pstmt.setString(1, today);
+	                pstmt.setString(2, pageOwnerId);
+	                pstmt.setString(3, visitorId);
+	                pstmt.executeUpdate();
+	            } else {
+	                // 첫 방문이면 레코드 삽입
+	                sql = "INSERT INTO visitCount (visit_date, visit_count, page_owner_id, visitor_id) VALUES (?, 1, ?, ?)";
+	                pstmt = con.prepareStatement(sql);
+	                pstmt.setString(1, today);
+	                pstmt.setString(2, pageOwnerId);
+	                pstmt.setString(3, visitorId);
+	                pstmt.executeUpdate();
 	            }
-
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        } finally {
-	            pool.freeConnection(con, pstmt1);
-	            pool.freeConnection(con, pstmt2);
+	            pool.freeConnection(con, pstmt, rs);
 	        }
-
-	        return flag;
 	    }
 
-	    // 방문자 수 정보 가져오기
-	    public VisitCountBean getVisitCount(String pageOwnerId) {
+	    // 페이지 소유자별 오늘의 방문자 수 조회
+	    public int getTodayVisitorCount(String pageOwnerId) {
 	        Connection con = null;
-	        PreparedStatement pstmt1 = null;
-	        PreparedStatement pstmt2 = null;
+	        PreparedStatement pstmt = null;
 	        ResultSet rs = null;
-	        VisitCountBean visitCountBean = new VisitCountBean();
+	        String sql;
+	        String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+	        int todayCount = 0;
 
 	        try {
 	            con = pool.getConnection();
 
-	            // 오늘 해당 페이지 소유자에 대한 방문자 수 가져오기
-	            String sql1 = "SELECT COUNT(*) FROM visitcount WHERE user_id = ? AND visit_today = CURDATE()";
-	            pstmt1 = con.prepareStatement(sql1);
-	            pstmt1.setString(1, pageOwnerId);
-	            rs = pstmt1.executeQuery();
-	            if (rs.next()) {
-	                visitCountBean.setVisit_today(rs.getInt(1)); // 오늘 방문자 수 저장
-	            }
+	            sql = "SELECT SUM(visit_count) AS today_count FROM visitCount WHERE visit_date = ? AND page_owner_id = ?";
+	            pstmt = con.prepareStatement(sql);
+	            pstmt.setString(1, today);
+	            pstmt.setString(2, pageOwnerId);
+	            rs = pstmt.executeQuery();
 
-	            // 해당 페이지 소유자의 전체 방문자 수 가져오기
-	            String sql2 = "SELECT COUNT(*) FROM visitcount WHERE user_id = ?";
-	            pstmt2 = con.prepareStatement(sql2);
-	            pstmt2.setString(1, pageOwnerId);
-	            rs = pstmt2.executeQuery();
 	            if (rs.next()) {
-	                visitCountBean.setVisit_all(rs.getInt(1)); // 전체 방문자 수 저장
+	                todayCount = rs.getInt("today_count");
 	            }
-
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        } finally {
-	            pool.freeConnection(con, pstmt1, rs);
-	            pool.freeConnection(con, pstmt2);
+	            pool.freeConnection(con, pstmt, rs);
 	        }
 
-	        return visitCountBean;
+	        return todayCount;
+	    }
+
+	    // 페이지 소유자별 총 방문자 수 조회
+	    public int getTotalVisitorCount(String pageOwnerId) {
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+	        String sql;
+	        int totalCount = 0;
+
+	        try {
+	            con = pool.getConnection();
+
+	            sql = "SELECT SUM(visit_count) AS total_count FROM visitCount WHERE page_owner_id = ?";
+	            pstmt = con.prepareStatement(sql);
+	            pstmt.setString(1, pageOwnerId);
+	            rs = pstmt.executeQuery();
+
+	            if (rs.next()) {
+	                totalCount = rs.getInt("total_count");
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return totalCount;
 	    }
 	}
 	
