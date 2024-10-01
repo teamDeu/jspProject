@@ -135,6 +135,7 @@ function frequest_receive_clickCancelBtn(){
 	    xhr.open("GET", "../miniroom/alarmProc.jsp?type=delete&content_type=친구요청&content_num="+document.querySelector(".request_num").value, true); // Alarm 갱신Proc
 	    xhr.onreadystatechange = function () {
 	        if (xhr.readyState === 4 && xhr.status === 200) {
+	        	
 	        }
 	    };
 	    xhr.send();

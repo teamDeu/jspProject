@@ -175,6 +175,9 @@
     .visitor-stats .total {
         color: #4682B4; /* 총 방문자수는 파란색 */
     }
+    .chat_reportBtn{
+    	color: red;
+    }
 </style>
 <script>
 function loadContent(url) {
@@ -379,12 +382,16 @@ function clickAlarm(){
           userNameSpan = document.createElement("span");
           addFriendBtn = document.createElement("button");
           goHomepageBtn = document.createElement("button");
+          reportBtn = document.createElement("button");
+          reportBtn.innerText = "신고하기";
+          reportBtn.classList.add("chat_reportBtn");
           addFriendBtn.innerText = "친구추가";
           goHomepageBtn.innerText = "미니룸 구경가기";
           userNameSpan.innerText = name;
           informationDiv.appendChild(userNameSpan);
           informationDiv.appendChild(addFriendBtn);
           informationDiv.appendChild(goHomepageBtn);
+          informationDiv.appendChild(reportBtn);
           newDiv.onclick = (function(informationDiv) {
               return function() {
                   console.log(informationDiv.style.display);
@@ -413,6 +420,19 @@ function clickAlarm(){
                  location.href = "http://"+location.host+"/jspProject/miniroom/main.jsp?url=" + id;   
               };
           })(id);
+          
+          reportBtn.onclick = (function(senduserid,receiveuserid) {
+              return function() {
+            	  var xhr = new XMLHttpRequest();
+          	    	xhr.open("GET", "../miniroom/reportProc.jsp?report_senduserid="+senduserid+"&report_receiveuserid="+receiveuserid+"&report_type=chat", true); // Alarm 갱신Proc
+          	    	xhr.onreadystatechange = function () {
+          	        if (xhr.readyState === 4 && xhr.status === 200) {
+          	        	alert("신고가 완료되었습니다.");
+          	        }
+          	    };
+          	    xhr.send();
+               };
+           })(localId,id);
           newDiv.appendChild(informationDiv);
             // add the newly created element and its content into the DOM
             if(miniroom){
