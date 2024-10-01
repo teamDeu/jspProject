@@ -182,7 +182,7 @@
         <h1>대시보드</h1>
         <div class="content-cards">
             <div class="card">
-                <h3>사용자 수</h3>
+                <h3>총 점속자</h3>
                 <p>총 1,234명</p>
             </div>
             <div class="card">

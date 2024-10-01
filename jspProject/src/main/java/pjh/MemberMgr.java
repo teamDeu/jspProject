@@ -463,7 +463,7 @@ public class MemberMgr {
 	        return totalCount;  // 총 상품 수 반환
 	    }
 	 // 페이지 소유자별 방문자 수 업데이트
-	    public void updateVisitorCount(String visitId, String userId) {
+	    public void updateVisitorCount(String pageOwnerId, String visitorId) {
 	        Connection con = null;
 	        PreparedStatement pstmt = null;
 	        ResultSet rs = null;
@@ -474,31 +474,29 @@ public class MemberMgr {
 	            con = pool.getConnection();
 
 	            // 오늘의 방문자 수를 조회
-	            sql = "SELECT * FROM visitCount WHERE visit_date = ? AND visit_id = ? AND user_id = ?";
+	            sql = "SELECT * FROM visitCount WHERE visit_date = ? AND page_owner_id = ? AND visitor_id = ?";
 	            pstmt = con.prepareStatement(sql);
 	            pstmt.setString(1, today);
-	            pstmt.setString(2, visitId);
-	            pstmt.setString(3, userId);  // user_id 추가
+	            pstmt.setString(2, pageOwnerId);
+	            pstmt.setString(3, visitorId);
 	            rs = pstmt.executeQuery();
 
 	            if (rs.next()) {
 	                // 이미 방문한 경우 visit_count 증가
-	                sql = "UPDATE visitCount SET visit_count = visit_count + 1 WHERE visit_date = ? AND visit_id = ? AND user_id = ?";
+	                sql = "UPDATE visitCount SET visit_count = visit_count + 1 WHERE visit_date = ? AND page_owner_id = ? AND visitor_id = ?";
 	                pstmt = con.prepareStatement(sql);
 	                pstmt.setString(1, today);
-	                pstmt.setString(2, visitId);
-	                pstmt.setString(3, userId);
-	                int rowsAffected = pstmt.executeUpdate();
-	                System.out.println("Visit count updated. Rows affected: " + rowsAffected);
+	                pstmt.setString(2, pageOwnerId);
+	                pstmt.setString(3, visitorId);
+	                pstmt.executeUpdate();
 	            } else {
 	                // 첫 방문이면 레코드 삽입
-	                sql = "INSERT INTO visitCount (visit_date, visit_count, visit_id, user_id) VALUES (?, 1, ?, ?)";
+	                sql = "INSERT INTO visitCount (visit_date, visit_count, page_owner_id, visitor_id) VALUES (?, 1, ?, ?)";
 	                pstmt = con.prepareStatement(sql);
 	                pstmt.setString(1, today);
-	                pstmt.setString(2, visitId);
-	                pstmt.setString(3, userId);
-	                int rowsAffected = pstmt.executeUpdate();
-	                System.out.println("Visit record inserted. Rows affected: " + rowsAffected);
+	                pstmt.setString(2, pageOwnerId);
+	                pstmt.setString(3, visitorId);
+	                pstmt.executeUpdate();
 	            }
 	        } catch (Exception e) {
 	            e.printStackTrace();
@@ -508,7 +506,7 @@ public class MemberMgr {
 	    }
 
 	    // 페이지 소유자별 오늘의 방문자 수 조회
-	    public int getTodayVisitorCount(String visitId) {
+	    public int getTodayVisitorCount(String pageOwnerId) {
 	        Connection con = null;
 	        PreparedStatement pstmt = null;
 	        ResultSet rs = null;
@@ -519,14 +517,14 @@ public class MemberMgr {
 	        try {
 	            con = pool.getConnection();
 
-	            sql = "SELECT visit_count FROM visitcount WHERE visit_date = ? AND visit_id = ?";
+	            sql = "SELECT SUM(visit_count) AS today_count FROM visitCount WHERE visit_date = ? AND page_owner_id = ?";
 	            pstmt = con.prepareStatement(sql);
 	            pstmt.setString(1, today);
-	            pstmt.setString(2, visitId);
+	            pstmt.setString(2, pageOwnerId);
 	            rs = pstmt.executeQuery();
 
 	            if (rs.next()) {
-	                todayCount = rs.getInt("visit_count");
+	                todayCount = rs.getInt("today_count");
 	            }
 	        } catch (Exception e) {
 	            e.printStackTrace();
@@ -538,7 +536,7 @@ public class MemberMgr {
 	    }
 
 	    // 페이지 소유자별 총 방문자 수 조회
-	    public int getTotalVisitorCount(String visitId) {
+	    public int getTotalVisitorCount(String pageOwnerId) {
 	        Connection con = null;
 	        PreparedStatement pstmt = null;
 	        ResultSet rs = null;
@@ -548,9 +546,9 @@ public class MemberMgr {
 	        try {
 	            con = pool.getConnection();
 
-	            sql = "SELECT SUM(visit_count) AS total_count FROM visitcount WHERE visit_id = ?";
+	            sql = "SELECT SUM(visit_count) AS total_count FROM visitCount WHERE page_owner_id = ?";
 	            pstmt = con.prepareStatement(sql);
-	            pstmt.setString(1, visitId);
+	            pstmt.setString(1, pageOwnerId);
 	            rs = pstmt.executeQuery();
 
 	            if (rs.next()) {
