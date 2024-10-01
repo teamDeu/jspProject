@@ -38,12 +38,12 @@
 // MemberMgr 객체 초기화
    MemberMgr memberMgr = new MemberMgr();
 
-   // 쿠키에서 마지막 방문 시간 확인
+// 쿠키에서 마지막 방문 시간 확인
    String lastVisit = null;
    javax.servlet.http.Cookie[] cookies = request.getCookies();
    if (cookies != null) {
        for (javax.servlet.http.Cookie cookie : cookies) {
-           if (cookie.getName().equals("lastVisit")) {
+           if (cookie.getName().equals("lastVisit_" + pageOwnerId)) {
                lastVisit = cookie.getValue();
            }
        }
@@ -53,20 +53,21 @@
    boolean shouldUpdateVisitorCount = false;
 
    if (lastVisit == null || (currentTime - Long.parseLong(lastVisit)) > 10000) { // 10초 이상 경과 시
-       // 방문자 수 업데이트
-       memberMgr.updateVisitorCount();
+       // 페이지 소유자별 방문자 수 업데이트
+       memberMgr.updateVisitorCount(pageOwnerId, id);
        shouldUpdateVisitorCount = true;
 
        // 마지막 방문 시간을 현재 시간으로 쿠키에 저장
-       javax.servlet.http.Cookie visitCookie = new javax.servlet.http.Cookie("lastVisit", Long.toString(currentTime));
+       javax.servlet.http.Cookie visitCookie = new javax.servlet.http.Cookie("lastVisit_" + pageOwnerId, Long.toString(currentTime));
        visitCookie.setMaxAge(60 * 60 * 24); // 쿠키 유효 기간을 하루로 설정
        response.addCookie(visitCookie);
    }
 
-   // 오늘의 방문자 수 및 전체 방문자 수 가져오기
-   int todayVisitorCount = memberMgr.getTodayVisitorCount();
-   int totalVisitorCount = memberMgr.getTotalVisitorCount();
+   // 페이지 소유자별 오늘의 방문자 수 및 전체 방문자 수 가져오기
+   int todayVisitorCount = memberMgr.getTodayVisitorCount(pageOwnerId);
+   int totalVisitorCount = memberMgr.getTotalVisitorCount(pageOwnerId);
 %>
+
 
 <!DOCTYPE html>
 <html>
