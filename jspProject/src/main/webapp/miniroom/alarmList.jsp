@@ -1,4 +1,5 @@
 
+<%@page import="alarm.AlarmBean"%>
 <%@page import="miniroom.ItemMgr"%>
 <%@page import="pjh.MemberBean"%>
 <%@page import="friend.FriendRequestBean"%>
@@ -7,10 +8,11 @@
     pageEncoding="UTF-8"%>
 <jsp:useBean id="fMgr" class ="friend.FriendMgr"/>
 <jsp:useBean id="uMgr" class ="pjh.MemberMgr"/>
+<jsp:useBean id="aMgr" class ="alarm.AlarmMgr"/>
 <%
 	String id = (String)session.getAttribute("idKey");
 	String url = request.getParameter("url");
-	Vector<FriendRequestBean> vlist = fMgr.getFriendRequest(id);
+	Vector<AlarmBean> vlist = aMgr.getAllAlarm(id);
 	ItemMgr iMgr = new ItemMgr();
 %>
 <head>
@@ -33,7 +35,9 @@
 }
 
 .alarmlist_main_div_header {
+	position :relative;
 	display: flex;
+	align-items :center;
 	gap : 20px;
 	font-size: 28px;
 }
@@ -86,6 +90,20 @@
 .alarm_pagination span.active {
 	color: red;
 }
+
+.alarmlist_main_div_item_read{
+	color : rgba(0,0,0,0.2);
+}
+.alarmlist_main_div_deleteAllBtn{
+	position:absolute;
+	font-size : 20px;
+	right:5px;
+	color : #FFB2B2;
+	cursor : pointer;
+}
+.alarmlist_main_div_deleteAllBtn:hover{
+	color : #DD9090;
+}
 </style>
 
 </head>
@@ -94,22 +112,34 @@
 	<div class ="alarmlist_main_div">
 		<div class ="alarmlist_main_div_header">
 		<div><img src ="./img/alram.png"></div> <span>알림목록</span>
+		<div onclick ="clickAlarmlist_main_div_deleteAllBtn()" class ="alarmlist_main_div_deleteAllBtn">읽은 알림 모두 삭제</div>
 		</div>
 		<ul class ="alarmlist_main_div_list">
 			<%for(int i = 0 ; i < vlist.size() ; i ++){ 
-				FriendRequestBean bean = vlist.get(i);
-				MemberBean user = uMgr.getMember(bean.getRequest_senduserid());
+				AlarmBean alarmBean = vlist.get(i);
+				String alarmType = alarmBean.getAlarm_type();
+				int alarmContentNum = alarmBean.getAlarm_content_num();
+				String alarmAt = alarmBean.getAlarm_at();
+				String alarmUser_id = alarmBean.getAlarm_user_id();
+				int alarmNum = alarmBean.getAlarm_num();
+				boolean alarmRead = alarmBean.isAlarm_read();
+				FriendRequestBean fBean = null;
+				MemberBean fUser = null;
+				if(alarmType.equals("친구요청")){
+					fBean = fMgr.getFriendRequestItem(alarmContentNum);
+					fUser = uMgr.getMember(fBean.getRequest_senduserid());
+				}
 				%>
-				<li class ="alarmlist_main_div_item">
-					<input type = "hidden" name = "character" value ="<%=iMgr.getUsingCharacter(bean.getRequest_senduserid()).getItem_path()%>">
-					<input type = "hidden" name = "name" value ="<%=user.getUser_name()%>">
-					<input type = "hidden" name = "type" value ="<%=bean.getRequest_type()%>">
-					<input type = "hidden" name = "comment" value ="<%=bean.getRequest_comment() %>">
-					<input type = "hidden" name = "num" value ="<%=bean.getRequest_num() %>">
-					<input type = "hidden" name = "request_senduserid" value ="<%=bean.getRequest_senduserid() %>">
-					<span class ="alarmlist_main_div_item_readbool">읽음</span>
-					<span onclick = "clickAlarmItem(event)" class ="alarmlist_main_div_item_title"><%=user.getUser_name() %>님이 <%=bean.getRequest_type()== 1 ? "일촌" : "이촌" %> 요청을 보냈습니다.</span>
-					<span class ="alarmlist_main_div_item_requestAt"><%=bean.getRequest_at() %></span>
+				<li id = <%=alarmNum%> class ="alarmlist_main_div_item">
+					<input type = "hidden" name = "character" value ="<%=iMgr.getUsingCharacter(fBean.getRequest_senduserid()).getItem_path()%>">
+					<input type = "hidden" name = "name" value ="<%=fUser.getUser_name()%>">
+					<input type = "hidden" name = "type" value ="<%=fBean.getRequest_type()%>">
+					<input type = "hidden" name = "comment" value ="<%=fBean.getRequest_comment() %>">
+					<input type = "hidden" name = "num" value ="<%=fBean.getRequest_num() %>">
+					<input type = "hidden" name = "request_senduserid" value ="<%=fBean.getRequest_senduserid() %>">
+					<span class ="alarmlist_main_div_item_readbool <%if(alarmRead){%>alarmlist_main_div_item_read<%}%>">읽음</span>
+					<span onclick = "clickAlarmItem(event)" class ="alarmlist_main_div_item_title"><%=fUser.getUser_name() %>님이 <%=fBean.getRequest_type()== 1 ? "일촌" : "이촌" %> 요청을 보냈습니다.</span>
+					<span class ="alarmlist_main_div_item_requestAt"><%=fBean.getRequest_at() %></span>
 				</li>
 			<%} %>
 				
@@ -123,11 +153,27 @@ const alarm_itemsPerPage = 4; // 페이지당 8개 아이템
 let alarm_currentPage = 1; // 현재 페이지
 let alarm_items = []; // 모든 아이템을 담을 배열
 
+function clickAlarmlist_main_div_deleteAllBtn(){
+	alarm_items = alarm_items.filter((e) => e.querySelector(".alarmlist_main_div_item_read") == null);
+	displayalarm_items();
+    alarm_updatePagination();
+    
+ 
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "../miniroom/alarmProc.jsp?type=deleteAll", true); // Alarm 갱신Proc
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+        }
+    };
+    xhr.send();
+}
 // 페이지를 바꾸는 함수
 function alarm_changePage(page) {
     alarm_currentPage = page;
     displayalarm_items();
     alarm_updatePagination();
+    
+    
 }
 
 // 아이템을 보여주는 함수
@@ -138,8 +184,7 @@ function displayalarm_items() {
 
     const alarm_itemsContainer = document.querySelector(".alarmlist_main_div_list");
     alarm_itemsContainer.innerHTML = ''; // 기존 아이템 제거
-	
-    if(alarm_items.length){
+    if(alarm_items.filter((e) => e.querySelector(".alarmlist_main_div_item_read") == null).length){
     	document.querySelector(".main_profile_alarm_isalarm").style.display = "block";
     }
     else{
@@ -207,13 +252,21 @@ function clickAlarmItem(event){
 	
     // 값을 가져와서 modal에 설정
     openRequestModalReceive(characterInput.value,nameInput.value,typeInput.value,commentInput.value,numInput.value,idInput.value);
-    fr_form.querySelector(".alarmlist_main_div_item_readbool").style.color = "rgba(0,0,0,0.2)"
+    fr_form.querySelector(".alarmlist_main_div_item_readbool").classList.add("alarmlist_main_div_item_read");
     //alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != numInput.value);
     console.log(alarm_items);
     
     
     displayalarm_items();
     alarm_updatePagination();
+    
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "../miniroom/alarmProc.jsp?type=read&num="+fr_form.id, true); // Alarm 갱신Proc
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+        }
+    };
+    xhr.send();
     
 }
 

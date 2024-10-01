@@ -20,21 +20,6 @@
     align-items: center;
 }
 
-.board-form {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-    position: absolute;
-    top: 55px; 
-	width: 780px; /* 너비 조정 */
-	border: 1px solid #BAB9AA;
-	padding: 20px; /* 내부 여백 */
-    background-color: #F7F7F7; /* 배경 색상 */
-    margin: 20px auto; /* 위아래 간격 및 중앙 정렬 */
-    height: 610px; 
-    
-}
 
 .board-form input[type="text"] {
 	font-family: 'NanumTobak', sans-serif;
@@ -64,9 +49,6 @@
     font-size: 28px;
     cursor: pointer;
     color: #f46a6a;
-    
-
-    
 }
 
 .list-button {
@@ -129,90 +111,6 @@
 	max-width: 200px;
 	display: none;
 	margin-bottom: 10px;
-}
-
-/* 하단 버튼 및 설정 스타일 */
-.button-options {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    background-color: #F7F7F7; /* 배경색 */
-    padding: 10px 20px;
-    box-sizing: border-box;
-    border-top: 1px solid #BAB9AA;
-    margin: 15px 0; 
-    color: #424242; /* 폰트 컬러 추가 */
-}
-
-.button-options .options-group{
-    display: flex;
-    align-items: center;
-    width: 180px;
-    color: #424242; /* 폰트 컬러 추가 */
-    border: 1px solid #ccc;
-    height: 35px;
-    background-color: #fff;
-    margin:0 0 0 -20px;
-    
-    
-}
-
-.button-options .options-group2 {
-	display: flex;
-	align-items: center;
-	width: 160px;
-	color: #424242;
-	border: 1px solid #ccc;
-	height: 35px;
-	background-color: #fff;
-	margin:0 40px 0 -200px; 
-}
-
-
-.button-options .options-group label,
-.button-options .options-group2 label {
-    font-size: 21px;
-    margin-right: 10px;
-    margin-left: 10px;
-    color: #424242; /* 폰트 컬러 추가 */
-    
-}
-
-
-
-.button-options .options-group input[type="checkbox"],
-.button-options .options-group2 input[type="checkbox"] {
-	border: 1px solid #424242;
-    margin: 0 7px 0 7px;
-    color: #424242; /* 폰트 컬러 추가 */
-}
-
-.button-options .button-group {
-    display: flex;
-    color: #424242; /* 폰트 컬러 추가 */
-    margin: 0 -20px 0 0 ;
-}
-
-.button-options .button-group button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100px;
-    height: 35px;
-    margin-left: 10px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    cursor: pointer;
-    font-size: 20px;
-    font-family: 'NanumTobak', sans-serif;
-    color: #424242; 
-    
-}
-
-.button-options .button-group button img {
-    margin-right: 5px;
-    width: 20px;
-    height: 20px;
 }
 
 

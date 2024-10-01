@@ -1,23 +1,28 @@
+<%@page import="board.BoardFolderMgr"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+	BoardFolderMgr mgr = new BoardFolderMgr();
+	int latestNum = mgr.getLatestBoardFolder().getFolder_num();
+	String id = (String)session.getAttribute("idKey");
+	
+%>
 <!-- bInnerbox1.jsp -->
 <div class="folder-container">
     <div class="folder-input-container" id="folderInputContainer">
-        <img src="img/folder.png" alt="Folder Icon">
+        <img src="../seyoung/img/folder.png" alt="Folder Icon">
         <input type="text" id="folderNameInput" placeholder="폴더명을 입력하세요.">
         <button onclick="addFolder()">
-            <img src="img/plus.png">
+            <img src="../seyoung/img/plus.png">
         </button>
-        <!-- 폴더 선택 후 boardWrite.jsp로 넘길 hidden input -->
-        <input type="hidden" name="board_folder" id="board-folder">
     </div>     
     <button class="folder-manage-button" id="folderManageButton" onclick="toggleFolderInput()">폴더 관리 하기</button>
 </div>
 
 <script>
-    var userId = '1111'; // 실제로는 세션에서 사용자 ID를 가져와야 합니다.
+    var userId = '<%=id%>'; // 실제로는 세션에서 사용자 ID를 가져와야 합니다.
     var selectedFolderItem = null; // 현재 선택된 폴더를 저장할 변수
-
+	var latestNum = <%=latestNum%>;
     function toggleFolderInput() {
         var inputContainer = document.getElementById('folderInputContainer');
         var deleteButtons = document.querySelectorAll('.delete-button'); // 모든 삭제 버튼을 가져옴
@@ -45,7 +50,7 @@
 	
 	    if (folderName !== '') {
 	        var xhr = new XMLHttpRequest();
-	        xhr.open('POST', 'bFolderAddProc.jsp', true);
+	        xhr.open('POST', '../seyoung/bFolderAddProc.jsp', true);
 	        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	
 	        xhr.onreadystatechange = function() {
@@ -81,14 +86,14 @@
 	    folderItem.setAttribute('data-folder-num', folderNum);
 	
 	    var folderIcon = document.createElement('img');
-	    folderIcon.src = 'img/folder.png'; // 기본 아이콘 설정
+	    folderIcon.src = '../seyoung/img/folder.png'; // 기본 아이콘 설정
 	    folderIcon.alt = 'Folder Icon';
 	
 	    var folderNameSpan = document.createElement('span');
 	    folderNameSpan.textContent = folderName;
 	
 	    var deleteButton = document.createElement('img');
-	    deleteButton.src = 'img/bin.png';
+	    deleteButton.src = '../seyoung/img/bin.png';
 	    deleteButton.classList.add('delete-button');
 	    deleteButton.style.display = 'flex';
 	    deleteButton.onclick = function(event) {
@@ -99,7 +104,6 @@
 	    folderItem.appendChild(folderIcon);
 	    folderItem.appendChild(folderNameSpan);
 	    folderItem.appendChild(deleteButton);
-	
 	    folderItem.onclick = function() {
 	        selectFolder(folderItem); // 폴더 선택 시 selectFolder 함수 호출
 	    };
@@ -116,7 +120,6 @@
     function selectFolder(folderItem) {
         var folderIcon = folderItem.querySelector('img');
         var folderNum = folderItem.getAttribute('data-folder-num');
-
         // 폴더 번호가 유효하지 않을 경우 처리
         if (!folderNum || isNaN(folderNum)) {
             console.error("폴더 번호가 유효하지 않습니다.");
@@ -127,18 +130,20 @@
         if (folderIcon.src.includes('folder.png')) {
             if (selectedFolderItem) {
                 // 이전에 선택된 폴더가 있으면 아이콘과 스타일 원래대로
-                selectedFolderItem.querySelector('img').src = 'img/folder.png';
+                selectedFolderItem.querySelector('img').src = '../seyoung/img/folder.png';
                 selectedFolderItem.querySelector('span').style.fontWeight = 'normal';
             }
 
             // 현재 폴더를 선택된 상태로 변경
-            folderIcon.src = 'img/folder2.png'; // 아이콘 변경
+            folderIcon.src = '../seyoung/img/folder2.png'; // 아이콘 변경
             folderItem.querySelector('span').style.fontWeight = 'bold'; // 글자 굵기 변경
             selectedFolderItem = folderItem; // 현재 선택된 폴더 갱신
-
+			clickOpenBox('boardList');
+			loadBoardList(folderNum);
+			document.getElementById("board-folder").value = selectedFolderItem;
             // AJAX 요청을 통해 서버에서 폴더 정보 가져오기
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'bgetFolderProc.jsp?folderNum=' + encodeURIComponent(folderNum), true);
+            xhr.open('GET', '../seyoung/bgetFolderProc.jsp?folderNum=' + encodeURIComponent(folderNum), true);
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     console.log('선택된 폴더 정보:', xhr.responseText);
@@ -148,23 +153,17 @@
 
         } else if (folderIcon.src.includes('folder2.png')) {
             // 선택된 상태일 때 다시 클릭하면 선택 해제
-            folderIcon.src = 'img/folder.png'; // 아이콘 원래대로
+            folderIcon.src = '../seyoung/img/folder.png'; // 아이콘 원래대로
             folderItem.querySelector('span').style.fontWeight = 'normal'; // 글자 굵기 원래대로
             selectedFolderItem = null; // 선택 해제
+            clickOpenBox('board');
         }
     }
-
-
-
-
-
-
-    
 
     // 폴더 목록 로드
 	function loadFolders() {
 	    var xhr = new XMLHttpRequest();
-	    xhr.open('GET', 'bFolderListProc.jsp?user_id=' + encodeURIComponent(userId), true);
+	    xhr.open('GET', '../seyoung/bFolderListProc.jsp?user_id=' + encodeURIComponent(userId), true);
 	    xhr.onreadystatechange = function() {
 	        if (xhr.readyState === 4 && xhr.status === 200) {
 	            var folderContainer = document.querySelector('.folder-container');
@@ -187,14 +186,14 @@
 	                    folderItem.setAttribute('data-folder-num', folder.folder_num); 
 	
 	                    var folderIcon = document.createElement('img');
-	                    folderIcon.src = 'img/folder.png'; // 초기 아이콘은 folder.png로 설정
+	                    folderIcon.src = '../seyoung/img/folder.png'; // 초기 아이콘은 folder.png로 설정
 	                    folderIcon.alt = 'Folder Icon';
 	
 	                    var folderNameSpan = document.createElement('span');
 	                    folderNameSpan.textContent = folder.folder_name;
 	
 	                    var deleteButton = document.createElement('img');
-	                    deleteButton.src = 'img/bin.png';
+	                    deleteButton.src = '../seyoung/img/bin.png';
 	                    deleteButton.classList.add('delete-button');
 	                    deleteButton.style.display = 'none';
 	                    deleteButton.onclick = function() {
@@ -212,9 +211,6 @@
 	                    folderContainer.appendChild(folderItem);
 	
 	                    // 첫 번째 폴더를 자동으로 선택
-	                    if (index === 0) {
-	                        selectFolder(folderItem); // 첫 번째 폴더를 자동 선택
-	                    }
 	                });
 	
 	                updateFolderPositions(); 
@@ -224,9 +220,6 @@
 	    xhr.send();
 	}
 
-
-
-
     // 폴더 삭제 함수
     function deleteFolder(folderNum, folderItem) {
 	    if (!folderNum || isNaN(folderNum)) {
@@ -235,7 +228,7 @@
 	    }
 	
 	    var xhr = new XMLHttpRequest();
-	    xhr.open('POST', 'bFolderDelProc.jsp', true);
+	    xhr.open('POST', '../seyoung/bFolderDelProc.jsp', true);
 	    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	
 	    xhr.onreadystatechange = function() {

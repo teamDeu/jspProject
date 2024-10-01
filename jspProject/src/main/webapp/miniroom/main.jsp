@@ -1,4 +1,4 @@
-<%@page import="pjh.VisitCountBean"%>
+<%@page import="pjh.MemberMgr"%>
 <%@page import="pjh.MemberBean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
    pageEncoding="UTF-8"%>
@@ -21,14 +21,6 @@
       pageOwnerId = id;
    }
 
-   // 방문자 수 업데이트 (방문자가 페이지 소유자와 다를 때만 카운트)
-   if (!pageOwnerId.equals(id)) {
-       mMgr.updateVisitCount(pageOwnerId, id);
-   }
-
-   // 방문자 수 가져오기
-   VisitCountBean visitCount = mMgr.getVisitCount(pageOwnerId);
-
 
    // 캐릭터 및 배경 이미지 설정
    String character = iMgr.getUsingCharacter(id).getItem_path();
@@ -43,6 +35,37 @@
 
    // 사용자 정보 가져오기
    MemberBean userBean = mMgr.getMember(id);
+// MemberMgr 객체 초기화
+   MemberMgr memberMgr = new MemberMgr();
+
+   // 쿠키에서 마지막 방문 시간 확인
+   String lastVisit = null;
+   javax.servlet.http.Cookie[] cookies = request.getCookies();
+   if (cookies != null) {
+       for (javax.servlet.http.Cookie cookie : cookies) {
+           if (cookie.getName().equals("lastVisit")) {
+               lastVisit = cookie.getValue();
+           }
+       }
+   }
+
+   long currentTime = System.currentTimeMillis();
+   boolean shouldUpdateVisitorCount = false;
+
+   if (lastVisit == null || (currentTime - Long.parseLong(lastVisit)) > 10000) { // 10초 이상 경과 시
+       // 방문자 수 업데이트
+       memberMgr.updateVisitorCount();
+       shouldUpdateVisitorCount = true;
+
+       // 마지막 방문 시간을 현재 시간으로 쿠키에 저장
+       javax.servlet.http.Cookie visitCookie = new javax.servlet.http.Cookie("lastVisit", Long.toString(currentTime));
+       visitCookie.setMaxAge(60 * 60 * 24); // 쿠키 유효 기간을 하루로 설정
+       response.addCookie(visitCookie);
+   }
+
+   // 오늘의 방문자 수 및 전체 방문자 수 가져오기
+   int todayVisitorCount = memberMgr.getTodayVisitorCount();
+   int totalVisitorCount = memberMgr.getTotalVisitorCount();
 %>
 
 <!DOCTYPE html>
@@ -144,6 +167,15 @@ function clickOpenBox(id){
       anotherBox[i].style.display ="none";
    }
    openBox.style.display = "flex";
+   
+   if(id.includes("board")){
+	   document.getElementById("boardInnerBox").style.display = "block";
+	   document.getElementById("normalInnerBox").style.display = "none";
+   }
+   else{
+	   document.getElementById("boardInnerBox").style.display = "none";
+	   document.getElementById("normalInnerBox").style.display = "block";
+   }
 }
 function clickUser(event){
    console.log(event);
@@ -443,13 +475,13 @@ function clickAlarm(){
          <div class="solid-box">
          <!-- 방문자 수 표시 -->
             <div class="visitor-stats">
-                <div class="today">
-                    TODAY: <%= visitCount.getVisit_today() %>
-                </div>
-                <div class="total">
-                    TOTAL: <%= visitCount.getVisit_all() %>
-                </div>
-            </div>
+        <div class="today">
+            TODAY: <%= todayVisitorCount %>
+        </div>
+        <div class="total">
+            TOTAL: <%= totalVisitorCount %>
+        </div>
+    </div>
 
             <div class ="main_profile_alram">
             <img class="main_profile_alram_img" onclick ="clickAlarm()" src="./img/alram.png">
@@ -459,10 +491,13 @@ function clickAlarm(){
             </jsp:include>
             </div>
             
-            <div class="inner-box-1">
+            <div id = "normalInnerBox" class="inner-box-1">
                <jsp:include page="profile.jsp">
                   <jsp:param value='<%=url %>' name="url"/>
                </jsp:include>
+            </div>
+            <div id = "boardInnerBox" class="inner-box-1" style = "display :none">
+               <jsp:include page="../seyoung/bInnerbox1.jsp"></jsp:include>
             </div>
             <!-- 이미지가 박스 -->
             <div class="image-box">
@@ -492,7 +527,13 @@ function clickAlarm(){
                 </jsp:include>
 	         </div> 
 	         <div id="board" class="inner-box-2" style="display: none">
-	         
+	         	<jsp:include page ="../seyoung/board.jsp"></jsp:include>
+	         </div>
+	         <div id="boardList" class ="inner-box-2" style="display:none">
+	         	<jsp:include page ="../seyoung/boardList.jsp"></jsp:include>
+	         </div>
+	         <div id="boardWrite" class ="inner-box-2" style="display:none">
+	         	<jsp:include page ="../seyoung/boardWrite.jsp"></jsp:include>
 	         </div>
 	         <div id="music" class="inner-box-2" style="display: none">
 	         </div>

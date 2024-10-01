@@ -28,10 +28,11 @@
                 } catch (Exception e) {
                     formattedDate = board.getBoard_at(); // 이미 String이라면 그대로 사용
                 }
+                
 %>
                 <tr>
                     <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
-                    <td><a href="boardDetail.jsp?boardNum=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
+                    <td><a href="../seyoung/boardDetail.jsp?boardNum=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
                     <td><%= board.getBoard_id() %></td>
                     <td><%= formattedDate %></td>
                     <td><%= board.getBoard_views() %></td>
