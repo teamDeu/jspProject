@@ -83,19 +83,23 @@ try {
 	font-family: 'NanumTobak';
 	background-color: #F5F5F5;
 	text-align: center;
+	min-height: 80vh; /* 전체 화면을 차지하도록 설정 */
 	margin: 0;
 	padding: 0;
 	overflow: scroll;
 }
 
 .storecontainer {
-	width: 95%;
-	margin: 0 auto;
-	padding: 20px;
-	background-color: #FFF;
-	border-radius: 10px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	position: relative;
+    width: 95%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    height: 80vh; /* 고정된 높이 설정 */
+    max-height: 80vh; /* 최대 높이 설정 */
+    overflow-y: auto; /* 콘텐츠가 넘칠 경우 스크롤 표시 */
 }
 /* 상점 제목 */
 .store-title {
