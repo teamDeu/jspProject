@@ -1,22 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<jsp:useBean id="mgr" class="board.BoardWriteMgr" />
-
-<%
-    // 현재 로그인한 사용자 ID를 세션에서 가져옴
-    String sessionUserId = (String) session.getAttribute("idKey");
-	if (sessionUserId == null) {
-	    sessionUserId = "1111"; // 디버깅 용도로 기본값 설정
-	}
-%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>CloverStory</title>
 <!-- Linking the CSS file -->
-<link rel="stylesheet" type="text/css" href="css/style.css">
-<link rel="stylesheet" type="text/css" href="css/boardWrite.css">
+<link rel="stylesheet" type="text/css" href="../seyoung/css/boardWrite.css">
 
 <style>
 /* inner-box-2의 게시판 텍스트 스타일 */
@@ -33,25 +23,20 @@
 
 
 /* inner-box-2의 내용이 가운데 정렬*/
-.inner-box-2 {
-    display: flex;
-    justify-content: left;
-    align-items: center;
-}
 
 .board-form {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     padding: 10px;
-    position: absolute;
-    top: 60px; 
 	width: 780px; /* 너비 조정 */
 	border: 1px solid #BAB9AA;
 	padding: 20px; /* 내부 여백 */
     background-color: #F7F7F7; /* 배경 색상 */
     margin: 20px 32px; /* 위아래 간격 및 중앙 정렬 */
     height: 610px; 
+    position:relative;
+    top : 25px;
     
 }
 
@@ -206,13 +191,13 @@
     color: #424242; /* 폰트 컬러 추가 */
 }
 
-.button-options .button-group {
+.button-options .button-group-write {
     display: flex;
     color: #424242; /* 폰트 컬러 추가 */
     margin: 0 -20px 0 0 ;
 }
 
-.button-options .button-group button {
+.button-options .button-group-write button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -228,7 +213,7 @@
     
 }
 
-.button-options .button-group button img {
+.button-options .button-group-write button img {
     margin-right: 5px;
     width: 20px;
     height: 20px;
@@ -293,19 +278,6 @@
 	border-radius: 10px;
 }
 
-.folder-input-container {
-    display: none; /* 처음에는 숨겨져 있도록 설정 */
-    align-items: center; 
-    width: 80%;
-    padding: 5px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;    
-  	position: absolute; /* 요소를 부모 기준으로 절대 위치에 배치 */
-    top: 622px; /* 하단에서 40px 위로 */
- 	left: 8%; 
-    
-}
 
 .folder-input-container img {
     width: 27px; 
@@ -524,95 +496,65 @@
         }
     });
 
- 	// 폴더 선택 시 폴더 번호를 hidden input에 저장
-    function selectFolder(folderNum) {
+    // 폴더 선택 시 히든 필드에 폴더 번호 저장
+    /* function selectFolder(folderNum) {
         var boardFolderInput = document.getElementById('board-folder');
         if (boardFolderInput) {
-            boardFolderInput.value = folderNum; // 폴더 번호를 hidden input에 저장
+            boardFolderInput.value = folderNum;
         }
     }
 
-    function submitBoard() {
-        var boardTitle = document.querySelector('input[name="board_title"]').value;
-        var boardContent = document.getElementById('board-content').innerText; // contenteditable에서 텍스트 가져오기
-        var boardVisibility = document.querySelector('input[name="board_visibility"]:checked').value;
-        var boardAnswerType = document.querySelector('input[name="board_answertype"]:checked').value;
-        var boardFolder = document.getElementById('board-folder').value;
-        var boardId = "<%= sessionUserId %>";
+    function onFolderSelected(folderNum) {
+        selectFolder(folderNum);
+    } */
 
-        // 데이터 검증
-        if (!boardTitle.trim()) {
-            alert("제목을 입력해주세요.");
-            return;
+    // 폼 제출 전에 게시글 내용을 textarea에 복사하여 전송
+    function copyContentToTextarea() {
+        var boardContentTextarea = document.getElementById('board-content-text');
+        var boardContentDiv = document.getElementById('board-content');
+        if (boardContentTextarea && boardContentDiv) {
+            boardContentTextarea.value = boardContentDiv.innerHTML; // textarea에 내용 복사
         }
-        if (!boardContent.trim()) {
-            alert("내용을 입력해주세요.");
-            return;
+    }
+
+    // 폼 제출 시 폴더 번호가 있는지 확인
+    function validateForm() {
+        var boardFolderInput = document.getElementById('board-folder');
+        if (!boardFolderInput.value) {
+            alert('폴더를 선택해 주세요.');
+            return false;
         }
+        return true;
+    }
 
-        // FormData 객체 생성 (이미지 업로드를 위해 사용)
-        var formData = new FormData();
-        formData.append("board_title", boardTitle);
-        formData.append("board_content", boardContent);
-        formData.append("board_visibility", boardVisibility);
-        formData.append("board_answertype", boardAnswerType);
-        formData.append("board_folder", boardFolder);
-        formData.append("board_id", boardId);
-
-        var fileInput = document.getElementById('file-input');
-        if (fileInput.files.length > 0) {
-            formData.append("image_file", fileInput.files[0]);
-        }
-
-        // AJAX 요청 보내기
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "bWriteAddProc.jsp", true);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                var response = xhr.responseText.trim();
-                if (response === 'success') {
-                    alert("게시글이 성공적으로 작성되었습니다.");
-                    location.href = 'boardList.jsp'; // 성공 시 목록 페이지로 이동
-                } else {
-                    alert("게시글 작성에 실패했습니다. 다시 시도해주세요.");
+    document.addEventListener('DOMContentLoaded', function() {
+        // 폼 제출 시 폴더 번호와 내용 복사
+        var form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                if (!validateForm()) {
+                    event.preventDefault(); // 폴더가 선택되지 않았으면 제출 중단
                 }
-            } else {
-                alert("서버 오류가 발생했습니다.");
-            }
-        };
-        xhr.send(formData); // 폼 데이터 전송
-    }
-    
+                copyContentToTextarea(); // 게시글 내용을 textarea에 복사
+            });
+        }
+
+        // 폴더 선택 시 이벤트 핸들러 추가
+        var folderItems = document.querySelectorAll('.folder-item');
+        folderItems.forEach(function(folderItem) {
+            folderItem.addEventListener('click', function() {
+                var folderNum = folderItem.getAttribute('data-folder-num');
+                selectFolder(folderNum); // 폴더 선택 시 폴더 번호 설정
+            });
+        });
+    });
 </script>
 
 </head>
-<body>
-<div class="container">
-    <div class="header">
-        <img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
-        <div class="settings">
-            <a href="#">설정</a> 
-            <a href="#">로그아웃</a>
-        </div>
-    </div>
-    <div class="dashed-box">
-        <div class="solid-box">
-            <div class="inner-box-1">
-                <!-- 폴더 관리하기 섹션 -->
-                <jsp:include page="bInnerbox1.jsp"/>	        
-            </div>
-            <div class="image-box">
-                <img src="img/img1.png" alt="Image between boxes 1" class="between-image"> 
-                <img src="img/img1.png" alt="Image between boxes 2" class="between-image">
-            </div>
-            <div align="center" class="inner-box-2">
-                <!-- 게시글 작성 폼 -->
-                <form action="bWriteAddProc.jsp" method="post" enctype="multipart/form-data">
+<!-- 게시글 작성 폼 -->
+                <form action="../seyoung/bWriteAddProc.jsp" method="post" enctype="multipart/form-data">
                     <h1 class="board-title">게시판</h1>
-                    <button type="button" class="list-button" onclick="location.href='boardList.jsp'">목록</button>
-					
-					<!-- 현재 로그인한 사용자 ID를 숨겨서 폼에 추가 -->
-                    <input type="hidden" name="board_id" value="<%= sessionUserId %>">
+                    <button type="button" class="list-button" onclick="clickOpenBox('boardList')">목록</button>
 					
                     <!-- 폴더 선택 시 폴더 번호 저장 -->
                     <input type="hidden" name="board_folder" id="board-folder" value="">
@@ -620,7 +562,7 @@
                     <div class="board-form">
                         <div class="title-container">
                             <!-- 게시글 제목 입력 -->
-                            <input type="text" name="board_title" placeholder=" 제목을 입력해주세요.">
+                            <input type="text" name="board_title" placeholder=" 제목을 입력해주세요." required>
                             <!-- 등록 버튼 -->
                             <button type="submit" class="register-button">등록</button>
                         </div>          
@@ -649,28 +591,12 @@
                             </div>
 
                             <!-- 파일 첨부 버튼 -->
-                            <div class="button-group">
+                            <div class="button-group-write">
                                 <button type="button" onclick="handleFileSelect()">
-                                    <img src="img/photo-icon.png" alt="사진">사진
+                                    <img src="../seyoung/img/photo-icon.png" alt="사진">사진
                                 </button>
                             </div>
                         </div>
                     </div>
                 </form>
-            </div>          
-        </div>
-    </div>
-    
-    <div class="button-container">
-        <button class="custom-button">홈</button>
-        <button class="custom-button">프로필</button>
-        <button class="custom-button">미니룸</button>
-        <button class="custom-button">게시판</button>
-        <button class="custom-button">방명록</button>
-        <button class="custom-button">상점</button>
-        <button class="custom-button">게임</button>
-        <button class="custom-button">음악</button>
-    </div>
-</div>
-</body>
 </html>

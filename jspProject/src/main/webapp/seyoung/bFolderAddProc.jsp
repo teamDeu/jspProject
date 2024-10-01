@@ -12,7 +12,7 @@
     // 폴더명과 사용자 ID를 파라미터로 받음
     String folderName = request.getParameter("folderName");
     String userId = request.getParameter("user_id");
-
+	
     // 파라미터 유효성 검사
     if (folderName != null && !folderName.trim().isEmpty() && userId != null) {
         BoardFolderMgr folderMgr = new BoardFolderMgr();
@@ -23,7 +23,8 @@
         
         // 폴더 추가
         if (folderMgr.addFolder(folderBean)) {
-            result = "success";
+        	int latestNum = mgr.getLatestBoardFolder().getFolder_num();
+            result = "success," + latestNum;
         }
     }
 
