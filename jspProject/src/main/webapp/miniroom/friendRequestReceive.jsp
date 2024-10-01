@@ -114,14 +114,15 @@ function frequest_receive_clickCancelBtn(){
 	   	userId = fr_modal.querySelector(".request_senduserid").value;
 	   	userName = fr_modal.querySelector(".request_user_name_font").innerText;
 	   	userCharacter = fr_modal.querySelector(".request_profile_img").src;
+	   	requestType = fr_modal.querySelector('.request_type_span').innerText;
 	   	connectId = '<%=connectId%>'
 	   	
 		if(!isFriend(connectId,userId)){
 			if(url == userId){
-				submitFriendRequest(connectId,localName,localCharacter);
+				submitFriendRequest(connectId,localName,localCharacter,requestType);
 			}
 			else if(url == connectId){
-				submitFriendRequest(userId,userName,userCharacter);
+				submitFriendRequest(userId,userName,userCharacter,requestType);
 			}
 			
 		}
@@ -137,7 +138,6 @@ function frequest_receive_clickCancelBtn(){
 	        }
 	    };
 	    xhr.send();
-	    
 		displayalarm_items();
 	    alarm_updatePagination();
 	}

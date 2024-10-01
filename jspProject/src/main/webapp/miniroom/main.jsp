@@ -265,23 +265,42 @@ function clickAlarm(){
                 	 userId = rawdata[1];
                 	 userName = rawdata[2];
                 	 userCharacter = rawdata[3];
+                	 requestType = rawdata[4];
                 	 flag = isFriend(localId,userId);
-                	 const profileDiv = 
-             	    	'<div onclick="onclickMainProfileFriendsDiv(this)" class="main_profile_friends_div friends_type_first">'+
-             	        '<div class="profile_function_div_main" style="display : none">' +
-             	            '<div class="profile_function_div">' +
-             	                '<span>'+userName+'</span>' +
-             	                (flag ? "<button onclick = 'onclickDeleteFriend("+localId+","+userId+","+userName+")'>친구삭제</button>" :
-             	                	"<button onclick='onclickAddFriend("+localId+","+userId+","+userCharacter+","+userName+")''>친구추가</button>")
-             	                +
-             	                '<button onclick="onclickGoHomePage('+userId+')">미니룸 구경가기</button>' +
-             	            '</div>' +
-             	        '</div>' +
-             	        '<img class="main_profile_friends" src="'+userCharacter+'">' +
-             	        '<span class="main_profile_friends_name">'+userName+'</span>'+
-             	        '</div>'+
-             	        '</div>';
-             	    document.querySelector('.main_profile_friends_list').innerHTML += profileDiv;
+                	 
+                	 const createProfileDiv = (userName, userId, userCharacter, localId, flag) => {
+                		 const profileDiv = 
+                			    '<div onclick="onclickMainProfileFriendsDiv(this)" class="main_profile_friends_div friends_type_first">' +
+                			        '<div class="profile_function_div_main" style="display: none;">' +
+                			            '<div class="profile_function_div">' +
+                			                '<span>' + userName + '</span>' +
+                			                (flag ? 
+                			                    '<button onclick="onclickDeleteFriend(' + localId + ', ' + userId + ', \'' + userName + '\')">친구삭제</button>' :
+                			                    '<button onclick="onclickAddFriend(' + localId + ', ' + userId + ', \'' + userCharacter + '\', \'' + userName + '\')">친구추가</button>'
+                			                ) +
+                			                '<button onclick="onclickGoHomePage(' + userId + ')">미니룸 구경가기</button>' +
+                			            '</div>' +
+                			        '</div>' +
+                			        '<img class="main_profile_friends" src="' + userCharacter + '">' +
+                			        '<span class="main_profile_friends_name">' + userName + '</span>' +
+                			    '</div>';
+                		    // 임시 div 생성
+                		    const tempDiv = document.createElement('div');
+                		    tempDiv.innerHTML = profileDiv;
+
+                		    // 첫 번째 자식 요소를 반환
+                		    return tempDiv.firstChild;
+                		};
+                	const profileDiv = createProfileDiv(userName,userId,userCharacter,localId,flag);
+                	
+                	 if(requestType == "일촌"){
+              			friend_items_first.push(profileDiv)
+              			changeFriendType(1);
+              		}
+              		else if(requestType == "이촌"){
+              			friend_items_second.push(profileDiv)
+              			changeFriendType(2);
+              		}
                  }
             };
             ws.onclose = function() {
@@ -300,8 +319,8 @@ function clickAlarm(){
         	dataSeparator + localId;
         	ws.send(message);
         }
-        function submitFriendRequest(username,userid,usercharacter){
-        	var message = "submitFriendRequest" + dataSeparator + username + dataSeparator + userid + dataSeparator + usercharacter;
+        function submitFriendRequest(username,userid,usercharacter,requestType){
+        	var message = "submitFriendRequest" + dataSeparator + username + dataSeparator + userid + dataSeparator + usercharacter + dataSeparator + requestType;
         	ws.send(message);
         }
         function sendMessage() {
