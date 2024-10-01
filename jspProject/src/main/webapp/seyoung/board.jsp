@@ -458,10 +458,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        }
 	    }
 
-	    window.onload = function() {
-	        loadAnswers(); // 페이지가 로드될 때 댓글 목록을 불러오는 함수 호출
-	    }
-
 	    function loadAnswers() {
 	        var boardNum = <%= latestBoard.getBoard_num() %>; // 현재 게시글 번호 가져오기
 	        var xhr = new XMLHttpRequest();
