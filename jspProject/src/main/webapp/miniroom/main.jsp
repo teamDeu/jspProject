@@ -159,21 +159,21 @@
 }
 .visitor-stats {
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: 8px;
+        left: 60px;
         text-align: left;
-        font-size: 16px;
+        font-size: 20px;
         font-weight: bold;
         display: flex;
         gap: 20px; /* TODAY와 TOTAL 간의 간격을 조정 */
     }
 
     .visitor-stats .today {
-        color: #FF6347; /* 오늘 방문자수는 눈에 띄게 빨간색 */
+        color: #000000; /* 오늘 방문자수는 눈에 띄게 빨간색 */
     }
 
     .visitor-stats .total {
-        color: #4682B4; /* 총 방문자수는 파란색 */
+        color: #000000; /* 총 방문자수는 파란색 */
     }
     .chat_reportBtn{
     	color: red;
