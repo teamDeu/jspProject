@@ -495,6 +495,7 @@ function clickAlarm(){
 	         
 	         </div>
 	         <div id="music" class="inner-box-2" style="display: none">
+	         	<jsp:include page="../yang/music1.jsp"></jsp:include>
 	         </div>
          </div>
          <!-- 버튼 -->

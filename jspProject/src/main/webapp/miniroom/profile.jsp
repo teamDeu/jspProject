@@ -229,6 +229,8 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 .main_profile_friend_count{
 	width:50px;
 }
+        
+        
 </style>
 </head>
 <body>
@@ -261,7 +263,19 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 			</div>
 		</div>
 		<hr width="100%" color="#BAB9AA" style="margin: 10px 0px">
-		<div class="main_profile_music">music</div>
+		
+		<div class="music-player">
+	        <div class="play-button play" id="playButton"></div>
+	        <div class="song-info">
+	            <div class="title">곡명</div>
+	            <div class="artist">아티스트</div>
+	        </div>
+	        <div class="progress-bar"></div>
+	    </div>
+	
+	    <!-- Placeholder audio for demo -->
+	    <audio id="audioPlayer"></audio>
+		
 		<div class="main_profile_friends_main_div">
 			<div class="main_profile_friends_search_div">
 				<input class ="main_profile_friends_search_text" type="text" placeholder="닉네임을 입력해주세요.">
@@ -314,6 +328,10 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 		</div>
 	</div>
 	<script>
+	 
+    
+    
+    
 	const friend_itemsPerPage = 4; // 페이지당 8개 아이템
 	let friend_currentPage = 1; // 현재 페이지
 	let friend_items_first = []; // 모든 아이템을 담을 배열

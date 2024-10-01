@@ -7,7 +7,6 @@
 <%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
 <jsp:useBean id="mgr" class="pjh.MemberMgr" />
 <%
-
 String user_id = (String) session.getAttribute("idKey");
 System.out.println(user_id);
 
@@ -65,18 +64,43 @@ try {
     <title>가로로 긴 네모 박스 레이아웃</title>
     <script>
 
-	    function game1show() {
-	        document.getElementById("main").style.display = "none";
-	        document.getElementById("game1-container").style.display = "block";
-	        document.getElementById("game2-container").style.display = "none";
-	
-	        
-	    }
+        function game1show() {
+            document.getElementById("main").style.display = "none";
+            document.getElementById("game1-container").style.display = "block";
+            document.getElementById("game2-container").style.display = "none";
+        }
+        
         function game2show() {
             document.getElementById("main").style.display = "none";
             document.getElementById("game1-container").style.display = "none";
             document.getElementById("game2-container").style.display = "block";
         }
+
+        // 클로버 값 주기적으로 서버에서 가져오는 함수
+        function updateCloverAmountFromServer() {
+            $.ajax({
+                url: '../yang/getCloverBalance.jsp',  // 클로버 값을 가져오는 경로
+                type: 'POST',
+                data: {
+                    userId: '<%= user_id %>'
+                },
+                success: function(response) {
+                    const serverCloverAmount = parseInt(response);
+                    const currentCloverAmount = parseInt($('#cloverAmountDisplay2').text()) || 0;
+
+                    // 서버에서 받은 클로버 값이 현재 화면에 표시된 값과 다를 경우 업데이트
+                    if (serverCloverAmount !== currentCloverAmount) {
+                        $('#cloverAmountDisplay2').text(serverCloverAmount);
+                    }
+                },
+                error: function() {
+                    console.log('서버에서 클로버 잔액을 가져오는 중 오류가 발생했습니다.');
+                }
+            });
+        }
+
+        // 1초마다 서버에서 클로버 값을 가져와 화면에 반영
+        setInterval(updateCloverAmountFromServer, 1000);
         
     </script>
     <style>
@@ -147,7 +171,7 @@ try {
 		    font-size: 30px;
 		    background-color: white;
 		    color: black;
-		    border: 1px solid #c1c1c1; /* 테두리 빨간색 */
+		    border: 1px solid #c1c1c1; /* 테두리 */
 		    border-radius: 5px;
 		    cursor: pointer;
 		    align-self: flex-end; /* 버튼을 오른쪽에 배치 */
@@ -181,10 +205,7 @@ try {
         <!-- 클로버 금액 -->
 		<div class="clover-amount1">
 			<img src="./img/clover_icon.png" alt="클로버">
-			<span class = "clover-amount-span">
-			<%=user_clover%>
-			</span>
-			
+			<span id="cloverAmountDisplay2"><%=user_clover%></span>
 			<!-- 여기서 클로버 값 출력 -->
 		</div>
 
