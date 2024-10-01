@@ -12,7 +12,7 @@ import miniroom.UtilMgr;
 
 public class AItemMgr {
 
-	public static final String  SAVEFOLDER = "C:/Jsp/jspProject/jspProject/jspProject/src/main/webapp/miniroom/img";
+	public static final String  SAVEFOLDER = "C:/Jsp/jspProject/jspProject/src/main/webapp/miniroom/img";
 	public static final String ENCTYPE = "UTF-8";
 	public static int MAXSIZE = 50*1024*1024;//50mb
     // DBConnectionMgr을 사용하여 데이터베이스 연결
@@ -121,6 +121,7 @@ public class AItemMgr {
            }
            if(pstmt.executeUpdate() == 1) flag = true;
         } catch (Exception e) {
+        	e.printStackTrace();
         } finally {
            pool.freeConnection(con, pstmt);
         }

@@ -76,47 +76,64 @@
     <h1>상품 관리</h1>
 
     <div class="form-container">
+     <%
+            String item_num = request.getParameter("item_num");
+            String item_name = request.getParameter("item_name");
+            String item_image = request.getParameter("item_image");
+            String item_price = request.getParameter("item_price");
+            String item_type = request.getParameter("item_type");
+            String item_path = request.getParameter("item_path");
+
+            boolean isEditMode = (item_num != null); // 수정 모드 여부
+        %>
+    
         <form action="storeAction.jsp" method="post" enctype="multipart/form-data">
+            <!-- 상품 번호 (수정 시 필요) -->
+            <input type="hidden" name="item_num" value="<%= item_num != null ? item_num : "" %>">
+            
             <!-- 상품 이름 -->
             <div class="form-group">
                 <label for="item_name">상품 이름:</label>
-                <input type="text" id="item_name" name="item_name" required>
+                <input type="text" id="item_name" name="item_name" value="<%= item_name != null ? item_name : "" %>" required>
             </div>
 
             <!-- 파일 업로드 -->
             <div class="form-group">
                 <label for="item_image">이미지:</label>
-                <input type="file" id="item_image" name="item_image" accept="image/*" required>
+                <input type="file" id="item_image" name="item_image" accept="image/*" <%= isEditMode ? "" : "required" %>>
+                <% if (isEditMode && item_image != null) { %>
+                    <p>현재 이미지: <%= item_image %></p>
+                <% } %>
             </div>
-            
-            
+
             <!-- 상품 가격 -->
             <div class="form-group">
                 <label for="item_price">상품 가격:</label>
-                <input type="number" id="item_price" name="item_price" required>원
+                <input type="number" id="item_price" name="item_price" value="<%= item_price != null ? item_price : "" %>" required> 원
             </div>
-
-
 
             <!-- 상품 타입 선택 -->
             <div class="form-group">
                 <label for="item_type">상품 타입:</label>
-                <select onchange = "changeItemType(this)" id="item_type" name="item_type" required>
-                    <option value="음악">음악</option>
-                    <option value="캐릭터">캐릭터</option>
-                    <option value="배경화면">배경</option>
+                <select onchange="changeItemType(this)" id="item_type" name="item_type" required>
+                    <option value="음악" <%= "음악".equals(item_type) ? "selected" : "" %>>음악</option>
+                    <option value="캐릭터" <%= "캐릭터".equals(item_type) ? "selected" : "" %>>캐릭터</option>
+                    <option value="배경화면" <%= "배경화면".equals(item_type) ? "selected" : "" %>>배경</option>
                 </select>
             </div>
 
-            <!-- 파일 입력 -->
+            <!-- 파일 입력 (음악일 경우) -->
             <div class="form-group">
                 <label for="item_path">파일 :</label>
-                <input type="file" id="item_path" name="item_path" accept="image/*">
+                <input type="file" id="item_path" name="item_path" accept="audio/*" <%= "음악".equals(item_type) ? "" : "disabled" %>>
+                <% if (isEditMode && item_path != null && "음악".equals(item_type)) { %>
+                    <p>현재 파일: <%= item_path %></p>
+                <% } %>
             </div>
 
             <!-- 제출 버튼 -->
             <div class="form-group">
-                <button type="submit">상품 추가</button>
+                <button type="submit"><%= isEditMode ? "상품 수정" : "상품 추가" %></button>
             </div>
         </form>
     </div>
