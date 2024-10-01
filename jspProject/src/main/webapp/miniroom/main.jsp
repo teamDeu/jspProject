@@ -159,10 +159,10 @@
 }
 .visitor-stats {
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: 8px;
+        left: 60px;
         text-align: left;
-        font-size: 16px;
+        font-size: 20px;
         font-weight: bold;
         display: flex;
         gap: 20px; /* TODAY와 TOTAL 간의 간격을 조정 */
