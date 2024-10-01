@@ -85,6 +85,34 @@
 * {
     font-family: 'NanumTobak', sans-serif;
 }
+.profile_function_div {
+	display: flex;
+	z-index:3;
+	flex-direction: column;
+	position: absolute;
+	width: 120px;
+	padding: 10px;
+	gap: 10px;
+	border-radius: 10px;
+	box-sizing: border-box;
+	background-color: #FFFEF3;
+	left:0px;
+	top: -120px;
+	border: 2px solid #BAB9AA;
+}
+
+.profile_function_div button {
+	padding: 2px 10px;
+	border: 1px solid #DCDCDC;
+	background-color: #FFFFFF;
+	font-size: 16px;
+	border-radius: 10px;
+}
+
+.profile_function_div span {
+	align-self: center;
+	font-size: 20px;
+}
 .miniroom_information {
    display: none;
    flex-direction: column;
@@ -275,10 +303,10 @@ function clickAlarm(){
                 			            '<div class="profile_function_div">' +
                 			                '<span>' + userName + '</span>' +
                 			                (flag ? 
-                			                    '<button onclick="onclickDeleteFriend(' + localId + ', ' + userId + ', \'' + userName + '\')">친구삭제</button>' :
-                			                    '<button onclick="onclickAddFriend(' + localId + ', ' + userId + ', \'' + userCharacter + '\', \'' + userName + '\')">친구추가</button>'
+                			                    '<button onclick="onclickDeleteFriend(\'' + localId + '\', \'' + userId + '\', \'' + userName + '\')">친구삭제</button>' :
+                			                    '<button onclick="onclickAddFriend(\'' + localId + '\', \'' + userId + '\', \'' + userCharacter + '\', \'' + userName + '\')">친구추가</button>'
                 			                ) +
-                			                '<button onclick="onclickGoHomePage(' + userId + ')">미니룸 구경가기</button>' +
+                			                '<button onclick="onclickGoHomePage(\'' + userId + '\')">미니룸 구경가기</button>' +
                 			            '</div>' +
                 			        '</div>' +
                 			        '<img class="main_profile_friends" src="' + userCharacter + '">' +
