@@ -98,10 +98,7 @@ function frequest_receive_clickCancelBtn(){
 	fr_form.receive_type.value = "reject";
 	fr_form.submit();
 	alert("친구요청을 거절했습니다.");
-	
-	alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != fr_form.request_num.value);
-	displayalarm_items();
-    alarm_updatePagination();
+	alarmRenewal();
 }
 	function frequest_receive_clickSubmitBtn(){
 		
@@ -111,22 +108,39 @@ function frequest_receive_clickCancelBtn(){
 		fr_form.submit();
 		document.getElementById("friend_request_modal_receive").style.display = "none";
 		
-		alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != fr_form.request_num.value);
-		displayalarm_items();
-	    alarm_updatePagination();
+		alarmRenewal();
 	    fr_modal = document.getElementById("friend_request_modal_receive");
 	    
 	   	userId = fr_modal.querySelector(".request_senduserid").value;
 	   	userName = fr_modal.querySelector(".request_user_name_font").innerText;
 	   	userCharacter = fr_modal.querySelector(".request_profile_img").src;
 	   	connectId = '<%=connectId%>'
-	   	console.log(userId,connectId);
+	   	
 		if(!isFriend(connectId,userId)){
-			submitFriendRequest(userId,userName,userCharacter);
+			if(url == userId){
+				submitFriendRequest(connectId,localName,localCharacter);
+			}
+			else if(url == connectId){
+				submitFriendRequest(userId,userName,userCharacter);
+			}
+			
 		}
 	    
 	}
-	
+	function alarmRenewal(){
+		alarm_items = alarm_items.filter((e) => e.querySelector('input[name="num"]').value != fr_form.request_num.value);
+		
+		var xhr = new XMLHttpRequest();
+	    xhr.open("GET", "../miniroom/alarmProc.jsp?type=delete&content_type=친구요청&content_num="+document.querySelector(".request_num").value, true); // Alarm 갱신Proc
+	    xhr.onreadystatechange = function () {
+	        if (xhr.readyState === 4 && xhr.status === 200) {
+	        }
+	    };
+	    xhr.send();
+	    
+		displayalarm_items();
+	    alarm_updatePagination();
+	}
 	function frequest_receive_clickCloseBtn(){
 		document.getElementById("friend_request_modal_receive").style.display = "none";
 	}
