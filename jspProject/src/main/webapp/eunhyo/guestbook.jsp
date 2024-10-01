@@ -104,7 +104,7 @@ dateFormat.setTimeZone(seoulTimeZone);
 .entry-container {
    width: 100%;
    height: 560px;
-   margin-top: 90px;
+   margin-top: 0px;
    background-color: #F7F7F7;
 }
 /* 리스트 스타일 제거 */
@@ -244,7 +244,7 @@ label[for="secretCheckbox"] {
 }
 
 /* 답글 목록 스타일 */
-.answer-list {
+.a-list {
     width: 95%;
     max-height: 60px; /* 최대 높이 설정 (필요에 따라 높이 조절) */
     list-style-type: none;
@@ -257,7 +257,7 @@ label[for="secretCheckbox"] {
     left: 20px;
 }
 /* 답글 항목 스타일 */
-.answer-item {
+.a-item {
     display: flex;
     align-items: center; /* 텍스트를 수직 중앙에 정렬 */
     width: 102% !important;
@@ -271,7 +271,7 @@ label[for="secretCheckbox"] {
 
 
 /* 답글 작성 폼 스타일 */
-.answer-form {
+.a-form {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -279,7 +279,7 @@ label[for="secretCheckbox"] {
 }
 
 /* 답글 작성 textarea 스타일 */
-.answer-textarea {
+.a-textarea {
    width: 100%; /* 적당한 너비 */
    height: 20px; /* 높이 조정 */
    padding:5px;
@@ -295,7 +295,7 @@ label[for="secretCheckbox"] {
 }
 
 /* 답글 등록 버튼 스타일 */
-.answer-submit-btn {
+.a-submit-btn {
    background-color: #e4e4e4; /* 강조된 색상 */
    color: #000000;
    border: none;
@@ -308,7 +308,7 @@ label[for="secretCheckbox"] {
    margin-top:55px;
 }
 /* 답글 삭제 버튼 스타일 */
-.delete-answer-btn {
+.delete-a-btn {
     background-color: #ffffff; /* 배경색 */
     color: #000000; /* 글자색 */
     border: none; /* 테두리 없음 */
@@ -445,23 +445,23 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
     // 답글 목록 및 답글 작성 폼 추가
     var answerList = document.createElement("ul");
     answerList.id = "answerList-" + guestbookNum;
-    answerList.classList.add('answer-list'); // 클래스 추가
+    answerList.classList.add('alist'); // 클래스 추가
 
     // 답글 작성 폼
     var answerForm = document.createElement("div");
-    answerForm.classList.add('answer-form');
+    answerForm.classList.add('an-form');
 
     var answerTextarea = document.createElement("textarea");
     answerTextarea.id = "answerContent-" + guestbookNum;
-    answerTextarea.classList.add('answer-textarea'); // 클래스 추가
+    answerTextarea.classList.add('a-textarea'); // 클래스 추가
     answerTextarea.placeholder = "답글 내용을 입력하세요";
 
     var answerButton = document.createElement("button");
     answerButton.type = "button";
     answerButton.textContent = "등록";
-    answerButton.classList.add('answer-submit-btn'); // 클래스 추가
+    answerButton.classList.add('a-submit-btn'); // 클래스 추가
     answerButton.onclick = function() {
-        addAnswer(guestbookNum);
+        adAnswer(guestbookNum);
     };
 
     answerForm.appendChild(answerTextarea);
@@ -499,70 +499,59 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
         }
         
      // 새 답글 항목을 페이지에 추가하는 함수
-        function appendAnswer(answerNum, guestbookNum, ganswerId, comment, ganswerAt, profileName) {
-            var ul = document.getElementById("answerList-" + guestbookNum);
-            if (!ul) {
-                console.error("답글 목록이 존재하지 않습니다.");
-                return;
-            }
-
-            // li 요소 생성 및 클래스 추가
-            var li = document.createElement("li");
-            li.id = "answer-" + answerNum;
-            li.classList.add('answer-item'); // 클래스 추가
-            li.style.position = 'relative'; // 버튼 배치를 위한 상대 위치 설정
-
-            // 답글 내용 추가
-            var contentElem = document.createElement("p");
-            contentElem.classList.add('answer-content'); // 필요한 경우 클래스 추가
-
-            if (profileName && profileName !== "") {
-                contentElem.textContent = "↳ " + profileName + " (" + ganswerId + ") : " + comment + " (" + ganswerAt + ")";
-            } else {
-                contentElem.textContent = "↳ " + ganswerId + " : " + comment + " (" + ganswerAt + ")";
-            }
-
-            li.appendChild(contentElem);
-
-            // 답글 삭제 버튼 추가 (로그인한 사용자가 답글 작성자 또는 방명록 주인인 경우)
-            var sessionUserId = "<%=sessionUserId%>"; // 현재 로그인한 사용자 ID
-            if (sessionUserId !== null && (sessionUserId === ganswerId || sessionUserId === "<%=ownerId%>")) {
-                var deleteButton = document.createElement("button");
-                deleteButton.type = "button";
-                deleteButton.textContent = "삭제";
-                deleteButton.classList.add('delete-answer-btn'); // 클래스 추가
-                deleteButton.onclick = function() {
-                    deleteAnswer(answerNum, guestbookNum);
-                };
-                
-                li.appendChild(deleteButton); // 삭제 버튼을 답글 <li>에 추가
-            }
-
-            ul.appendChild(li); // 새 답글을 목록에 추가
-
-            // 새로 생성된 li 요소에 대해 리렌더링 강제
-            li.offsetHeight; // 리플로우 강제 트리거
-        }
-
-
+		function appendAnswer(answerNum, guestbookNum, ganswerId, comment, ganswerAt, profileName) {
+		    var ul = document.getElementById("a-list-" + guestbookNum);
+		    if (!ul) {
+		        console.error("답글 목록이 존재하지 않습니다.");
+		        return;
+		    }
+		
+		    // li 요소 생성 및 클래스 추가
+		    var li = document.createElement("li");
+		    li.id = "a-" + answerNum;
+		    li.classList.add('a-item'); // 클래스 변경
+		    li.style.position = 'relative'; // 버튼 배치를 위한 상대 위치 설정
+		
+		    // 답글 내용 추가
+		    var contentElem = document.createElement("p");
+		    contentElem.classList.add('a-content'); // 필요한 경우 클래스 추가
+		
+		    if (profileName && profileName !== "") {
+		        contentElem.textContent = "↳ " + profileName + " (" + ganswerId + ") : " + comment + " (" + ganswerAt + ")";
+		    } else {
+		        contentElem.textContent = "↳ " + ganswerId + " : " + comment + " (" + ganswerAt + ")";
+		    }
+		
+		    li.appendChild(contentElem);
+		
+		    // 답글 삭제 버튼 추가 (로그인한 사용자가 답글 작성자 또는 방명록 주인인 경우)
+		    var sessionUserId = "<%=sessionUserId%>"; // 현재 로그인한 사용자 ID
+		    if (sessionUserId !== null && (sessionUserId === ganswerId || sessionUserId === "<%=ownerId%>")) {
+		        var deleteButton = document.createElement("button");
+		        deleteButton.type = "button";
+		        deleteButton.textContent = "삭제";
+		        deleteButton.classList.add('delete-a-btn'); // 클래스 변경
+		        deleteButton.onclick = function() {
+		            deleteAnswer(answerNum, guestbookNum);
+		        };
+		        
+		        li.appendChild(deleteButton); // 삭제 버튼을 답글 <li>에 추가
+		    }
+		
+		    ul.appendChild(li); // 새 답글을 목록에 추가
+		
+		    // 새로 생성된 li 요소에 대해 리렌더링 강제
+		    li.offsetHeight; // 리플로우 강제 트리거
+		}
 
 
-
-
-
-
-
-
-
-
-        
 		// 답글 작성 함수
-		function addAnswer(guestbookNum) {
-		    var comment = document.getElementById("answerContent-" + guestbookNum).value;
+		function adAnswer(guestbookNum) {
+		    var comment = document.getElementById("aContent-" + guestbookNum).value;
 		    var xhr = new XMLHttpRequest();
 		    var cPath = "<%=cPath%>";
-
-		    xhr.open("POST", cPath + "/eunhyo/addAnswer.jsp", true);
+		
+		    xhr.open("POST", cPath + "/eunhyo/adAnswer.jsp", true);
 		    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		    xhr.onreadystatechange = function() {
 		        if (xhr.readyState === 4) {
@@ -580,7 +569,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
 		                            response.profileName // 프로필 이름 추가
 		                        );
 		                        // 입력 필드 초기화
-		                        document.getElementById("answerContent-" + guestbookNum).value = '';
+		                        document.getElementById("aContent-" + guestbookNum).value = '';
 		                    } else {
 		                        alert("답글 작성에 실패하였습니다.");
 		                    }
@@ -596,6 +585,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
 		    };
 		    xhr.send("guestbookNum=" + guestbookNum + "&comment=" + encodeURIComponent(comment));
 		}
+
 		
 		// AJAX를 이용한 답글 삭제 함수
 		function deleteAnswer(answerNum, guestbookNum) {
@@ -688,35 +678,35 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
 		                    alt="삭제">
 		                <% } %>
 		
-		                <!-- 답글 목록 (방명록 항목 내부로 이동) -->
-		                <ul id="answerList-<%=entry.getGuestbookNum()%>" class="answer-list">
-		                    <% for (GuestbookanswerBean answer : answers) { 
-		                        // 답글 작성자의 프로필 정보 가져오기
-		                        GuestbookprofileBean answerProfile = profileMgr.getProfileByUserId(answer.getGanswerId());
-		                        String answerProfileName = (answerProfile != null) ? answerProfile.getProfileName() : "";
-		                        String ganswerId = answer.getGanswerId();
-		                    %>
-		                        <li id="answer-<%=answer.getGanswerNum()%>" class="answer-item">
-		                            <!-- 프로필 이름이 있을 때와 없을 때 각각의 형식으로 출력 -->
-		                            <p>
-		                                ↳ <%= !answerProfileName.isEmpty() ? answerProfileName + " (" + ganswerId + ") :" : ganswerId + " :" %> 
-		                                <%= answer.getGanswerComment() %> (<%= answer.getGanswerAt() %>)
-		                                
-		                                <!-- 삭제 버튼: sessionUserId가 답글 작성자(ganswerId) 또는 방명록 주인(ownerId)인 경우에만 표시 -->
-														<% if (sessionUserId != null && (sessionUserId.equals(ganswerId) || sessionUserId.equals(ownerId))) { %>
-														    <button type="button" class="delete-answer-btn" onclick="deleteAnswer(<%=answer.getGanswerNum()%>, <%=entry.getGuestbookNum()%>)">삭제</button>
-														<% } %>
+		               <!-- 답글 목록 (방명록 항목 내부로 이동) -->
+						<ul id="a-list-<%=entry.getGuestbookNum()%>" class="a-list">
+						    <% for (GuestbookanswerBean answer : answers) { 
+						        // 답글 작성자의 프로필 정보 가져오기
+						        GuestbookprofileBean answerProfile = profileMgr.getProfileByUserId(answer.getGanswerId());
+						        String answerProfileName = (answerProfile != null) ? answerProfile.getProfileName() : "";
+						        String ganswerId = answer.getGanswerId();
+						    %>
+						        <li id="a-<%=answer.getGanswerNum()%>" class="a-item">
+						            <!-- 프로필 이름이 있을 때와 없을 때 각각의 형식으로 출력 -->
+						            <p>
+						                ↳ <%= !answerProfileName.isEmpty() ? answerProfileName + " (" + ganswerId + ") :" : ganswerId + " :" %> 
+						                <%= answer.getGanswerComment() %> (<%= answer.getGanswerAt() %>)
+						                
+						                <!-- 삭제 버튼: sessionUserId가 답글 작성자(ganswerId) 또는 방명록 주인(ownerId)인 경우에만 표시 -->
+						                <% if (sessionUserId != null && (sessionUserId.equals(ganswerId) || sessionUserId.equals(ownerId))) { %>
+						                    <button type="button" class="delete-a-btn" onclick="deleteAnswer(<%=answer.getGanswerNum()%>, <%=entry.getGuestbookNum()%>)">삭제</button>
+						                <% } %>
+						            </p>
+						        </li>
+						    <% } %>
+						</ul>
+						
+						<!-- 답글 작성 폼 (방명록 항목 내부로 이동) -->
+						<div class="a-form">
+						    <textarea id="aContent-<%=entry.getGuestbookNum()%>" class="a-textarea" placeholder="답글 내용을 입력하세요"></textarea>
+						    <button type="button" class="a-submit-btn" onclick="adAnswer(<%=entry.getGuestbookNum()%>)">등록</button>
+						</div>
 
-		                            </p>
-		                        </li>
-		                    <% } %>
-		                </ul>
-		
-		                <!-- 답글 작성 폼 (방명록 항목 내부로 이동) -->
-		                <div class="answer-form">
-		                    <textarea id="answerContent-<%=entry.getGuestbookNum()%>" class="answer-textarea" placeholder="답글 내용을 입력하세요"></textarea>
-		                    <button type="button" class="answer-submit-btn" onclick="addAnswer(<%=entry.getGuestbookNum()%>)">등록</button>
-		                </div>
 		            <% } %>
 		        </li>
 		    <% } %>
