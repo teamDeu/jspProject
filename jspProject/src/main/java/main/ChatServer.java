@@ -5,6 +5,10 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+
+import report.ChatLogBean;
+import report.ReportMgr;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -71,6 +75,15 @@ public class ChatServer {
                 }
             }
         	flag = false;
+        }
+        else if(command.equals("sendMessage")) {
+        	String id = data.split("㉡")[0];
+        	String comment = data.split("㉡")[1];
+        	ReportMgr mgr = new ReportMgr();
+        	ChatLogBean bean = new ChatLogBean();
+        	bean.setChatlog_id(id);
+        	bean.setChatlog_content(comment);
+        	mgr.insertChatLog(bean);
         }
         if(flag) {
         	synchronized (clients) {
