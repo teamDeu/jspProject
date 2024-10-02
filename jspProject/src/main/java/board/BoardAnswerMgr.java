@@ -3,9 +3,7 @@ package board;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Vector;
-
 import miniroom.DBConnectionMgr;
 
 public class BoardAnswerMgr {
@@ -17,7 +15,7 @@ public class BoardAnswerMgr {
 	
 	
 	// 댓글 추가
-    public void insertAnswer(BoardAnswerBean answerBean) {
+	public void binsertAnswer(BoardAnswerBean answerBean) {
         Connection con = null;
         PreparedStatement pstmt = null;
         String sql = "INSERT INTO boardanswer (board_num, answer_content, answer_id, answer_at) VALUES (?, ?, ?, now())";
@@ -37,36 +35,42 @@ public class BoardAnswerMgr {
     }
 
     // 댓글 삭제
-    public void deleteAnswer(int answerNum) {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        String sql = "DELETE FROM boardanswer WHERE answer_num = ?";
+	public boolean bdeleteAnswer(int answerNum) {
+	    Connection con = null;
+	    PreparedStatement pstmt = null;
+	    String sql = "DELETE FROM boardanswer WHERE answer_num = ?";
+	    boolean isDeleted = false;
 
-        try {
-            con = pool.getConnection();
-            pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, answerNum);
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected == 0) {
-                System.out.println("No comment found to delete with answer_num: " + answerNum);
-            } else {
-                System.out.println("Successfully deleted comment with answer_num: " + answerNum);
-            }
-        } catch (Exception e) {
-            System.out.println("Error while deleting answer: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            pool.freeConnection(con, pstmt);
-        }
-    }
+	    try {
+	        con = pool.getConnection();
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setInt(1, answerNum);
+	        int rowsAffected = pstmt.executeUpdate();
+	        
+	        if (rowsAffected > 0) {
+	            // 댓글이 삭제되었을 경우
+	            isDeleted = true;
+	            System.out.println("Successfully deleted comment with answer_num: " + answerNum);
+	        } else {
+	            System.out.println("No comment found to delete with answer_num: " + answerNum);
+	        }
+	    } catch (Exception e) {
+	        System.out.println("Error while deleting answer: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        pool.freeConnection(con, pstmt);
+	    }
+
+	    return isDeleted; // 삭제 성공 여부 반환
+	}
 
     // 댓글 목록 불러오기 (특정 게시물에 달린 댓글)
-    public Vector<BoardAnswerBean> getAnswers(int boardNum) {
+    public Vector<BoardAnswerBean> bgetAnswers(int boardNum) {
         Vector<BoardAnswerBean> answerList = new Vector<>();
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        String sql = "SELECT * FROM boardanswer WHERE board_num = ? ORDER BY answer_at ASC";
+        String sql = "SELECT * FROM boardanswer WHERE board_num = ? ORDER BY answer_at DESC";
 
         try {
             con = pool.getConnection();
@@ -92,4 +96,6 @@ public class BoardAnswerMgr {
         return answerList;
     }
 	
+    
+    
 }

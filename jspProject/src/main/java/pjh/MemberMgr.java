@@ -5,7 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 import net.nurigo.sdk.message.model.Message;
@@ -49,66 +54,74 @@ public class MemberMgr {
 
 	// 회원가입
 	public boolean insertMember(MemberBean bean) {
-		Connection con = null;
-		PreparedStatement pstmt1 = null;
-		PreparedStatement pstmt2 = null;
-		String sql1 = null;
-		String sql2 = null;
-		boolean flag = false;
+	    Connection con = null;
+	    PreparedStatement pstmt1 = null;
+	    PreparedStatement pstmt2 = null;
+	    String sql1 = null;
+	    String sql2 = null;
+	    boolean flag = false;
 
-		try {
-			con = pool.getConnection();
-			con.setAutoCommit(false); // 트랜잭션 시작
+	    try {
+	        con = pool.getConnection();
+	        con.setAutoCommit(false); // 트랜잭션 시작
 
-			// 회원 정보를 user 테이블에 저장
-			sql1 = "INSERT INTO user(user_id, user_pwd, user_name, user_birth, user_phone, user_email, user_clover, user_character) "
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-			pstmt1 = con.prepareStatement(sql1);
-			pstmt1.setString(1, bean.getUser_id());
-			pstmt1.setString(2, bean.getUser_pwd());
-			pstmt1.setString(3, bean.getUser_name());
-			pstmt1.setString(4, bean.getUser_birth());
-			pstmt1.setString(5, bean.getUser_phone());
-			pstmt1.setString(6, bean.getUser_email());
-			pstmt1.setInt(7, bean.getUser_clover());
-			pstmt1.setInt(8, 1); // 기본 캐릭터 설정
+	        // 현재 날짜를 가져옴
+	        String userDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+	        bean.setUser_date(userDate);  // Bean에 날짜 설정
 
-			if (pstmt1.executeUpdate() == 1) {
-				// 회원가입이 성공하면 miniroom 테이블에도 user_id를 저장
-				sql2 = "INSERT INTO miniroom(user_id) VALUES(?)";
-				pstmt2 = con.prepareStatement(sql2);
-				pstmt2.setString(1, bean.getUser_id());
+	        // 회원 정보를 user 테이블에 저장
+	        sql1 = "INSERT INTO user(user_id, user_pwd, user_name, user_birth, user_phone, user_email, user_clover, user_character, user_date) "
+	             + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	        pstmt1 = con.prepareStatement(sql1);
+	        pstmt1.setString(1, bean.getUser_id());
+	        pstmt1.setString(2, bean.getUser_pwd());
+	        pstmt1.setString(3, bean.getUser_name());
+	        pstmt1.setString(4, bean.getUser_birth());
+	        pstmt1.setString(5, bean.getUser_phone());
+	        pstmt1.setString(6, bean.getUser_email());
+	        pstmt1.setInt(7, bean.getUser_clover());
+	        pstmt1.setInt(8, 1);
+	        pstmt1.setString(9, bean.getUser_date());  // 가입 날짜 추가
 
-				if (pstmt2.executeUpdate() == 1) {
-					flag = true;
-					con.commit(); // 트랜잭션 성공 시 커밋
-				} else {
-					con.rollback(); // miniroom 저장 실패 시 롤백
-				}
-			} else {
-				con.rollback(); // 회원가입 실패 시 롤백
-			}
+	        if (pstmt1.executeUpdate() == 1) {
+	            // 회원가입이 성공하면 miniroom 테이블에도 user_id를 저장
+	            sql2 = "INSERT INTO miniroom(user_id) VALUES(?)";
+	            pstmt2 = con.prepareStatement(sql2);
+	            pstmt2.setString(1, bean.getUser_id());
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			try {
-				if (con != null) {
-					con.rollback(); // 예외 발생 시 롤백
-				}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-		} finally {
-			try {
-				if (con != null)
-					con.setAutoCommit(true); // 자동 커밋 모드로 복원
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			pool.freeConnection(con, pstmt1);
-			pool.freeConnection(con, pstmt2);
-		}
-		return flag;
+	            if (pstmt2.executeUpdate() == 1) {
+	                flag = true;
+	                con.commit(); // 트랜잭션 성공 시 커밋
+	            } else {
+	                con.rollback(); // miniroom 저장 실패 시 롤백
+	                System.out.println("Miniroom 테이블에 저장 실패");
+	            }
+	        } else {
+	            con.rollback(); // 회원가입 실패 시 롤백
+	            System.out.println("User 테이블에 저장 실패");
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        try {
+	            if (con != null) {
+	                con.rollback(); // 예외 발생 시 롤백
+	                System.out.println("롤백 처리됨: " + e.getMessage());
+	            }
+	        } catch (SQLException e1) {
+	            e1.printStackTrace();
+	        }
+	    } finally {
+	        try {
+	            if (con != null)
+	                con.setAutoCommit(true); // 자동 커밋 모드로 복원
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        pool.freeConnection(con, pstmt1);
+	        pool.freeConnection(con, pstmt2);
+	    }
+	    return flag;
 	}
 
 	// 로그인
@@ -474,28 +487,25 @@ public class MemberMgr {
 	            con = pool.getConnection();
 
 	            // 오늘의 방문자 수를 조회
-	            sql = "SELECT * FROM visitCount WHERE visit_date = ? AND page_owner_id = ? AND visitor_id = ?";
-	            pstmt = con.prepareStatement(sql);
-	            pstmt.setString(1, today);
-	            pstmt.setString(2, pageOwnerId);
-	            pstmt.setString(3, visitorId);
+	            sql = "SELECT * FROM visitCount WHERE visit_date = now() AND page_owner_id = ? AND visitor_id = ?";
+	            pstmt = con.prepareStatement(sql);	         
+	            pstmt.setString(1, pageOwnerId);
+	            pstmt.setString(2, visitorId);
 	            rs = pstmt.executeQuery();
 
 	            if (rs.next()) {
 	                // 이미 방문한 경우 visit_count 증가
-	                sql = "UPDATE visitCount SET visit_count = visit_count + 1 WHERE visit_date = ? AND page_owner_id = ? AND visitor_id = ?";
+	                sql = "UPDATE visitCount SET visit_count = visit_count + 1 WHERE visit_date = now() AND page_owner_id = ? AND visitor_id = ?";
 	                pstmt = con.prepareStatement(sql);
-	                pstmt.setString(1, today);
-	                pstmt.setString(2, pageOwnerId);
-	                pstmt.setString(3, visitorId);
+	                pstmt.setString(1, pageOwnerId);
+	                pstmt.setString(2, visitorId);
 	                pstmt.executeUpdate();
 	            } else {
 	                // 첫 방문이면 레코드 삽입
-	                sql = "INSERT INTO visitCount (visit_date, visit_count, page_owner_id, visitor_id) VALUES (?, 1, ?, ?)";
+	                sql = "INSERT INTO visitCount (visit_date, visit_count, page_owner_id, visitor_id) VALUES (now(), 1, ?, ?)";
 	                pstmt = con.prepareStatement(sql);
-	                pstmt.setString(1, today);
-	                pstmt.setString(2, pageOwnerId);
-	                pstmt.setString(3, visitorId);
+	                pstmt.setString(1, pageOwnerId);
+	                pstmt.setString(2, visitorId);
 	                pstmt.executeUpdate();
 	            }
 	        } catch (Exception e) {
@@ -517,9 +527,9 @@ public class MemberMgr {
 	        try {
 	            con = pool.getConnection();
 
-	            sql = "SELECT SUM(visit_count) AS today_count FROM visitCount WHERE visit_date = ? AND page_owner_id = ?";
+	            sql = "SELECT SUM(visit_count) AS today_count FROM visitCount WHERE visit_date like ? AND page_owner_id = ?";
 	            pstmt = con.prepareStatement(sql);
-	            pstmt.setString(1, today);
+	            pstmt.setString(1, today+'%');
 	            pstmt.setString(2, pageOwnerId);
 	            rs = pstmt.executeQuery();
 
@@ -562,6 +572,208 @@ public class MemberMgr {
 
 	        return totalCount;
 	    }
+	 // 오늘의 전체 접속 횟수 조회
+	    public int getTodayVisitorCountForAll() {
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+	        String sql;
+	        int todayCount = 0;
+
+	        try {
+	            con = pool.getConnection();
+
+	            // visit_date의 날짜가 오늘인 모든 방문자의 총 방문 횟수를 계산
+	            sql = "SELECT SUM(visit_count) AS today_count FROM visitCount WHERE DATE(visit_date) = CURDATE()";
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
+
+	            if (rs.next()) {
+	                todayCount = rs.getInt("today_count");
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return todayCount;
+	    }
+
+
+
+	 // 전체 방문자 수 조회
+	    public int getTotalVisitorCountForAll() {
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+	        String sql;
+	        int totalCount = 0;
+
+	        try {
+	            con = pool.getConnection();
+
+	            // 전체 방문자 수의 총합을 계산
+	            sql = "SELECT SUM(visit_count) AS total_count FROM visitCount";
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
+
+	            if (rs.next()) {
+	                totalCount = rs.getInt("total_count");
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return totalCount;
+	    }
+
+	 // 월별 방문자 수 가져오기
+	    public Map<String, Integer> getMonthlyVisitorCount() throws Exception {
+	        Map<String, Integer> monthlyVisitorCount = new LinkedHashMap<>();
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+	        
+	        String sql = "SELECT DATE_FORMAT(visit_date, '%m월') AS month, SUM(visit_count) AS count FROM visitcount GROUP BY month";
+	        
+	        try {
+	            con = pool.getConnection();
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
+	            
+	            // 결과를 Map에 넣기
+	            while (rs.next()) {
+	                monthlyVisitorCount.put(rs.getString("month"), rs.getInt("count"));
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+	        
+	        return monthlyVisitorCount;
+	    }
+
+	    // 시간대별 방문자 수 가져오기
+	    public Map<String, Integer> getHourlyVisitorCount() throws Exception {
+	        Map<String, Integer> hourlyVisitorCount = new LinkedHashMap<>();
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+
+	        // 현재 시간을 가져옴
+	        LocalDateTime now = LocalDateTime.now();
+
+	        // SQL 쿼리: 최근 6시간의 방문자 수를 가져옴
+	        String sql = "SELECT DATE_FORMAT(visit_date, '%H') AS hour, SUM(visit_count) AS count " +
+	                     "FROM visitcount " +
+	                     "WHERE visit_date >= DATE_SUB(NOW(), INTERVAL 6 HOUR) " +
+	                     "GROUP BY hour ORDER BY hour ASC";
+
+	        try {
+	            con = pool.getConnection();
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
+
+	            // 최근 6시간에 대한 방문자 수를 Map에 저장
+	            while (rs.next()) {
+	                hourlyVisitorCount.put(rs.getString("hour"), rs.getInt("count"));
+	            }
+
+	            // 현재 시간을 기준으로 6시간을 저장 (기록 없는 경우 0으로 채움)
+	            for (int i = 5; i >= 0; i--) {
+	                String hourLabel = now.minusHours(i).format(DateTimeFormatter.ofPattern("HH"));
+	                hourlyVisitorCount.putIfAbsent(hourLabel, 0);
+	            }
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return hourlyVisitorCount;
+	    }
+
+
+
+
+	    // 가상의 DB 데이터 조회 함수 예시
+	    private Map<String, Integer> getMonthlyDataFromDB1() {
+	        // 실제 DB 쿼리 구현
+	        return new HashMap<>(); // 가상의 DB 데이터 반환
+	    }
+
+	    private Map<String, Integer> getHourlyDataFromDB1() {
+	        // 실제 DB 쿼리 구현
+	        return new HashMap<>(); // 가상의 DB 데이터 반환
+	    }
+	    
+	 // 5일간의 신규 가입자 수를 반환하는 메서드 추가
+	    public Map<String, Integer> getDailyNewMembersCount() throws Exception {
+	        Map<String, Integer> dailyNewMembersCount = new LinkedHashMap<>();
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+
+	        String sql = "SELECT DATE(user_date) AS reg_date, COUNT(*) AS count FROM user " +
+	                     "WHERE user_date >= DATE_SUB(CURDATE(), INTERVAL 5 DAY) " +
+	                     "GROUP BY reg_date ORDER BY reg_date ASC";
+
+	        try {
+	            con = pool.getConnection();
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
+
+	            // 결과를 Map에 넣기
+	            while (rs.next()) {
+	                dailyNewMembersCount.put(rs.getString("reg_date"), rs.getInt("count"));
+	            }
+
+	            // 5일 전부터 오늘까지 날짜를 저장 (기록 없는 경우 0으로 채움)
+	            for (int i = 5; i >= 0; i--) {
+	                String dateLabel = java.time.LocalDate.now().minusDays(i).toString();
+	                dailyNewMembersCount.putIfAbsent(dateLabel, 0);
+	            }
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return dailyNewMembersCount;
+	    }
+	    
+	 // 총 가입자 수를 반환하는 메서드 추가
+	    public int getTotalMemberCount() throws Exception {
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+	        int totalMembers = 0;
+
+	        try {
+	            con = pool.getConnection();
+	            String sql = "SELECT COUNT(*) AS total FROM user";
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
+
+	            if (rs.next()) {
+	                totalMembers = rs.getInt("total"); // 총 회원 수 반환
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return totalMembers;
+	    }
+
+
 	}
 	
 

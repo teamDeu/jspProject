@@ -1,125 +1,39 @@
-<%@page import="miniroom.UtilMgr"%>
 <%@page import="miniroom.ItemMgr"%>
-<%@page import="pjh.MemberBean"%>
-<%@page import="java.util.Vector"%>
 <%@page import="pjh.MemberMgr"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@page import="pjh.MemberBean"%>
+<%@page import="miniroom.UtilMgr"%>
+<%@ page import="java.util.Vector"%>
+<%@ page import="pjh.ItemBean, pjh.AItemMgr" %>
+<%@ page import="java.util.List" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<% String type = request.getParameter("type"); %>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
- <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            height: 100vh;
-            background-color: #f5f5f5;
-        }
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-            width: calc(100% - 250px);
-            background-color: #fff;
-            height: 100vh;
-            overflow-y: auto;
-            position: relative;
-        }
-        .main-content h1 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .main-content .content-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-        .main-content .card {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-        .main-content .card:hover {
-            transform: translateY(-10px);
-        }
-        .main-content .card h3 {
-            font-size: 20px;
-            color: #2ecc71;
-            margin-bottom: 10px;
-        }
-        .main-content .card p {
-            color: #666;
-            font-size: 14px;
-        }
-        .product-list {
-            margin-top: 30px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .product-list table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .product-list table th, .product-list table td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: center;
-        }
-        .product-list table th {
-            background-color: #C0E5AF;
-            color: #333;
-        }
-        .product-list table td button {
-            padding: 5px 10px;
-            background-color: #FF6B6B;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .product-list table td button:hover {
-            background-color: #FF4D4D;
-        }
-        
-        .pagination {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .pagination a {
-            margin: 0 5px;
-            padding: 8px 16px;
-            text-decoration: none;
-            color: #333;
-            background-color: #eee;
-            border-radius: 5px;
-        }
-        .pagination a.current-page {
-            background-color: #C0E5AF;
-            color: white;
-        }
-        .pagination a:hover {
-            background-color: #8DB369;
-            color: white;
-        }
-        .admin_userList_user_img{
-        	width : 120px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지</title>
+	<link rel="stylesheet" href="./css/admin.css" />
+	<style>
+		.admin_userList_user_img{
+			width : 120px;
+		}
+	</style>
 </head>
 <body>
-	<div>
+
+    <!-- 사이드바 -->
+    <div class="sidebar">
+        <h2>관리자 패널</h2>
+        <ul>
+            <li onclick="showCategory(event)" data = "adminMain.jsp" id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
+            <li onclick="showCategory(event)" data = "adminUser.jsp" class="active" >유저관리</li>
+            <li onclick="showCategory(event)" data = "adminStore.jsp" id="storeTab"><i class="fa fa-store"></i>상점관리</li>
+            <li onclick="showCategory(event)" data = "adminReport.jsp">신고관리</li>
+            <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
+        </ul>
+    </div>
+	<div class ="main-content">
 		<h1>유저 관리</h1>
 		<!-- 검색 폼 -->
 		<form method="get" action="adminUser.jsp">
@@ -145,16 +59,15 @@
 						<th>이메일</th>
 						<th>클로버</th>
 						<th>캐릭터</th>
-						<th>관리</th>
 					</tr>
 				</thead>
 				<tbody>
 					<%
 					// 현재 페이지와 검색 조건을 받아옴
 					String pageStr = request.getParameter("page");
-					int currentPage = (pageStr != null) ? Integer.parseInt(pageStr) : 1;
-					int itemsPerPage = 4;
-					int start = (currentPage - 1) * itemsPerPage;
+					int userCurrentPage = (pageStr != null) ? Integer.parseInt(pageStr) : 1;
+					int userItemsPerPage = 4;
+					int start = (userCurrentPage - 1) * userItemsPerPage;
 
 					// 검색어와 검색 필드를 받아옴
 					String keyField = request.getParameter("user_keyField");
@@ -166,10 +79,10 @@
 					int totalUsers = userMgr.getTotalUserCount(keyField, keyWord);
 
 					// 상품 목록 가져오기 (start와 itemsPerPage 적용)
-					Vector<MemberBean> users = userMgr.getUserList(keyField, keyWord, start, itemsPerPage);
+					Vector<MemberBean> users = userMgr.getUserList(keyField, keyWord, start, userItemsPerPage);
 
 					// 총 페이지 수 계산
-					int totalPages = (int) Math.ceil(totalUsers / (double) itemsPerPage);
+					int totalPages = (int) Math.ceil(totalUsers / (double) userItemsPerPage);
 
 					if (users.size() > 0) {
 						for (MemberBean user : users) {
@@ -191,15 +104,6 @@
 						<td><%=userEmail%></td>
 						<td><%=userClover%></td>
 						<td><img class ="admin_userList_user_img"src='<%=userChracter%>'></td>
-						<td>
-							<!-- 삭제 버튼 -->
-							<form action="deleteItem.jsp" method="post"
-								onsubmit="return confirm('정말로 이 상품을 삭제하시겠습니까?');">
-								<input type="hidden" name="user_id" value="<%=userId%>">
-								<button type="submit"
-									style="padding: 5px 10px; background-color: #FF6B6B; color: white; border: none; border-radius: 5px; cursor: pointer;">삭제</button>
-							</form>
-						</td>
 					</tr>
 					<%
 					}
@@ -221,8 +125,8 @@
 				for (int i = 1; i <= totalPages; i++) {
 				%>
 				<a
-					href="adminMain.jsp?page=<%=i%>&keyField=<%=keyField != null ? keyField : ""%>&keyWord=<%=keyWord != null ? keyWord : ""%>&type=user"
-					class="<%=(i == currentPage) ? "current-page" : ""%>"> <%=i%>
+					href="adminUser.jsp?page=<%=i%>&keyField=<%=keyField != null ? keyField : ""%>&keyWord=<%=keyWord != null ? keyWord : ""%>&type=user"
+					class="<%=(i == userCurrentPage) ? "current-page" : ""%>"> <%=i%>
 				</a>
 				<%
 				}
@@ -230,5 +134,25 @@
 			</div>
 		</div>
 	</div>
+
+    <!-- FontAwesome 아이콘 -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <!-- UI 전환 함수 -->
+    <script>
+        function logout() {
+            if (confirm('정말로 로그아웃 하시겠습니까?')) {
+                window.location.href = 'logout.jsp';
+            }
+        }
+		function showCategory(event){
+			console.dir(event.target);
+			location.href = event.target.getAttribute("data");
+		}
+        // 상품 추가 페이지를 새창으로 열기
+        function openStoreManage() {
+            window.open('storeManage.jsp', '_blank', 'width=600,height=600');
+        }
+    </script>
 </body>
 </html>

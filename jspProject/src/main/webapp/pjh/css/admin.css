@@ -1,0 +1,148 @@
+@charset "UTF-8";
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .sidebar {
+            background-color: #C0E5AF;
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar h2 {
+            text-align: center;
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 15px 20px;
+            color: #fff;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+        .sidebar ul li:hover {
+            background-color: #27ae60;
+        }
+        .sidebar ul li.active {
+            background-color: #1abc9c;
+        }
+        .main-content {
+            margin-left: 250px;
+            background-color: #fff;
+            padding:20px;
+            height: 100vh;
+            overflow-y: auto;
+            box-sizing:border-box;
+            position: relative;
+        }
+        .main-content h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .main-content .content-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .main-content .card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .main-content .card:hover {
+            transform: translateY(-10px);
+        }
+        .main-content .card h3 {
+            font-size: 20px;
+            color: #2ecc71;
+            margin-bottom: 10px;
+        }
+        .main-content .card p {
+            color: #666;
+            font-size: 14px;
+        }
+        .product-list {
+            margin-top: 30px;
+            max-width: 1800px;
+        }
+        .product-list table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .product-list table th, .product-list table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        .product-list table th {
+            background-color: #C0E5AF;
+            color: #333;
+        }
+        .product-list table td button {
+		    padding: 5px 10px;
+		    color: black;
+		    border: none;
+		    border-radius: 5px;
+		    cursor: pointer;
+        }
+        .product-list table td button:hover {
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .add-product-btn {
+            margin-top: 20px;
+            padding: 15px 20px;
+            background-color: #C0E5AF;
+            color: #333;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            width: 150px;
+        }
+        .add-product-btn:hover {
+            background-color: #8DB369;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #333;
+            background-color: #eee;
+            border-radius: 5px;
+        }
+        .pagination a.current-page {
+            background-color: #C0E5AF;
+            color: white;
+        }
+        .pagination a:hover {
+            background-color: #8DB369;
+            color: white;
+        }

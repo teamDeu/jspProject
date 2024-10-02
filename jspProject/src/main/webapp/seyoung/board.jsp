@@ -24,24 +24,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 <style>
 
 
-.board-recentpost {
-    color: black; 
-    text-align: center; 
-    font-size: 24px; 
-    font-weight: 300; 
-    position: absolute; 
-    top: 15px; 
-    left: 100px;
-    display: inline-block; 
-}
-
-.board-line {
-    border-bottom: 1px solid #BAB9AA; /* 실선 색상 및 두께 */
-    width: calc(100% - 55px); /* 실선의 너비 */
-    position: absolute; 
-    top: 80px; 
-    left: 25px; 
-}
 
 .folder-container {
     width: 230px;
@@ -377,7 +359,78 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
     background-color: #f9f9f9; /* 배경색 설정 */
 }
 
+		.board-recentpost {
+            color: black; 
+            text-align: center; 
+            font-size: 24px; 
+            font-weight: 300; 
+            position: absolute; 
+            top: 15px; 
+            left: 100px;
+            display: inline-block; 
+        }
 
+        .board-line {
+            border-bottom: 1px solid #BAB9AA; 
+            width: calc(100% - 55px); 
+            position: absolute; 
+            top: 80px; 
+            left: 25px; 
+        }
+
+        .answer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #f2f2f2;
+            border: none;
+            box-sizing: border-box;
+            width: 90%; 
+            position: relative; 
+        }
+
+        .answer-item img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+
+        .answer-content {
+            background-color: #f9f9f9;
+            border: 1px solid #BAB9AA;
+            padding: 10px;
+            width: 90%;
+        }
+
+        .reanswer-form {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            padding: 10px;
+            width: 90%;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #BAB9AA;
+        }
+
+        .reanswer-input {
+            width: 80%;
+            margin-right: 10px;
+            padding: 5px;
+            border: 1px solid #BAB9AA;
+            border-radius: 5px;
+        }
+
+        .reanswer-button {
+            padding: 5px 10px;
+            border: 1px solid #BAB9AA;
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            cursor: pointer;
+        }
 
 </style>
 
@@ -403,7 +456,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 						
 						<div class="wanswer-form">
 							<input type="text" id="ansewerinput" placeholder="  게시판에 댓글을 남겨주세요.">
-							<button type="button" onclick="addAnswer()">등록</button>
+							<button type="button" onclick="baddAnswer()">등록</button>
 						</div>
 					</div>
 	
@@ -432,7 +485,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        xhr.send();
 	    }
 	    
-	    function addAnswer() {
+	    function baddAnswer() {
 	        var input = document.getElementById('ansewerinput');
 	        var answerText = input.value.trim();
 	        if (answerText !== '') {
@@ -444,126 +497,318 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	            xhr.onreadystatechange = function () {
 	                if (xhr.readyState === 4 && xhr.status === 200) {
 	                    input.value = ''; // 입력 필드를 비움
-	                    loadAnswers(); // 댓글을 추가한 후 댓글 목록을 다시 로드
+	                    bloadAnswers(); // 댓글을 추가한 후 댓글 목록을 다시 로드
 	                }
 	            };
 
 	            // Ajax 요청 본문에 데이터 전달
 	            var boardNum = <%= latestBoard.getBoard_num() %>; // 최신 게시글 번호를 가져옴
-	            var answerId = '1234'; // answer_id를 1234로 고정
+	            var answerId = "<%= UserId %>"; 
 	            var params = "board_num=" + encodeURIComponent(boardNum) +
 	                         "&answer_content=" + encodeURIComponent(answerText) +
-	                         "&answer_id=" + encodeURIComponent(answerId); // 고정된 answer_id 사용
+	                         "&answer_id=" + encodeURIComponent(answerId); 
 	            xhr.send(params);
 	        }
 	    }
 
-	    function loadAnswers() {
-	        var boardNum = <%= latestBoard.getBoard_num() %>; // 현재 게시글 번호 가져오기
+	    
+	 
+	    
+	    
+
+	     
+	    
+	    
+	    // 답글을 서버에 저장하는 함수
+	    function baddReAnswer(answerNum, replyText) {
 	        var xhr = new XMLHttpRequest();
-	        xhr.open("GET", "<%= cPath %>/seyoung/bgetAnswer.jsp?board_num=" + encodeURIComponent(boardNum), true);
+	        xhr.open("POST", "<%= cPath %>/seyoung/bReAnswerAddProc.jsp", true); // 서버 측 처리 파일 호출
+	        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
-	                var answerForm = document.querySelector('.banswer-form');
-	                answerForm.style.display = 'flex'; // 댓글 영역을 보여줌
-	                var answers = JSON.parse(xhr.responseText); // JSON 형식으로 응답을 파싱
-
-	                // 기존 댓글 내용을 초기화
-	                answerForm.innerHTML = '';
-
-	                // 서버에서 받은 댓글 데이터를 화면에 추가
-	                answers.forEach(function(answer) {
-	                    var answerItem = document.createElement('div');
-	                    answerItem.className = 'answer-item';
-	                    answerItem.style.display = 'flex';
-	                    answerItem.style.alignItems = 'flex-start';
-	                    answerItem.style.marginBottom = '10px';
-	                    answerItem.style.width = '100%';
-
-	                    var userImage = document.createElement('img');
-	                    userImage.src = 'img/character2.png';
-	                    userImage.alt = '사용자 이미지';
-	                    userImage.className = 'user-image';
-
-	                    var answerContent = document.createElement('div');
-	                    answerContent.className = 'answer-content';
-	                    answerContent.style.backgroundColor = '#f9f9f9';
-	                    answerContent.style.border = '1px solid #BAB9AA';
-	                    answerContent.style.padding = '10px';
-	                    answerContent.style.width = '535px';
-	                    answerContent.style.display = 'flex';
-	                    answerContent.style.flexDirection = 'column';
-
-	                    var answerHeader = document.createElement('div');
-	                    answerHeader.style.display = 'flex';
-	                    answerHeader.style.alignItems = 'center';
-	                    answerHeader.style.marginBottom = '5px';
-
-	                    var userName = document.createElement('div');
-	                    userName.className = 'user-name';
-	                    userName.textContent = '홍길동'; // 댓글 작성자 이름 (이 예시에서는 고정값, 서버에서 값을 받을 수도 있음)
-	                    userName.style.fontWeight = 'bold';
-	                    userName.style.marginRight = '10px';
-
-	                    var answerTime = document.createElement('div');
-	                    answerTime.className = 'answer-time';
-	                    answerTime.textContent = answer.answer_at; // 댓글 작성 시간
-	                    answerTime.style.fontSize = '15px';
-	                    answerTime.style.color = 'black';
-
-	                    answerHeader.appendChild(userName);
-	                    answerHeader.appendChild(answerTime);
-
-	                    var answerTextNode = document.createElement('div');
-	                    answerTextNode.className = 'answer-text';
-	                    answerTextNode.textContent = answer.answer_content; // 댓글 내용
-	                    answerTextNode.style.fontSize = '18px';
-	                    answerTextNode.style.color = 'black';
-	                    answerTextNode.style.marginTop = '5px';
-	                    answerTextNode.style.textAlign = 'left';
-
-	                    answerContent.appendChild(answerHeader);
-	                    answerContent.appendChild(answerTextNode);
-
-	                    // 수정 및 삭제 버튼 추가
-	                    var answerActions = document.createElement('div');
-	                    answerActions.className = 'answer-actions';
-	                    answerActions.style.display = 'flex';
-	                    answerActions.style.flexDirection = 'column'; // 세로로 정렬
-	                    answerActions.style.alignItems = 'flex-start'; // 왼쪽 정렬
-	                    answerActions.style.marginLeft = '15px'; // 약간의 왼쪽여백 추가
-	                    answerActions.style.maginTop = '5px';
-
-	                    var editButton = document.createElement('button');
-	                    editButton.textContent = '수정';
-	                    editButton.style.color = '#2D8E00';
-	                    editButton.onclick = function() {
-	                        // 수정 기능 로직을 추가합니다.
-	                        alert('수정 기능');
-	                    };
-	                    answerActions.appendChild(editButton);
-
-	                    var deleteButton = document.createElement('button');
-	                    deleteButton.textContent = '삭제';
-	                    deleteButton.style.color = '#FF5A5A';
-	                    
-
-	                    answerActions.appendChild(deleteButton);
-
-	                    // 수정/삭제 버튼을 answerContent에 추가
-	                    answerItem.appendChild(userImage);
-	                    answerItem.appendChild(answerContent);
-	                    answerItem.appendChild(answerActions); // 여기에서 추가
-	                    answerForm.appendChild(answerItem);
-	                });
+	                bloadAnswers(); // 답글 추가 후 전체 댓글 목록을 다시 로드
 	            }
 	        };
-	        xhr.send();
-	    }
 
-		
-		
+	        var answerId = "<%= UserId %>"; // 현재 로그인한 사용자 ID 가져오기
+	        var params = "answer_num=" + encodeURIComponent(answerNum) +
+	                     "&reanswer_content=" + encodeURIComponent(replyText) +
+	                     "&reanswer_id=" + encodeURIComponent(answerId);
+	        
+	        console.log(params);
+	        xhr.send(params);
+	    }
+	    
+
+	    
+	    // 답글을 answerItem 아래에 추가하는 함수
+	    function baddReply(answerItem, replyText) {
+	        var replyItem = document.createElement('div');
+	        replyItem.className = 'reply-item';
+	        replyItem.style.display = 'flex';
+	        replyItem.style.alignItems = 'flex-start';
+	        replyItem.style.marginLeft = '60px'; // 부모 댓글에서 약간 들여쓰기
+	        replyItem.style.marginBottom = '10px';
+	        replyItem.style.width = '100%';
+
+	        // 화살표 이미지 추가
+	        var replyIcon = document.createElement('img');
+	        replyIcon.src = '<%= request.getContextPath() %>/seyoung/img/reanswer.png'; 
+	        replyIcon.alt = 'reply icon';
+	        replyIcon.style.width = '20px';
+	        replyIcon.style.height = '20px';
+	        replyIcon.style.marginRight = '10px';
+
+	        var replyContent = document.createElement('div');
+	        replyContent.className = 'reply-content';
+	        replyContent.style.backgroundColor = '#f9f9f9';
+	        replyContent.style.border = '1px solid #BAB9AA';
+	        replyContent.style.padding = '10px';
+	        replyContent.style.width = '515px';
+	        replyContent.style.display = 'flex';
+	        replyContent.style.flexDirection = 'column';
+
+	        var replyHeader = document.createElement('div');
+	        replyHeader.style.display = 'flex';
+	        replyHeader.style.alignItems = 'center';
+	        replyHeader.style.marginBottom = '5px';
+	        
+	        
+	        var reuserImage = document.createElement('img');
+	        reuserImage.src = '<%= request.getContextPath() %>/seyoung/img/character4.png'; // 사용자 이미지 경로
+	        reuserImage.style.width = '30px'; // 이미지 크기 설정
+	        reuserImage.style.height = '30px';
+	        reuserImage.style.marginRight = '10px'; // 사용자 이름과 이미지 간격 설정
+	        reuserImage.style.borderRadius = '50%'; // 둥근 이미지로 설정
+	        
+
+	        var reuserName = document.createElement('div');
+	        reuserName.className = 'reuser-name';
+	        reuserName.textContent = '사용자'; // 여기에 실제 사용자 이름을 넣을 수 있음
+	        reuserName.style.fontWeight = 'bold';
+	        reuserName.style.marginRight = '10px';
+	        reuserName.style.fontSize = '16px';
+
+	        var replyTime = document.createElement('div');
+	        replyTime.className = 'reply-time';
+	        replyTime.textContent = new Date().toLocaleString(); // 현재 시간
+	        replyTime.style.fontSize = '15px';
+	        replyTime.style.color = 'black';
+	        replyTime.style.marginTop = '5px';
+
+	        replyHeader.appendChild(reuserImage);
+	        replyHeader.appendChild(reuserName);
+	        replyHeader.appendChild(replyTime);
+
+	        var replyTextNode = document.createElement('div');
+	        replyTextNode.className = 'reply-text';
+	        replyTextNode.textContent = replyText;
+	        replyTextNode.style.fontSize = '18px';
+	        replyTextNode.style.color = 'black';
+	        replyTextNode.style.marginTop = '5px';
+	        replyTextNode.style.textAlign = 'left';
+
+	        replyContent.appendChild(replyHeader); // 사용자 이름과 시간 추가
+	        replyContent.appendChild(replyTextNode);
+
+	        replyItem.appendChild(replyIcon); // 화살표 이미지 추가
+	        replyItem.appendChild(replyContent);
+
+	        // 답글을 answerItem 바로 아래에 추가
+	        answerItem.parentNode.insertBefore(replyItem, answerItem.nextSibling);
+	    }
+	    
+
+	    // 기존 댓글 로드 함수에 답글 버튼 이벤트 연결 추가
+	    function bloadAnswers() {
+		    var boardNum = <%= latestBoard.getBoard_num() %>; // 현재 게시글 번호 가져오기
+		    var xhr = new XMLHttpRequest();
+		    xhr.open("GET", "<%= cPath %>/seyoung/bgetAnswer.jsp?board_num=" + encodeURIComponent(boardNum), true);
+		    
 	
+		    
+		    xhr.onreadystatechange = function () {
+		        if (xhr.readyState === 4 && xhr.status === 200) {
+		            var answerForm = document.querySelector('.banswer-form');
+		            answerForm.style.display = 'flex'; // 댓글 영역을 보여줌
+		            var answers = JSON.parse(xhr.responseText); // JSON 형식으로 응답을 파싱
+
+		            // 기존 댓글 내용을 초기화
+		            answerForm.innerHTML = '';
+
+		            // 서버에서 받은 댓글 데이터를 화면에 추가
+		            answers.forEach(function (answer) {
+		                var answerItem = document.createElement('div');
+		                answerItem.className = 'answer-item';
+		                answerItem.style.display = 'flex';
+		                answerItem.style.alignItems = 'flex-start';
+		                answerItem.style.marginBottom = '5px';
+		                answerItem.style.width = '100%';
+		                answerItem.style.flexDirection = 'row';
+
+		                // answer_num을 answerItem에 data 속성으로 저장
+		                answerItem.setAttribute('data-answer-num', answer.answer_num);
+
+		                var userImage = document.createElement('img');
+		                userImage.src = 'img/character2.png';
+		                userImage.alt = '사용자 이미지';
+		                userImage.className = 'user-image';
+		                userImage.style.marginRight = '10px';
+
+		                var answerContentContainer = document.createElement('div');
+		                answerContentContainer.style.display = 'flex';
+		                answerContentContainer.style.flexDirection = 'column'; // 답글 폼을 세로로 배치
+		                answerContentContainer.style.width = '100%';
+
+		                var answerContent = document.createElement('div');
+		                answerContent.className = 'answer-content';
+		                answerContent.style.backgroundColor = '#f9f9f9';
+		                answerContent.style.border = '1px solid #BAB9AA';
+		                answerContent.style.padding = '10px';
+		                answerContent.style.width = '600px';
+		                answerContent.style.display = 'flex';
+		                answerContent.style.flexDirection = 'column';
+
+		                var answerHeader = document.createElement('div');
+		                answerHeader.style.display = 'flex';
+		                answerHeader.style.alignItems = 'center'; // Center align the userName and answerTime
+		                answerHeader.style.marginBottom = '5px';
+		                answerHeader.style.justifyContent = 'space-between';
+
+		                var userName = document.createElement('div');
+		                userName.className = 'user-name';
+		                userName.textContent = answer.answer_id;
+		                userName.style.fontWeight = 'bold';
+		                userName.style.fontSize = '16px';
+		                userName.style.display = 'inline-block'; // Inline block to allow adjacent alignment
+
+		                var answerTime = document.createElement('div');
+		                answerTime.className = 'answer-time';
+		                answerTime.textContent = answer.answer_at; // 댓글 작성 시간
+		                answerTime.style.fontSize = '15px';
+		                answerTime.style.color = 'black';
+		                answerTime.style.marginLeft = '-440px';
+		                answerTime.style.display = 'inline-block'; // Keep in the same line as userName
+
+		                var answerTimeContainer = document.createElement('div');
+		                answerTimeContainer.style.display = 'flex'; // 시간과 삭제 버튼을 같은 줄에 배치
+
+		                var delButton = document.createElement('button');
+		                delButton.textContent = '삭제';
+		                delButton.style.color = '#FF5A5A';
+		                delButton.style.marginTop = '0px';
+		                delButton.style.cursor = 'pointer';
+		                delButton.style.border = 'none';
+		                delButton.style.background = 'none';
+		                delButton.style.fontSize = '15px';
+
+		                delButton.onclick = function () {
+		                    if (confirm("댓글을 삭제하시겠습니까?")) {
+		                        bdeleteAnswer(answer.answer_num); // 삭제 함수 호출
+		                    }
+		                };
+
+		                answerTimeContainer.appendChild(delButton);
+
+		                answerHeader.appendChild(userName);
+		                answerHeader.appendChild(answerTime);
+		                answerHeader.appendChild(answerTimeContainer);
+
+		                var answerTextNode = document.createElement('div');
+		                answerTextNode.className = 'answer-text';
+		                answerTextNode.textContent = answer.answer_content; // 댓글 내용
+		                answerTextNode.style.fontSize = '18px';
+		                answerTextNode.style.color = 'black';
+		                answerTextNode.style.marginTop = '5px';
+		                answerTextNode.style.textAlign = 'left';
+
+		                answerContent.appendChild(answerHeader);
+		                answerContent.appendChild(answerTextNode);
+
+		                // 답글 입력 폼
+		                var reAnswerForm = document.createElement('div');
+		                reAnswerForm.className = 'reanswer-form';
+		                reAnswerForm.style.display = 'flex';
+		                reAnswerForm.style.flexDirection = 'row';
+		                reAnswerForm.style.alignItems = 'flex-start';
+		                reAnswerForm.style.padding = '10px';
+		                reAnswerForm.style.width = '600px';
+		                reAnswerForm.style.marginTop = '5px';
+		                reAnswerForm.style.marginBottom = '5px';
+		                reAnswerForm.style.marginLeft = '0px';
+		                reAnswerForm.style.border = '1px solid #BAB9AA';
+		                reAnswerForm.style.backgroundColor = '#f9f9f9';
+
+		                var reAnswerInput = document.createElement('input');
+		                reAnswerInput.className = 'reanswer-input';
+		                reAnswerInput.type = 'text';
+		                reAnswerInput.placeholder = '답글을 입력하세요';
+		                reAnswerInput.style.width = '90%';
+		                reAnswerInput.style.marginBottom = '5px';
+		                reAnswerInput.style.padding = '5px';
+		                reAnswerInput.style.border = '1px solid #BAB9AA';
+		                reAnswerInput.style.borderRadius = '5px';
+		                reAnswerInput.style.fontSize = '15px';
+
+		                var reAnswerButton = document.createElement('button');
+		                reAnswerButton.className = 'reanswer-button';
+		                reAnswerButton.textContent = '등록';
+		                reAnswerButton.style.padding = '5px 10px';
+		                reAnswerButton.style.border = '1px solid #BAB9AA';
+		                reAnswerButton.style.borderRadius = '5px';
+		                reAnswerButton.style.backgroundColor = '#f2f2f2';
+		                reAnswerButton.style.cursor = 'pointer';
+		                reAnswerButton.style.margin = '0px 10px';
+		                reAnswerButton.style.fontSize = '15px';
+		                reAnswerButton.style.height = '29px';
+		                reAnswerButton.style.width = '40px';
+
+		                reAnswerButton.onclick = function () {
+		                    var replyText = reAnswerInput.value.trim();
+		                    if (replyText !== '') {
+		                        baddReAnswer(answer.answer_num, replyText); // 답글 등록
+		                    }
+		                };
+
+		                reAnswerForm.appendChild(reAnswerInput);
+		                reAnswerForm.appendChild(reAnswerButton);
+
+		                answerContentContainer.appendChild(answerContent);
+		                answerContentContainer.appendChild(reAnswerForm);
+
+		                answerItem.appendChild(userImage); // 이미지 추가
+		                answerItem.appendChild(answerContentContainer); // 답글 폼과 콘텐츠 추가
+
+		                answerForm.appendChild(answerItem); // 전체 answerItem을 추가
+		            });
+		        }
+		    };
+
+		    xhr.send();
+		}
+
+	    function bdeleteAnswer(answerNum) {
+	        var xhr = new XMLHttpRequest();
+	        xhr.open("POST", "<%= cPath %>/seyoung/bAnswerDeleteProc.jsp", true); // 서버 측 댓글 삭제 처리 파일
+	        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+	        xhr.onreadystatechange = function () {
+	            if (xhr.readyState === 4 && xhr.status === 200) {
+	                if (xhr.responseText === 'success') {
+	                    alert("댓글이 성공적으로 삭제되었습니다.");
+	                    bloadAnswers(); 
+	                } else {
+	                    alert("댓글 삭제에 실패했습니다.");
+	                }
+	            }
+	        };
+
+	        var params = "answer_num=" + encodeURIComponent(answerNum); // 삭제할 댓글 번호
+	        xhr.send(params);
+	    }
+	    
+
     </script>
 </body>
 </html>
