@@ -496,17 +496,7 @@
         }
     });
 
-    // 폴더 선택 시 히든 필드에 폴더 번호 저장
-    /* function selectFolder(folderNum) {
-        var boardFolderInput = document.getElementById('board-folder');
-        if (boardFolderInput) {
-            boardFolderInput.value = folderNum;
-        }
-    }
-
-    function onFolderSelected(folderNum) {
-        selectFolder(folderNum);
-    } */
+	
 
     // 폼 제출 전에 게시글 내용을 textarea에 복사하여 전송
     function copyContentToTextarea() {

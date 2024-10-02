@@ -33,7 +33,7 @@
 
     try {
         // 댓글 삭제 메서드를 호출합니다.
-        mgr.deleteAnswer(answerNum);
+        mgr.bdeleteAnswer(answerNum);
 
         // 성공 응답을 보냅니다.
         response.setContentType("application/json");

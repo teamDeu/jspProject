@@ -3,9 +3,7 @@ package board;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Vector;
-
 import miniroom.DBConnectionMgr;
 
 public class BoardAnswerMgr {
@@ -17,7 +15,7 @@ public class BoardAnswerMgr {
 	
 	
 	// 댓글 추가
-    public void insertAnswer(BoardAnswerBean answerBean) {
+	public void binsertAnswer(BoardAnswerBean answerBean) {
         Connection con = null;
         PreparedStatement pstmt = null;
         String sql = "INSERT INTO boardanswer (board_num, answer_content, answer_id, answer_at) VALUES (?, ?, ?, now())";
@@ -37,7 +35,7 @@ public class BoardAnswerMgr {
     }
 
     // 댓글 삭제
-    public void deleteAnswer(int answerNum) {
+    public void bdeleteAnswer(int answerNum) {
         Connection con = null;
         PreparedStatement pstmt = null;
         String sql = "DELETE FROM boardanswer WHERE answer_num = ?";
@@ -61,7 +59,7 @@ public class BoardAnswerMgr {
     }
 
     // 댓글 목록 불러오기 (특정 게시물에 달린 댓글)
-    public Vector<BoardAnswerBean> getAnswers(int boardNum) {
+    public Vector<BoardAnswerBean> bgetAnswers(int boardNum) {
         Vector<BoardAnswerBean> answerList = new Vector<>();
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -92,4 +90,30 @@ public class BoardAnswerMgr {
         return answerList;
     }
 	
+    // 특정 댓글의 answer_num을 가져오는 메소드
+    public int getAnswerNumById(String answerId) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int answerNum = -1; // 기본값은 -1로 설정
+
+        try {
+            con = pool.getConnection();
+            String sql = "SELECT answer_num FROM boardanswer WHERE answer_id = ?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, answerId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                answerNum = rs.getInt("answer_num");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+
+        return answerNum; // 해당 answer_num을 반환
+    }
+    
 }
