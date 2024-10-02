@@ -172,6 +172,12 @@
     </div>
     <script>
     	miniroom = document.getElementById("miniroom");
+    	document.addEventListener('DOMContentLoaded', function () {
+    		if(isSuspension){
+    			document.getElementById("messageInput").disabled = true;
+    			document.getElementById("messageInput").placeholder = "채팅이 정지된 계정입니다.";
+    		}
+    	})
     </script>
 </body>
 </html>

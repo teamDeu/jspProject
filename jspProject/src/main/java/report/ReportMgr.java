@@ -132,6 +132,41 @@ public class ReportMgr {
 
 	        return totalCount;  // 총 상품 수 반환
 	    }
+	    
+	    public ReportBean getReportBean(int num) {
+	    	Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+	        String sql = null;
+	        ReportBean bean = new ReportBean();
+
+	        try {
+	            con = pool.getConnection();
+
+	                // 검색이 없는 경우
+	                sql = "SELECT * FROM report where report_num = ?";
+	                pstmt = con.prepareStatement(sql);
+	                pstmt.setInt(1, num);
+	            
+	            rs = pstmt.executeQuery();
+	            while (rs.next()) {
+	            	
+	            	bean.setReport_num(rs.getInt(1));
+	            	bean.setReport_senduserid(rs.getString(2));
+	            	bean.setReport_receiveuserid(rs.getString(3));
+	            	bean.setReport_at(rs.getString(4));
+	            	bean.setReport_type(rs.getString(5));
+	            	
+
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return bean;
+	    }
 	    public Vector<ChatLogBean> getChatLogByReport(ReportBean report){
 	 
 	    	Connection con = null;
@@ -164,5 +199,60 @@ public class ReportMgr {
 				pool.freeConnection(con, pstmt, rs);
 			}
 			return vlist;
+	    }
+	    public SuspensionBean getSuspension(int num) {
+	    	
+	    	Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql = "";
+			SuspensionBean bean = new SuspensionBean();
+			try {
+				con = pool.getConnection();
+				sql = "select * from suspension where suspension_num = ?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setInt(1, num);
+				rs = pstmt.executeQuery();
+				if (rs.next()) {
+					bean.setSuspension_num(rs.getInt(1));
+					bean.setSuspension_id(rs.getString(2));
+					bean.setSuspension_date(rs.getString(3));
+					bean.setSuspension_type(rs.getInt(4));
+					bean.setSuspension_reason(rs.getInt(5));
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			} finally {
+				pool.freeConnection(con, pstmt, rs);
+			}
+			
+			return bean;
+	    }
+	    public SuspensionBean isSuspension(String id) {
+	    	Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql = "";
+			SuspensionBean bean = new SuspensionBean();
+			try {
+				con = pool.getConnection();
+				sql = "select * from suspension where suspension_id = ? and suspension_date > now() order by suspension_type desc";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				if (rs.next()) {
+					bean.setSuspension_num(rs.getInt(1));
+					bean.setSuspension_id(rs.getString(2));
+					bean.setSuspension_date(rs.getString(3));
+					bean.setSuspension_type(rs.getInt(4));
+					bean.setSuspension_reason(rs.getInt(5));
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			} finally {
+				pool.freeConnection(con, pstmt, rs);
+			}
+			
+			return bean;
 	    }
 }	

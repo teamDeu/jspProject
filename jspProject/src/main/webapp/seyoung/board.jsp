@@ -808,10 +808,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        xhr.send(params);
 	    }
 	    
-	    
-	    window.onload = function() {
-	        bloadAnswers(); // 페이지가 로드될 때 댓글 목록을 불러오는 함수 호출
-	    };
 
     </script>
 </body>

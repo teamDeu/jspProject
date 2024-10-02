@@ -57,7 +57,32 @@
 			display:flex;
 			flex-direction : column;
 			gap : 5px;
+			max-height : 300px;
+			overflow-y : scroll;
 			padding : 10px;
+		}
+		.admin_input{
+			padding : 6px;
+			border-radius:5px;
+			border : 1px solid black;
+			box-sizing:border-box;
+		}
+		.admin_select{
+			padding : 5px;
+			border-radius:5px;
+			border : 1px solid black;
+			box-sizing:border-box;
+		}
+		.admin_submitBtn{
+			padding : 4px;
+			background : none;
+			border-radius:5px;
+			box-sizing:border-box;
+			border : 1px solid black;
+		}
+		.product-list-table td,
+		.product-list-table th{
+			border : none;
 		}
 	</style>
 </head>
@@ -78,17 +103,17 @@
 		<h1>유저 관리</h1>
 		<!-- 검색 폼 -->
 		<form method="get" action="adminReport.jsp">
-			<select name="user_keyField">
+			<select class ="admin_select" name="user_keyField">
 				<option value="report_type">신고 타입</option>
 				<option value="report_senduserid">신고 유저</option>
 				<option value="report_receiveuserid">피신고 유저</option>
-			</select> <input type="text" name="user_keyWord" placeholder="검색어 입력" /> <input
-				type="submit" value="검색" />
+			</select> <input class ="admin_input" type="text" name="user_keyWord" placeholder="검색어 입력" /> <input
+				type="submit" class ="admin_submitBtn" value="검색" />
 		</form>
 		<!-- 상품 목록 출력 및 페이징 -->
 		<div class="product-list">
 			<h2>신고 목록</h2>
-			<table>
+			<table class ="product-list-table">
 				<thead>
 					<tr>
 						<th>신고번호</th>
@@ -96,7 +121,7 @@
 						<th>피신고 유저</th>
 						<th>신고 시간</th>
 						<th>신고 타입</th>
-						<th> </th>
+						<th>관리</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -147,7 +172,7 @@
 							<%} else{%>
 							<%for(int i = 0 ; i < chatLogList.size() ; i++) {
 							ChatLogBean chatLogBean = chatLogList.get(i);%>
-							<div class ="report_chatLogBox_content"> 
+							<div class ="report_chatLogBox_content">
 								<%=chatLogBean.getChatlog_id() %> : <%=chatLogBean.getChatlog_content() %>
 							</div>
 							<%} }%>
@@ -222,6 +247,7 @@
         	document.getElementById(id).style.display = "none";
         }
         function clickReportChatLogBoxOpenBtn(id){
+        	document.querySelectorAll(".report_chatLogBox").forEach((e) => e.style.display = "none");
         	document.getElementById(id).style.display = "flex";
         }
     </script>
