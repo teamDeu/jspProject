@@ -46,7 +46,6 @@
         }
         body {
             font-family: 'Arial', sans-serif;
-            display: flex;
             height: 100vh;
             background-color: #f5f5f5;
         }
@@ -85,10 +84,11 @@
         .main-content {
             margin-left: 250px;
             padding: 20px;
-            width: calc(100% - 250px);
             background-color: #fff;
+            width:100%;
             height: 100vh;
             overflow-y: auto;
+            box-sizing:border-box;
             position: relative;
         }
         .main-content h1 {
@@ -206,9 +206,9 @@
     <div class="sidebar">
         <h2>관리자 패널</h2>
         <ul>
-            <li onclick="showCategory('dashboard')" id="dashboardTab" class="active"><i class="fa fa-home"></i> 대시보드</li>
-            <li onclick="showCategory('user')">유저</li>
-            <li onclick="showCategory('store')" id="storeTab"><i class="fa fa-store"></i> 상점 관리</li>
+            <li onclick="showCategory(event)" data = "adminMain.jsp" id="dashboardTab" class="active"><i class="fa fa-home"></i> 대시보드</li>
+            <li onclick="showCategory(event)" data = "adminUser.jsp">유저관리</li>
+            <li onclick="showCategory(event)" data = "adminStore.jsp" id="storeTab"><i class="fa fa-store">상점관리</li>
             <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
             
         </ul>
@@ -424,29 +424,14 @@
                 window.location.href = 'logout.jsp';
             }
         }
-		function showCategory(id){
-			document.querySelectorAll('.main-content').forEach((e) => e.style.display = "none");
-			document.getElementById(id).style.display ="block";
+		function showCategory(event){
+			console.dir(event.target);
+			location.href = event.target.getAttribute("data");
 		}
         // 상품 추가 페이지를 새창으로 열기
         function openStoreManage() {
             window.open('storeManage.jsp', '_blank', 'width=600,height=600');
         }
-
-        // 페이지 로드 시 대시보드 표시
-        window.onload = function () {
-            var urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('keyWord') || urlParams.has('page')) {
-            	type = <%=type%>
-            	if(type == store)
-                	showCategory('store');
-            	else if(type == user)
-            		showCategory('user');
-            } else {
-            	
-                showCategory('dashboard');
-            }
-        };
     </script>
 </body>
 </html>

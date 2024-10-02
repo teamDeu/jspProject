@@ -1,3 +1,4 @@
+<%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="friend.FriendRequestBean"%>
 <%@page import="friend.FriendInfoBean"%>
 <%@page import="java.util.Vector"%>
@@ -7,6 +8,7 @@
 <jsp:useBean id="fMgr" class="friend.FriendMgr" />
 <jsp:useBean id="uMgr" class="pjh.MemberMgr" />
 <jsp:useBean id="iMgr" class="miniroom.ItemMgr"/>
+<jsp:useBean id="profileMgr" class="guestbook.GuestbookprofileMgr"/>
 <%
 
 String connect_id = (String)session.getAttribute("idKey");
@@ -23,6 +25,7 @@ if (connect_id.equals(user_id))
 
 Vector<FriendInfoBean> fInfoList = fMgr.getFriendList(user_id);
 Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
+GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 %>
 <!DOCTYPE html>
 <html>
@@ -43,13 +46,13 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 .main_profile_img_box {
 	widht: 100%;
 	display: flex;
+	height:250px;
 	justify-content: center;
 }
 
 .main_profile_img {
-	width: 100%;
 	object-fit: cover;
-	margin: auto;
+	width:100%;
 }
 
 .main_profile_status {
@@ -243,10 +246,10 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 		</select>
 		<div class="main_profile_main">
 			<div class="main_profile_img_box">
-				<img class="main_profile_img" src="./img/character1.png">
+				<img class="main_profile_img" src="./<%=profileBean.getProfilePicture()%>">
 			</div>
 			<div class="main_profile_comment">
-				<span style="font-size: 22px">후비적 후비적</span>
+				<span style="font-size: 22px"><%=profileBean.getProfileContent()%></span>
 			</div>
 			<div class="main_profile_main_bottom">
 				<%
@@ -312,11 +315,15 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 						}
 						MemberBean bean = uMgr.getMember(friendId);
 						String image = iMgr.getUsingCharacter(friendId).getItem_path();
+					
 						int type = fInfoBean.getFriend_type();
+						String userName = bean.getUser_name();
+						GuestbookprofileBean profileBeanInComponent = profileMgr.getProfileByUserId(friendId);
+						userName = profileBeanInComponent.getProfileName();
 					%>
 					<jsp:include page="friendComponent.jsp">
 						<jsp:param value="<%=image%>" name="profileImg" />
-						<jsp:param value="<%=bean.getUser_name()%>" name="profileName" />
+						<jsp:param value="<%=userName%>" name="profileName" />
 						<jsp:param value="<%=type %>" name = "type"/>
 						<jsp:param value="<%=bean.getUser_id() %>" name = "profileId"/>
 					</jsp:include>
@@ -328,9 +335,6 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 		</div>
 	</div>
 	<script>
-	 
-    
-    
     
 	const friend_itemsPerPage = 4; // 페이지당 8개 아이템
 	let friend_currentPage = 1; // 현재 페이지

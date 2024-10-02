@@ -1,3 +1,4 @@
+<%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="pjh.MemberMgr"%>
 <%@page import="pjh.MemberBean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -5,6 +6,7 @@
 <jsp:useBean id="iMgr" class ="miniroom.ItemMgr"/>
 <jsp:useBean id="mMgr" class ="pjh.MemberMgr"/>
 <jsp:useBean id="fMgr" class ="friend.FriendMgr"/>
+<jsp:useBean id="profileMgr" class ="guestbook.GuestbookprofileMgr"/>
 <%
    // 세션에서 idKey 가져오기
    String id = (String)session.getAttribute("idKey");
@@ -12,7 +14,7 @@
       response.sendRedirect("../pjh/login.jsp");
       return;
    }
-
+   GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(id);
 // 페이지 소유자의 ID 가져오기
    String pageOwnerId = request.getParameter("url");
 
@@ -123,7 +125,7 @@
    border-radius : 10px;
    box-sizing:border-box;
    background-color:#FFFEF3;
-   top: -100px;
+   top: -130px;
    border: 2px solid #BAB9AA;
 }
 .miniroom_information button{
@@ -231,7 +233,7 @@ function clickAlarm(){
         var localId = "<%=userBean.getUser_id()%>";
         var localCharacter = "<%=character%>"
         var url = "<%=url%>";
-        var localName = "<%=userBean.getUser_name()%>";
+        var localName = "<%=profileBean.getProfileName()%>";
         var dataSeparator = "㉠"
         var messageSeparator = "㉡";
         var timeNameText = "";
@@ -355,7 +357,7 @@ function clickAlarm(){
         	ws.send(message);
         }
         function sendMessage() {
-            var message = "sendMessage" + dataSeparator +  localId + messageSeparator + document.getElementById("messageInput").value + messageSeparator + '<%=userBean.getUser_name()%>';
+            var message = "sendMessage" + dataSeparator +  localId + messageSeparator + document.getElementById("messageInput").value + messageSeparator + localName;
             if (message.trim() !== "") {
                 ws.send(message);
                 document.getElementById("messageInput").value = '';

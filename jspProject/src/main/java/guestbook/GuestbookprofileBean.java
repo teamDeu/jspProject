@@ -4,8 +4,52 @@ public class GuestbookprofileBean {
     private String userId;
     private String profileName;
     private String profilePicture;
+    private String profileBirth;
+    private String profileHobby;
+    private String profileEmail;
+    private String profileMbti;
+    private String profileContent;
+    public String getProfileBirth() {
+		return profileBirth;
+	}
 
-    // Getters and Setters
+	public void setProfileBirth(String profileBirth) {
+		this.profileBirth = profileBirth;
+	}
+
+	public String getProfileHobby() {
+		return profileHobby;
+	}
+
+	public void setProfileHobby(String profileHobby) {
+		this.profileHobby = profileHobby;
+	}
+
+	public String getProfileEmail() {
+		return profileEmail;
+	}
+
+	public void setProfileEmail(String profileEmail) {
+		this.profileEmail = profileEmail;
+	}
+
+	public String getProfileMbti() {
+		return profileMbti;
+	}
+
+	public void setProfileMbti(String profileMbti) {
+		this.profileMbti = profileMbti;
+	}
+
+	public String getProfileContent() {
+		return profileContent;
+	}
+
+	public void setProfileContent(String profileContent) {
+		this.profileContent = profileContent;
+	}
+
+	// Getters and Setters
     public String getUserId() {
         return userId;
     }
