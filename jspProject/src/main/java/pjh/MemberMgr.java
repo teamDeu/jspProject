@@ -54,66 +54,74 @@ public class MemberMgr {
 
 	// 회원가입
 	public boolean insertMember(MemberBean bean) {
-		Connection con = null;
-		PreparedStatement pstmt1 = null;
-		PreparedStatement pstmt2 = null;
-		String sql1 = null;
-		String sql2 = null;
-		boolean flag = false;
+	    Connection con = null;
+	    PreparedStatement pstmt1 = null;
+	    PreparedStatement pstmt2 = null;
+	    String sql1 = null;
+	    String sql2 = null;
+	    boolean flag = false;
 
-		try {
-			con = pool.getConnection();
-			con.setAutoCommit(false); // 트랜잭션 시작
+	    try {
+	        con = pool.getConnection();
+	        con.setAutoCommit(false); // 트랜잭션 시작
 
-			// 회원 정보를 user 테이블에 저장
-			sql1 = "INSERT INTO user(user_id, user_pwd, user_name, user_birth, user_phone, user_email, user_clover, user_character) "
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-			pstmt1 = con.prepareStatement(sql1);
-			pstmt1.setString(1, bean.getUser_id());
-			pstmt1.setString(2, bean.getUser_pwd());
-			pstmt1.setString(3, bean.getUser_name());
-			pstmt1.setString(4, bean.getUser_birth());
-			pstmt1.setString(5, bean.getUser_phone());
-			pstmt1.setString(6, bean.getUser_email());
-			pstmt1.setInt(7, bean.getUser_clover());
-			pstmt1.setInt(8, 1); // 기본 캐릭터 설정
+	        // 현재 날짜를 가져옴
+	        String userDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+	        bean.setUser_date(userDate);  // Bean에 날짜 설정
 
-			if (pstmt1.executeUpdate() == 1) {
-				// 회원가입이 성공하면 miniroom 테이블에도 user_id를 저장
-				sql2 = "INSERT INTO miniroom(user_id) VALUES(?)";
-				pstmt2 = con.prepareStatement(sql2);
-				pstmt2.setString(1, bean.getUser_id());
+	        // 회원 정보를 user 테이블에 저장
+	        sql1 = "INSERT INTO user(user_id, user_pwd, user_name, user_birth, user_phone, user_email, user_clover, user_character, user_date) "
+	             + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	        pstmt1 = con.prepareStatement(sql1);
+	        pstmt1.setString(1, bean.getUser_id());
+	        pstmt1.setString(2, bean.getUser_pwd());
+	        pstmt1.setString(3, bean.getUser_name());
+	        pstmt1.setString(4, bean.getUser_birth());
+	        pstmt1.setString(5, bean.getUser_phone());
+	        pstmt1.setString(6, bean.getUser_email());
+	        pstmt1.setInt(7, bean.getUser_clover());
+	        pstmt1.setInt(8, 1);
+	        pstmt1.setString(9, bean.getUser_date());  // 가입 날짜 추가
 
-				if (pstmt2.executeUpdate() == 1) {
-					flag = true;
-					con.commit(); // 트랜잭션 성공 시 커밋
-				} else {
-					con.rollback(); // miniroom 저장 실패 시 롤백
-				}
-			} else {
-				con.rollback(); // 회원가입 실패 시 롤백
-			}
+	        if (pstmt1.executeUpdate() == 1) {
+	            // 회원가입이 성공하면 miniroom 테이블에도 user_id를 저장
+	            sql2 = "INSERT INTO miniroom(user_id) VALUES(?)";
+	            pstmt2 = con.prepareStatement(sql2);
+	            pstmt2.setString(1, bean.getUser_id());
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			try {
-				if (con != null) {
-					con.rollback(); // 예외 발생 시 롤백
-				}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-		} finally {
-			try {
-				if (con != null)
-					con.setAutoCommit(true); // 자동 커밋 모드로 복원
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			pool.freeConnection(con, pstmt1);
-			pool.freeConnection(con, pstmt2);
-		}
-		return flag;
+	            if (pstmt2.executeUpdate() == 1) {
+	                flag = true;
+	                con.commit(); // 트랜잭션 성공 시 커밋
+	            } else {
+	                con.rollback(); // miniroom 저장 실패 시 롤백
+	                System.out.println("Miniroom 테이블에 저장 실패");
+	            }
+	        } else {
+	            con.rollback(); // 회원가입 실패 시 롤백
+	            System.out.println("User 테이블에 저장 실패");
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        try {
+	            if (con != null) {
+	                con.rollback(); // 예외 발생 시 롤백
+	                System.out.println("롤백 처리됨: " + e.getMessage());
+	            }
+	        } catch (SQLException e1) {
+	            e1.printStackTrace();
+	        }
+	    } finally {
+	        try {
+	            if (con != null)
+	                con.setAutoCommit(true); // 자동 커밋 모드로 복원
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        pool.freeConnection(con, pstmt1);
+	        pool.freeConnection(con, pstmt2);
+	    }
+	    return flag;
 	}
 
 	// 로그인
@@ -702,6 +710,67 @@ public class MemberMgr {
 	    private Map<String, Integer> getHourlyDataFromDB1() {
 	        // 실제 DB 쿼리 구현
 	        return new HashMap<>(); // 가상의 DB 데이터 반환
+	    }
+	    
+	 // 5일간의 신규 가입자 수를 반환하는 메서드 추가
+	    public Map<String, Integer> getDailyNewMembersCount() throws Exception {
+	        Map<String, Integer> dailyNewMembersCount = new LinkedHashMap<>();
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+
+	        String sql = "SELECT DATE(user_date) AS reg_date, COUNT(*) AS count FROM user " +
+	                     "WHERE user_date >= DATE_SUB(CURDATE(), INTERVAL 5 DAY) " +
+	                     "GROUP BY reg_date ORDER BY reg_date ASC";
+
+	        try {
+	            con = pool.getConnection();
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
+
+	            // 결과를 Map에 넣기
+	            while (rs.next()) {
+	                dailyNewMembersCount.put(rs.getString("reg_date"), rs.getInt("count"));
+	            }
+
+	            // 5일 전부터 오늘까지 날짜를 저장 (기록 없는 경우 0으로 채움)
+	            for (int i = 5; i >= 0; i--) {
+	                String dateLabel = java.time.LocalDate.now().minusDays(i).toString();
+	                dailyNewMembersCount.putIfAbsent(dateLabel, 0);
+	            }
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return dailyNewMembersCount;
+	    }
+	    
+	 // 총 가입자 수를 반환하는 메서드 추가
+	    public int getTotalMemberCount() throws Exception {
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+	        int totalMembers = 0;
+
+	        try {
+	            con = pool.getConnection();
+	            String sql = "SELECT COUNT(*) AS total FROM user";
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
+
+	            if (rs.next()) {
+	                totalMembers = rs.getInt("total"); // 총 회원 수 반환
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return totalMembers;
 	    }
 
 
