@@ -1,3 +1,4 @@
+<%@page import="java.time.format.DateTimeFormatter"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page import="java.util.Vector"%>
@@ -25,12 +26,37 @@
 	    Map<String, Integer> monthlyVisitorData = memberMgr.getMonthlyVisitorCount();
 	    Map<String, Integer> hourlyVisitorData = memberMgr.getHourlyVisitorCount();
 
-	    // 데이터를 자바스크립트로 전달하기 위해 준비
-	    List<String> monthlyLabels = new ArrayList<>(monthlyVisitorData.keySet());
-	    List<Integer> monthlyValues = new ArrayList<>(monthlyVisitorData.values());
+	    // 월별 기본 레이블 (현재 달 포함 6개월)
+	    List<String> monthlyLabels = new ArrayList<>();
+	    for (int i = 5; i >= 0; i--) {
+	        monthlyLabels.add(java.time.LocalDate.now().minusMonths(i).getMonthValue() + "월");
+	    }
 
-	    List<String> hourlyLabels = new ArrayList<>(hourlyVisitorData.keySet());
-	    List<Integer> hourlyValues = new ArrayList<>(hourlyVisitorData.values());
+	    
+
+	    // 월별 데이터 생성 (기록 없는 경우 0으로 초기화)
+	    List<Integer> monthlyValues = new ArrayList<>();
+	    for (String label : monthlyLabels) {
+	    	if(label.length() == 2){
+	    		label = '0'+label;
+	    	}
+	        monthlyValues.add(monthlyVisitorData.getOrDefault(label, 0));
+	        System.out.println(label + monthlyVisitorData.getOrDefault(label, 0));
+	    }
+	 // 현재 시간 기준 6시간의 레이블 생성
+	    List<String> hourlyLabels = new ArrayList<>();
+	    for (int i = 5; i >= 0; i--) {
+	        hourlyLabels.add(java.time.LocalTime.now().minusHours(i).format(DateTimeFormatter.ofPattern("HH")) + "시");
+	    }
+
+	    // 시간대별 데이터 생성 (기록 없는 경우 0으로 초기화)
+	    List<Integer> hourlyValues = new ArrayList<>();
+	    for (String label : hourlyLabels) {
+	        String hour = label.replace("시", "");  // "HH시"에서 "HH"만 추출
+	        hourlyValues.add(hourlyVisitorData.getOrDefault(hour, 0));
+	    }
+
+	    
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -112,7 +138,7 @@
                 chart.destroy();
             }
 
-            // 차트 컨테이너 표시
+         // 차트 컨테이너 표시
             document.getElementById('chartContainer').style.display = 'block';
 
             var ctx = document.getElementById('visitorChart').getContext('2d');
@@ -121,7 +147,7 @@
                 data: {
                     labels: labels,  // x축 레이블
                     datasets: [{
-                        label: type === 'monthly' ? '월별 접속자 수' : '4시간 단위 접속자 수',
+                        label: type === 'monthly' ? '월별 접속자 수' : '시간대별 접속자 수',
                         data: values,  // y축 데이터
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',

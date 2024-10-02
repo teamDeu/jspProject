@@ -5,7 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
@@ -620,58 +623,85 @@ public class MemberMgr {
 	    }
 
 	 // 월별 방문자 수 가져오기
-	    public Map<String, Integer> getMonthlyVisitorCount() {
-	        Map<String, Integer> monthlyData = new LinkedHashMap<>();
+	    public Map<String, Integer> getMonthlyVisitorCount() throws Exception {
+	        Map<String, Integer> monthlyVisitorCount = new LinkedHashMap<>();
 	        Connection con = null;
 	        PreparedStatement pstmt = null;
 	        ResultSet rs = null;
-
+	        
+	        String sql = "SELECT DATE_FORMAT(visit_date, '%m월') AS month, SUM(visit_count) AS count FROM visitcount GROUP BY month";
+	        
 	        try {
 	            con = pool.getConnection();
-	            String sql = "SELECT DATE_FORMAT(visit_date, '%Y-%m') AS month, SUM(visit_count) AS count "
-	                       + "FROM visitCount GROUP BY month ORDER BY month";
 	            pstmt = con.prepareStatement(sql);
 	            rs = pstmt.executeQuery();
-
+	            
+	            // 결과를 Map에 넣기
 	            while (rs.next()) {
-	                monthlyData.put(rs.getString("month"), rs.getInt("count"));
+	                monthlyVisitorCount.put(rs.getString("month"), rs.getInt("count"));
 	            }
-
-	        } catch (Exception e) {
+	        } catch (SQLException e) {
 	            e.printStackTrace();
 	        } finally {
 	            pool.freeConnection(con, pstmt, rs);
 	        }
-
-	        return monthlyData;
+	        
+	        return monthlyVisitorCount;
 	    }
 
-	    // 시간대별 방문자 수 가져오기 (4시간 간격)
-	    public Map<String, Integer> getHourlyVisitorCount() {
-	        Map<String, Integer> hourlyData = new LinkedHashMap<>();
+	    // 시간대별 방문자 수 가져오기
+	    public Map<String, Integer> getHourlyVisitorCount() throws Exception {
+	        Map<String, Integer> hourlyVisitorCount = new LinkedHashMap<>();
 	        Connection con = null;
 	        PreparedStatement pstmt = null;
 	        ResultSet rs = null;
 
+	        // 현재 시간을 가져옴
+	        LocalDateTime now = LocalDateTime.now();
+
+	        // SQL 쿼리: 최근 6시간의 방문자 수를 가져옴
+	        String sql = "SELECT DATE_FORMAT(visit_date, '%H') AS hour, SUM(visit_count) AS count " +
+	                     "FROM visitcount " +
+	                     "WHERE visit_date >= DATE_SUB(NOW(), INTERVAL 6 HOUR) " +
+	                     "GROUP BY hour ORDER BY hour ASC";
+
 	        try {
 	            con = pool.getConnection();
-	            String sql = "SELECT DATE_FORMAT(visit_date, '%H:00') AS hour_block, SUM(visit_count) AS count "
-	                       + "FROM visitCount WHERE DATE(visit_date) = CURDATE() "
-	                       + "GROUP BY hour_block ORDER BY hour_block";
 	            pstmt = con.prepareStatement(sql);
 	            rs = pstmt.executeQuery();
 
+	            // 최근 6시간에 대한 방문자 수를 Map에 저장
 	            while (rs.next()) {
-	                hourlyData.put(rs.getString("hour_block"), rs.getInt("count"));
+	                hourlyVisitorCount.put(rs.getString("hour"), rs.getInt("count"));
 	            }
 
-	        } catch (Exception e) {
+	            // 현재 시간을 기준으로 6시간을 저장 (기록 없는 경우 0으로 채움)
+	            for (int i = 5; i >= 0; i--) {
+	                String hourLabel = now.minusHours(i).format(DateTimeFormatter.ofPattern("HH"));
+	                hourlyVisitorCount.putIfAbsent(hourLabel, 0);
+	            }
+
+	        } catch (SQLException e) {
 	            e.printStackTrace();
 	        } finally {
 	            pool.freeConnection(con, pstmt, rs);
 	        }
 
-	        return hourlyData;
+	        return hourlyVisitorCount;
+	    }
+
+
+
+
+	    // 가상의 DB 데이터 조회 함수 예시
+	    private Map<String, Integer> getMonthlyDataFromDB1() {
+	        // 실제 DB 쿼리 구현
+	        return new HashMap<>(); // 가상의 DB 데이터 반환
+	    }
+
+	    private Map<String, Integer> getHourlyDataFromDB1() {
+	        // 실제 DB 쿼리 구현
+	        return new HashMap<>(); // 가상의 DB 데이터 반환
 	    }
 
 
