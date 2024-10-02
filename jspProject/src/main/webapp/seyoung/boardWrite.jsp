@@ -495,37 +495,82 @@
             currentSelected = null; // 선택 상태 초기화
         }
     });
+    
+ // 내용을 입력란을 클릭하면 안내 문구 사라짐
+    function handleContentFocus() {
+        var boardContentDiv = document.getElementById('board-content');
+        boardContentDiv.classList.remove('empty'); // 안내 문구 제거
+    }
 
-	
+    // 내용을 입력란에서 벗어나면 내용이 비었을 때 안내 문구 추가
+    function handleContentBlur() {
+        var boardContentDiv = document.getElementById('board-content');
+        if (boardContentDiv.innerText.trim() === "") {
+            boardContentDiv.classList.add('empty'); // 안내 문구 추가
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var boardContentDiv = document.getElementById('board-content');
+
+        // 내용 입력란이 비어 있으면 안내 문구 표시
+        if (boardContentDiv.innerText.trim() === "") {
+            boardContentDiv.classList.add('empty'); // 안내 문구 추가
+        }
+
+        // 입력란에 포커스 및 블러 이벤트 추가
+        boardContentDiv.addEventListener('focus', handleContentFocus);
+        boardContentDiv.addEventListener('blur', handleContentBlur);
+    });
+    
+    
 
     // 폼 제출 전에 게시글 내용을 textarea에 복사하여 전송
     function copyContentToTextarea() {
         var boardContentTextarea = document.getElementById('board-content-text');
         var boardContentDiv = document.getElementById('board-content');
+        
+        // 내용이 비어있으면 경고 메시지 출력
+        if (!boardContentDiv.innerText.trim()) {
+            alert("내용을 입력해주세요.");
+            return false;
+        }
+
         if (boardContentTextarea && boardContentDiv) {
             boardContentTextarea.value = boardContentDiv.innerHTML; // textarea에 내용 복사
-        }
-    }
-
-    // 폼 제출 시 폴더 번호가 있는지 확인
-    function validateForm() {
-        var boardFolderInput = document.getElementById('board-folder');
-        if (!boardFolderInput.value) {
-            alert('폴더를 선택해 주세요.');
-            return false;
         }
         return true;
     }
 
+    // 폼 제출 시 폴더 번호와 제목 유효성 확인
+    function validateForm() {
+        var boardTitleInput = document.querySelector('input[name="board_title"]');
+        var boardFolderInput = document.getElementById('board-folder');
+        
+        // 제목이 비어 있으면 경고 메시지 출력
+        if (!boardTitleInput.value.trim()) {
+            alert('제목을 입력해주세요.');
+            boardTitleInput.focus();
+            return false;
+        }
+        
+        // 폴더가 선택되지 않았으면 경고 메시지 출력
+        if (!boardFolderInput.value) {
+            alert('폴더를 선택해 주세요.');
+            return false;
+        }
+        
+        return true;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
-        // 폼 제출 시 폴더 번호와 내용 복사
+        // 폼 제출 시 폴더 번호와 제목, 내용 복사 및 유효성 검사
         var form = document.querySelector('form');
         if (form) {
             form.addEventListener('submit', function(event) {
-                if (!validateForm()) {
-                    event.preventDefault(); // 폴더가 선택되지 않았으면 제출 중단
+                if (!validateForm() || !copyContentToTextarea()) {
+                    event.preventDefault(); // 유효성 검사를 통과하지 못하면 제출 중단
                 }
-                copyContentToTextarea(); // 게시글 내용을 textarea에 복사
             });
         }
 
@@ -542,7 +587,7 @@
 
 
 </head>
-<!-- 게시글 작성 폼 -->
+				<!-- 게시글 작성 폼 -->
                 <form action="../seyoung/bWriteAddProc.jsp" method="post" enctype="multipart/form-data">
                     <h1 class="board-title">게시판</h1>
                     <button type="button" class="list-button" onclick="clickOpenBox('boardList')">목록</button>
@@ -553,7 +598,7 @@
                     <div class="board-form">
                         <div class="title-container">
                             <!-- 게시글 제목 입력 -->
-                            <input type="text" name="board_title" placeholder=" 제목을 입력해주세요." required>
+                            <input type="text" name="board_title" placeholder=" 제목을 입력해주세요.">
                             <!-- 등록 버튼 -->
                             <button type="submit" class="register-button">등록</button>
                         </div>          

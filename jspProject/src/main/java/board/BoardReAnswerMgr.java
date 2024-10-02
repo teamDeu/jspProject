@@ -17,7 +17,7 @@ public class BoardReAnswerMgr {
 	public boolean addReAnswer(BoardReAnswerBean reAnswerBean) {
 	    Connection con = null;
 	    PreparedStatement pstmt = null;
-	    String sql = "INSERT INTO board_reanswer (answer_num, reanswer_content, reanswer_id, reanswer_at) VALUES (?, ?, ?, now())";
+	    String sql = "INSERT INTO boardreanswer (answer_num, reanswer_content, reanswer_id, reanswer_at) VALUES (?, ?, ?, now())";
 	    
 	    boolean result = false;
 
