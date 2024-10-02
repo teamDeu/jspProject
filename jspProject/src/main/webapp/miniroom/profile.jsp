@@ -229,6 +229,8 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 .main_profile_friend_count{
 	width:50px;
 }
+        
+        
 </style>
 </head>
 <body>
@@ -261,15 +263,27 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 			</div>
 		</div>
 		<hr width="100%" color="#BAB9AA" style="margin: 10px 0px">
-		<div class="main_profile_music">music</div>
+		
+		<div class="music-player">
+	        <div class="play-button play" id="playButton"></div>
+	        <div class="song-info">
+	            <div class="title">곡명</div>
+	            <div class="artist">아티스트</div>
+	        </div>
+	        <div class="progress-bar"></div>
+	    </div>
+	
+	    <!-- Placeholder audio for demo -->
+	    <audio id="audioPlayer"></audio>
+		
 		<div class="main_profile_friends_main_div">
 			<div class="main_profile_friends_search_div">
 				<input class ="main_profile_friends_search_text" type="text" placeholder="닉네임을 입력해주세요.">
 				<button onclick = "friendSearchClick()">검색</button>
 			</div>
 			<div class="main_profile_friends_list_friendtype_btns">
-				<button style = "background-color : #C0E5AF" class ="main_profile_friendtype_btn" onclick = "changeFriendType(event,1)">일촌</button>
-				<button class ="main_profile_friendtype_btn" onclick = "changeFriendType(event,2)">이촌</button>
+				<button style = "background-color : #C0E5AF" id = "main_profile_friendtype_btn1" class ="main_profile_friendtype_btn" onclick = "changeFriendType(1)">일촌</button>
+				<button class ="main_profile_friendtype_btn" id ="main_profile_friendtype_btn2" onclick = "changeFriendType(2)">이촌</button>
 			</div>
 			<div class="main_profile_friends_list_div">
 
@@ -314,6 +328,10 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 		</div>
 	</div>
 	<script>
+	 
+    
+    
+    
 	const friend_itemsPerPage = 4; // 페이지당 8개 아이템
 	let friend_currentPage = 1; // 현재 페이지
 	let friend_items_first = []; // 모든 아이템을 담을 배열
@@ -345,17 +363,17 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 	    friend_currentPage = page;
 	    friend_displayItems();
 	}
-	function changeFriendType(event,friendType){
+	function changeFriendType(friendType){
 		Array.from(document.querySelectorAll(".main_profile_friendtype_btn")).forEach((btn) => btn.style.backgroundColor = "#DCDCDC");
-		event.target.style.backgroundColor = "#C0E5AF";
 		
 		if(friendType == 1){
 			friend_items = friend_items_first;
+			document.getElementById("main_profile_friendtype_btn1").style.backgroundColor = "#C0E5AF";
 		}
 		else if(friendType == 2){
 			friend_items = friend_items_second;
+			document.getElementById("main_profile_friendtype_btn2").style.backgroundColor = "#C0E5AF";
 		}
-		document.querySelector(".main_profile_friend_count").innerText = friend_items.length + "명";
 		friend_currentPage = 1;
 		friend_displayItems();
 	}
@@ -369,12 +387,12 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 		visibleItems.forEach(item => {
 			itemsContainer.appendChild(item);
 		});
+		document.querySelector(".main_profile_friend_count").innerText = friend_items.length + "명";
 	}
 	document.addEventListener('DOMContentLoaded', function () {
 		friend_items_first = Array.from(document.querySelectorAll('.friends_type_first'));
 		friend_items_second = Array.from(document.querySelectorAll('.friends_type_second'));
 		friend_items = friend_items_first;
-		document.querySelector(".main_profile_friend_count").innerText = friend_items.length + "명";
 		friend_displayItems();
 	})
 	</script>

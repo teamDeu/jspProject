@@ -458,6 +458,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        }
 	    }
 
+<<<<<<< HEAD
 	    
 	 // 답글 버튼을 클릭하면 answer_num을 가져와서 콘솔에 출력
 	    function toggleReAnswerForm(button) {
@@ -466,6 +467,10 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        // answer_id를 기반으로 answer_num을 가져오는 Ajax 요청
 	        var answerId = answerItem.querySelector('.user-name').textContent.trim(); // answer_id 가져오기
 
+=======
+	    function loadAnswers() {
+	        var boardNum = <%= latestBoard.getBoard_num() %>; // 현재 게시글 번호 가져오기
+>>>>>>> branch 'main' of https://github.com/teamDeu/jspProject.git
 	        var xhr = new XMLHttpRequest();
 	        xhr.open("POST", "<%= cPath %>/seyoung/getAnswerNum.jsp", true); // 서버에 answer_num을 요청하는 JSP 파일
 	        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");

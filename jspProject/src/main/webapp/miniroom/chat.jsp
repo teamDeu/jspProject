@@ -161,7 +161,7 @@
     	<img id ="miniroom_background" src="<%=backgroundImg%>">
     </div>
     <div class ="setting">
-    	<button>미니룸 설정</button>
+    	<button onclick = "clickOpenBox('Box_miniroom_design')">미니룸 설정</button>
     	<div id ="nowvisit">NOW 0</div>
     </div>
     <div id ="chatArea2"></div>

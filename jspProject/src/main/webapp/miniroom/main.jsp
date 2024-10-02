@@ -1,4 +1,4 @@
-<%@page import="pjh.VisitCountBean"%>
+<%@page import="pjh.MemberMgr"%>
 <%@page import="pjh.MemberBean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
    pageEncoding="UTF-8"%>
@@ -21,14 +21,6 @@
       pageOwnerId = id;
    }
 
-   // 방문자 수 업데이트 (방문자가 페이지 소유자와 다를 때만 카운트)
-   if (!pageOwnerId.equals(id)) {
-       mMgr.updateVisitCount(pageOwnerId, id);
-   }
-
-   // 방문자 수 가져오기
-   VisitCountBean visitCount = mMgr.getVisitCount(pageOwnerId);
-
 
    // 캐릭터 및 배경 이미지 설정
    String character = iMgr.getUsingCharacter(id).getItem_path();
@@ -43,7 +35,38 @@
 
    // 사용자 정보 가져오기
    MemberBean userBean = mMgr.getMember(id);
+// MemberMgr 객체 초기화
+   MemberMgr memberMgr = new MemberMgr();
+
+// 쿠키에서 마지막 방문 시간 확인
+   String lastVisit = null;
+   javax.servlet.http.Cookie[] cookies = request.getCookies();
+   if (cookies != null) {
+       for (javax.servlet.http.Cookie cookie : cookies) {
+           if (cookie.getName().equals("lastVisit_" + pageOwnerId)) {
+               lastVisit = cookie.getValue();
+           }
+       }
+   }
+
+   long currentTime = System.currentTimeMillis();
+   boolean shouldUpdateVisitorCount = false;
+
+   if (lastVisit == null || (currentTime - Long.parseLong(lastVisit)) > 10000) { // 10초 이상 경과 시
+       // 페이지 소유자별 방문자 수 업데이트
+       memberMgr.updateVisitorCount(pageOwnerId, id); // 방문자 ID는 세션의 id
+
+       // 마지막 방문 시간을 현재 시간으로 쿠키에 저장
+       javax.servlet.http.Cookie visitCookie = new javax.servlet.http.Cookie("lastVisit_" + pageOwnerId, Long.toString(currentTime));
+       visitCookie.setMaxAge(60 * 60 * 24); // 쿠키 유효 기간을 하루로 설정
+       response.addCookie(visitCookie);
+   }
+
+   // 페이지 소유자별 오늘의 방문자 수 및 전체 방문자 수 가져오기
+   int todayVisitorCount = memberMgr.getTodayVisitorCount(pageOwnerId);
+   int totalVisitorCount = memberMgr.getTotalVisitorCount(pageOwnerId);
 %>
+
 
 <!DOCTYPE html>
 <html>
@@ -61,6 +84,34 @@
 
 * {
     font-family: 'NanumTobak', sans-serif;
+}
+.profile_function_div {
+	display: flex;
+	z-index:3;
+	flex-direction: column;
+	position: absolute;
+	width: 120px;
+	padding: 10px;
+	gap: 10px;
+	border-radius: 10px;
+	box-sizing: border-box;
+	background-color: #FFFEF3;
+	left:0px;
+	top: -120px;
+	border: 2px solid #BAB9AA;
+}
+
+.profile_function_div button {
+	padding: 2px 10px;
+	border: 1px solid #DCDCDC;
+	background-color: #FFFFFF;
+	font-size: 16px;
+	border-radius: 10px;
+}
+
+.profile_function_div span {
+	align-self: center;
+	font-size: 20px;
 }
 .miniroom_information {
    display: none;
@@ -108,21 +159,24 @@
 }
 .visitor-stats {
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: 8px;
+        left: 60px;
         text-align: left;
-        font-size: 16px;
+        font-size: 20px;
         font-weight: bold;
         display: flex;
         gap: 20px; /* TODAY와 TOTAL 간의 간격을 조정 */
     }
 
     .visitor-stats .today {
-        color: #FF6347; /* 오늘 방문자수는 눈에 띄게 빨간색 */
+        color: #000000; /* 오늘 방문자수는 눈에 띄게 빨간색 */
     }
 
     .visitor-stats .total {
-        color: #4682B4; /* 총 방문자수는 파란색 */
+        color: #000000; /* 총 방문자수는 파란색 */
+    }
+    .chat_reportBtn{
+    	color: red;
     }
 </style>
 <script>
@@ -242,23 +296,42 @@ function clickAlarm(){
                 	 userId = rawdata[1];
                 	 userName = rawdata[2];
                 	 userCharacter = rawdata[3];
+                	 requestType = rawdata[4];
                 	 flag = isFriend(localId,userId);
-                	 const profileDiv = 
-             	    	'<div onclick="onclickMainProfileFriendsDiv(this)" class="main_profile_friends_div friends_type_first">'+
-             	        '<div class="profile_function_div_main" style="display : none">' +
-             	            '<div class="profile_function_div">' +
-             	                '<span>'+userName+'</span>' +
-             	                (flag ? "<button onclick = 'onclickDeleteFriend("+localId+","+userId+","+userName+")'>친구삭제</button>" :
-             	                	"<button onclick='onclickAddFriend("+localId+","+userId+","+userCharacter+","+userName+")''>친구추가</button>")
-             	                +
-             	                '<button onclick="onclickGoHomePage('+userId+')">미니룸 구경가기</button>' +
-             	            '</div>' +
-             	        '</div>' +
-             	        '<img class="main_profile_friends" src="'+userCharacter+'">' +
-             	        '<span class="main_profile_friends_name">'+userName+'</span>'+
-             	        '</div>'+
-             	        '</div>';
-             	    document.querySelector('.main_profile_friends_list').innerHTML += profileDiv;
+                	 
+                	 const createProfileDiv = (userName, userId, userCharacter, localId, flag) => {
+                		 const profileDiv = 
+                			    '<div onclick="onclickMainProfileFriendsDiv(this)" class="main_profile_friends_div friends_type_first">' +
+                			        '<div class="profile_function_div_main" style="display: none;">' +
+                			            '<div class="profile_function_div">' +
+                			                '<span>' + userName + '</span>' +
+                			                (flag ? 
+                			                    '<button onclick="onclickDeleteFriend(\'' + localId + '\', \'' + userId + '\', \'' + userName + '\')">친구삭제</button>' :
+                			                    '<button onclick="onclickAddFriend(\'' + localId + '\', \'' + userId + '\', \'' + userCharacter + '\', \'' + userName + '\')">친구추가</button>'
+                			                ) +
+                			                '<button onclick="onclickGoHomePage(\'' + userId + '\')">미니룸 구경가기</button>' +
+                			            '</div>' +
+                			        '</div>' +
+                			        '<img class="main_profile_friends" src="' + userCharacter + '">' +
+                			        '<span class="main_profile_friends_name">' + userName + '</span>' +
+                			    '</div>';
+                		    // 임시 div 생성
+                		    const tempDiv = document.createElement('div');
+                		    tempDiv.innerHTML = profileDiv;
+
+                		    // 첫 번째 자식 요소를 반환
+                		    return tempDiv.firstChild;
+                		};
+                	const profileDiv = createProfileDiv(userName,userId,userCharacter,localId,flag);
+                	
+                	 if(requestType == "일촌"){
+              			friend_items_first.push(profileDiv)
+              			changeFriendType(1);
+              		}
+              		else if(requestType == "이촌"){
+              			friend_items_second.push(profileDiv)
+              			changeFriendType(2);
+              		}
                  }
             };
             ws.onclose = function() {
@@ -277,8 +350,8 @@ function clickAlarm(){
         	dataSeparator + localId;
         	ws.send(message);
         }
-        function submitFriendRequest(username,userid,usercharacter){
-        	var message = "submitFriendRequest" + dataSeparator + username + dataSeparator + userid + dataSeparator + usercharacter;
+        function submitFriendRequest(username,userid,usercharacter,requestType){
+        	var message = "submitFriendRequest" + dataSeparator + username + dataSeparator + userid + dataSeparator + usercharacter + dataSeparator + requestType;
         	ws.send(message);
         }
         function sendMessage() {
@@ -309,12 +382,16 @@ function clickAlarm(){
           userNameSpan = document.createElement("span");
           addFriendBtn = document.createElement("button");
           goHomepageBtn = document.createElement("button");
+          reportBtn = document.createElement("button");
+          reportBtn.innerText = "신고하기";
+          reportBtn.classList.add("chat_reportBtn");
           addFriendBtn.innerText = "친구추가";
           goHomepageBtn.innerText = "미니룸 구경가기";
           userNameSpan.innerText = name;
           informationDiv.appendChild(userNameSpan);
           informationDiv.appendChild(addFriendBtn);
           informationDiv.appendChild(goHomepageBtn);
+          informationDiv.appendChild(reportBtn);
           newDiv.onclick = (function(informationDiv) {
               return function() {
                   console.log(informationDiv.style.display);
@@ -343,6 +420,19 @@ function clickAlarm(){
                  location.href = "http://"+location.host+"/jspProject/miniroom/main.jsp?url=" + id;   
               };
           })(id);
+          
+          reportBtn.onclick = (function(senduserid,receiveuserid) {
+              return function() {
+            	  var xhr = new XMLHttpRequest();
+          	    	xhr.open("GET", "../miniroom/reportProc.jsp?report_senduserid="+senduserid+"&report_receiveuserid="+receiveuserid+"&report_type=chat", true); // Alarm 갱신Proc
+          	    	xhr.onreadystatechange = function () {
+          	        if (xhr.readyState === 4 && xhr.status === 200) {
+          	        	alert("신고가 완료되었습니다.");
+          	        }
+          	    };
+          	    xhr.send();
+               };
+           })(localId,id);
           newDiv.appendChild(informationDiv);
             // add the newly created element and its content into the DOM
             if(miniroom){
@@ -452,13 +542,13 @@ function clickAlarm(){
          <div class="solid-box">
          <!-- 방문자 수 표시 -->
             <div class="visitor-stats">
-                <div class="today">
-                    TODAY: <%= visitCount.getVisit_today() %>
-                </div>
-                <div class="total">
-                    TOTAL: <%= visitCount.getVisit_all() %>
-                </div>
-            </div>
+        <div class="today">
+            TODAY: <%= todayVisitorCount %>
+        </div>
+        <div class="total">
+            TOTAL: <%= totalVisitorCount %>
+        </div>
+    </div>
 
             <div class ="main_profile_alram">
             <img class="main_profile_alram_img" onclick ="clickAlarm()" src="./img/alram.png">
@@ -513,6 +603,7 @@ function clickAlarm(){
 	         	<jsp:include page ="../seyoung/boardWrite.jsp"></jsp:include>
 	         </div>
 	         <div id="music" class="inner-box-2" style="display: none">
+	         	<jsp:include page="../yang/music1.jsp"></jsp:include>
 	         </div>
          </div>
          <!-- 버튼 -->

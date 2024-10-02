@@ -513,6 +513,32 @@ if (user_id != null) {
 
             let intervalId = setInterval(moveDown, 20);
         }
+     // 클로버 값 주기적으로 서버에서 가져오는 함수
+        function updateCloverAmountFromServer() {
+            $.ajax({
+                url: '../yang/getCloverBalance.jsp',  // 클로버 값을 가져오는 경로
+                type: 'POST',
+                data: {
+                    userId: '<%= user_id %>'
+                },
+                success: function(response) {
+                    const serverCloverAmount = parseInt(response);
+                    const currentCloverAmount = parseInt($('#cloverAmountDisplay').text()) || 0;
+
+                    // 서버에서 받은 클로버 값이 현재 화면에 표시된 값과 다를 경우 업데이트
+                    if (serverCloverAmount !== currentCloverAmount) {
+                        $('#cloverAmountDisplay').text(serverCloverAmount);
+                    }
+                },
+                error: function() {
+                    console.log('서버에서 클로버 잔액을 가져오는 중 오류가 발생했습니다.');
+                }
+            });
+        }
+
+        // 1초마다 서버에서 클로버 값을 가져와 화면에 반영
+        setInterval(updateCloverAmountFromServer, 1000);
+
 
         function showPopup1(result, picture, multiplier, totalAmount) {
             const popup = document.getElementById('popup1');

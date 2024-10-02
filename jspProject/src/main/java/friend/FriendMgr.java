@@ -50,6 +50,7 @@ public class FriendMgr {
 
 			if(rs.next()) {
 				bean.setRequest_num(rs.getInt(1));
+				bean.setRequest_receiveuserid(rs.getString("request_receiveuserid"));
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
