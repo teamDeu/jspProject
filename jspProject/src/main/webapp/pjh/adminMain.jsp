@@ -10,6 +10,23 @@
 		//MemberMgr 인스턴스 생성
 		MemberMgr memberMgr = new MemberMgr();
 		
+		// 총 회원 수 가져오기
+	    int totalMembers = memberMgr.getTotalMemberCount();
+		
+	    // 신규 가입자 수 가져오기
+	    Map<String, Integer> dailyNewMembersCount = memberMgr.getDailyNewMembersCount();
+
+	    // 일자별 라벨 생성 (현재 날짜부터 5일 전까지)
+	    List<String> dailyLabels = new ArrayList<>();
+	    for (int i = 5; i >= 0; i--) {
+	        dailyLabels.add(java.time.LocalDate.now().minusDays(i).toString());
+	    }
+
+	    // 신규 가입자 수 데이터 생성
+	    List<Integer> dailyValues = new ArrayList<>();
+	    for (String label : dailyLabels) {
+	        dailyValues.add(dailyNewMembersCount.getOrDefault(label, 0));
+	    }
 		// 전체 방문자 수 가져오기 (visitcount 테이블의 visit_count의 총합)
 		int totalVisitors = memberMgr.getTotalVisitorCountForAll();
 		
@@ -102,10 +119,10 @@
                 <h3>오늘 접속자</h3>
                 <p>총 <%= todayVisitors %>명</p>
             </div>
-            <div class="card">
-                <h3>신규 가입자</h3>
-                <p>총 78명</p>
-            </div>
+			<div class="card" id="newMembersCard">
+			    <h3>총 가입자</h3>
+			    <p>총 <%= totalMembers %>명</p>
+			</div>
         </div>
 
         <!-- 차트 컨테이너 -->
@@ -120,9 +137,30 @@
         // JSP에서 전달된 데이터를 자바스크립트 배열로 변환
         var monthlyLabels = <%= new org.json.JSONArray(monthlyLabels).toString() %>;
         var monthlyValues = <%= new org.json.JSONArray(monthlyValues).toString() %>;
-
+        
+       
         var hourlyLabels = <%= new org.json.JSONArray(hourlyLabels).toString() %>;
         var hourlyValues = <%= new org.json.JSONArray(hourlyValues).toString() %>;
+        
+     	// 추가: dailyLabels와 dailyValues 변환
+        // JSP에서 전달된 데이터를 자바스크립트 배열로 변환
+		var dailyLabels = <%= new org.json.JSONArray(dailyLabels).toString() %>;
+		var dailyValues = <%= new org.json.JSONArray(dailyValues).toString() %>;
+        
+        // 총 접속자 카드 클릭 시 월별 접속자 수 차트 그리기
+        document.getElementById('totalVisitorsCard').onclick = function() {
+            drawChart('monthly', monthlyLabels, monthlyValues);
+        };
+
+        // 오늘 접속자 카드 클릭 시 시간대별 접속자 수 차트 그리기
+        document.getElementById('todayVisitorsCard').onclick = function() {
+            drawChart('hourly', hourlyLabels, hourlyValues);
+        };
+
+     	// 신규 가입자 카드 클릭 시 일별 신규 가입자 수 차트 그리기
+		document.getElementById('newMembersCard').onclick = function() {
+		    drawChart('daily', dailyLabels, dailyValues);
+		};
 
         document.getElementById('totalVisitorsCard').onclick = function() {
             drawChart('monthly', monthlyLabels, monthlyValues);
@@ -138,7 +176,7 @@
                 chart.destroy();
             }
 
-         // 차트 컨테이너 표시
+            // 차트 컨테이너 표시
             document.getElementById('chartContainer').style.display = 'block';
 
             var ctx = document.getElementById('visitorChart').getContext('2d');
@@ -147,7 +185,9 @@
                 data: {
                     labels: labels,  // x축 레이블
                     datasets: [{
-                        label: type === 'monthly' ? '월별 접속자 수' : '시간대별 접속자 수',
+                        label: type === 'monthly' ? '월별 접속자 수' 
+                              : type === 'hourly' ? '시간대별 접속자 수' 
+                              : '일별 신규 가입자 수',  // 올바른 라벨 사용
                         data: values,  // y축 데이터
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
