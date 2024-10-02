@@ -27,7 +27,7 @@ public class GuestbookprofileMgr {
 
         try {
             con = pool.getConnection(); // Connection 가져오기
-            String query = "SELECT user_id, profile_name, profile_picture FROM profile WHERE user_id = ?";
+            String query = "SELECT * FROM profile WHERE user_id = ?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
@@ -37,6 +37,11 @@ public class GuestbookprofileMgr {
                 profile.setUserId(rs.getString("user_id"));
                 profile.setProfileName(rs.getString("profile_name"));
                 profile.setProfilePicture(rs.getString("profile_picture"));
+                profile.setProfileBirth(rs.getString("profile_birth"));
+                profile.setProfileContent(rs.getString("profile_content"));
+                profile.setProfileEmail(rs.getString("profile_email"));
+                profile.setProfileMbti(rs.getString("profile_mbti"));
+                profile.setProfileHobby(rs.getString("profile_hobby"));
             }
         } catch (SQLException e) {
             // SQL 관련 예외 처리

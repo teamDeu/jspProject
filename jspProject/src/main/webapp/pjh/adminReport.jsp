@@ -1,3 +1,5 @@
+<%@page import="report.ReportBean"%>
+<%@page import="report.ReportMgr"%>
 <%@page import="miniroom.ItemMgr"%>
 <%@page import="pjh.MemberMgr"%>
 <%@page import="pjh.MemberBean"%>
@@ -27,9 +29,9 @@
         <h2>관리자 패널</h2>
         <ul>
             <li onclick="showCategory(event)" data = "adminMain.jsp" id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
-            <li onclick="showCategory(event)" data = "adminUser.jsp" class="active" >유저관리</li>
+            <li onclick="showCategory(event)" data = "adminUser.jsp" >유저관리</li>
             <li onclick="showCategory(event)" data = "adminStore.jsp" id="storeTab"><i class="fa fa-store"></i>상점관리</li>
-            <li onclick="showCategory(event)" data = "adminReport.jsp">신고관리</li>
+            <li onclick="showCategory(event)" data = "adminReport.jsp" class ="active">신고관리</li>
             <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
         </ul>
     </div>
@@ -38,28 +40,24 @@
 		<!-- 검색 폼 -->
 		<form method="get" action="adminUser.jsp">
 			<select name="user_keyField">
-				<option value="user_id">유저 ID</option>
-				<option value="user_name">유저 이름</option>
-				<option value="user_phone">유저 번호</option>
+				<option value="report_type">신고 타입</option>
+				<option value="report_senduserid">신고 유저</option>
+				<option value="report_receiveuserid">피신고 유저</option>
 			</select> <input type="text" name="user_keyWord" placeholder="검색어 입력" /> <input
 				type="submit" value="검색" />
 		</form>
-
 		<!-- 상품 목록 출력 및 페이징 -->
 		<div class="product-list">
-			<h2>유저 목록</h2>
+			<h2>신고 목록</h2>
 			<table>
 				<thead>
 					<tr>
-						<th>ID</th>
-						<th>비밀번호</th>
-						<th>닉네임</th>
-						<th>생년월일</th>
-						<th>전화번호</th>
-						<th>이메일</th>
-						<th>클로버</th>
-						<th>캐릭터</th>
-						<th>관리</th>
+						<th>신고번호</th>
+						<th>신고 유저</th>
+						<th>피신고 유저</th>
+						<th>신고 시간</th>
+						<th>신고 타입</th>
+						<th> </th>
 					</tr>
 				</thead>
 				<tbody>
@@ -75,41 +73,36 @@
 					String keyWord = request.getParameter("user_keyWord");
 
 					// 총 상품 수 계산
-					MemberMgr userMgr = new MemberMgr();
+					ReportMgr reportMgr = new ReportMgr();
 					ItemMgr itemMgr = new ItemMgr();
-					int totalUsers = userMgr.getTotalUserCount(keyField, keyWord);
+					int totalUsers = reportMgr.getTotalReportCount(keyField, keyWord);
 
 					// 상품 목록 가져오기 (start와 itemsPerPage 적용)
-					Vector<MemberBean> users = userMgr.getUserList(keyField, keyWord, start, userItemsPerPage);
+					Vector<ReportBean> reports = reportMgr.getReportList(keyField, keyWord, start, userItemsPerPage);
+					
 
 					// 총 페이지 수 계산
 					int totalPages = (int) Math.ceil(totalUsers / (double) userItemsPerPage);
 
-					if (users.size() > 0) {
-						for (MemberBean user : users) {
-							String userId = user.getUser_id();
-							String userPwd = user.getUser_pwd();
-							String userName = user.getUser_name();
-							String userBirth = user.getUser_birth();
-							String userPhone = UtilMgr.phoneFormat(user.getUser_phone());
-							String userEmail = user.getUser_email();
-							int userClover = user.getUser_clover();
-							String userChracter = itemMgr.getItemPath(user.getUser_character());
+					if (reports.size() > 0) {
+						for (ReportBean report : reports) {
+							int reportNum = report.getReport_num();
+							String reportSendUserId = report.getReport_senduserid();
+							String reportReceiveUserId = report.getReport_receiveuserid();
+							String reportAt = report.getReport_at();
+							String reportType = report.getReport_type();
 					%>
 					<tr>
-						<td><%=userId%></td>
-						<td>*****</td>
-						<td><%=userName%></td>
-						<td><%=userBirth%></td>
-						<td><%=userPhone%></td>
-						<td><%=userEmail%></td>
-						<td><%=userClover%></td>
-						<td><img class ="admin_userList_user_img"src='<%=userChracter%>'></td>
+						<td><%=reportNum%></td>
+						<td><%=reportSendUserId%></td>
+						<td><%=reportReceiveUserId%></td>
+						<td><%=reportAt%></td>
+						<td><%=reportType%></td>
 						<td>
 							<!-- 삭제 버튼 -->
 							<form action="deleteItem.jsp" method="post"
 								onsubmit="return confirm('정말로 이 상품을 삭제하시겠습니까?');">
-								<input type="hidden" name="user_id" value="<%=userId%>">
+								<input type="hidden" name="user_id" value="<%=reportNum%>">
 								<button type="submit"
 									style="padding: 5px 10px; background-color: #FF6B6B; color: white; border: none; border-radius: 5px; cursor: pointer;">삭제</button>
 							</form>

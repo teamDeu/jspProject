@@ -46,13 +46,13 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 .main_profile_img_box {
 	widht: 100%;
 	display: flex;
+	height:250px;
 	justify-content: center;
 }
 
 .main_profile_img {
-	width: 100%;
 	object-fit: cover;
-	margin: auto;
+	width:100%;
 }
 
 .main_profile_status {
@@ -246,10 +246,10 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 		</select>
 		<div class="main_profile_main">
 			<div class="main_profile_img_box">
-				<img class="main_profile_img" src="./img/character1.png">
+				<img class="main_profile_img" src="./<%=profileBean.getProfilePicture()%>">
 			</div>
 			<div class="main_profile_comment">
-				<span style="font-size: 22px"><%=profileBean%></span>
+				<span style="font-size: 22px"><%=profileBean.getProfileContent()%></span>
 			</div>
 			<div class="main_profile_main_bottom">
 				<%

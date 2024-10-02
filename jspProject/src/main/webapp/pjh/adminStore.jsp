@@ -9,159 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 페이지</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Arial', sans-serif;
-            height: 100vh;
-            background-color: #f5f5f5;
-        }
-        .sidebar {
-            background-color: #C0E5AF;
-            width: 250px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding-top: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-        .sidebar h2 {
-            text-align: center;
-            color: #fff;
-            font-weight: bold;
-            margin-bottom: 40px;
-        }
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .sidebar ul li {
-            padding: 15px 20px;
-            color: #fff;
-            transition: background-color 0.3s ease;
-            cursor: pointer;
-        }
-        .sidebar ul li:hover {
-            background-color: #27ae60;
-        }
-        .sidebar ul li.active {
-            background-color: #1abc9c;
-        }
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-            background-color: #fff;
-            width:100%;
-            height: 100vh;
-            overflow-y: auto;
-            box-sizing:border-box;
-            position: relative;
-        }
-        .main-content h1 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .main-content .content-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-        .main-content .card {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-        .main-content .card:hover {
-            transform: translateY(-10px);
-        }
-        .main-content .card h3 {
-            font-size: 20px;
-            color: #2ecc71;
-            margin-bottom: 10px;
-        }
-        .main-content .card p {
-            color: #666;
-            font-size: 14px;
-        }
-        .product-list {
-            margin-top: 30px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .product-list table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .product-list table th, .product-list table td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: center;
-        }
-        .product-list table th {
-            background-color: #C0E5AF;
-            color: #333;
-        }
-        .product-list table td button {
-            padding: 5px 10px;
-            background-color: #FF6B6B;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .product-list table td button:hover {
-            background-color: #FF4D4D;
-        }
-        .add-product-btn {
-            margin-top: 20px;
-            padding: 15px 20px;
-            background-color: #C0E5AF;
-            color: #333;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            display: block;
-            text-align: center;
-            margin-left: auto;
-            margin-right: auto;
-            width: 150px;
-        }
-        .add-product-btn:hover {
-            background-color: #8DB369;
-        }
-        .pagination {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .pagination a {
-            margin: 0 5px;
-            padding: 8px 16px;
-            text-decoration: none;
-            color: #333;
-            background-color: #eee;
-            border-radius: 5px;
-        }
-        .pagination a.current-page {
-            background-color: #C0E5AF;
-            color: white;
-        }
-        .pagination a:hover {
-            background-color: #8DB369;
-            color: white;
-        }
-    </style>
+	 <link rel="stylesheet" href="./css/admin.css" />
 </head>
 <body>
 
@@ -169,37 +17,16 @@
     <div class="sidebar">
         <h2>관리자 패널</h2>
         <ul>
-            <li onclick="showCategory(event)" data = "adminMain.jsp" id="dashboardTab" class="active"><i class="fa fa-home"></i> 대시보드</li>
-            <li onclick="showCategory(event)" data = "adminUser.jsp">유저관리</li>
-            <li onclick="showCategory(event)" data = "adminStore.jsp" id="storeTab"><i class="fa fa-store">상점관리</li>
+            <li onclick="showCategory(event)" data = "adminMain.jsp" id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
+            <li onclick="showCategory(event)" data = "adminUser.jsp" >유저관리</li>
+            <li onclick="showCategory(event)" data = "adminStore.jsp" class="active" id="storeTab"><i class="fa fa-store">상점관리</li>
+            <li onclick="showCategory(event)" data = "adminReport.jsp">신고관리</li>
             <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
             
         </ul>
     </div>
-
-    <!-- 대시보드 섹션 -->
-    <div id="dashboard" class="main-content">
-        <h1>대시보드</h1>
-        <div class="content-cards">
-            <div class="card">
-                <h3>총 점속자</h3>
-                <p>총 1,234명</p>
-            </div>
-            <div class="card">
-                <h3>오늘 접속자</h3>
-                <p>총 567명</p>
-            </div>
-            <div class="card">
-                <h3>신규 가입자</h3>
-                <p>총 78명</p>
-            </div>
-        </div>
-    </div>
-	<div id = "user" class ="main-content" style ="display:none">
-		<jsp:include page="adminUser.jsp"></jsp:include>
-	</div>
     <!-- 상점 관리 섹션 -->
-    <div id="store" class="main-content" style="display: none;">
+    <div id="store" class="main-content">
         <h1>상점 관리</h1>
 
         <!-- 검색 폼 -->
@@ -298,7 +125,7 @@
                 <%
                     for (int i = 1; i <= totalPages; i++) {
                 %>
-                <a href="adminMain.jsp?page=<%= i %>&keyField=<%= keyField != null ? keyField : "" %>&keyWord=<%= keyWord != null ? keyWord : "" %>&type=store"
+                <a href="adminStore.jsp?page=<%= i %>&keyField=<%= keyField != null ? keyField : "" %>&keyWord=<%= keyWord != null ? keyWord : "" %>&type=store"
                    class="<%= (i == currentPage) ? "current-page" : "" %>">
                     <%= i %>
                 </a>
