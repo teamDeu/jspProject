@@ -59,7 +59,6 @@
 						<th>이메일</th>
 						<th>클로버</th>
 						<th>캐릭터</th>
-						<th>관리</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -105,15 +104,6 @@
 						<td><%=userEmail%></td>
 						<td><%=userClover%></td>
 						<td><img class ="admin_userList_user_img"src='<%=userChracter%>'></td>
-						<td>
-							<!-- 삭제 버튼 -->
-							<form action="deleteItem.jsp" method="post"
-								onsubmit="return confirm('정말로 이 상품을 삭제하시겠습니까?');">
-								<input type="hidden" name="user_id" value="<%=userId%>">
-								<button type="submit"
-									style="padding: 5px 10px; background-color: #FF6B6B; color: white; border: none; border-radius: 5px; cursor: pointer;">삭제</button>
-							</form>
-						</td>
 					</tr>
 					<%
 					}

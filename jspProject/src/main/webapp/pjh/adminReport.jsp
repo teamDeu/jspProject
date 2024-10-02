@@ -6,114 +6,155 @@
 <%@page import="pjh.MemberBean"%>
 <%@page import="miniroom.UtilMgr"%>
 <%@ page import="java.util.Vector"%>
-<%@ page import="pjh.ItemBean, pjh.AItemMgr" %>
-<%@ page import="java.util.List" %>
+<%@ page import="pjh.ItemBean, pjh.AItemMgr"%>
+<%@ page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
-<% String type = request.getParameter("type"); %>
+<%
+String type = request.getParameter("type");
+%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>관리자 페이지</title>
-	<link rel="stylesheet" href="./css/admin.css" />
-	<style>
-		.admin_userList_user_img{
-			width : 120px;
-		}
-		.report_num_span{
-			cursor : pointer;
-		}
-		.report_chatLogBox{
-			position:absolute;
-			display:flex;
-			flex-direction:column;
-			background-color : white;
-			width : 550px;
-			padding : 20px;
-			gap : 5px;
-			border : 1px solid black;
-		}
-		.report_chatLogBox_exitBtn{
-			position:absolute;
-			right:5px;
-			top:5px;
-			cursor : pointer;
-		}
-		.report_chatLogBox_content{
-			display:flex;
-			align-items :center;
-			width : 100%;
-		}
-		.report_chatLogBox_content div{
-			padding : 5px;
-			box-sizing : border-box;
-		}
-		.report_chatLogBox_Header{
-			font-size : 24px;
-		}
-		.report_chatLogBox_content_box{
-			border : 1px solid black;
-			display:flex;
-			flex-direction : column;
-			gap : 5px;
-			max-height : 300px;
-			overflow-y : scroll;
-			padding : 10px;
-		}
-		.admin_input{
-			padding : 6px;
-			border-radius:5px;
-			border : 1px solid black;
-			box-sizing:border-box;
-		}
-		.admin_select{
-			padding : 5px;
-			border-radius:5px;
-			border : 1px solid black;
-			box-sizing:border-box;
-		}
-		.admin_submitBtn{
-			padding : 4px;
-			background : none;
-			border-radius:5px;
-			box-sizing:border-box;
-			border : 1px solid black;
-		}
-		.product-list-table td,
-		.product-list-table th{
-			border : none;
-		}
-	</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자 페이지</title>
+<link rel="stylesheet" href="./css/admin.css" />
+<style>
+.admin_userList_user_img {
+	width: 120px;
+}
+
+.report_chatLogModal {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+}
+
+.report_chatLogBox {
+	display: flex;
+	position: relative;
+	flex-direction: column;
+	background-color: white;
+	width: 550px;
+	height : 500px;
+	padding: 20px;
+	gap: 5px;
+	border: 1px solid black;
+}
+
+.report_chatLogBox_exitBtn {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	cursor: pointer;
+}
+
+.report_chatLogBox_content {
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.report_chatLogBox_content div {
+	padding: 5px;
+	box-sizing: border-box;
+}
+
+.report_chatLogBox_Header {
+	font-size: 24px;
+}
+
+.report_chatLogBox_content_box {
+	border: 1px solid black;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	max-height: 300px;
+	overflow-y: scroll;
+	padding: 10px;
+}
+
+.admin_input {
+	padding: 6px;
+	border-radius: 5px;
+	border: 1px solid black;
+	box-sizing: border-box;
+}
+
+.admin_select {
+	padding: 5px;
+	border-radius: 5px;
+	border: 1px solid black;
+	box-sizing: border-box;
+}
+
+.admin_submitBtn {
+	padding: 4px;
+	background: none;
+	border-radius: 5px;
+	box-sizing: border-box;
+	border: 1px solid black;
+}
+.suspension_period{
+	padding : 10px;
+	width : 200px;
+}
+.product-list-table td, .product-list-table th {
+	border: none;
+}
+.report_manage_div{
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+}
+.suspension_type{
+	padding : 5px;
+	border : 1px solid black;
+}
+.suspension_setting_section{
+	display:flex;
+	align-items:center;
+}
+</style>
 </head>
 <body>
 
-    <!-- 사이드바 -->
-    <div class="sidebar">
-        <h2>관리자 패널</h2>
-        <ul>
-            <li onclick="showCategory(event)" data = "adminMain.jsp" id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
-            <li onclick="showCategory(event)" data = "adminUser.jsp" >유저관리</li>
-            <li onclick="showCategory(event)" data = "adminStore.jsp" id="storeTab"><i class="fa fa-store"></i>상점관리</li>
-            <li onclick="showCategory(event)" data = "adminReport.jsp" class ="active">신고관리</li>
-            <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
-        </ul>
-    </div>
-	<div class ="main-content">
+	<!-- 사이드바 -->
+	<div class="sidebar">
+		<h2>관리자 패널</h2>
+		<ul>
+			<li onclick="showCategory(event)" data="adminMain.jsp"
+				id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
+			<li onclick="showCategory(event)" data="adminUser.jsp">유저관리</li>
+			<li onclick="showCategory(event)" data="adminStore.jsp" id="storeTab"><i
+				class="fa fa-store"></i>상점관리</li>
+			<li onclick="showCategory(event)" data="adminReport.jsp"
+				class="active">신고관리</li>
+			<li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
+		</ul>
+	</div>
+	<div class="main-content">
 		<h1>유저 관리</h1>
 		<!-- 검색 폼 -->
 		<form method="get" action="adminReport.jsp">
-			<select class ="admin_select" name="user_keyField">
+			<select class="admin_select" name="user_keyField">
 				<option value="report_type">신고 타입</option>
 				<option value="report_senduserid">신고 유저</option>
 				<option value="report_receiveuserid">피신고 유저</option>
-			</select> <input class ="admin_input" type="text" name="user_keyWord" placeholder="검색어 입력" /> <input
-				type="submit" class ="admin_submitBtn" value="검색" />
+			</select> <input class="admin_input" type="text" name="user_keyWord"
+				placeholder="검색어 입력" /> <input type="submit"
+				class="admin_submitBtn" value="검색" />
 		</form>
 		<!-- 상품 목록 출력 및 페이징 -->
 		<div class="product-list">
 			<h2>신고 목록</h2>
-			<table class ="product-list-table">
+			<table class="product-list-table">
 				<thead>
 					<tr>
 						<th>신고번호</th>
@@ -143,13 +184,12 @@
 
 					// 상품 목록 가져오기 (start와 itemsPerPage 적용)
 					Vector<ReportBean> reports = reportMgr.getReportList(keyField, keyWord, start, userItemsPerPage);
-					
 
 					// 총 페이지 수 계산
 					int totalPages = (int) Math.ceil(totalUsers / (double) userItemsPerPage);
 
 					if (reports.size() > 0) {
-						for (int j = 0 ; j < reports.size() ; j ++) {
+						for (int j = 0; j < reports.size(); j++) {
 							ReportBean report = reports.get(j);
 							int reportNum = report.getReport_num();
 							String reportSendUserId = report.getReport_senduserid();
@@ -159,40 +199,60 @@
 							Vector<ChatLogBean> chatLogList = reportMgr.getChatLogByReport(report);
 					%>
 					<tr>
-						
+
 						<td>
-						<div class ="report_chatLogBox" id = "chatLogBox-<%=reportNum %>" style = "display : none">
-							<div class ="report_chatLogBox_exitBtn" onclick = "clickReportChatLogBoxExitBtn('chatLogBox-<%=reportNum%>')">X</div>
-							<div class ="report_chatLogBox_Header">채팅 내역</div>
-							<div class ="report_chatLogBox_content_box">
-							<%if(chatLogList.size() == 0){ %>
-								<div class ="report_chatLogBox_content"> 
-								채팅내역이 없습니다.
+							<div class="report_chatLogModal" id="chatLogBox-<%=reportNum%>"
+								style="display: none">
+								<div class="report_chatLogBox">
+									<div class="report_chatLogBox_exitBtn"
+										onclick="clickReportChatLogBoxExitBtn('chatLogBox-<%=reportNum%>')">X</div>
+									<div class="report_chatLogBox_Header">채팅 내역</div>
+									<div class="report_chatLogBox_content_box">
+										<%
+										if (chatLogList.size() == 0) {
+										%>
+										<div class="report_chatLogBox_content">채팅내역이 없습니다.</div>
+										<%} else {%>
+										<%
+										for (int i = 0; i < chatLogList.size(); i++) {
+											ChatLogBean chatLogBean = chatLogList.get(i);
+										%>
+										<div class="report_chatLogBox_content">
+											<%=chatLogBean.getChatlog_id()%>
+											:
+											<%=chatLogBean.getChatlog_content()%>
+										</div>
+										<%}}%>
+									</div>
+									<div class ="report_manage_div">
+									<section class ="suspension_setting_section">
+									<select class = "suspension_period">
+										<option value =3>3일</option>
+										<option value =5>5일</option>
+										<option value =7>7일</option>
+										<option value =30>30일</option>
+									</select>
+									<div class ="suspension_type_box">
+									<input name = "suspension_type" id ="suspension_type0" type ="radio" value = 0 hidden = "true"><label class ="suspension_type" for ="suspension_type0">채팅정지</label>
+									<input name = "suspension_type" id ="suspension_type1" type ="radio" value = 1 hidden = "true"><label class ="suspension_type" for ="suspension_type1">계정정지</label>
+									</div>
+									</section>
+									<div class ="report_manage_div_btn_box">
+										<button class ="report_manage_div_btn_submit">제출하기</button>
+										<button class ="report_manage_div_btn_cancel">취소하기</button>
+									</div>
 								</div>
-							<%} else{%>
-							<%for(int i = 0 ; i < chatLogList.size() ; i++) {
-							ChatLogBean chatLogBean = chatLogList.get(i);%>
-							<div class ="report_chatLogBox_content">
-								<%=chatLogBean.getChatlog_id() %> : <%=chatLogBean.getChatlog_content() %>
-							</div>
-							<%} }%>
-							</div>
-						</div>
-						<span class ="report_num_span" onclick ="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')"><%=reports.size() - j%></span>
+								</div>
+								
+							</div> <span class="report_num_span"
+							onclick="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')"><%=reports.size() - j%></span>
 						</td>
 						<td><%=reportSendUserId%></td>
 						<td><%=reportReceiveUserId%></td>
 						<td><%=reportAt%></td>
 						<td><%=reportType%></td>
-						<td>
-							<!-- 삭제 버튼 -->
-							<form action="deleteItem.jsp" method="post"
-								onsubmit="return confirm('정말로 이 상품을 삭제하시겠습니까?');">
-								<input type="hidden" name="user_id" value="<%=reportNum%>">
-								<button type="submit"
-									style="padding: 5px 10px; background-color: #FF6B6B; color: white; border: none; border-radius: 5px; cursor: pointer;">삭제</button>
-							</form>
-						</td>
+						<td><button
+								onclick="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')">관리하기</button></td>
 					</tr>
 					<%
 					}
@@ -224,11 +284,12 @@
 		</div>
 	</div>
 
-    <!-- FontAwesome 아이콘 -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+	<!-- FontAwesome 아이콘 -->
+	<script src="https://kit.fontawesome.com/a076d05399.js"
+		crossorigin="anonymous"></script>
 
-    <!-- UI 전환 함수 -->
-    <script>
+	<!-- UI 전환 함수 -->
+	<script>
         function logout() {
             if (confirm('정말로 로그아웃 하시겠습니까?')) {
                 window.location.href = 'logout.jsp';
@@ -247,7 +308,7 @@
         	document.getElementById(id).style.display = "none";
         }
         function clickReportChatLogBoxOpenBtn(id){
-        	document.querySelectorAll(".report_chatLogBox").forEach((e) => e.style.display = "none");
+        	document.querySelectorAll(".report_chatLogModal").forEach((e) => e.style.display = "none");
         	document.getElementById(id).style.display = "flex";
         }
     </script>

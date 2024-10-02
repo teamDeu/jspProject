@@ -99,15 +99,14 @@
             color: #333;
         }
         .product-list table td button {
-            padding: 5px 10px;
-            background-color: #FF6B6B;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+		    padding: 5px 10px;
+		    color: black;
+		    border: none;
+		    border-radius: 5px;
+		    cursor: pointer;
         }
         .product-list table td button:hover {
-            background-color: #FF4D4D;
+            background-color: rgba(0, 0, 0, 0.4);
         }
         .add-product-btn {
             margin-top: 20px;

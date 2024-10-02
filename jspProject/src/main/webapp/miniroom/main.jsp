@@ -23,7 +23,7 @@
    if(suspensionBean.getSuspension_num() != 0){
 	   isSuspension = true;
 	   if(suspensionBean.getSuspension_type() == 1){
-		   response.sendRedirect("../miniroom/suspensionProc.jsp?suspension_num="+suspensionBean.getSuspension_num());
+		   response.sendRedirect("../miniroom/suspension.jsp?suspension_num="+suspensionBean.getSuspension_num());
 		   return;
 	   }
 	   else if(suspensionBean.getSuspension_type() == 0){
