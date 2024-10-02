@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 import net.nurigo.sdk.message.model.Message;
@@ -474,28 +476,25 @@ public class MemberMgr {
 	            con = pool.getConnection();
 
 	            // 오늘의 방문자 수를 조회
-	            sql = "SELECT * FROM visitCount WHERE visit_date = ? AND page_owner_id = ? AND visitor_id = ?";
-	            pstmt = con.prepareStatement(sql);
-	            pstmt.setString(1, today);
-	            pstmt.setString(2, pageOwnerId);
-	            pstmt.setString(3, visitorId);
+	            sql = "SELECT * FROM visitCount WHERE visit_date = now() AND page_owner_id = ? AND visitor_id = ?";
+	            pstmt = con.prepareStatement(sql);	         
+	            pstmt.setString(1, pageOwnerId);
+	            pstmt.setString(2, visitorId);
 	            rs = pstmt.executeQuery();
 
 	            if (rs.next()) {
 	                // 이미 방문한 경우 visit_count 증가
-	                sql = "UPDATE visitCount SET visit_count = visit_count + 1 WHERE visit_date = ? AND page_owner_id = ? AND visitor_id = ?";
+	                sql = "UPDATE visitCount SET visit_count = visit_count + 1 WHERE visit_date = now() AND page_owner_id = ? AND visitor_id = ?";
 	                pstmt = con.prepareStatement(sql);
-	                pstmt.setString(1, today);
-	                pstmt.setString(2, pageOwnerId);
-	                pstmt.setString(3, visitorId);
+	                pstmt.setString(1, pageOwnerId);
+	                pstmt.setString(2, visitorId);
 	                pstmt.executeUpdate();
 	            } else {
 	                // 첫 방문이면 레코드 삽입
-	                sql = "INSERT INTO visitCount (visit_date, visit_count, page_owner_id, visitor_id) VALUES (?, 1, ?, ?)";
+	                sql = "INSERT INTO visitCount (visit_date, visit_count, page_owner_id, visitor_id) VALUES (now(), 1, ?, ?)";
 	                pstmt = con.prepareStatement(sql);
-	                pstmt.setString(1, today);
-	                pstmt.setString(2, pageOwnerId);
-	                pstmt.setString(3, visitorId);
+	                pstmt.setString(1, pageOwnerId);
+	                pstmt.setString(2, visitorId);
 	                pstmt.executeUpdate();
 	            }
 	        } catch (Exception e) {
@@ -517,9 +516,9 @@ public class MemberMgr {
 	        try {
 	            con = pool.getConnection();
 
-	            sql = "SELECT SUM(visit_count) AS today_count FROM visitCount WHERE visit_date = ? AND page_owner_id = ?";
+	            sql = "SELECT SUM(visit_count) AS today_count FROM visitCount WHERE visit_date like ? AND page_owner_id = ?";
 	            pstmt = con.prepareStatement(sql);
-	            pstmt.setString(1, today);
+	            pstmt.setString(1, today+'%');
 	            pstmt.setString(2, pageOwnerId);
 	            rs = pstmt.executeQuery();
 
@@ -562,6 +561,120 @@ public class MemberMgr {
 
 	        return totalCount;
 	    }
+	 // 오늘의 전체 접속 횟수 조회
+	    public int getTodayVisitorCountForAll() {
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+	        String sql;
+	        int todayCount = 0;
+
+	        try {
+	            con = pool.getConnection();
+
+	            // visit_date의 날짜가 오늘인 모든 방문자의 총 방문 횟수를 계산
+	            sql = "SELECT SUM(visit_count) AS today_count FROM visitCount WHERE DATE(visit_date) = CURDATE()";
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
+
+	            if (rs.next()) {
+	                todayCount = rs.getInt("today_count");
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return todayCount;
+	    }
+
+
+
+	 // 전체 방문자 수 조회
+	    public int getTotalVisitorCountForAll() {
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+	        String sql;
+	        int totalCount = 0;
+
+	        try {
+	            con = pool.getConnection();
+
+	            // 전체 방문자 수의 총합을 계산
+	            sql = "SELECT SUM(visit_count) AS total_count FROM visitCount";
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
+
+	            if (rs.next()) {
+	                totalCount = rs.getInt("total_count");
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return totalCount;
+	    }
+
+	 // 월별 방문자 수 가져오기
+	    public Map<String, Integer> getMonthlyVisitorCount() {
+	        Map<String, Integer> monthlyData = new LinkedHashMap<>();
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+
+	        try {
+	            con = pool.getConnection();
+	            String sql = "SELECT DATE_FORMAT(visit_date, '%Y-%m') AS month, SUM(visit_count) AS count "
+	                       + "FROM visitCount GROUP BY month ORDER BY month";
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
+
+	            while (rs.next()) {
+	                monthlyData.put(rs.getString("month"), rs.getInt("count"));
+	            }
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return monthlyData;
+	    }
+
+	    // 시간대별 방문자 수 가져오기 (4시간 간격)
+	    public Map<String, Integer> getHourlyVisitorCount() {
+	        Map<String, Integer> hourlyData = new LinkedHashMap<>();
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+
+	        try {
+	            con = pool.getConnection();
+	            String sql = "SELECT DATE_FORMAT(visit_date, '%H:00') AS hour_block, SUM(visit_count) AS count "
+	                       + "FROM visitCount WHERE DATE(visit_date) = CURDATE() "
+	                       + "GROUP BY hour_block ORDER BY hour_block";
+	            pstmt = con.prepareStatement(sql);
+	            rs = pstmt.executeQuery();
+
+	            while (rs.next()) {
+	                hourlyData.put(rs.getString("hour_block"), rs.getInt("count"));
+	            }
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return hourlyData;
+	    }
+
+
 	}
 	
 
