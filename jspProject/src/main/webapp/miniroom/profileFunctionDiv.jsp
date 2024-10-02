@@ -1,10 +1,11 @@
+<%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="friend.FriendMgr"%>
 <%@page import="miniroom.ItemMgr"%>
 <%@page import="pjh.MemberBean"%>
 <%@page import="pjh.MemberMgr"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-
+<jsp:useBean id="profileMgr" class ="guestbook.GuestbookprofileMgr"/>
 <%
 	String connectId = (String) session.getAttribute("idKey");
 	if (connectId == null) {
@@ -19,6 +20,8 @@
 	String name = user.getUser_name();
 	String userId = user.getUser_id();
 	String userCharacter = imgr.getUsingCharacter(userId).getItem_path();
+	GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(userId);
+	name = profileBean.getProfileName();
 %>
 <!DOCTYPE html>
 <html>
