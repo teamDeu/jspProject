@@ -264,19 +264,17 @@ Vector<FriendRequestBean> fRequestList = fMgr.getFriendRequest(user_id);
 		</div>
 		<hr width="100%" color="#BAB9AA" style="margin: 10px 0px">
 		
-		<div class="music-player">
-	        <div class="play-button play" id="playButton"></div>
-	        <div class="song-info">
-	            <div class="title">곡명</div>
-	            <div class="artist">아티스트</div>
+		<div class="music-player" style="width: 100%; height: 75px; background-color: #f1f3f4; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 5px; box-sizing: border-box; margin: auto; margin-top: 2px;">
+	        <div class="song-info" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 30px;">
+	            <div class="title" style="font-size: 20px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;margin-bottom: -20px;">곡명</div>
+	            <div class="artist" style="font-size: 16px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;margin-bottom: -20px;">아티스트</div>
 	        </div>
-	        <div class="progress-bar"></div>
+	        <audio id="audioPlayer" controls autoplay muted style="width: 100%; height: 40px;">
+	            <source type="audio/mp3">
+	        </audio>
 	    </div>
-	
-	    <!-- Placeholder audio for demo -->
-	    <audio id="audioPlayer"></audio>
 		
-		<div class="main_profile_friends_main_div">
+		<div class="main_profile_friends_main_div" style="margin-top:10px">
 			<div class="main_profile_friends_search_div">
 				<input class ="main_profile_friends_search_text" type="text" placeholder="닉네임을 입력해주세요.">
 				<button onclick = "friendSearchClick()">검색</button>

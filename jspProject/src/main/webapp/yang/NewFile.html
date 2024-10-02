@@ -3,101 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Music Player</title>
-    <style>
-        .music-player {
-            width: 100%;
-            max-width: 500px;
-            height: 75px;
-            background-color: #e0e0e0;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            box-sizing: border-box;
-        }
-
-        .play-button {
-            width: 50px;
-            height: 50px;
-            border: 2px solid gray;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            background-color: transparent;
-        }
-
-        .play-button:before {
-            content: '';
-            border-style: solid;
-            border-width: 10px 0 10px 18px;
-            border-color: transparent transparent transparent gray;
-        }
-
-        .song-info {
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .song-info .title {
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .song-info .artist {
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .progress-bar {
-            height: 2px;
-            background-color: gray;
-            width: 100%;
-            margin-left: 20px;
-        }
-    </style>
+    <title>Music Player with Resume</title>
 </head>
 <body>
+    <h1>Music Player</h1>
+    <audio id="audioPlayer" controls>
+        <source src="../miniroom/img/10.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
 
-<div class="music-player">
-    <div class="play-button" id="playButton"></div>
-    <div class="song-info">
-        <div class="title">소유(SOYU)</div>
-        <div class="artist">Y (Please Tell Me Why)</div>
-    </div>
-    <div class="progress-bar"></div>
-</div>
+    <script>
+        // Get the audio player element
+        const audioPlayer = document.getElementById('audioPlayer');
 
-<!-- Placeholder audio for demo -->
-<audio id="audioPlayer" src="../yang/music/10.mp3"></audio>
+        // Check if there's a saved time in localStorage and resume playback
+        window.onload = function () {
+            const savedTime = localStorage.getItem('savedTime');
+            if (savedTime) {
+                audioPlayer.currentTime = parseFloat(savedTime);
+            }
 
-<script>
-    const playButton = document.getElementById('playButton');
-    const audioPlayer = document.getElementById('audioPlayer');
+            // Automatically play the audio after setting the current time
+            audioPlayer.play().catch((error) => {
+                console.log('Autoplay was prevented:', error);
+            });
+        };
 
-    let isPlaying = false;
+        // Save the current playback time in localStorage periodically
+        audioPlayer.ontimeupdate = function () {
+            localStorage.setItem('savedTime', audioPlayer.currentTime);
+        };
 
-    playButton.addEventListener('click', () => {
-        if (isPlaying) {
-            audioPlayer.pause();
-            isPlaying = false;
-            playButton.innerHTML = ''; // Reset play button icon
-        } else {
-            audioPlayer.play();
-            isPlaying = true;
-            playButton.innerHTML = '❚❚'; // Change to pause icon
-        }
-    });
-
-    audioPlayer.addEventListener('ended', () => {
-        playButton.innerHTML = ''; // Reset play button to play icon after song ends
-        isPlaying = false;
-    });
-</script>
-
+        // Clear the saved time when the song ends
+        audioPlayer.onended = function () {
+            localStorage.removeItem('savedTime');
+        };
+    </script>
 </body>
 </html>
