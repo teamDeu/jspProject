@@ -14,35 +14,55 @@ public class BoardReAnswerMgr {
 	}
 	
 	// 답글 추가 메소드
-    public boolean addReAnswer(BoardReAnswerBean reAnswer) {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        String sql = "INSERT INTO boardreanswer (reanswer_num, answer_num, reanswer_content, reanswer_id, reanswer_at) VALUES (NULL, ?, ?, ?, NOW())";       
-        boolean result = false;
+	public boolean addReAnswer(BoardReAnswerBean reAnswerBean) {
+	    Connection con = null;
+	    PreparedStatement pstmt = null;
+	    String sql = "INSERT INTO board_reanswer (answer_num, reanswer_content, reanswer_id, reanswer_at) VALUES (?, ?, ?, now())";
+	    
+	    boolean result = false;
 
-        try {
-            con = pool.getConnection();
-            pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, reAnswer.getAnswer_num());
-            pstmt.setString(2, reAnswer.getReanswer_content());
-            pstmt.setString(3, reAnswer.getReanswer_id());
+	    try {
+	        // DB 연결 시도
+	        con = pool.getConnection();
+	        
+	        // PreparedStatement 생성
+	        pstmt = con.prepareStatement(sql);
+	        
+	        // 전달받은 데이터를 로그로 출력 (디버깅 용도)
+	        System.out.println("Inserting answer_num: " + reAnswerBean.getAnswer_num());
+	        System.out.println("Inserting reanswer_content: " + reAnswerBean.getReanswer_content());
+	        System.out.println("Inserting reanswer_id: " + reAnswerBean.getReanswer_id());
+	        
+	        // 파라미터 설정
+	        pstmt.setInt(1, reAnswerBean.getAnswer_num());
+	        pstmt.setString(2, reAnswerBean.getReanswer_content());
+	        pstmt.setString(3, reAnswerBean.getReanswer_id());
 
-            int count = pstmt.executeUpdate();
-            if (count > 0) {
-                result = true; 
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            pool.freeConnection(con, pstmt);
-        }
+	        // 쿼리 실행 및 결과 확인
+	        int rowsAffected = pstmt.executeUpdate();
+	        if (rowsAffected > 0) {
+	            result = true;  // 저장 성공
+	            System.out.println("답글이 성공적으로 저장되었습니다.");
+	        } else {
+	            System.out.println("답글 저장에 실패하였습니다.");
+	        }
+	    } catch (Exception e) {
+	        // 예외 발생 시 스택 트레이스를 출력하고 구체적인 에러 메시지 출력
+	        System.out.println("Error occurred while inserting reAnswer: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        // 자원 반환
+	        pool.freeConnection(con, pstmt);
+	    }
 
-        return result;
-    }
-    
-    
-	
-	
-	
-	
+	    return result;
+	}
+
 }
+    
+    
+	
+	
+	
+	
+

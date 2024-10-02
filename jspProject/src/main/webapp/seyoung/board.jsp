@@ -403,7 +403,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 						
 						<div class="wanswer-form">
 							<input type="text" id="ansewerinput" placeholder="  게시판에 댓글을 남겨주세요.">
-							<button type="button" onclick="addAnswer()">등록</button>
+							<button type="button" onclick="baddAnswer()">등록</button>
 						</div>
 					</div>
 	
@@ -432,7 +432,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        xhr.send();
 	    }
 	    
-	    function addAnswer() {
+	    function baddAnswer() {
 	        var input = document.getElementById('ansewerinput');
 	        var answerText = input.value.trim();
 	        if (answerText !== '') {
@@ -444,96 +444,147 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	            xhr.onreadystatechange = function () {
 	                if (xhr.readyState === 4 && xhr.status === 200) {
 	                    input.value = ''; // 입력 필드를 비움
-	                    loadAnswers(); // 댓글을 추가한 후 댓글 목록을 다시 로드
+	                    bloadAnswers(); // 댓글을 추가한 후 댓글 목록을 다시 로드
 	                }
 	            };
 
 	            // Ajax 요청 본문에 데이터 전달
 	            var boardNum = <%= latestBoard.getBoard_num() %>; // 최신 게시글 번호를 가져옴
-	            //var answerId = '1234'; // answer_id를 1234로 고정
+	            var answerId = "<%= UserId %>"; 
 	            var params = "board_num=" + encodeURIComponent(boardNum) +
 	                         "&answer_content=" + encodeURIComponent(answerText) +
-	                         "&answer_id=" + encodeURIComponent(answerId); // 고정된 answer_id 사용
+	                         "&answer_id=" + encodeURIComponent(answerId); 
 	            xhr.send(params);
 	        }
 	    }
 
-	    window.onload = function() {
-	        loadAnswers(); // 페이지가 로드될 때 댓글 목록을 불러오는 함수 호출
+	    
+	 // 답글 버튼을 클릭하면 answer_num을 가져와서 콘솔에 출력
+	    function toggleReAnswerForm(button) {
+	        var answerItem = button.closest('.answer-item');
+
+	        // answer_id를 기반으로 answer_num을 가져오는 Ajax 요청
+	        var answerId = answerItem.querySelector('.user-name').textContent.trim(); // answer_id 가져오기
+
+	        var xhr = new XMLHttpRequest();
+	        xhr.open("POST", "<%= cPath %>/seyoung/getAnswerNum.jsp", true); // 서버에 answer_num을 요청하는 JSP 파일
+	        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+	        // 요청 성공 시 answer_num을 콘솔에 출력
+	        xhr.onreadystatechange = function () {
+	            if (xhr.readyState === 4 && xhr.status === 200) {
+	                console.log("Received answer_num: " + xhr.responseText); // 응답 받은 answer_num 출력
+	                var receivedAnswerNum = xhr.responseText;
+
+	                // 이후 receivedAnswerNum을 이용해 답글 폼을 추가하거나 다른 작업을 진행할 수 있음
+	                addReplyForm(button, receivedAnswerNum); // 폼 추가하는 함수 호출
+	            }
+	        };
+
+	        // Ajax 요청 본문에 answer_id를 전달
+	        var params = "answer_id=" + encodeURIComponent(answerId);
+	        xhr.send(params);
 	    }
 
+	    
+	    
+
 	    // 답글 버튼을 클릭하면 답글 폼을 생성 또는 삭제하는 함수
-		function toggleReAnswerForm(button, answerNum) {
-			console.log("Answer Num: " + answerNum);
-		    var answerItem = button.closest('.answer-item');
-		    var existingForm = answerItem.nextElementSibling; // answer-item 아래에 있는 요소를 확인
-		
-		    if (existingForm && existingForm.classList.contains('reanswer-form')) {
-		        // 이미 답글 폼이 존재하면 폼을 제거
-		        existingForm.remove();
-		    } else {
-		        // 답글 폼이 없으면 새로 생성하여 추가
-		        var reAnswerForm = document.createElement('div');
-		        reAnswerForm.className = 'reanswer-form';
-		        reAnswerForm.style.display = 'flex';
-		        reAnswerForm.style.flexDirection = 'row';
-		        reAnswerForm.style.alignItems = 'flex-start';
-		        reAnswerForm.style.padding = '10px';
-		        reAnswerForm.style.width = '640px';
-		        reAnswerForm.style.marginTop = '10px';
-		        reAnswerForm.style.marginBottom = '10px';
-		        reAnswerForm.style.marginLeft = '10px';
-		        reAnswerForm.style.border = '1px solid #BAB9AA';
-		        reAnswerForm.style.backgroundColor = '#f9f9f9';
-		
-		        var reAnswerInput = document.createElement('input');
-		        reAnswerInput.type = 'text';
-		        reAnswerInput.placeholder = ' 답글을 입력하세요.';
-		        reAnswerInput.style.width = '90%';
-		        reAnswerInput.style.marginBottom = '5px';
-		        reAnswerInput.style.padding = '5px';
-		        reAnswerInput.style.border = '1px solid #BAB9AA';
-		        reAnswerInput.style.borderRadius = '5px';
-		        reAnswerInput.style.fontSize = '15px';
-		
-		        var reAnswerButton = document.createElement('button');
-		        reAnswerButton.textContent = '등록';
-		        reAnswerButton.style.padding = '5px 10px';
-		        reAnswerButton.style.border = '1px solid #BAB9AA';
-		        reAnswerButton.style.borderRadius = '5px';
-		        reAnswerButton.style.backgroundColor = '#f2f2f2';
-		        reAnswerButton.style.cursor = 'pointer';
-		        reAnswerButton.style.margin = '0px 10px ';
-		        reAnswerButton.style.fontSize = '15px';
-		        reAnswerButton.style.height = '29px';
-		        reAnswerButton.style.width = '40px';
-		
-		        reAnswerButton.onclick = function() {
-		            var replyText = reAnswerInput.value.trim();
-		            if (replyText !== '') {
-		            	addReAnswer(answerNum, replyText); // readdAnswer 함수 호출
-		                reAnswerForm.remove(); // 답글 입력 폼 제거
-		            }
-		        };
-		
-		        reAnswerForm.appendChild(reAnswerInput);
-		        reAnswerForm.appendChild(reAnswerButton);
-		
-		        // answerItem 아래에 답글 폼 추가
-		        answerItem.parentNode.insertBefore(reAnswerForm, answerItem.nextSibling);
-		    }
-		}
+	    function addReplyForm(button, answerNum) {
+
+	        var answerItem = button.closest('.answer-item');
+	        
+	        var existingForm = answerItem.nextElementSibling; // answer-item 아래에 있는 요소를 확인
+	        
+	        if (existingForm && existingForm.classList.contains('reanswer-form')) {
+	            // 이미 답글 폼이 존재하면 폼을 제거
+	            existingForm.remove();
+	        } else {
+	            // 답글 폼이 없으면 새로 생성하여 추가
+	            var reAnswerForm = document.createElement('div');
+	            reAnswerForm.className = 'reanswer-form';
+	            reAnswerForm.style.display = 'flex';
+	            reAnswerForm.style.flexDirection = 'row';
+	            reAnswerForm.style.alignItems = 'flex-start';
+	            reAnswerForm.style.padding = '10px';
+	            reAnswerForm.style.width = '640px';
+	            reAnswerForm.style.marginTop = '-5px';
+	            reAnswerForm.style.marginBottom = '10px';
+	            reAnswerForm.style.marginLeft = '10px';
+	            reAnswerForm.style.border = '1px solid #BAB9AA';
+	            reAnswerForm.style.backgroundColor = '#f9f9f9';
+
+	            var reAnswerInput = document.createElement('input');
+	            reAnswerInput.type = 'text';
+	            reAnswerInput.placeholder = ' 답글을 입력하세요.';
+	            reAnswerInput.style.width = '90%';
+	            reAnswerInput.style.marginBottom = '5px';
+	            reAnswerInput.style.padding = '5px';
+	            reAnswerInput.style.border = '1px solid #BAB9AA';
+	            reAnswerInput.style.borderRadius = '5px';
+	            reAnswerInput.style.fontSize = '15px';
+
+	            var reAnswerButton = document.createElement('button');
+	            reAnswerButton.textContent = '등록';
+	            reAnswerButton.style.padding = '5px 10px';
+	            reAnswerButton.style.border = '1px solid #BAB9AA';
+	            reAnswerButton.style.borderRadius = '5px';
+	            reAnswerButton.style.backgroundColor = '#f2f2f2';
+	            reAnswerButton.style.cursor = 'pointer';
+	            reAnswerButton.style.margin = '0px 10px';
+	            reAnswerButton.style.fontSize = '15px';
+	            reAnswerButton.style.height = '29px';
+	            reAnswerButton.style.width = '40px';
+
+	            // 답글 등록 버튼 클릭 시 서버로 전달하는 부분
+	            reAnswerButton.onclick = function() {
+	                var replyText = reAnswerInput.value.trim();
+	                if (replyText !== '') {
+	                    baddReAnswer(answerNum, replyText); // selectedAnswerNum을 전달
+	                    reAnswerForm.remove(); // 답글 입력 폼 제거
+	                }
+	            };
+
+	            reAnswerForm.appendChild(reAnswerInput);
+	            reAnswerForm.appendChild(reAnswerButton);
+
+	            // answerItem 아래에 답글 폼 추가
+	            answerItem.parentNode.insertBefore(reAnswerForm, answerItem.nextSibling);
+	        }
+	    } 
+
 
 		// Ajax로 답글을 추가하는 함수
-	    function addReAnswer(answerNum, replyText) {
+	    function baddReAnswer(answerNum, replyText) {
 	        var xhr = new XMLHttpRequest();
 	        xhr.open("POST", "<%= cPath %>/seyoung/bReAnswerAddProc.jsp", true);
 	        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
+	        
 	        var reanswer_id = "<%= UserId %>";  // 세션에서 사용자 ID를 가져옴
 	        var params = "answer_num=" + encodeURIComponent(answerNum) +
 	                     "&reanswer_content=" + encodeURIComponent(replyText) +
 	                     "&reanswer_id=" + encodeURIComponent(reanswer_id);
+	        
+	        
+	        console.log("Sending answer_num: " + answerNum);
+	        
+	        xhr.onreadystatechange = function () {
+	            if (xhr.readyState === 4 && xhr.status === 200) {
+	                // 답글 추가 성공 후 동작을 정의 (필요 시 추가 기능 구현 가능)
+	                console.log("Response: " + xhr.responseText);
+	                
+	                if (xhr.responseText.includes("답글 저장 성공")) {
+	                    alert("답글이 성공적으로 저장되었습니다.");
+	                } else {
+	                    alert("답글 저장 실패: " + xhr.responseText);
+	                }
+	            }
+	        };
+	        
+	        
+	        
+	        
 	        xhr.send(params);
 	    }
 		
@@ -542,7 +593,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	    
 	    
 	    // 답글을 answerItem 아래에 추가하는 함수
-	    function addReply(answerItem, replyText) {
+	    function baddReply(answerItem, replyText) {
 	        var replyItem = document.createElement('div');
 	        replyItem.className = 'reply-item';
 	        replyItem.style.display = 'flex';
@@ -620,10 +671,13 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	    
 
 	    // 기존 댓글 로드 함수에 답글 버튼 이벤트 연결 추가
-	    function loadAnswers() {
+	    function bloadAnswers() {
 		    var boardNum = <%= latestBoard.getBoard_num() %>; // 현재 게시글 번호 가져오기
 		    var xhr = new XMLHttpRequest();
 		    xhr.open("GET", "<%= cPath %>/seyoung/bgetAnswer.jsp?board_num=" + encodeURIComponent(boardNum), true);
+		    
+	
+		    
 		    xhr.onreadystatechange = function () {
 		        if (xhr.readyState === 4 && xhr.status === 200) {
 		            var answerForm = document.querySelector('.banswer-form');
@@ -642,6 +696,10 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 		                answerItem.style.marginBottom = '5px';
 		                answerItem.style.width = '100%';
 		                answerItem.style.flexDirection = 'row'; // 세로 정렬
+		                
+		                
+		                // answer_num을 answerItem에 data 속성으로 저장
+	                    answerItem.setAttribute('data-answer-num', answer.answer_num);
 		
 		                var userImage = document.createElement('img');
 		                userImage.src = 'img/character2.png';
@@ -698,19 +756,20 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 		                answerActions.style.marginLeft = '7px'; // 약간의 왼쪽여백 추가
 		                answerActions.style.marginTop = '5px';
 		
-		                var editButton = document.createElement('button');
-		                editButton.textContent = '답글';
-		                editButton.onclick = function() {
-		                    toggleReAnswerForm(editButton, answer.answer_num); // answer_num 전달
+		                var beditButton = document.createElement('button');
+		                beditButton.textContent = '답글';
+		                beditButton.onclick = function() {
+		                	var answerNum = answerItem.getAttribute('data-answer-num');
+		                    toggleReAnswerForm(beditButton, answerNum); // answer_num 전달
 		                };
-		                answerActions.appendChild(editButton);
+		                answerActions.appendChild(beditButton);
 		
-		                var deleteButton = document.createElement('button');
-		                deleteButton.textContent = '삭제';
-		                deleteButton.style.color = '#FF5A5A';
-		                deleteButton.style.marginTop = '7px';
+		                var delButton = document.createElement('button');
+		                delButton.textContent = '삭제';
+		                delButton.style.color = '#FF5A5A';
+		                delButton.style.marginTop = '7px';
 		
-		                answerActions.appendChild(deleteButton);
+		                answerActions.appendChild(delButton);
 		
 		                // 수정/삭제 버튼을 answerContent에 추가
 		                answerItem.appendChild(userImage);
@@ -723,7 +782,9 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 		    xhr.send();
 		}
 
-
+	    window.onload = function() {
+	        bloadAnswers(); // 페이지가 로드될 때 댓글 목록을 불러오는 함수 호출
+	    };
 
     </script>
 </body>

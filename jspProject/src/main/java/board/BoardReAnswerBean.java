@@ -7,9 +7,19 @@ public class BoardReAnswerBean {
 	private String reanswer_id;
 	private String reanswer_at;
 	
+	public BoardReAnswerBean() {}
 	
-	
-	
+
+	public BoardReAnswerBean(int reanswer_num, int answer_num, String reanswer_content, String reanswer_id,
+			String reanswer_at) {
+		super();
+		this.reanswer_num = reanswer_num;
+		this.answer_num = answer_num;
+		this.reanswer_content = reanswer_content;
+		this.reanswer_id = reanswer_id;
+		this.reanswer_at = reanswer_at;
+	}
+
 	public int getReanswer_num() {
 		return reanswer_num;
 	}

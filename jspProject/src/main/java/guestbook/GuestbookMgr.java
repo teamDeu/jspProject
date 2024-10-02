@@ -134,7 +134,8 @@ public class GuestbookMgr {
         }
         return false;
     }
- // GuestbookMgr 클래스 내부에 추가
+    
+    // GuestbookMgr 클래스 내부에 추가
     public Timestamp getWrittenAt(int guestbookNum) {
         Connection con = null;
         PreparedStatement pstmt = null;

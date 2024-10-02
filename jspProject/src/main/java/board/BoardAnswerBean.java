@@ -6,8 +6,19 @@ public class BoardAnswerBean {
     private String answerContent;
     private String answerId;
     private String answerAt;
+    
+    public BoardAnswerBean() {}
 
-    public int getAnswerNum() {
+    public BoardAnswerBean(int answerNum, int boardNum, String answerContent, String answerId, String answerAt) {
+		super();
+		this.answerNum = answerNum;
+		this.boardNum = boardNum;
+		this.answerContent = answerContent;
+		this.answerId = answerId;
+		this.answerAt = answerAt;
+	}
+
+	public int getAnswerNum() {
         return answerNum;
     }
 

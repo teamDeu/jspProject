@@ -9,7 +9,7 @@
 
     // 댓글 목록 불러오기
     BoardAnswerMgr answerMgr = new BoardAnswerMgr();
-    Vector<BoardAnswerBean> answerList = answerMgr.getAnswers(Integer.parseInt(boardNum));
+    Vector<BoardAnswerBean> answerList = answerMgr.bgetAnswers(Integer.parseInt(boardNum));
 
     // 댓글 데이터를 JSON 형식으로 출력
     response.setContentType("application/json");
