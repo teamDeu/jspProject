@@ -35,28 +35,34 @@ public class BoardAnswerMgr {
     }
 
     // 댓글 삭제
-    public void bdeleteAnswer(int answerNum) {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        String sql = "DELETE FROM boardanswer WHERE answer_num = ?";
+	public boolean bdeleteAnswer(int answerNum) {
+	    Connection con = null;
+	    PreparedStatement pstmt = null;
+	    String sql = "DELETE FROM boardanswer WHERE answer_num = ?";
+	    boolean isDeleted = false;
 
-        try {
-            con = pool.getConnection();
-            pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, answerNum);
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected == 0) {
-                System.out.println("No comment found to delete with answer_num: " + answerNum);
-            } else {
-                System.out.println("Successfully deleted comment with answer_num: " + answerNum);
-            }
-        } catch (Exception e) {
-            System.out.println("Error while deleting answer: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            pool.freeConnection(con, pstmt);
-        }
-    }
+	    try {
+	        con = pool.getConnection();
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setInt(1, answerNum);
+	        int rowsAffected = pstmt.executeUpdate();
+	        
+	        if (rowsAffected > 0) {
+	            // 댓글이 삭제되었을 경우
+	            isDeleted = true;
+	            System.out.println("Successfully deleted comment with answer_num: " + answerNum);
+	        } else {
+	            System.out.println("No comment found to delete with answer_num: " + answerNum);
+	        }
+	    } catch (Exception e) {
+	        System.out.println("Error while deleting answer: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        pool.freeConnection(con, pstmt);
+	    }
+
+	    return isDeleted; // 삭제 성공 여부 반환
+	}
 
     // 댓글 목록 불러오기 (특정 게시물에 달린 댓글)
     public Vector<BoardAnswerBean> bgetAnswers(int boardNum) {
@@ -64,7 +70,7 @@ public class BoardAnswerMgr {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        String sql = "SELECT * FROM boardanswer WHERE board_num = ? ORDER BY answer_at ASC";
+        String sql = "SELECT * FROM boardanswer WHERE board_num = ? ORDER BY answer_at DESC";
 
         try {
             con = pool.getConnection();
@@ -90,30 +96,6 @@ public class BoardAnswerMgr {
         return answerList;
     }
 	
-    // 특정 댓글의 answer_num을 가져오는 메소드
-    public int getAnswerNumById(String answerId) {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        int answerNum = -1; // 기본값은 -1로 설정
-
-        try {
-            con = pool.getConnection();
-            String sql = "SELECT answer_num FROM boardanswer WHERE answer_id = ?";
-            pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, answerId);
-            rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                answerNum = rs.getInt("answer_num");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            pool.freeConnection(con, pstmt, rs);
-        }
-
-        return answerNum; // 해당 answer_num을 반환
-    }
+    
     
 }
