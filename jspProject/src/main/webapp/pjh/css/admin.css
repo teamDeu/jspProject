@@ -43,7 +43,6 @@
         }
         .main-content {
             margin-left: 250px;
-            padding: 20px;
             background-color: #fff;
             height: 100vh;
             overflow-y: auto;
@@ -82,9 +81,7 @@
         }
         .product-list {
             margin-top: 30px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
+            max-width: 1800px;
         }
         .product-list table {
             width: 100%;
