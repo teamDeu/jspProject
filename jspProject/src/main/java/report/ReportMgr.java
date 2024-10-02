@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Vector;
 
+import miniroom.UtilMgr;
 import pjh.ItemBean;
 
 public class ReportMgr {
@@ -131,5 +132,37 @@ public class ReportMgr {
 
 	        return totalCount;  // 총 상품 수 반환
 	    }
-	    
-}
+	    public Vector<ChatLogBean> getChatLogByReport(ReportBean report){
+	 
+	    	Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			Vector<ChatLogBean> vlist = new Vector<ChatLogBean>();
+			
+			String sql = "";
+			try {
+				con = pool.getConnection();
+				sql = "SELECT * FROM chatlog WHERE chatlog_id = ? AND chatlog_at >= ? AND chatlog_at < ?;";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, report.getReport_receiveuserid());
+				String[] times = UtilMgr.setTimeRange(report.getReport_at());
+				pstmt.setString(2, times[0]);
+				pstmt.setString(3, times[1]);
+				rs = pstmt.executeQuery();
+
+				while (rs.next()) {
+					ChatLogBean bean = new ChatLogBean();
+					bean.setChatlog_num(rs.getInt(1));
+					bean.setChatlog_id(rs.getString(2));
+					bean.setChatlog_content(rs.getString(3));
+					bean.setChatlog_at(rs.getString(4));
+					vlist.add(bean);
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			} finally {
+				pool.freeConnection(con, pstmt, rs);
+			}
+			return vlist;
+	    }
+}	

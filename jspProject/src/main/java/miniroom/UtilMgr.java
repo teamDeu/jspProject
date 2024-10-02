@@ -74,6 +74,35 @@ public class UtilMgr {
 		}
 		return returnValue;
 	}
+	
+	public static String[] setTimeRange(String timestamp) {
+		String times[] = new String[2];
+		String prev;
+		String next;
+		String date = timestamp.split(" ")[0];
+		String time = timestamp.split(" ")[1];
+		String allTime[] = time.split(":");
+		String hour = allTime[0];
+		String min = allTime[1];
+		String sec = allTime[2];
+		
+		int prevMin = Integer.parseInt(min) - 3;
+		int nextMin = Integer.parseInt(min) + 3;
+		
+		String prevTime = hour +":"+ Integer.toString(prevMin) +":"+sec;
+		String nextTime = hour +":"+ Integer.toString(nextMin) +":"+ sec;
+		prev = date + " " + prevTime;
+		next = date + " " + nextTime;
+		System.out.println(prev);
+		System.out.println(next);
+		times[0] = prev;
+		times[1] = next;
+		return times;
+	}
+	
+	public static void main(String[] args) {
+		setTimeRange("2024-10-02 11:33:35");
+	}
 }
 
 

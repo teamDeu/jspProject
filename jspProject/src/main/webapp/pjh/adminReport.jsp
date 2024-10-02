@@ -1,3 +1,4 @@
+<%@page import="report.ChatLogBean"%>
 <%@page import="report.ReportBean"%>
 <%@page import="report.ReportMgr"%>
 <%@page import="miniroom.ItemMgr"%>
@@ -20,6 +21,44 @@
 		.admin_userList_user_img{
 			width : 120px;
 		}
+		.report_num_span{
+			cursor : pointer;
+		}
+		.report_chatLogBox{
+			position:absolute;
+			display:flex;
+			flex-direction:column;
+			background-color : white;
+			width : 550px;
+			padding : 20px;
+			gap : 5px;
+			border : 1px solid black;
+		}
+		.report_chatLogBox_exitBtn{
+			position:absolute;
+			right:5px;
+			top:5px;
+			cursor : pointer;
+		}
+		.report_chatLogBox_content{
+			display:flex;
+			align-items :center;
+			width : 100%;
+		}
+		.report_chatLogBox_content div{
+			padding : 5px;
+			box-sizing : border-box;
+		}
+		.report_chatLogBox_Header{
+			font-size : 24px;
+		}
+		.report_chatLogBox_content_box{
+			border : 1px solid black;
+			display:flex;
+			flex-direction : column;
+			gap : 5px;
+			padding : 10px;
+		}
 	</style>
 </head>
 <body>
@@ -38,7 +77,7 @@
 	<div class ="main-content">
 		<h1>유저 관리</h1>
 		<!-- 검색 폼 -->
-		<form method="get" action="adminUser.jsp">
+		<form method="get" action="adminReport.jsp">
 			<select name="user_keyField">
 				<option value="report_type">신고 타입</option>
 				<option value="report_senduserid">신고 유저</option>
@@ -65,7 +104,7 @@
 					// 현재 페이지와 검색 조건을 받아옴
 					String pageStr = request.getParameter("page");
 					int userCurrentPage = (pageStr != null) ? Integer.parseInt(pageStr) : 1;
-					int userItemsPerPage = 4;
+					int userItemsPerPage = 15;
 					int start = (userCurrentPage - 1) * userItemsPerPage;
 
 					// 검색어와 검색 필드를 받아옴
@@ -85,15 +124,37 @@
 					int totalPages = (int) Math.ceil(totalUsers / (double) userItemsPerPage);
 
 					if (reports.size() > 0) {
-						for (ReportBean report : reports) {
+						for (int j = 0 ; j < reports.size() ; j ++) {
+							ReportBean report = reports.get(j);
 							int reportNum = report.getReport_num();
 							String reportSendUserId = report.getReport_senduserid();
 							String reportReceiveUserId = report.getReport_receiveuserid();
 							String reportAt = report.getReport_at();
 							String reportType = report.getReport_type();
+							Vector<ChatLogBean> chatLogList = reportMgr.getChatLogByReport(report);
 					%>
 					<tr>
-						<td><%=reportNum%></td>
+						
+						<td>
+						<div class ="report_chatLogBox" id = "chatLogBox-<%=reportNum %>" style = "display : none">
+							<div class ="report_chatLogBox_exitBtn" onclick = "clickReportChatLogBoxExitBtn('chatLogBox-<%=reportNum%>')">X</div>
+							<div class ="report_chatLogBox_Header">채팅 내역</div>
+							<div class ="report_chatLogBox_content_box">
+							<%if(chatLogList.size() == 0){ %>
+								<div class ="report_chatLogBox_content"> 
+								채팅내역이 없습니다.
+								</div>
+							<%} else{%>
+							<%for(int i = 0 ; i < chatLogList.size() ; i++) {
+							ChatLogBean chatLogBean = chatLogList.get(i);%>
+							<div class ="report_chatLogBox_content"> 
+								<%=chatLogBean.getChatlog_id() %> : <%=chatLogBean.getChatlog_content() %>
+							</div>
+							<%} }%>
+							</div>
+						</div>
+						<span class ="report_num_span" onclick ="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')"><%=reports.size() - j%></span>
+						</td>
 						<td><%=reportSendUserId%></td>
 						<td><%=reportReceiveUserId%></td>
 						<td><%=reportAt%></td>
@@ -128,7 +189,7 @@
 				for (int i = 1; i <= totalPages; i++) {
 				%>
 				<a
-					href="adminUser.jsp?page=<%=i%>&keyField=<%=keyField != null ? keyField : ""%>&keyWord=<%=keyWord != null ? keyWord : ""%>&type=user"
+					href="adminReport.jsp?page=<%=i%>&keyField=<%=keyField != null ? keyField : ""%>&keyWord=<%=keyWord != null ? keyWord : ""%>&type=user"
 					class="<%=(i == userCurrentPage) ? "current-page" : ""%>"> <%=i%>
 				</a>
 				<%
@@ -155,6 +216,13 @@
         // 상품 추가 페이지를 새창으로 열기
         function openStoreManage() {
             window.open('storeManage.jsp', '_blank', 'width=600,height=600');
+        }
+        
+        function clickReportChatLogBoxExitBtn(id){
+        	document.getElementById(id).style.display = "none";
+        }
+        function clickReportChatLogBoxOpenBtn(id){
+        	document.getElementById(id).style.display = "flex";
         }
     </script>
 </body>
