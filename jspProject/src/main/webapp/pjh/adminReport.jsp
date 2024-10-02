@@ -102,7 +102,7 @@ String type = request.getParameter("type");
 	border: 1px solid black;
 }
 .suspension_period{
-	padding : 10px;
+	padding : 4px;
 	width : 200px;
 }
 .product-list-table td, .product-list-table th {
@@ -111,7 +111,9 @@ String type = request.getParameter("type");
 .report_manage_div{
 	display:flex;
 	flex-direction:column;
+	justify-self:flex-end;
 	align-items:center;
+	gap : 5px;
 }
 .suspension_type{
 	padding : 5px;
@@ -120,6 +122,7 @@ String type = request.getParameter("type");
 .suspension_setting_section{
 	display:flex;
 	align-items:center;
+	gap : 5px;
 }
 </style>
 </head>
@@ -204,8 +207,6 @@ String type = request.getParameter("type");
 							<div class="report_chatLogModal" id="chatLogBox-<%=reportNum%>"
 								style="display: none">
 								<div class="report_chatLogBox">
-									<div class="report_chatLogBox_exitBtn"
-										onclick="clickReportChatLogBoxExitBtn('chatLogBox-<%=reportNum%>')">X</div>
 									<div class="report_chatLogBox_Header">채팅 내역</div>
 									<div class="report_chatLogBox_content_box">
 										<%
@@ -233,13 +234,13 @@ String type = request.getParameter("type");
 										<option value =30>30일</option>
 									</select>
 									<div class ="suspension_type_box">
-									<input name = "suspension_type" id ="suspension_type0" type ="radio" value = 0 hidden = "true"><label class ="suspension_type" for ="suspension_type0">채팅정지</label>
-									<input name = "suspension_type" id ="suspension_type1" type ="radio" value = 1 hidden = "true"><label class ="suspension_type" for ="suspension_type1">계정정지</label>
+									<input name = "suspension_type" id ="suspension_type0" onchange = "onchangeType('suspension_type0')" type ="radio" value = 0 ><label class ="suspension_type" for ="suspension_type0">채팅정지</label>
+									<input name = "suspension_type" id ="suspension_type1" onchange = "onchangeType('suspension_type0')" type ="radio" value = 1 ><label class ="suspension_type" for ="suspension_type1">계정정지</label>
 									</div>
 									</section>
 									<div class ="report_manage_div_btn_box">
-										<button class ="report_manage_div_btn_submit">제출하기</button>
-										<button class ="report_manage_div_btn_cancel">취소하기</button>
+										<button onclick = "" class ="report_manage_div_btn_submit">제출하기</button>
+										<button onclick = "clickReportChatLogBoxExitBtn('chatLogBox-<%=reportNum%>')" class ="report_manage_div_btn_cancel">취소하기</button>
 									</div>
 								</div>
 								</div>
