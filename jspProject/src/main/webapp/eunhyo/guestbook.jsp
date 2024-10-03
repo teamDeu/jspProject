@@ -648,7 +648,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
 
 	                // 방명록 리스트와 페이지네이션 업데이트
 	                document.getElementById("guestbookList").innerHTML = doc.getElementById("guestbookList").innerHTML;
-	                document.querySelector('.pagination').innerHTML = doc.querySelector('.pagination').innerHTML;
+	                document.querySelector('#guestbook_pagination').innerHTML = doc.querySelector('.pagination').innerHTML;
 
 	                updateGuestbookPagination(page); // 현재 페이지를 업데이트
 	            }
