@@ -86,23 +86,29 @@
                         <td><%= item.getItem_price() %>원</td>
                         <td><%= item.getItem_type() %></td>
                         <td><%= item.getItem_path() %></td>
-                        <td>
-                        <!-- 수정 버튼 -->
-            <form action="storeManage2.jsp" method="get" style="display:inline;">
-			    <input type="hidden" name="item_num" value="<%= item.getItem_num() %>">
-			    <input type="hidden" name="item_name" value="<%= item.getItem_name() %>">
-			    <input type="hidden" name="item_image" value="<%= item.getItem_image() %>">
-			    <input type="hidden" name="item_price" value="<%= item.getItem_price() %>">
-			    <input type="hidden" name="item_type" value="<%= item.getItem_type() %>">
-			    <input type="hidden" name="item_path" value="<%= item.getItem_path() %>">
-			    <button type="submit"  >수정</button>
-			</form>
-                            <!-- 삭제 버튼 -->
-                            <form action="deleteItem.jsp" method="post" onsubmit="return confirm('정말로 이 상품을 삭제하시겠습니까?');">
-                                <input type="hidden" name="item_num" value="<%= item.getItem_num() %>">
-                                <button type="submit" >삭제</button>
-                            </form>
-                        </td>
+                        <td style="width: 150px; text-align: center;">
+			    
+			    <div style="display: flex; justify-content: center; gap: 5px;">
+			        <!-- 수정 버튼 -->
+			        <form action="storeManage2.jsp" method="get" style="display:inline;">
+			            <input type="hidden" name="item_num" value="<%= item.getItem_num() %>">
+			            <input type="hidden" name="item_name" value="<%= item.getItem_name() %>">
+			            <input type="hidden" name="item_image" value="<%= item.getItem_image() %>">
+			            <input type="hidden" name="item_price" value="<%= item.getItem_price() %>">
+			            <input type="hidden" name="item_type" value="<%= item.getItem_type() %>">
+			            <input type="hidden" name="item_path" value="<%= item.getItem_path() %>">
+			            <button type="submit" style="padding: 5px 10px;">수정</button>
+			        </form>
+			        
+			        <!-- 삭제 버튼 -->
+			        <form action="deleteItem.jsp" method="post" onsubmit="return confirm('정말로 이 상품을 삭제하시겠습니까?');" style="display:inline;">
+			            <input type="hidden" name="item_num" value="<%= item.getItem_num() %>">
+			            <button type="submit" style="padding: 5px 10px;">삭제</button>
+			        </form>
+			    </div>
+			</td>
+
+
                     </tr>
                     <%
                             }
