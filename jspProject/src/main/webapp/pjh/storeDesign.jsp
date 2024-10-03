@@ -83,7 +83,7 @@ try {
 	font-family: 'NanumTobak';
 	background-color: #F7F7F7;
 	text-align: center;
-	min-height: 80vh; /* 전체 화면을 차지하도록 설정 */
+	min-height: 70vh; /* 전체 화면을 차지하도록 설정 */
 	margin: 0;
 	padding: 0;
 	overflow: scroll;
@@ -98,8 +98,8 @@ try {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     position: relative;
-    height: 80vh; /* 고정된 높이 설정 */
-    max-height: 80vh; /* 최대 높이 설정 */
+    height: 70vh; /* 고정된 높이 설정 */
+    max-height: 70vh; /* 최대 높이 설정 */
     overflow-y: auto; /* 콘텐츠가 넘칠 경우 스크롤 표시 */
     border-radius:30px;
 }
