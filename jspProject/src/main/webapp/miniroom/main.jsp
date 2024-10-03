@@ -449,6 +449,7 @@ function clickAlarm(){
           	    	xhr.onreadystatechange = function () {
           	        if (xhr.readyState === 4 && xhr.status === 200) {
           	        	alert("신고가 완료되었습니다.");
+          	        	
           	        }
           	    };
           	    xhr.send();

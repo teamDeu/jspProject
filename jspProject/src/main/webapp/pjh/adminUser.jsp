@@ -14,9 +14,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 페이지</title>
 	<link rel="stylesheet" href="./css/admin.css" />
+	
 	<style>
 		.admin_userList_user_img{
-			width : 120px;
+			width : 20px;
 		}
 	</style>
 </head>
@@ -103,7 +104,7 @@
 						<td><%=userPhone%></td>
 						<td><%=userEmail%></td>
 						<td><%=userClover%></td>
-						<td><img class ="admin_userList_user_img"src='<%=userChracter%>'></td>
+						<td class ="admin_userList_user_img_box"><img class ="admin_userList_user_img"src='<%=userChracter%>'></td>
 					</tr>
 					<%
 					}

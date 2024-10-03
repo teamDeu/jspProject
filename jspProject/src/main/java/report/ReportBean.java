@@ -6,7 +6,14 @@ public class ReportBean {
 	private String report_receiveuserid;
 	private String report_at;
 	private String report_type;
+	private boolean report_complete;
 	
+	public boolean isReport_complete() {
+		return report_complete;
+	}
+	public void setReport_complete(boolean report_complete) {
+		this.report_complete = report_complete;
+	}
 	public int getReport_num() {
 		return report_num;
 	}

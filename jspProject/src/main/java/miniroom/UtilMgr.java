@@ -55,6 +55,14 @@ public class UtilMgr {
 	  return df.format(now).toString();
   }
   
+  public static String addDay(int num) {
+	  Calendar calendar = Calendar.getInstance();
+      calendar.add(Calendar.DAY_OF_MONTH, num); // 현재 날짜에 num만큼 일수 추가
+      Date newDate = calendar.getTime(); // 수정된 날짜 가져오기
+      DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); // 원하는 형식으로 포맷
+      return df.format(newDate);
+  }
+  
 	public static int parseInt(HttpServletRequest request, 
 			String name) {
 		return Integer.parseInt(request.getParameter(name));
