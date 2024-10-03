@@ -26,6 +26,7 @@
 		display:flex;
 		align-items:center;
 		justify-content : center;
+		background-color: #F8F6E3;
 	}
 	.suspension_main{
 		display:flex;
@@ -34,6 +35,7 @@
 		padding : 20px;
 		box-sizing : border-box;
 		border : 1px solid black;
+		background-color: #F8F6E3;
 	}
 	.report_chatLogBox{
 			display:flex;

@@ -1,3 +1,4 @@
+<%@page import="report.SuspensionBean"%>
 <%@page import="report.ChatLogBean"%>
 <%@page import="report.ReportBean"%>
 <%@page import="report.ReportMgr"%>
@@ -42,7 +43,7 @@ String type = request.getParameter("type");
 	flex-direction: column;
 	background-color: white;
 	width: 550px;
-	height : 500px;
+	height: 500px;
 	padding: 20px;
 	gap: 5px;
 	border: 1px solid black;
@@ -101,28 +102,40 @@ String type = request.getParameter("type");
 	box-sizing: border-box;
 	border: 1px solid black;
 }
-.suspension_period{
-	padding : 4px;
-	width : 200px;
+
+.suspension_period {
+	padding: 5px;
+	width: 200px;
 }
+
 .product-list-table td, .product-list-table th {
 	border: none;
 }
-.report_manage_div{
-	display:flex;
-	flex-direction:column;
-	justify-self:flex-end;
-	align-items:center;
-	gap : 5px;
+
+.report_manage_div {
+	display: flex;
+	flex-direction: column;
+	justify-self: flex-end;
+	align-items: center;
+	gap: 5px;
 }
-.suspension_type{
-	padding : 5px;
-	border : 1px solid black;
+
+.suspension_type {
+	cursor: pointer;
+	padding: 5px;
+	border: 1px solid black;
+	border-radius: 5px;
 }
-.suspension_setting_section{
-	display:flex;
-	align-items:center;
-	gap : 5px;
+
+.suspension_type.active {
+	border: 1px solid blue; /* 활성화된 라벨의 경계선 색상 */
+	background-color: #e0f0ff; /* 활성화된 라벨의 배경색 */
+}
+
+.suspension_setting_section {
+	display: flex;
+	align-items: center;
+	gap: 5px;
 }
 </style>
 </head>
@@ -199,7 +212,9 @@ String type = request.getParameter("type");
 							String reportReceiveUserId = report.getReport_receiveuserid();
 							String reportAt = report.getReport_at();
 							String reportType = report.getReport_type();
+							boolean reportComplete = report.isReport_complete();
 							Vector<ChatLogBean> chatLogList = reportMgr.getChatLogByReport(report);
+							Vector<SuspensionBean> suspensionList = reportMgr.getSuspesionList(reportReceiveUserId);
 					%>
 					<tr>
 
@@ -213,7 +228,9 @@ String type = request.getParameter("type");
 										if (chatLogList.size() == 0) {
 										%>
 										<div class="report_chatLogBox_content">채팅내역이 없습니다.</div>
-										<%} else {%>
+										<%
+										} else {
+										%>
 										<%
 										for (int i = 0; i < chatLogList.size(); i++) {
 											ChatLogBean chatLogBean = chatLogList.get(i);
@@ -223,28 +240,64 @@ String type = request.getParameter("type");
 											:
 											<%=chatLogBean.getChatlog_content()%>
 										</div>
-										<%}}%>
+										<%
+										}
+										}
+										%>
 									</div>
-									<div class ="report_manage_div">
-									<section class ="suspension_setting_section">
-									<select class = "suspension_period">
-										<option value =3>3일</option>
-										<option value =5>5일</option>
-										<option value =7>7일</option>
-										<option value =30>30일</option>
-									</select>
-									<div class ="suspension_type_box">
-									<input name = "suspension_type" id ="suspension_type0" onchange = "onchangeType('suspension_type0')" type ="radio" value = 0 ><label class ="suspension_type" for ="suspension_type0">채팅정지</label>
-									<input name = "suspension_type" id ="suspension_type1" onchange = "onchangeType('suspension_type0')" type ="radio" value = 1 ><label class ="suspension_type" for ="suspension_type1">계정정지</label>
+									<div class="report_chatLogBox_Header">정지 내역</div>
+									<div class="report_chatLogBox_content_box">
+										<%
+										if (suspensionList.size() == 0) {
+										%>
+										<div class="report_chatLogBox_content">정지내역이 없습니다.</div>
+										<%
+										} else {
+										%>
+										<%
+										for (int i = 0; i < suspensionList.size(); i++) {
+											SuspensionBean suspensionBean = suspensionList.get(i);
+										%>
+										<div class="report_chatLogBox_content">
+											<%=suspensionBean.getSuspension_date()%> 까지 
+											<%=suspensionBean.getSuspension_type() == 1 ? "계정" : "채팅"%> 정지
+										</div>
+										<%
+										}
+										}
+										%>
 									</div>
-									</section>
-									<div class ="report_manage_div_btn_box">
-										<button onclick = "" class ="report_manage_div_btn_submit">제출하기</button>
-										<button onclick = "clickReportChatLogBoxExitBtn('chatLogBox-<%=reportNum%>')" class ="report_manage_div_btn_cancel">취소하기</button>
+									<div class="report_manage_div">
+										<section class="suspension_setting_section" id ="settingSection-<%=reportNum%>">
+											<select class="suspension_period">
+												<option value=3>3일</option>
+												<option value=5>5일</option>
+												<option value=7>7일</option>
+												<option value=30>30일</option>
+											</select>
+											<div class="suspension_type_box">
+												<input name="suspension_type" id="suspension_type0<%=j%>"
+													onchange="onchangeType(event)" type="radio" value=0
+													hidden="true"><label class="suspension_type"
+													for="suspension_type0<%=j%>">채팅정지</label> <input
+													name="suspension_type" id="suspension_type1<%=j%>"
+													onchange="onchangeType(event)" type="radio" value=1
+													hidden="true"><label class="suspension_type"
+													for="suspension_type1<%=j%>">계정정지</label>
+											</div>
+										</section>
+										<div class="report_manage_div_btn_box">
+											<button onclick="clickReportSubmit('<%=reportNum%>')"
+												class="report_manage_div_btn_submit">제출하기</button>
+											<button onclick="clickReportReject('<%=reportNum%>')">신고반려</button>
+											<button
+												onclick="clickReportChatLogBoxExitBtn('chatLogBox-<%=reportNum%>')"
+												class="report_manage_div_btn_cancel">취소하기</button>
+
+										</div>
 									</div>
 								</div>
-								</div>
-								
+
 							</div> <span class="report_num_span"
 							onclick="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')"><%=reports.size() - j%></span>
 						</td>
@@ -252,8 +305,18 @@ String type = request.getParameter("type");
 						<td><%=reportReceiveUserId%></td>
 						<td><%=reportAt%></td>
 						<td><%=reportType%></td>
-						<td><button
-								onclick="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')">관리하기</button></td>
+						<td>
+							<%
+							if (reportComplete) {
+							%> <span>처리된 신고</span> <%
+ } else {
+ %>
+							<button
+								onclick="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')">관리하기</button>
+						</td>
+						<%
+						}
+						%>
 					</tr>
 					<%
 					}
@@ -311,6 +374,54 @@ String type = request.getParameter("type");
         function clickReportChatLogBoxOpenBtn(id){
         	document.querySelectorAll(".report_chatLogModal").forEach((e) => e.style.display = "none");
         	document.getElementById(id).style.display = "flex";
+        }
+        
+        function onchangeType(event) {
+            // 모든 라벨에서 active 클래스를 제거
+            const labels = document.querySelectorAll('.suspension_type');
+            labels.forEach(label => {
+                label.classList.remove('active');
+            });
+
+            // 선택된 라디오 버튼에 해당하는 라벨에 active 클래스 추가
+            const selectedLabel = document.querySelector("label[for='"+event.target.id+"']");
+            if (selectedLabel) {
+                selectedLabel.classList.add('active');
+            }
+        }
+        
+        function clickReportSubmit(reportNum){
+        	var xhr = new XMLHttpRequest();
+       		const settingSection = document.getElementById("settingSection-"+reportNum);
+       		const suspension_period = settingSection.querySelector('.suspension_period').value;
+       		if(settingSection.querySelector("input[name=suspension_type]:checked") == null){
+       			alert("제재 방식을 결정해주세요.")
+       			return;
+       		}
+       		const suspension_type = settingSection.querySelector("input[name=suspension_type]:checked").value
+       		console.log(suspension_period , suspension_type);
+       		
+  	    	xhr.open("GET", "../pjh/adminReportProc.jsp?type=submit&report_num="+reportNum+"&suspension_period="+suspension_period+"&suspension_type="+suspension_type, true); // Alarm 갱신Proc
+  	    	xhr.onreadystatechange = function () {
+	  	        if (xhr.readyState === 4 && xhr.status === 200) {
+	  	        	alert("제재가 완료되었습니다");
+	  	        	location.href = location.href;
+	  	        }
+  	    	};
+  	    	xhr.send();
+  	    	
+        }
+        
+        function clickReportReject(reportNum){
+        	var xhr = new XMLHttpRequest();
+        	xhr.open("GET","../pjh/adminReportProc.jsp?type=reject&report_num="+reportNum);
+        	xhr.onreadystatechange = function(){
+        		if(xhr.readyState === 4 && xhr.status === 200){
+        			alert("신고가 반려되었습니다.")
+        			location.href = location.href;
+        		}
+        	};
+        	xhr.send();
         }
     </script>
 </body>
