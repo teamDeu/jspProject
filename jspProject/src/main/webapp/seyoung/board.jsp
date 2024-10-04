@@ -642,7 +642,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        xhr.send(params);
 	    }
 	    
-<<<<<<< HEAD
+
 	    
 	 // 최신 게시글이 로드된 후 댓글을 불러오는 함수 호출
 	    function loadLatestPost() {
@@ -660,18 +660,13 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        xhr.send();
 	    }
 
-	    // 최신 게시글 ID를 추출하는 함수
-	    function extractLatestBoardNum() {
-		    var boardElement = document.querySelector(".bwrite-form");
-		    return boardElement.getAttribute("data-board-num"); // data-board-num 속성에서 추출
-		}
+	    
 	    
 	    document.addEventListener('DOMContentLoaded', function () {
 	    	bloadAnswers(<%= latestBoard.getBoard_num() %>); // 페이지가 로드될 때 댓글 목록을 불러오는 함수 호출
 	    	loadLatestPost(); // 페이지가 로드될 때 최신 게시글을 불러옴
 		})
-=======
->>>>>>> branch 'main' of https://github.com/teamDeu/jspProject.git
+
 
     </script>
 </body>

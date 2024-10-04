@@ -139,17 +139,20 @@ String boardNum = request.getParameter("board_num"); // 게시글 번호를 받�
 
 Vector<BoardAnswerBean> answers = null;
 
-try {
-    if (boardNum != null && !boardNum.isEmpty() && !"null".equals(boardNum)) {
-        answers = mgr.bgetAnswers(Integer.parseInt(boardNum));
-    } else {
-        // 예외 처리: board_num이 null이거나 빈 값일 때 처리
-        System.out.println("게시글 번호가 유효하지 않습니다.");
-    }
-} catch (NumberFormatException e) {
-    System.out.println("게시글 번호 형식이 잘못되었습니다: " + boardNum);
+//게시글 번호가 유효한지 확인
+if (boardNum != null && !boardNum.isEmpty()) {
+ try {
+     answers = mgr.bgetAnswers(Integer.parseInt(boardNum));
+ } catch (NumberFormatException e) {
+     System.out.println("유효하지 않은 게시글 번호: " + boardNum);
+ }
+} else {
+ System.out.println("게시글 번호가 전달되지 않았습니다.");
 }
 %>
+
+
+
 <% if (answers != null && answers.size() > 0) { %>
     <% for (BoardAnswerBean answer : answers) { %>
         <div class="answer-item" data-answer-num="<%= answer.getAnswerNum() %>">
