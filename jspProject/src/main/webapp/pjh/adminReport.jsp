@@ -137,6 +137,26 @@ String type = request.getParameter("type");
 	align-items: center;
 	gap: 5px;
 }
+.pagination {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        background-color: #f1f1f1;
+        padding: 10px;
+    }
+
+    .pagination a {
+        margin: 0 5px;
+        text-decoration: none;
+        color: #000;
+    }
+
+    .pagination a.current-page {
+        font-weight: bold;
+        color: #007bff;
+    }
 </style>
 </head>
 <body>

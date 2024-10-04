@@ -10,6 +10,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 페이지</title>
 	 <link rel="stylesheet" href="./css/admin.css" />
+	 <style>
+	 .pagination {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        background-color: #f1f1f1;
+        padding: 10px;
+    }
+
+    .pagination a {
+        margin: 0 5px;
+        text-decoration: none;
+        color: #000;
+    }
+
+    .pagination a.current-page {
+        font-weight: bold;
+        color: #007bff;
+    }
+	 </style>
 </head>
 <body>
 
