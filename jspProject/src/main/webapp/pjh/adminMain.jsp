@@ -88,6 +88,7 @@
             margin-left: auto;
             margin-right: auto;
         }
+        
     </style>
     <link rel="stylesheet" href="./css/admin.css" />
      <!-- 차트.js CDN -->
