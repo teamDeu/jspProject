@@ -217,7 +217,7 @@ function loadContent(url) {
 function clickOpenBox(id){
    openBox = document.getElementById(id);
    anotherBox = document.querySelectorAll(".inner-box-2");
-   anotherButton = document.querySelectorAll(".custom-button");
+   anotherButton = document.qu	erySelectorAll(".custom-button");
    for(i = 0 ; i < anotherBox.length ; i++){
       anotherBox[i].style.display ="none";
    }

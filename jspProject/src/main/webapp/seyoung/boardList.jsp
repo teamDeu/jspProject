@@ -10,7 +10,8 @@
 String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 
-Vector<BoardWriteBean> boardList = mgr.getBoardListByUser(board_id); // 사용자 ID에 맞는 게시글 목록 가져오기
+
+Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); // 사용자 ID에 맞는 게시글 목록 가져오기
 %>
 
 <!DOCTYPE html>
@@ -269,20 +270,29 @@ td a {
                                     <th>조회수</th>
                                 </tr>
                             </thead>
+                            
+                            
+                            
                             <tbody id="board-list-body">
-                            	<%
-								    for (BoardWriteBean board : boardList) {
-								%>
-								    <tr>
-								        <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
-								        <td><a href="boardView.jsp?board_num=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
-								        <td><%= board.getBoard_id() %></td>
-								        <td><%= board.getBoard_at() %></td>
-								        <td><%= board.getBoard_views() %></td>
-								    </tr>
-								<%
-								    }
-								%>
+                            	<%-- <% 
+                                if (boardListAll != null && !boardListAll.isEmpty()) {
+                                    for (BoardWriteBean board : boardListAll) {  
+				                %>
+				                <tr>
+				                    <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
+				                    <td><a href="boardDetail.jsp?board_num=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
+				                    <td><%= board.getBoard_id() %></td>
+				                    <td><%= board.getBoard_at() %></td>
+				                    <td><%= board.getBoard_views() %></td>
+				                </tr>
+				                <% 
+				                    }
+				                } else { 
+				                %>
+				                <tr>
+				                    <td colspan="5">게시글이 없습니다.</td>
+				                </tr>
+				                <% } %> --%>
                             </tbody>
                         </table>
                     </div>
@@ -345,6 +355,18 @@ td a {
     function loadBoardList(folderNum) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '../seyoung/getBoardList.jsp?folderNum=' + encodeURIComponent(folderNum), true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
+                document.getElementById('board-list-body').innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send(); // 목록 로드 요청
+    }
+    
+    function loadBoardListAll(userId){
+    	var xhr = new XMLHttpRequest();
+        xhr.open('GET', '../seyoung/getBoardList.jsp?userId=' + encodeURIComponent(boardNum), true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
