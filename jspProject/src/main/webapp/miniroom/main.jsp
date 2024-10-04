@@ -607,7 +607,7 @@ function clickAlarm(){
                </jsp:include>
             </div>
             <div id="profile" class="inner-box-2" style="display: none">
-            	<jsp:include page="../pjh/profile.jsp"></jsp:include>
+               <jsp:include page="../pjh/profile.jsp"></jsp:include>
             </div>
             <div id="inner-box-2-miniroom" class ="inner-box-2" style="display: none" >
                <jsp:include page="miniDesign.jsp"></jsp:include>
