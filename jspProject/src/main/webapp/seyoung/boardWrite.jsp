@@ -464,11 +464,7 @@ String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 �
 
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
-            	
-            	
-
-            	
-            	
+  	
                 // 성공적으로 게시글 등록 후 목록 갱신
                 loadBoardList(formData.get('board_folder')); // 폴더 번호에 맞는 게시물 목록 로드
                 clickOpenBox('boardList'); // 게시판 목록으로 돌아가기

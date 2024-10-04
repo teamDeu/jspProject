@@ -10,6 +10,7 @@
 String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 
+
 Vector<BoardWriteBean> boardList = mgr.getBoardListByUser(board_id); // 사용자 ID에 맞는 게시글 목록 가져오기
 %>
 
@@ -269,20 +270,29 @@ td a {
                                     <th>조회수</th>
                                 </tr>
                             </thead>
+                            
+                            
+                            
                             <tbody id="board-list-body">
-                            	<%
-								    for (BoardWriteBean board : boardList) {
-								%>
-								    <tr>
-								        <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
-								        <td><a href="boardView.jsp?board_num=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
-								        <td><%= board.getBoard_id() %></td>
-								        <td><%= board.getBoard_at() %></td>
-								        <td><%= board.getBoard_views() %></td>
-								    </tr>
-								<%
-								    }
-								%>
+                            	<% 
+				                if (boardList != null) {
+				                    for (BoardWriteBean board : boardList) { 
+				                %>
+				                <tr>
+				                    <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
+				                    <td><a href="boardDetail.jsp?board_num=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
+				                    <td><%= board.getBoard_id() %></td>
+				                    <td><%= board.getBoard_at() %></td>
+				                    <td><%= board.getBoard_views() %></td>
+				                </tr>
+				                <% 
+				                    }
+				                } else { 
+				                %>
+				                <tr>
+				                    <td colspan="5">게시글이 없습니다.</td>
+				                </tr>
+				                <% } %>
                             </tbody>
                         </table>
                     </div>
