@@ -558,7 +558,6 @@ function clickAlarm(){
 
 </head>
 <body>
-
    <div class="container">
       <div class="header">
          <img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
@@ -661,6 +660,5 @@ function clickAlarm(){
    <div id = "friend_request_modal_receive" class ="friend_request_modal" style = "display:none">
          <jsp:include page="friendRequestReceive.jsp"></jsp:include>
    </div>
-   
 </body>
 </html>
