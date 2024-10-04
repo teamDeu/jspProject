@@ -12,14 +12,17 @@
 	 <link rel="stylesheet" href="./css/admin.css" />
 	 <style>
 	  html, body {
+	  font-family: 'Arial', sans-serif;
             height: 100%;
             margin: 0;
             display: flex;
             flex-direction: column;
+            
         }
 
         /* 메인 콘텐츠가 화면 전체 높이를 차지하고 페이징이 하단에 고정되도록 설정 */
         .main-content {
+        font-family: 'Arial', sans-serif;
             flex: 1;
             display: flex;
             flex-direction: column;

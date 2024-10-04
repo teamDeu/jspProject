@@ -85,22 +85,18 @@ try {
 	text-align: center;
 	min-height: 70vh; /* 전체 화면을 차지하도록 설정 */
 	margin: 0;
-	padding: 0;
-	overflow: scroll;
+	padding: 0;	
 	border-radius:30px;
 }
 
 .storecontainer {
-    width: 95%;
+    width: 98%;
     margin: 0 auto;
-    padding: 20px;
-    background-color: #F7F7F7;
+    padding: 10px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     position: relative;
     height: 70vh; /* 고정된 높이 설정 */
     max-height: 70vh; /* 최대 높이 설정 */
-    overflow-y: auto; /* 콘텐츠가 넘칠 경우 스크롤 표시 */
     border-radius:30px;
 }
 /* 상점 제목 */
@@ -130,7 +126,7 @@ try {
 	list-style: none;
 	padding: 0;
 	margin-bottom: 20px;
-	margin-top: 80px;
+	margin-top: 50px;
 	border-bottom: 2px solid #ccc; /* 카테고리 아래 줄 추가 */
 }
 
@@ -201,7 +197,7 @@ try {
 
 .product-img {
    	width: 165px;
-    height: 150px;
+    height: 130px;
     border-radius: 10px; /* 상품 이미지 모서리 둥글게 */
 }
 

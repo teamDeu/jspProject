@@ -248,4 +248,39 @@ public class BoardWriteMgr {
         return board;
     }
     
+    // userId에 해당하는 사용자의 게시글 목록을 가져오는 메서드 추가
+    public Vector<BoardWriteBean> getBoardListByUser(String userId) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Vector<BoardWriteBean> boardList = new Vector<>();
+        try {
+            con = pool.getConnection();
+            String sql = "SELECT * FROM board WHERE board_id = ? ORDER BY board_at DESC";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, userId);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                BoardWriteBean board = new BoardWriteBean();
+                board.setBoard_num(rs.getInt("board_num"));
+                board.setBoard_visibility(rs.getInt("board_visibility"));
+                board.setBoard_answertype(rs.getInt("board_answertype"));
+                board.setBoard_folder(rs.getInt("board_folder"));
+                board.setBoard_id(rs.getString("board_id"));
+                board.setBoard_title(rs.getString("board_title"));
+                board.setBoard_content(rs.getString("board_content"));
+                board.setBoard_at(rs.getTimestamp("board_at").toString());
+                board.setBoard_image(rs.getString("board_image"));
+                board.setBoard_views(rs.getInt("board_views"));
+                boardList.add(board);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return boardList;
+    }
+    
 }
