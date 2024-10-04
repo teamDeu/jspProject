@@ -677,4 +677,4 @@ function clickAlarm(){
          <jsp:include page="friendRequestReceive.jsp"></jsp:include>
    </div>
 </body>
-</html>
+</html> 
