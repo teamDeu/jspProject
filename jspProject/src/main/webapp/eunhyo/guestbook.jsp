@@ -738,26 +738,26 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
       
                      <!-- 답글 목록 (방명록 항목 내부로 이동) -->
                   <ul id="a-list-<%=entry.getGuestbookNum()%>" class="a-list">
-				    <% for (GuestbookanswerBean answer : answers) { 
-				        // 답글 작성자의 프로필 정보 가져오기
-				        GuestbookprofileBean answerProfile = profileMgr.getProfileByUserId(answer.getGanswerId());
-				        String answerProfileName = (answerProfile != null) ? answerProfile.getProfileName() : null;
-				        String ganswerId = answer.getGanswerId();
-				    %>
-				        <li id="a-<%=answer.getGanswerNum()%>" class="a-item">
-				            <!-- 프로필 이름이 있을 때와 없을 때 각각의 형식으로 출력 -->
-				            <p>
-				                ↳ <%= (answerProfileName != null && !answerProfileName.isEmpty()) ? answerProfileName + " (" + ganswerId + ") :" : ganswerId + " :" %> 
-				                <%= answer.getGanswerComment() %> (<%= answer.getGanswerAt() %>)
-				                
-				                <!-- 삭제 버튼: sessionUserId가 답글 작성자(ganswerId) 또는 방명록 주인(ownerId)인 경우에만 표시 -->
-				                <% if (sessionUserId != null && (sessionUserId.equals(ganswerId) || sessionUserId.equals(ownerId))) { %>
-				                    <button type="button" class="delete-a-btn" onclick="deleteAnswer(<%=answer.getGanswerNum()%>, <%=entry.getGuestbookNum()%>)">삭제</button>
-				                <% } %>
-				            </p>
-				        </li>
-				    <% } %>
-				</ul>
+                <% for (GuestbookanswerBean answer : answers) { 
+                    // 답글 작성자의 프로필 정보 가져오기
+                    GuestbookprofileBean answerProfile = profileMgr.getProfileByUserId(answer.getGanswerId());
+                    String answerProfileName = (answerProfile != null) ? answerProfile.getProfileName() : null;
+                    String ganswerId = answer.getGanswerId();
+                %>
+                    <li id="a-<%=answer.getGanswerNum()%>" class="a-item">
+                        <!-- 프로필 이름이 있을 때와 없을 때 각각의 형식으로 출력 -->
+                        <p>
+                            ↳ <%= (answerProfileName != null && !answerProfileName.isEmpty()) ? answerProfileName + " (" + ganswerId + ") :" : ganswerId + " :" %> 
+                            <%= answer.getGanswerComment() %> (<%= answer.getGanswerAt() %>)
+                            
+                            <!-- 삭제 버튼: sessionUserId가 답글 작성자(ganswerId) 또는 방명록 주인(ownerId)인 경우에만 표시 -->
+                            <% if (sessionUserId != null && (sessionUserId.equals(ganswerId) || sessionUserId.equals(ownerId))) { %>
+                                <button type="button" class="delete-a-btn" onclick="deleteAnswer(<%=answer.getGanswerNum()%>, <%=entry.getGuestbookNum()%>)">삭제</button>
+                            <% } %>
+                        </p>
+                    </li>
+                <% } %>
+            </ul>
                   
                   <!-- 답글 작성 폼 (방명록 항목 내부로 이동) -->
                   <div class="a-form">
