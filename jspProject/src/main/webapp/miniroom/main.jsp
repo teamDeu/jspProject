@@ -120,7 +120,10 @@
 	top: -120px;
 	border: 2px solid #BAB9AA;
 }
-
+.profile_function_div_guestbook{
+	top:25px;
+	left:0px;
+}
 .profile_function_div button {
 	padding: 2px 10px;
 	border: 1px solid #DCDCDC;

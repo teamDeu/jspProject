@@ -174,6 +174,7 @@ if (startIndex < totalEntries) {
    font-size: 22px;
    font-weight: bold;
    display: inline; /* 같은 줄에 표시 */
+   cursor : pointer;
 }
 
 .author-underline {
@@ -694,7 +695,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
 		                </div>
 		            <% } else { %>
 		                <!-- 작성자의 프로필 사진과 이름, 날짜를 표시 -->
-		                <div class="author-container">
+		                <div class="author-container" onclick = "onclickMainProfileFriendsDiv(this)">
 		                <% if (profile != null) { %>
 		                    <!-- 프로필 사진 -->
 		                    <img src="<%=profile.getProfilePicture()%>" alt="프로필 사진" class="profile-image">
@@ -710,6 +711,12 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
 		                        <span class="date"><%=entry.getWrittenAt() != null ? dateFormat.format(entry.getWrittenAt()) : ""%></span>
 		                    </p>
 		                <% } %>
+		                <div>
+			                <jsp:include page="../miniroom/profileFunctionDiv.jsp">
+								<jsp:param value="<%=entry.getWriterId()%>" name="profileId"/>
+								<jsp:param value="guestbook" name ="type"/>
+							</jsp:include>
+		                </div>
 		                <div class="author-underline"></div>
 		            </div>
 		
