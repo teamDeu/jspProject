@@ -275,24 +275,24 @@ td a {
                             
                             <tbody id="board-list-body">
                             	<%-- <% 
-                                if (boardListAll != null && !boardListAll.isEmpty()) {
-                                    for (BoardWriteBean board : boardListAll) {  
-				                %>
-				                <tr>
-				                    <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
-				                    <td><a href="boardDetail.jsp?board_num=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
-				                    <td><%= board.getBoard_id() %></td>
-				                    <td><%= board.getBoard_at() %></td>
-				                    <td><%= board.getBoard_views() %></td>
-				                </tr>
-				                <% 
-				                    }
-				                } else { 
-				                %>
-				                <tr>
-				                    <td colspan="5">게시글이 없습니다.</td>
-				                </tr>
-				                <% } %> --%>
+						        if (boardListAll != null && !boardListAll.isEmpty()) {
+						            for (BoardWriteBean board : boardListAll) { 
+						        %>
+						            <tr>
+						                <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
+						                <td><a href="boardDetail.jsp?board_num=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
+						                <td><%= board.getBoard_id() %></td>
+						                <td><%= board.getBoard_at() %></td>
+						                <td><%= board.getBoard_views() %></td>
+						            </tr>
+						        <% 
+						            }
+						        } else { 
+						        %>
+						        <tr>
+						            <td colspan="5">게시글이 없습니다.</td>
+						        </tr>
+						        <% } %> --%>
                             </tbody>
                         </table>
                     </div>
@@ -366,7 +366,7 @@ td a {
     
     function loadBoardListAll(userId){
     	var xhr = new XMLHttpRequest();
-        xhr.open('GET', '../seyoung/getBoardList.jsp?userId=' + encodeURIComponent(boardNum), true);
+        xhr.open('GET', '../seyoung/getBoardListAll.jsp?userId=' + encodeURIComponent(UserId), true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
@@ -375,6 +375,7 @@ td a {
         };
         xhr.send(); // 목록 로드 요청
     }
+    
 
     
 </script>

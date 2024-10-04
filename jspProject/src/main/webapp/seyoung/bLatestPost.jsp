@@ -22,7 +22,7 @@
     <!-- 이미지가 있을 경우 표시 -->
     <% if (latestBoard.getBoard_image() != null && !latestBoard.getBoard_image().isEmpty()) { %>
         <div style="text-align: center; margin-top: 10px;">
-            <img src="<%= latestBoard.getBoard_image() %>"  style="max-width: 100%; border: 1px solid #CCC; padding: 5px;">
+            <img src="<%= request.getContextPath() %>/seyoung/<%= latestBoard.getBoard_image().substring(latestBoard.getBoard_image().lastIndexOf('/') + 1) %>"   style="width: 300px; height: 200px; border: 1px solid #CCC; padding: 5px;">
         </div>
     <% } %>
 
