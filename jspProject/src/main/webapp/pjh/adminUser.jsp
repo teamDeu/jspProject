@@ -111,7 +111,24 @@
 	box-sizing: border-box;
 	border: 1px solid black;
 }
+.alarm_button{
+	    position: absolute;
+    right: 20px;
+    top: 160px;
+    padding:5px;
+    background : none;
+    border : 1px solid black;
+    border-radius : 10px;
+    cursor : pointer;
+}
+.alarm_button:hover{
+	background-color : rgba(0,0,0,0.2);
+}
 	</style>
+	<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
+  />
 </head>
 <body>
 
@@ -120,9 +137,9 @@
         <h2>관리자 패널</h2>
         <ul>
             <li onclick="showCategory(event)" data = "adminMain.jsp" id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
-            <li onclick="showCategory(event)" data = "adminUser.jsp" class="active" >유저관리</li>
-            <li onclick="showCategory(event)" data = "adminStore.jsp" id="storeTab"><i class="fa fa-store"></i>상점관리</li>
-            <li onclick="showCategory(event)" data = "adminReport.jsp">신고관리</li>
+            <li onclick="showCategory(event)" data = "adminUser.jsp" class="active" ><i class="fa-solid fa-users"></i> 유저관리</li>
+            <li onclick="showCategory(event)" data = "adminStore.jsp" id="storeTab"><i class="fa fa-store"></i> 상점관리</li>
+            <li onclick="showCategory(event)" data = "adminReport.jsp"><i class="fa-solid fa-lightbulb"></i> 신고관리</li>
             <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
         </ul>
     </div>
@@ -141,6 +158,7 @@
 		<!-- 상품 목록 출력 및 페이징 -->
 		<div class="product-list">
 			<h2>유저 목록</h2>
+			<button class="alarm_button">공지사항 알림</button>
 			<table>
 				<thead>
 					<tr>
