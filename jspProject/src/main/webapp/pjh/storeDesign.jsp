@@ -91,7 +91,7 @@ try {
 }
 
 .storecontainer {
-    width: 95%;
+    width: 96%;
     margin: 0 auto;
     padding: 20px;
     background-color: #F7F7F7;
