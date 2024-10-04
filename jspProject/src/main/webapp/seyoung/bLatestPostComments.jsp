@@ -63,7 +63,7 @@
 .answer-time {
 	font-size: 14px;
 	color: #666;
-	margin-left: auto; /* 자동으로 오른쪽에 정렬 */
+	margin-left: 0px; /* 자동으로 오른쪽에 정렬 */
 }
 
 /* 삭제 버튼 스타일 */
@@ -89,7 +89,7 @@
 	flex-direction: row;
 	align-items: flex-start;
 	padding: 10px;
-	width: 620px;
+	width: 670px;
 	margin-top: 5px;
 	margin-bottom: 5px;
 	border: 1px solid #BAB9AA;
@@ -126,7 +126,7 @@
 	background-color: #f9f9f9;
 	border: 1px solid #BAB9AA;
 	padding: 10px;
-	width: 548px;
+	width: 620px;
 	display: flex;
 	flex-direction: column;
 }

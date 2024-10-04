@@ -490,21 +490,10 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 
             openButton.style.backgroundColor = "#F7F7F7";
             
-            <%-- var userId = '<%= UserId %>';
-            loadBoardListAll(userId); --%>
+          
         }
 		
-		/* function loadBoardListAll(userId){
-	    	var xhr = new XMLHttpRequest();
-	        xhr.open('GET', '../seyoung/getBoardListAll.jsp?userId=' + encodeURIComponent(UserId), true);
-	        xhr.onreadystatechange = function() {
-	            if (xhr.readyState === 4 && xhr.status === 200) {
-	                // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
-	                document.getElementById('board-list-body').innerHTML = xhr.responseText;
-	            }
-	        };
-	        xhr.send(); // 목록 로드 요청
-	    } */
+		
 		
 		
 		document.addEventListener('DOMContentLoaded', function () {
