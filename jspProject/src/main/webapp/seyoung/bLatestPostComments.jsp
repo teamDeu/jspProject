@@ -15,16 +15,15 @@
 .answer-item {
 	display: flex;
 	align-items: flex-start;
-	margin-bottom: 5px;
+	margin: 5px 0px;
 	width: 100%;
-	flex-direction: row;
 }
 
 /* 사용자 이미지 스타일 */
 .user-image {
-	margin-right: 10px;
 	width: 40px;
 	height: 40px;
+	margin-right: 10px;
 	border-radius: 50%;
 }
 
@@ -37,41 +36,37 @@
 
 /* 댓글 컨텐츠 스타일 */
 .answer-content {
+	display: flex; /* 이미지와 텍스트를 가로로 배치 */
+	align-items: flex-start;
 	background-color: #f9f9f9;
 	border: 1px solid #BAB9AA;
 	padding: 10px;
-	width: 620px;
+	width: 600px;
 	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
 }
 
 /* 댓글 헤더 스타일 (이름과 시간) */
 .answer-header {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	margin-bottom: 5px;
+	width: 100%;
 }
 
 /* 사용자 이름 스타일 */
 .user-name {
 	font-weight: bold;
 	font-size: 16px;
+	margin-right: 10px;
 }
 
 /* 댓글 시간 스타일 */
 .answer-time {
-	font-size: 15px;
-	color: black;
-	margin-left: -440px;
+	font-size: 14px;
+	color: #666;
+	margin-left: auto; /* 자동으로 오른쪽에 정렬 */
 }
 
 /* 삭제 버튼 스타일 */
-.answer-time-container {
-	display: flex;
-}
-
 .delete-btn {
 	color: #FF5A5A;
 	cursor: pointer;
@@ -94,17 +89,15 @@
 	flex-direction: row;
 	align-items: flex-start;
 	padding: 10px;
-	width: 600px;
+	width: 620px;
 	margin-top: 5px;
 	margin-bottom: 5px;
-	margin-left: 0px;
 	border: 1px solid #BAB9AA;
 	background-color: #f9f9f9;
 }
 
 .reanswer-input {
 	width: 90%;
-	margin-bottom: 5px;
 	padding: 5px;
 	border: 1px solid #BAB9AA;
 	border-radius: 5px;
@@ -117,30 +110,16 @@
 	border-radius: 5px;
 	background-color: #f2f2f2;
 	cursor: pointer;
-	margin: 0px 10px;
+	margin-left: 10px;
 	font-size: 15px;
-	height: 29px;
-	width: 40px;
 }
 
-/* 댓글이 없을 때 스타일 */
-.no-comments {
-	font-size: 16px;
-	color: #666;
-	margin-top: 10px;
-}
-
+/* 답글 컨텐츠 스타일 */
 .reply-item {
 	display: flex;
 	align-items: flex-start;
-	margin : 5px 0px;
+	margin: 5px 0px;
 	width: 100%;
-}
-
-.reply-icon {
-	width: 20px;
-	height: 20px;
-	margin-right: 10px;
 }
 
 .reply-content {
@@ -159,22 +138,21 @@
 }
 
 .reuser-image {
-	width: 30px; /* 이미지 크기 설정 */
+	width: 30px;
 	height: 30px;
-	margin-right: 10px; /* 사용자 이름과 이미지 간격 설정 */
-	border-radius: 50%; /* 둥근 이미지로 설정 */
+	margin-right: 10px;
+	border-radius: 50%;
 }
 
 .reuser-name {
 	font-weight: bold;
-	margin-right: 10px;
 	font-size: 16px;
+	margin-right: 10px;
 }
 
 .reply-time {
 	font-size: 15px;
 	color: black;
-	margin-top: 5px;
 }
 
 .reply-text {
@@ -183,8 +161,8 @@
 	margin-top: 5px;
 	text-align: left;
 }
-</style>
 
+</style>
 
 </head>
 
