@@ -10,14 +10,107 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8">	
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 페이지</title>
 	<link rel="stylesheet" href="./css/admin.css" />
+	
 	<style>
-		.admin_userList_user_img{
-			width : 120px;
-		}
+	<style>
+         .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* 유저 목록을 상단에 고정 */
+            min-height: 100vh; /* 전체 화면 높이 */
+            padding-bottom: 60px; /* 페이징 영역을 위해 여유 공간 확보 */
+        }
+
+        .admin_userList {
+            flex-grow: 1;
+            margin-top: 20px;
+        }
+
+        .admin_userList table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin_userList table th, .admin_userList table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .admin_userList_user_img {
+            width : 20px;
+        }
+
+        /* 페이징 영역을 화면 하단에 고정 */
+        .pagination-container {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination-container a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #000;
+            padding: 10px;
+            background-color: #C0E5AF;
+            border-radius: 10px;
+        }
+
+        .pagination-container a.current-page {
+            font-weight: bold;
+            color: #007bff;
+            background-color: #27ae60;
+        }
+
+        .admin_userList {
+            flex-grow: 1;
+            margin-top: 20px;
+        }
+
+        .admin_userList table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin_userList table th, .admin_userList table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .admin_userList_user_img {
+            width : 20px;
+        }
+        .admin_input {
+	padding: 6px;
+	border-radius: 5px;
+	border: 1px solid black;
+	box-sizing: border-box;
+}
+
+.admin_select {
+	padding: 5px;
+	border-radius: 5px;
+	border: 1px solid black;
+	box-sizing: border-box;
+}
+
+.admin_submitBtn {
+	padding: 4px;
+	background: none;
+	border-radius: 5px;
+	box-sizing: border-box;
+	border: 1px solid black;
+}
 	</style>
 </head>
 <body>
@@ -37,12 +130,12 @@
 		<h1>유저 관리</h1>
 		<!-- 검색 폼 -->
 		<form method="get" action="adminUser.jsp">
-			<select name="user_keyField">
+			<select class = "admin_select" name="user_keyField">
 				<option value="user_id">유저 ID</option>
 				<option value="user_name">유저 이름</option>
 				<option value="user_phone">유저 번호</option>
-			</select> <input type="text" name="user_keyWord" placeholder="검색어 입력" /> <input
-				type="submit" value="검색" />
+			</select> <input class = admin_input type="text" name="user_keyWord" placeholder="검색어 입력" /> <input
+				type="submit" class = "admin_submitBtn" value="검색" />
 		</form>
 
 		<!-- 상품 목록 출력 및 페이징 -->
@@ -59,7 +152,6 @@
 						<th>이메일</th>
 						<th>클로버</th>
 						<th>캐릭터</th>
-						<th>관리</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -104,16 +196,7 @@
 						<td><%=userPhone%></td>
 						<td><%=userEmail%></td>
 						<td><%=userClover%></td>
-						<td><img class ="admin_userList_user_img"src='<%=userChracter%>'></td>
-						<td>
-							<!-- 삭제 버튼 -->
-							<form action="deleteItem.jsp" method="post"
-								onsubmit="return confirm('정말로 이 상품을 삭제하시겠습니까?');">
-								<input type="hidden" name="user_id" value="<%=userId%>">
-								<button type="submit"
-									style="padding: 5px 10px; background-color: #FF6B6B; color: white; border: none; border-radius: 5px; cursor: pointer;">삭제</button>
-							</form>
-						</td>
+						<td class ="admin_userList_user_img_box"><img class ="admin_userList_user_img"src='<%=userChracter%>'></td>
 					</tr>
 					<%
 					}
@@ -130,7 +213,7 @@
 
 			<!-- 상품 추가 버튼 -->
 			<!-- 페이징 처리 -->
-			<div class="pagination">
+			<div class="pagination-container">
 				<%
 				for (int i = 1; i <= totalPages; i++) {
 				%>

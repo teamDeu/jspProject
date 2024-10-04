@@ -39,7 +39,7 @@
             background-color: #27ae60;
         }
         .sidebar ul li.active {
-            background-color: #1abc9c;
+            background-color: #27ae60;
         }
         .main-content {
             margin-left: 250px;
@@ -99,15 +99,14 @@
             color: #333;
         }
         .product-list table td button {
-            padding: 5px 10px;
-            background-color: #FF6B6B;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+		    padding: 5px 10px;
+		    color: black;
+		    border: none;
+		    border-radius: 5px;
+		    cursor: pointer;
         }
         .product-list table td button:hover {
-            background-color: #FF4D4D;
+            background-color: rgba(0, 0, 0, 0.4);
         }
         .add-product-btn {
             margin-top: 20px;
@@ -127,23 +126,26 @@
         .add-product-btn:hover {
             background-color: #8DB369;
         }
-        .pagination {
-            margin-top: 20px;
-            text-align: center;
+        .pagination-container {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
         }
-        .pagination a {
+
+        .pagination-container a {
             margin: 0 5px;
-            padding: 8px 16px;
             text-decoration: none;
-            color: #333;
-            background-color: #eee;
-            border-radius: 5px;
+            color: #000;
+            padding : 10px;
+            background-color : #C0E5AF;
+            border-radius : 10px;
         }
-        .pagination a.current-page {
-            background-color: #C0E5AF;
-            color: white;
-        }
-        .pagination a:hover {
-            background-color: #8DB369;
-            color: white;
+
+        .pagination-container a.current-page {
+            font-weight: bold;
+            color: #007bff;
+            background-color : #1abc9c;
         }

@@ -20,101 +20,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Player</title>
     <style>
-        .music-player {
-		    width: 100%;
-		    max-width: 500px;
-		    height: 75px;
-		    background-color: #e0e0e0;
-		    border-radius: 15px;
-		    display: flex;
-		    align-items: center;
-		    justify-content: space-between;
-		    padding: 10px 20px;
-		    box-sizing: border-box;
-		    position: relative; /* 재생바의 절대 위치 설정을 위해 */
-		}
-		
-		.play-button {
-		    width: 50px;
-		    height: 50px;
-		    border: 2px solid gray;
-		    border-radius: 50%;
-		    display: flex;
-		    justify-content: center;
-		    align-items: center;
-		    cursor: pointer;
-		    background-color: transparent;
-		}
-		
-		.play-button.play:before {
-		    content: '';
-		    border-style: solid;
-		    border-width: 10px 0 10px 18px;
-		    border-color: transparent transparent transparent gray;
-		}
-		
-		.play-button.pause:before {
-		    content: '❚❚';
-		    font-size: 20px;
-		    color: gray;
-		}
-		
-		.song-info {
-		    display: flex;
-		    flex-direction: column;
-		    text-align: center;
-		    margin-left: 20px;
-		    margin-right: auto; /* 텍스트 왼쪽 정렬 */
-		}
-		
-		.song-info .title {
-		    font-size: 24px;
-		    font-weight: bold;
-		    margin-top: -30px;
-		    left:95px;
-		    text-align: center;
-		    white-space: nowrap;
-		}
-		
-		.song-info .artist {
-		    font-size: 24px;
-		    margin-top: -10px;
-		    left:120px;
-		    text-align: center;
-		    white-space: nowrap;
-		}
-		
-		/* 재생바를 맨 아래에 배치 */
-		.progress-bar {
-		    height: 2px;
-		    background-color: gray;
-		    width: 200px;
-		    position: absolute;
-		    bottom: 10px;
-		    left: 45px;
-		}
-
+        
 
         .big-box {
             width: 800px;
-            height: 600px;
+            height: 546px;
             border: 2px solid #BAB9AA;
             position: relative;
-            overflow-y: auto; /* 스크롤 가능하도록 */
+            overflow-y: auto;
         }
 
         .line {
             width: 100%;
-            height: 54px; 
+            height: 55px;
             border-bottom: 1px dashed #BAB9AA;
             box-sizing: border-box;
             position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .line.first {
-            border-bottom: 2px solid #BAB9AA;
             display: flex;
             align-items: center;
         }
@@ -124,13 +45,6 @@
             left: 150px;
             display: flex;
             align-items: center;
-        }
-
-        .checkbox-wrapper input[type="checkbox"] {
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
-            cursor: pointer;
         }
 
         .title, .artist {
@@ -163,6 +77,28 @@
             border: 2px solid #BAB9AA;
             margin-top: 0px;
             position: relative;
+        }
+        
+        .top-box {
+            width: 800px;
+            height: 56px;
+            border: 2px solid #BAB9AA;
+            margin-top: 0px;
+            position: relative;
+        }
+        .right-buttons {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+        .right-buttons button {
+            padding: 10px;
+            border: none;
+            background-color: #80A46F;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 12px;
         }
 
         .center-buttons {
@@ -217,73 +153,135 @@
             font-size: 35px;
             color: #80A46F;
         }
+
+        .line {
+            display: none;
+        }
     </style>
 
     <script>
-        let currentIndex = 0;
-        let selectedSongs = [];
+    let currentIndex = 0;
+    let selectedSongs = [];
+    const pageSize = 10;
+    const totalItems = <%= musicvlist.size() %>;
+    const totalPages = Math.ceil(totalItems / pageSize);
 
-        // 선택된 음악의 순서대로 배경 음악을 재생하는 함수
-        function playSongs() {
-            if (currentIndex >= selectedSongs.length) {
-                currentIndex = 0;  // 모든 곡이 재생되면 처음으로 돌아옴
-                return;
-            }
+    // 새로고침 시 저장된 정보로 음악 재생 재개
+    document.addEventListener("DOMContentLoaded", function () {
+    const savedSong = localStorage.getItem('currentSong');
+    const savedTime = localStorage.getItem('savedTime');
+    const savedArtist = localStorage.getItem('currentArtist');
 
-            const currentSong = selectedSongs[currentIndex];
-            const audioPlayer = document.getElementById('audioPlayer');
-            const playButton = document.getElementById('playButton');
-            const titleElement = document.querySelector('.title');
-            const artistElement = document.querySelector('.artist');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const titleElement = document.querySelector('.title');
+    const artistElement = document.querySelector('.artist');
 
-            // 현재 선택된 곡을 오디오 플레이어에 설정
-            audioPlayer.src = currentSong.path;
-            titleElement.innerText = currentSong.song;  // 곡명
-            artistElement.innerText = currentSong.artist;  // 아티스트
+    if (savedSong && savedTime) {
+        // 이전에 저장된 노래 정보 및 시간 불러오기
+        audioPlayer.src = savedSong;
+        titleElement.innerText = localStorage.getItem('currentSongTitle');
+        artistElement.innerText = savedArtist || '아티스트';
+        audioPlayer.currentTime = parseFloat(savedTime);
 
-            // 재생 시작
-            audioPlayer.play();
-            playButton.classList.remove('play');
-            playButton.classList.add('pause');
+        // 자동 재생 시작
+        audioPlayer.play();
+    }
 
-            // 다음 곡 재생 준비
-            currentIndex++;
+    // Unmute the audio after starting
+    audioPlayer.muted = false;
+});
+
+    function playSongs() {
+        if (currentIndex >= selectedSongs.length) {
+            currentIndex = 0;
+            return;
         }
 
-        // 음악이 끝나면 다음 곡 재생
-        document.getElementById('audioPlayer').addEventListener('ended', () => {
+        const currentSong = selectedSongs[currentIndex];
+        const audioPlayer = document.getElementById('audioPlayer');
+        const titleElement = document.querySelector('.title');
+        const artistElement = document.querySelector('.artist');
+
+        // 노래 정보 설정 및 재생
+        audioPlayer.src = currentSong.path;
+        titleElement.innerText = currentSong.song;
+        artistElement.innerText = currentSong.artist;
+
+        // localStorage에 현재 노래 정보 저장
+        localStorage.setItem('currentSong', currentSong.path);
+        localStorage.setItem('currentSongTitle', currentSong.song);
+        localStorage.setItem('currentArtist', currentSong.artist);
+
+        audioPlayer.play();
+
+    }
+    
+    function playNextSong() {
+        currentIndex++;
+        if (currentIndex < selectedSongs.length) {
             playSongs();
+        } else {
+            currentIndex = 0; // 마지막 곡이 끝나면 처음으로 돌아감
+        }
+    }
+        
+
+    function setBackgroundMusic() {
+        const checkboxes = document.querySelectorAll('.checkbox-wrapper input[type="checkbox"]:checked');
+        selectedSongs = [];
+
+        checkboxes.forEach((checkbox) => {
+            const line = checkbox.closest('.line');
+            const song = line.querySelector('.title').innerText;
+            const artist = line.querySelector('.artist').innerText;
+            const path = line.querySelector('.hidden').innerText;
+
+            selectedSongs.push({ song, artist, path });
         });
 
-        // 배경 음악 설정 버튼 클릭 시
-        function setBackgroundMusic() {
-            const checkboxes = document.querySelectorAll('.checkbox-wrapper input[type="checkbox"]:checked');
-            selectedSongs = [];
+        if (selectedSongs.length > 0) {
+            currentIndex = 0;
+            playSongs();
+        } else {
+            alert('음악을 선택해 주세요.');
+        }
+    }
 
-            // 선택된 곡들의 정보를 배열에 저장
-            checkboxes.forEach((checkbox) => {
-                const line = checkbox.closest('.line');
-                const song = line.querySelector('.title').innerText;
-                const artist = line.querySelector('.artist').innerText;
-                const path = line.querySelector('.hidden').innerText;
+        function showPage(page) {
+            const allLines = document.querySelectorAll('.line');
+            allLines.forEach(line => line.style.display = 'none');
 
-                selectedSongs.push({ song, artist, path });
-            });
+            const start = (page - 1) * pageSize;
+            const end = start + pageSize;
 
-            if (selectedSongs.length > 0) {
-                currentIndex = 0;
-                playSongs();  // 첫 번째 곡부터 재생 시작
-            } else {
-                alert('음악을 선택해 주세요.');
+            for (let i = start; i < end && i < totalItems; i++) {
+                allLines[i].style.display = 'flex';
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            showPage(1);
+        });
         
+        document.addEventListener('DOMContentLoaded', function () {
+            const audioPlayer = document.getElementById('audioPlayer');
+
+            // 현재 재생 시간을 주기적으로 저장
+            audioPlayer.ontimeupdate = function () {
+                localStorage.setItem('savedTime', audioPlayer.currentTime);
+            };
+
+         // 음악이 끝나면 다음 곡 재생
+            audioPlayer.onended = function () {
+                playNextSong();
+            };
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const playButton = document.getElementById('playButton');
             const audioPlayer = document.getElementById('audioPlayer');
             let isPlaying = false;
 
-            // 클릭 이벤트를 처리하여 재생/일시정지 기능을 구현
             playButton.addEventListener('click', () => {
                 if (isPlaying) {
                     audioPlayer.pause();
@@ -294,10 +292,9 @@
                     playButton.classList.remove('play');
                     playButton.classList.add('pause');
                 }
-                isPlaying = !isPlaying; // 상태 변경
+                isPlaying = !isPlaying;
             });
 
-            // 노래가 끝나면 일시정지 버튼을 다시 재생 버튼으로 변경
             audioPlayer.addEventListener('ended', () => {
                 playButton.classList.remove('pause');
                 playButton.classList.add('play');
@@ -305,7 +302,6 @@
             });
         });
 
-        // 체크박스 모두 선택/해제
         function toggleAllCheckboxes(source) {
             const checkboxes = document.querySelectorAll('.checkbox-wrapper input[type="checkbox"]');
             checkboxes.forEach((checkbox) => {
@@ -314,42 +310,40 @@
         }
     </script>
 </head>
-<body>
-
+<body>    
     <div class="music-title">
         <span>음악</span>
     </div>
+    <div class="top-box">
+        <div class="checkbox-wrapper">
+            <input type="checkbox" id="selectAll" style="margin-top:20px;" onclick="toggleAllCheckboxes(this)"> <!-- 제일 위 체크박스 -->
+        </div>
+        <div class="title" style=" font-size:40px; ">곡명</div>
+        <div class="artist" style=" font-size:40px;">아티스트</div>
+    </div>
+    
 
     <div class="big-box">
-        <!-- 첫 번째 줄, 체크박스, 곡명, 아티스트 -->
-        <div class="line first">
-            <div class="checkbox-wrapper">
-                <input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes(this)"> <!-- 제일 위 체크박스 -->
-            </div>
-            <div class="title">곡명</div>
-            <div class="artist">아티스트</div>
-        </div>
-
         <!-- 음악 리스트를 반복문으로 출력 -->
         <%
             for (int i = 0; i < musicvlist.size(); i++) {
                 MusicBean music = musicvlist.get(i);
-                String[] songInfo = music.getItem_name().split("-", 2);  // "-"로 분리
-                String artist = songInfo.length > 1 ? songInfo[0].trim() : "";  // 아티스트
-                String song = songInfo.length > 1 ? songInfo[1].trim() : songInfo[0];  // 곡명
+                String[] songInfo = music.getItem_name().split("-", 2);
+                String artist = songInfo.length > 1 ? songInfo[0].trim() : "";
+                String song = songInfo.length > 1 ? songInfo[1].trim() : songInfo[0];
         %>
         <div class="line">
             <div class="checkbox-wrapper">
-                <input type="checkbox">  <!-- 각 줄마다 체크박스 추가 -->
+                <input type="checkbox">
             </div>
             <div class="title">
-                <%= song %>  <!-- 곡명 출력 -->
+                <%= song %>
             </div>
             <div class="artist">
-                <%= artist %>  <!-- 아티스트 출력 -->
+                <%= artist %>
             </div>
             <div class="hidden">
-                <%= music.getMusic_path() %>  <!-- 숨긴 music_path -->
+                <%= music.getItem_path() %>
             </div>
         </div>
         <%
@@ -358,18 +352,18 @@
     </div>
 
     <div class="small-box">
-        <!-- 오른쪽 상단 버튼 -->
-        <div class="top-right-buttons">
+    	<div class="top-right-buttons">
+    		<button onclick="deleteSelectedSongs()">삭제</button>
             <button onclick="setBackgroundMusic()">배경음악 설정</button>
+            
         </div>
-
-        <!-- 가운데 아래 버튼 -->
         <div class="center-buttons">
-            <button onclick="changeColor(this)">1</button>
-            <button onclick="changeColor(this)">2</button>
-            <button onclick="changeColor(this)">3</button>
-            <button onclick="changeColor(this)">4</button>
+            <button onclick="showPage(1)">1</button>
+            <button onclick="showPage(2)">2</button>
+            <button onclick="showPage(3)">3</button>
+            <button onclick="showPage(4)">4</button>
         </div>
     </div>
+
 </body>
 </html>

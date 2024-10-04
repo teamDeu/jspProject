@@ -150,11 +150,20 @@
        	window.addEventListener("beforeunload",disconnect);
     </script> --%>
 	<link href="./css/chat.css" rel="stylesheet" />
+	<style>
+	.miniroom_header_title{
+		display:flex;
+		justify-content : space-between;
+		align-items:center;
+	}
+	</style>
 </head>
 <body onload="connect();">
 	<div class ="miniroom_header">
-		<font size = "24" color ="#80A46F">미니룸</font>
-		<span id="status">서버에 연결되지 않음</span>
+	<div class ="miniroom_header_title">
+	<font size = "24" color ="#80A46F">미니룸</font>
+	<span id="status">서버에 연결되지 않음</span>
+	</div>	
     	<hr color = "#BAB9AA" width = "100%">
 	</div>
     <div id = "miniroom">
@@ -172,6 +181,12 @@
     </div>
     <script>
     	miniroom = document.getElementById("miniroom");
+    	document.addEventListener('DOMContentLoaded', function () {
+    		if(isSuspension){
+    			document.getElementById("messageInput").disabled = true;
+    			document.getElementById("messageInput").placeholder = "채팅이 정지된 계정입니다.";
+    		}
+    	})
     </script>
 </body>
 </html>

@@ -55,6 +55,14 @@ public class UtilMgr {
 	  return df.format(now).toString();
   }
   
+  public static String addDay(int num) {
+	  Calendar calendar = Calendar.getInstance();
+      calendar.add(Calendar.DAY_OF_MONTH, num); // 현재 날짜에 num만큼 일수 추가
+      Date newDate = calendar.getTime(); // 수정된 날짜 가져오기
+      DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); // 원하는 형식으로 포맷
+      return df.format(newDate);
+  }
+  
 	public static int parseInt(HttpServletRequest request, 
 			String name) {
 		return Integer.parseInt(request.getParameter(name));
@@ -73,6 +81,45 @@ public class UtilMgr {
 			}
 		}
 		return returnValue;
+	}
+	
+	public static String[] setTimeRange(String timestamp) {
+		String times[] = new String[2];
+		String prev;
+		String next;
+		String date = timestamp.split(" ")[0];
+		String time = timestamp.split(" ")[1];
+		String allTime[] = time.split(":");
+		String hour = allTime[0];
+		String min = allTime[1];
+		String sec = allTime[2];
+		
+		int prevMin = Integer.parseInt(min) - 3;
+		int nextMin = Integer.parseInt(min) + 3;
+		int prevHour = Integer.parseInt(hour);
+		int nextHour = Integer.parseInt(hour);
+		
+		if(prevMin < 0) {
+			prevHour -= 1 ; 
+			prevMin += 60;
+		}
+		else if(nextMin >= 60) {
+			nextHour += 1;
+			nextMin -= 60;
+		}
+		String prevTime = Integer.toString(prevHour) +":"+ Integer.toString(prevMin) +":"+sec;
+		String nextTime = Integer.toString(nextHour) +":"+ Integer.toString(nextMin) +":"+ sec;
+		prev = date + " " + prevTime;
+		next = date + " " + nextTime;
+		System.out.println(prev);
+		System.out.println(next);
+		times[0] = prev;
+		times[1] = next;
+		return times;
+	}
+	
+	public static void main(String[] args) {
+		setTimeRange("2024-10-02 17:58:43");
 	}
 }
 

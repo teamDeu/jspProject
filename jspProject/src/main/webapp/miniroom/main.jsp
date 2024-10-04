@@ -1,3 +1,4 @@
+<%@page import="report.SuspensionBean"%>
 <%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="pjh.MemberMgr"%>
 <%@page import="pjh.MemberBean"%>
@@ -7,6 +8,7 @@
 <jsp:useBean id="mMgr" class ="pjh.MemberMgr"/>
 <jsp:useBean id="fMgr" class ="friend.FriendMgr"/>
 <jsp:useBean id="profileMgr" class ="guestbook.GuestbookprofileMgr"/>
+<jsp:useBean id="reportMgr" class ="report.ReportMgr"/>
 <%
    // 세션에서 idKey 가져오기
    String id = (String)session.getAttribute("idKey");
@@ -14,8 +16,24 @@
       response.sendRedirect("../pjh/login.jsp");
       return;
    }
+   
+   boolean isSuspension = false;
+   SuspensionBean suspensionBean = reportMgr.isSuspension(id);
+   System.out.println("이사람은 정지인가 ? : " + suspensionBean.getSuspension_num());
+   if(suspensionBean.getSuspension_num() != 0){
+	   isSuspension = true;
+	   if(suspensionBean.getSuspension_type() == 1){
+		   response.sendRedirect("../miniroom/suspension.jsp?suspension_num="+suspensionBean.getSuspension_num());
+		   return;
+	   }
+	   else if(suspensionBean.getSuspension_type() == 0){
+		   
+	   }
+   }
+	   
+   
    GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(id);
-// 페이지 소유자의 ID 가져오기
+   // 페이지 소유자의 ID 가져오기
    String pageOwnerId = request.getParameter("url");
 
    // 만약 url 파라미터가 없으면 페이지 소유자는 방문자(id)
@@ -37,10 +55,10 @@
 
    // 사용자 정보 가져오기
    MemberBean userBean = mMgr.getMember(id);
-// MemberMgr 객체 초기화
+   // MemberMgr 객체 초기화
    MemberMgr memberMgr = new MemberMgr();
 
-// 쿠키에서 마지막 방문 시간 확인
+   // 쿠키에서 마지막 방문 시간 확인
    String lastVisit = null;
    javax.servlet.http.Cookie[] cookies = request.getCookies();
    if (cookies != null) {
@@ -102,7 +120,10 @@
 	top: -120px;
 	border: 2px solid #BAB9AA;
 }
-
+.profile_function_div_guestbook{
+	top:25px;
+	left:0px;
+}
 .profile_function_div button {
 	padding: 2px 10px;
 	border: 1px solid #DCDCDC;
@@ -230,6 +251,7 @@ function clickAlarm(){
         var sayBoxId = 0; // 지역 변수로 선언
         var chatBoxId = 0;
         let userNum = 0;
+        var isSuspension = <%=isSuspension%>;
         var localId = "<%=userBean.getUser_id()%>";
         var localCharacter = "<%=character%>"
         var url = "<%=url%>";
@@ -430,6 +452,7 @@ function clickAlarm(){
           	    	xhr.onreadystatechange = function () {
           	        if (xhr.readyState === 4 && xhr.status === 200) {
           	        	alert("신고가 완료되었습니다.");
+          	        	
           	        }
           	    };
           	    xhr.send();

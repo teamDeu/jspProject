@@ -1,22 +1,26 @@
 
+<%@page import="guestbook.GuestbookprofileBean"%>
+<%@page import="guestbook.GuestbookprofileMgr"%>
+<%@page import="guestbook.GuestbookBean"%>
 <%@page import="alarm.AlarmBean"%>
 <%@page import="miniroom.ItemMgr"%>
 <%@page import="pjh.MemberBean"%>
 <%@page import="friend.FriendRequestBean"%>
 <%@page import="java.util.Vector"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<jsp:useBean id="fMgr" class ="friend.FriendMgr"/>
-<jsp:useBean id="uMgr" class ="pjh.MemberMgr"/>
-<jsp:useBean id="aMgr" class ="alarm.AlarmMgr"/>
+	pageEncoding="UTF-8"%>
+<jsp:useBean id="fMgr" class="friend.FriendMgr" />
+<jsp:useBean id="uMgr" class="pjh.MemberMgr" />
+<jsp:useBean id="aMgr" class="alarm.AlarmMgr" />
+<jsp:useBean id="gMgr" class="guestbook.GuestbookMgr" />
 <%
-	String id = (String)session.getAttribute("idKey");
-	String url = request.getParameter("url");
-	Vector<AlarmBean> vlist = aMgr.getAllAlarm(id);
-	ItemMgr iMgr = new ItemMgr();
+String id = (String) session.getAttribute("idKey");
+String url = request.getParameter("url");
+Vector<AlarmBean> vlist = aMgr.getAllAlarm(id);
+ItemMgr iMgr = new ItemMgr();
 %>
 <head>
-	<style>
+<style>
 .alarmlist_top_div {
 	position: absolute;
 	background-color: #F8F6E3;
@@ -27,25 +31,25 @@
 }
 
 .alarmlist_main_div {
-	display:flex;
-	flex-direction : column;
+	display: flex;
+	flex-direction: column;
 	background-color: rgba(255, 255, 255, 0.5);
 	padding: 20px;
-	width:100%;
+	width: 100%;
 }
 
 .alarmlist_main_div_header {
-	position :relative;
+	position: relative;
 	display: flex;
-	align-items :center;
-	gap : 20px;
+	align-items: center;
+	gap: 20px;
 	font-size: 28px;
 }
 
 .alarmlist_main_div_list {
 	background-color: none;
 	list-style: none;
-	height : 140px;
+	height: 140px;
 	padding: 10px;
 	display: flex;
 	flex-direction: column;
@@ -56,34 +60,36 @@
 .alarmlist_main_div_item {
 	display: flex;
 	justify-content: space-between;
-	font-size : 20px;
+	font-size: 20px;
+	cursor : pointer;
 }
 
 .alarmlist_main_div_item_title {
 	width: 70%;
 }
 
-.alarmlist_main_div_item_separator{
-	height : 1px;
-	display:flex;
-	margin : 5px 0px;
+.alarmlist_main_div_item_separator {
+	height: 1px;
+	display: flex;
+	margin: 5px 0px;
 }
-.alarmlist_main_div_item_separator_img{
-	width:100%;
-	object-fit:cover;
+
+.alarmlist_main_div_item_separator_img {
+	width: 100%;
+	object-fit: cover;
 }
 
 .alarm_pagination {
 	display: flex;
 	justify-content: space-around;
-	align-items:center;
-	background-color : #C0E5AF;
-	border-radius : 30px;
-	align-self:center;
+	align-items: center;
+	background-color: #C0E5AF;
+	border-radius: 30px;
+	align-self: center;
 }
 
 .alarm_pagination span {
-	padding : 10px;
+	padding: 10px;
 	cursor: pointer;
 }
 
@@ -91,64 +97,94 @@
 	color: red;
 }
 
-.alarmlist_main_div_item_read{
-	color : rgba(0,0,0,0.2);
+.alarmlist_main_div_item_read {
+	color: rgba(0, 0, 0, 0.2);
 }
-.alarmlist_main_div_deleteAllBtn{
-	position:absolute;
-	font-size : 20px;
-	right:5px;
-	color : #FFB2B2;
-	cursor : pointer;
+
+.alarmlist_main_div_deleteAllBtn {
+	position: absolute;
+	font-size: 20px;
+	right: 5px;
+	color: #FFB2B2;
+	cursor: pointer;
 }
-.alarmlist_main_div_deleteAllBtn:hover{
-	color : #DD9090;
+
+.alarmlist_main_div_deleteAllBtn:hover {
+	color: #DD9090;
 }
 </style>
 
 </head>
 <body>
-<div class ="alarmlist_top_div" style ="display:none">
-	<div class ="alarmlist_main_div">
-		<div class ="alarmlist_main_div_header">
-		<div><img src ="./img/alram.png"></div> <span>알림목록</span>
-		<div onclick ="clickAlarmlist_main_div_deleteAllBtn()" class ="alarmlist_main_div_deleteAllBtn">읽은 알림 모두 삭제</div>
-		</div>
-		<ul class ="alarmlist_main_div_list">
-			<%for(int i = 0 ; i < vlist.size() ; i ++){ 
-				AlarmBean alarmBean = vlist.get(i);
-				String alarmType = alarmBean.getAlarm_type();
-				int alarmContentNum = alarmBean.getAlarm_content_num();
-				String alarmAt = alarmBean.getAlarm_at();
-				String alarmUser_id = alarmBean.getAlarm_user_id();
-				int alarmNum = alarmBean.getAlarm_num();
-				boolean alarmRead = alarmBean.isAlarm_read();
-				FriendRequestBean fBean = null;
-				MemberBean fUser = null;
-				if(alarmType.equals("친구요청")){
-					fBean = fMgr.getFriendRequestItem(alarmContentNum);
-					fUser = uMgr.getMember(fBean.getRequest_senduserid());
-				}
+	<div class="alarmlist_top_div" style="display: none">
+		<div class="alarmlist_main_div">
+			<div class="alarmlist_main_div_header">
+				<div>
+					<img src="./img/alram.png">
+				</div>
+				<span>알림목록</span>
+				<div onclick="clickAlarmlist_main_div_deleteAllBtn()"
+					class="alarmlist_main_div_deleteAllBtn">읽은 알림 모두 삭제</div>
+			</div>
+			<ul class="alarmlist_main_div_list">
+				<%
+				for (int i = 0; i < vlist.size(); i++) {
+					AlarmBean alarmBean = vlist.get(i);
+					String alarmType = alarmBean.getAlarm_type();
+					int alarmContentNum = alarmBean.getAlarm_content_num();
+					String alarmAt = alarmBean.getAlarm_at();
+					String alarmUser_id = alarmBean.getAlarm_user_id();
+					int alarmNum = alarmBean.getAlarm_num();
+					boolean alarmRead = alarmBean.isAlarm_read();
+					GuestbookBean gBean = null;
+					FriendRequestBean fBean = null;
+					MemberBean fUser = null;
+					GuestbookprofileMgr gpMgr = new GuestbookprofileMgr();
+
+					if (alarmType.equals("친구요청")) {
+						fBean = fMgr.getFriendRequestItem(alarmContentNum);
+						fUser = uMgr.getMember(fBean.getRequest_senduserid());
+						GuestbookprofileBean gpBean = gpMgr.getProfileByUserId(fUser.getUser_id());
 				%>
-				<li id = <%=alarmNum%> class ="alarmlist_main_div_item">
-					<input type = "hidden" name = "character" value ="<%=iMgr.getUsingCharacter(fBean.getRequest_senduserid()).getItem_path()%>">
-					<input type = "hidden" name = "name" value ="<%=fUser.getUser_name()%>">
-					<input type = "hidden" name = "type" value ="<%=fBean.getRequest_type()%>">
-					<input type = "hidden" name = "comment" value ="<%=fBean.getRequest_comment() %>">
-					<input type = "hidden" name = "num" value ="<%=fBean.getRequest_num() %>">
-					<input type = "hidden" name = "request_senduserid" value ="<%=fBean.getRequest_senduserid() %>">
-					<span class ="alarmlist_main_div_item_readbool <%if(alarmRead){%>alarmlist_main_div_item_read<%}%>">읽음</span>
-					<span onclick = "clickAlarmItem(event)" class ="alarmlist_main_div_item_title"><%=fUser.getUser_name() %>님이 <%=fBean.getRequest_type()== 1 ? "일촌" : "이촌" %> 요청을 보냈습니다.</span>
-					<span class ="alarmlist_main_div_item_requestAt"><%=fBean.getRequest_at() %></span>
+				<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><input
+					type="hidden" name="character"
+					value="<%=iMgr.getUsingCharacter(fBean.getRequest_senduserid()).getItem_path()%>">
+					<input type="hidden" name="name"
+					value="<%=fUser.getUser_name()%>"> <input type="hidden"
+					name="type" value="<%=fBean.getRequest_type()%>"> <input
+					type="hidden" name="comment"
+					value="<%=fBean.getRequest_comment()%>"> <input
+					type="hidden" name="num" value="<%=fBean.getRequest_num()%>">
+					<input type="hidden" name="request_senduserid"
+					value="<%=fBean.getRequest_senduserid()%>"> <span
+					class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
+					<span onclick="clickAlarmItem(event)"
+					class="alarmlist_main_div_item_title"><%=gpBean.getProfileName()%>님이
+						<%=fBean.getRequest_type() == 1 ? "일촌" : "이촌"%> 요청을 보냈습니다.</span> <span
+					class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
 				</li>
-			<%} %>
+				<%
+				} else if (alarmType.equals("방명록")) {
+				gBean = gMgr.getGuestbookEntry(alarmContentNum);
 				
-		</ul>
-		<div class="alarm_pagination">
+				GuestbookprofileBean gpBean = gpMgr.getProfileByUserId(gBean.getWriterId());
+				%>
+				<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><span
+					class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
+					<span onclick="clickAlarmGuestbook(event)"
+					class="alarmlist_main_div_item_title"><%=gpBean.getProfileName()%>님이
+						방명록을 작성하였습니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
+				</li>
+				<%
+				}
+				} // for (alarmList)
+				%>
+
+			</ul>
+			<div class="alarm_pagination"></div>
 		</div>
 	</div>
-</div>
-<script>
+	<script>
 const alarm_itemsPerPage = 4; // 페이지당 8개 아이템
 let alarm_currentPage = 1; // 현재 페이지
 let alarm_items = []; // 모든 아이템을 담을 배열
@@ -269,7 +305,18 @@ function clickAlarmItem(event){
     xhr.send();
     
 }
-
+function clickAlarmGuestbook(event){
+	clickOpenBox('guestbook');
+	let fr_form = event.target.parentElement;
+	var xhr = new XMLHttpRequest();
+    xhr.open("GET", "../miniroom/alarmProc.jsp?type=read&num="+fr_form.id, true); // Alarm 갱신Proc
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+        }
+    };
+    xhr.send();
+    fr_form.querySelector(".alarmlist_main_div_item_readbool").classList.add("alarmlist_main_div_item_read");
+}
 // 페이지가 로드될 때 초기화
 document.addEventListener('DOMContentLoaded', function () {
 	const alarm_itemsContainer = document.querySelector(".alarmlist_main_div_list")
