@@ -7,7 +7,11 @@
 <title>CloverStory</title>
 <!-- Linking the CSS file -->
 <link rel="stylesheet" type="text/css" href="../seyoung/css/boardWrite.css">
+<%
+String board_id = request.getParameter("board_id");
+String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 
+%>
 <style>
 /* inner-box-2의 게시판 텍스트 스타일 */
 .board-title {
@@ -390,157 +394,23 @@
     }
 
     // 파일 업로드 및 이미지 미리보기 설정
-    function previewImage(event) {
-        const file = event.target.files[0];
-        if (file && file.type.match('image.*')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const boardContentDiv = document.getElementById('board-content');
-                if (boardContentDiv) {
-                    const selection = window.getSelection();
-                    if (!selection.rangeCount) return;
-                    const range = selection.getRangeAt(0);
+	function previewImage(event) {
+	    const file = event.target.files[0];
+	    if (file && file.type.match('image.*')) {
+	        const reader = new FileReader();
+	        reader.onload = function(e) {
+	            // 이미지 미리보기 영역 표시
+	            const imagePreviewContainer = document.getElementById('image-preview-container');
+	            const imagePreview = document.getElementById('image-preview');
+	            imagePreview.src = e.target.result;
+	            imagePreviewContainer.style.display = 'block'; // 미리보기 영역 보이기
+	        };
+	        reader.readAsDataURL(file); // 파일 내용을 읽어 URL로 변환
+	    } else {
+	        alert("이미지 파일만 업로드할 수 있습니다."); // 유효하지 않은 파일에 대한 경고
+	    }
+	}
 
-                    // 이미지가 들어갈 컨테이너 div 생성
-                    const imgContainer = document.createElement('div');
-                    imgContainer.className = 'img-container';
-                    imgContainer.style.width = '200px'; // 초기 너비 설정
-
-                    // 이미지 요소 생성
-                    const imgElement = document.createElement('img');
-                    imgElement.src = e.target.result;
-                    imgElement.alt = '첨부 이미지';
-
-                    // 이미지 로드 시 비율 계산
-                    imgElement.onload = function() {
-                        const aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight;
-                        imgContainer.style.height = (imgContainer.offsetWidth / aspectRatio) + 'px';
-                        imgContainer.dataset.aspectRatio = aspectRatio.toFixed(2);
-                    };
-
-                    // 이미지에 mousedown 이벤트 추가
-                    imgElement.addEventListener('mousedown', function(e) {
-                        e.preventDefault();
-                        selectImage(imgContainer); // 이미지 선택 함수 호출
-                        startResizing(e, imgContainer); // 크기 조절 시작
-                    });
-
-                    // 이미지에 클릭 이벤트 추가 (선택 토글)
-                    imgElement.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        selectImage(imgContainer); // 이미지 선택 함수 호출
-                    });
-
-                    // 이미지 컨테이너에 이미지 삽입
-                    imgContainer.appendChild(imgElement);
-
-                    // 커서 위치에 이미지 삽입
-                    range.insertNode(imgContainer);
-
-                    // 이미지 삽입 후 커서를 다음 줄로 이동
-                    range.setStartAfter(imgContainer);
-                    range.collapse(true);
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-
-                    // 줄바꿈 추가
-                    const br = document.createElement('br');
-                    range.insertNode(br);
-
-                    boardContentDiv.classList.remove('empty'); // 빈 내용 클래스 제거
-                }
-            };
-            reader.readAsDataURL(file); // 파일 내용을 읽어 URL로 변환
-        } else {
-            alert("이미지 파일만 업로드할 수 있습니다."); // 유효하지 않은 파일에 대한 경고
-        }
-    }
-
-    // 이미지 선택 함수
-    function selectImage(container) {
-        if (currentSelected && currentSelected !== container) {
-            currentSelected.classList.remove('selected'); // 이전 선택 해제
-        }
-        currentSelected = container; // 새로운 선택 설정
-        container.classList.toggle('selected'); // 선택 상태 토글
-    }
-
-    // 크기 조절 시작
-    function startResizing(e, container) {
-        const aspectRatio = parseFloat(container.dataset.aspectRatio);
-        const startX = e.clientX;
-        const startWidth = container.offsetWidth;
-
-        function doResize(e) {
-            const deltaX = e.clientX - startX;
-            let newWidth = startWidth + deltaX;
-            if (newWidth < 50) newWidth = 50; // 최소 너비 설정
-            container.style.width = newWidth + 'px';
-            container.style.height = (newWidth / aspectRatio) + 'px';
-        }
-
-        function stopResize() {
-            document.removeEventListener('mousemove', doResize);
-            document.removeEventListener('mouseup', stopResize);
-        }
-
-        document.addEventListener('mousemove', doResize);
-        document.addEventListener('mouseup', stopResize);
-    }
-
-    // 클릭 시 이미지 선택 해제
-    document.addEventListener('click', function(e) {
-        if (currentSelected) {
-            currentSelected.classList.remove('selected'); // 현재 선택 해제
-            currentSelected = null; // 선택 상태 초기화
-        }
-    });
-    
- // 내용을 입력란을 클릭하면 안내 문구 사라짐
-    function handleContentFocus() {
-        var boardContentDiv = document.getElementById('board-content');
-        boardContentDiv.classList.remove('empty'); // 안내 문구 제거
-    }
-
-    // 내용을 입력란에서 벗어나면 내용이 비었을 때 안내 문구 추가
-    function handleContentBlur() {
-        var boardContentDiv = document.getElementById('board-content');
-        if (boardContentDiv.innerText.trim() === "") {
-            boardContentDiv.classList.add('empty'); // 안내 문구 추가
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        var boardContentDiv = document.getElementById('board-content');
-
-        // 내용 입력란이 비어 있으면 안내 문구 표시
-        if (boardContentDiv.innerText.trim() === "") {
-            boardContentDiv.classList.add('empty'); // 안내 문구 추가
-        }
-
-        // 입력란에 포커스 및 블러 이벤트 추가
-        boardContentDiv.addEventListener('focus', handleContentFocus);
-        boardContentDiv.addEventListener('blur', handleContentBlur);
-    });
-    
-    
-
-    // 폼 제출 전에 게시글 내용을 textarea에 복사하여 전송
-    function copyContentToTextarea() {
-        var boardContentTextarea = document.getElementById('board-content-text');
-        var boardContentDiv = document.getElementById('board-content');
-        
-        // 내용이 비어있으면 경고 메시지 출력
-        if (!boardContentDiv.innerText.trim()) {
-            alert("내용을 입력해주세요.");
-            return false;
-        }
-
-        if (boardContentTextarea && boardContentDiv) {
-            boardContentTextarea.value = boardContentDiv.innerHTML; // textarea에 내용 복사
-        }
-        return true;
-    }
 
     // 폼 제출 시 폴더 번호와 제목 유효성 확인
     function validateForm() {
@@ -563,6 +433,7 @@
         return true;
     }
 
+    
     document.addEventListener('DOMContentLoaded', function() {
         // 폼 제출 시 폴더 번호와 제목, 내용 복사 및 유효성 검사
         var form = document.querySelector('form');
@@ -583,32 +454,77 @@
             });
         });
     });
+    
+    function submitbWrite() {
+        var formData = new FormData(document.querySelector(".bWriteAddForm"));
+
+        // AJAX 요청 생성
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "../seyoung/bWriteAddProc.jsp", true);
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+            	
+            	
+
+            	
+            	
+                // 성공적으로 게시글 등록 후 목록 갱신
+                loadBoardList(formData.get('board_folder')); // 폴더 번호에 맞는 게시물 목록 로드
+                clickOpenBox('boardList'); // 게시판 목록으로 돌아가기
+                
+                loadLatestPost(); 
+                resetForm(); // 게시글 작성 후 폼 초기화
+            }
+        };
+
+        xhr.send(formData); // 폼 데이터 전송
+    }
+    
+    function resetForm() {
+        document.querySelector(".bWriteAddForm").reset(); // 폼 초기화
+        document.getElementById('image-preview-container').style.display = 'none'; // 이미지 미리보기 숨김
+        document.getElementById('image-preview').src = ""; // 미리보기 이미지 초기화
+    }
+    
+    
+    
 </script>
 
 
 </head>
 				<!-- 게시글 작성 폼 -->
-                <form action="../seyoung/bWriteAddProc.jsp" method="post" enctype="multipart/form-data">
+                <form class = "bWriteAddForm"  method="post" enctype="multipart/form-data" target="blankifr" >
                     <h1 class="board-title">게시판</h1>
                     <button type="button" class="list-button" onclick="clickOpenBox('boardList')">목록</button>
 					
+					<input type="hidden" name="board_id" value="<%= UserId %>">
+					
                     <!-- 폴더 선택 시 폴더 번호 저장 -->
-                    <input type="hidden" name="board_folder" id="board-folder" value="">
+                    <input type="hidden" name="board_folder" id="selectedFolderNum" value="">
                     
                     <div class="board-form">
+                    	
+                    	
+                    
                         <div class="title-container">
+                        
                             <!-- 게시글 제목 입력 -->
                             <input type="text" name="board_title" placeholder=" 제목을 입력해주세요.">
                             <!-- 등록 버튼 -->
-                            <button type="submit" class="register-button">등록</button>
+                            <button onclick = "submitbWrite()" type="button" class="register-button">등록</button>
                         </div>          
-
+						
+						<div id="image-preview-container" style="width: 300px; height: 300px; display: none; border: 1px solid #ccc; margin-top: 10px;">
+				            <img id="image-preview" style="width: 100%; height: 100%; object-fit: cover;" alt="사진 미리보기">
+				        </div>
+						
                         <!-- 게시글 내용 입력 -->
-                        <div name="board_content" id="board-content" class="board_content empty" data-placeholder=" 내용을 입력해주세요." contenteditable="true"></div>
-                        <textarea name="board_content_text" id="board-content-text" style="display:none;"></textarea>
-
+                        <textarea name="board_content" id="board-content-text" class="board_content" placeholder=" 내용을 입력해주세요." required></textarea>
+                                           
                         <!-- 파일 입력 필드 -->
-                        <input type="file" id="file-input" name="image_file" style="display:none;" accept="image/*" onchange="previewImage(event)">
+                        <input type="file" id="file-input" name="board_image" style="display:none;" accept="image/*" onchange="previewImage(event)">
+                        
                         
                         <!-- 하단 옵션 -->
                         <div class="button-options">

@@ -1,10 +1,8 @@
 <%@ page import="board.BoardWriteMgr" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-    // BoardWriteMgr 인스턴스 생성
     BoardWriteMgr boardMgr = new BoardWriteMgr();
-    // 삭제할 boardNum 파라미터 가져오기
-    String[] boardNums = request.getParameterValues("boardNum");
+    String[] boardNums = request.getParameterValues("boardNums");
 
     boolean isDeleted = false;
 
@@ -16,10 +14,10 @@
         isDeleted = boardMgr.deleteMultipleBoards(numsToDelete); // 여러 게시물 삭제 메서드 호출
     }
 
+    // 삭제 성공 여부에 따라 응답 반환
     if (isDeleted) {
-        out.println("<script>alert('게시물이 성공적으로 삭제되었습니다.'); location.href='../seyoung/boardList.jsp';</script>");
+        out.print("success");
     } else {
-        out.println("<script>alert('게시물 삭제에 실패하였습니다. 다시 시도해주세요.'); history.back();</script>");
+        out.print("fail");
     }
 %>
-
