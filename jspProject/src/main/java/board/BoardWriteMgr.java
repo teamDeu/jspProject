@@ -17,7 +17,7 @@ public class BoardWriteMgr {
 	
 	public static final String  SAVEFOLDER = "C:/project/jspProject/jspProject/src/main/webapp/seyoung/img";
 	public static final String ENCTYPE = "UTF-8";
-	public static int MAXSIZE = 100*1024*1024;//50mb
+	public static int MAXSIZE = 100*1024*1024;
 	
 	private DBConnectionMgr pool;
 	

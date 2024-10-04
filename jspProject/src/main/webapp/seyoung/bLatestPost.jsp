@@ -3,6 +3,7 @@
 <%@ page import="board.BoardWriteBean" %>
 <%@ page import="board.BoardWriteMgr" %>
 <jsp:useBean id="mgr" class="board.BoardWriteMgr" />
+<jsp:useBean id="Bean" class="board.BoardWriteBean" />
 <%
     // 최신 게시글 불러오기
     BoardWriteBean latestBoard = mgr.getLatestBoard();
@@ -22,7 +23,7 @@
     <!-- 이미지가 있을 경우 표시 -->
     <% if (latestBoard.getBoard_image() != null && !latestBoard.getBoard_image().isEmpty()) { %>
         <div style="text-align: center; margin-top: 10px;">
-            <img src="<%= request.getContextPath() %>/seyoung/<%= latestBoard.getBoard_image().substring(latestBoard.getBoard_image().lastIndexOf('/') + 1) %>"   style="width: 300px; height: 200px; border: 1px solid #CCC; padding: 5px;">
+            <img src="<%=Bean.getBoard_image()%>"   style="width: 300px; height: 200px; border: 1px solid #CCC; padding: 5px;">
         </div>
     <% } %>
 
