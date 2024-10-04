@@ -68,7 +68,7 @@
         .pagination-container a.current-page {
             font-weight: bold;
             color: #007bff;
-            background-color: #1abc9c;
+            background-color: #27ae60;
         }
 
         .admin_userList {
