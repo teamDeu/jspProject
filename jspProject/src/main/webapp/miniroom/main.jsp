@@ -21,16 +21,16 @@
    SuspensionBean suspensionBean = reportMgr.isSuspension(id);
    System.out.println("이사람은 정지인가 ? : " + suspensionBean.getSuspension_num());
    if(suspensionBean.getSuspension_num() != 0){
-	   isSuspension = true;
-	   if(suspensionBean.getSuspension_type() == 1){
-		   response.sendRedirect("../miniroom/suspension.jsp?suspension_num="+suspensionBean.getSuspension_num());
-		   return;
-	   }
-	   else if(suspensionBean.getSuspension_type() == 0){
-		   
-	   }
+      isSuspension = true;
+      if(suspensionBean.getSuspension_type() == 1){
+         response.sendRedirect("../miniroom/suspension.jsp?suspension_num="+suspensionBean.getSuspension_num());
+         return;
+      }
+      else if(suspensionBean.getSuspension_type() == 0){
+         
+      }
    }
-	   
+      
    
    GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(id);
    // 페이지 소유자의 ID 가져오기
@@ -106,35 +106,35 @@
     font-family: 'NanumTobak', sans-serif;
 }
 .profile_function_div {
-	display: flex;
-	z-index:3;
-	flex-direction: column;
-	position: absolute;
-	width: 120px;
-	padding: 10px;
-	gap: 10px;
-	border-radius: 10px;
-	box-sizing: border-box;
-	background-color: #FFFEF3;
-	left:0px;
-	top: -120px;
-	border: 2px solid #BAB9AA;
+   display: flex;
+   z-index:3;
+   flex-direction: column;
+   position: absolute;
+   width: 120px;
+   padding: 10px;
+   gap: 10px;
+   border-radius: 10px;
+   box-sizing: border-box;
+   background-color: #FFFEF3;
+   left:0px;
+   top: -120px;
+   border: 2px solid #BAB9AA;
 }
 .profile_function_div_guestbook{
-	top:25px;
-	left:0px;
+   top:25px;
+   left:0px;
 }
 .profile_function_div button {
-	padding: 2px 10px;
-	border: 1px solid #DCDCDC;
-	background-color: #FFFFFF;
-	font-size: 16px;
-	border-radius: 10px;
+   padding: 2px 10px;
+   border: 1px solid #DCDCDC;
+   background-color: #FFFFFF;
+   font-size: 16px;
+   border-radius: 10px;
 }
 
 .profile_function_div span {
-	align-self: center;
-	font-size: 20px;
+   align-self: center;
+   font-size: 20px;
 }
 .miniroom_information {
    display: none;
@@ -170,15 +170,15 @@
    z-index : 11;
 }
 .main_profile_alarm_isalarm{
-	
-	background-color : red;
-	position:absolute;
-	display:none;
-	width : 5px;
-	height : 5px;
-	right:0px;
-	top:0px;
-	border-radius : 10px;
+   
+   background-color : red;
+   position:absolute;
+   display:none;
+   width : 5px;
+   height : 5px;
+   right:0px;
+   top:0px;
+   border-radius : 10px;
 }
 .visitor-stats {
         position: absolute;
@@ -199,7 +199,7 @@
         color: #000000; /* 총 방문자수는 파란색 */
     }
     .chat_reportBtn{
-    	color: red;
+       color: red;
     }
 </style>
 <script>
@@ -217,21 +217,21 @@ function loadContent(url) {
 function clickOpenBox(id){
    openBox = document.getElementById(id);
    anotherBox = document.querySelectorAll(".inner-box-2");
-   anotherButton = document.qu	erySelectorAll(".custom-button");
+   anotherButton = document.querySelectorAll(".custom-button");
    for(i = 0 ; i < anotherBox.length ; i++){
       anotherBox[i].style.display ="none";
    }
    openBox.style.display = "flex";
    anotherButton.forEach((e) => e.style.backgroundColor = "#C0E5AF")
    if(id.includes("board")){
-	   openButton = document.getElementById("custom-button-board");
-	   document.getElementById("boardInnerBox").style.display = "block";
-	   document.getElementById("normalInnerBox").style.display = "none";
+      openButton = document.getElementById("custom-button-board");
+      document.getElementById("boardInnerBox").style.display = "block";
+      document.getElementById("normalInnerBox").style.display = "none";
    }
    else{
-	   openButton = document.getElementById("custom-button-"+id);
-	   document.getElementById("boardInnerBox").style.display = "none";
-	   document.getElementById("normalInnerBox").style.display = "block";
+      openButton = document.getElementById("custom-button-"+id);
+      document.getElementById("boardInnerBox").style.display = "none";
+      document.getElementById("normalInnerBox").style.display = "block";
    }
    openButton.style.backgroundColor = "#F7F7F7";
    
@@ -310,57 +310,57 @@ function clickAlarm(){
                     userNum --;
                  }
                  else if(command == ("sendFriendRequest")){
-                	 sendUserName = rawdata[1];
-                	 sendUserCharacter = rawdata[2];
-                	 receiveId = rawdata[3];
-                	 requestType = rawdata[4];
-                	 comment = rawdata[5];
-                	 sendUserId = rawdata[6];
-                	 if(localId == receiveId){
-                		 openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"",sendUserId);
-                	 }
+                    sendUserName = rawdata[1];
+                    sendUserCharacter = rawdata[2];
+                    receiveId = rawdata[3];
+                    requestType = rawdata[4];
+                    comment = rawdata[5];
+                    sendUserId = rawdata[6];
+                    if(localId == receiveId){
+                       openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"",sendUserId);
+                    }
                  }
                  else if(command == ("submitFriendRequest")){
-                	 flag = false;
-                	 userId = rawdata[1];
-                	 userName = rawdata[2];
-                	 userCharacter = rawdata[3];
-                	 requestType = rawdata[4];
-                	 flag = isFriend(localId,userId);
-                	 
-                	 const createProfileDiv = (userName, userId, userCharacter, localId, flag) => {
-                		 const profileDiv = 
-                			    '<div onclick="onclickMainProfileFriendsDiv(this)" class="main_profile_friends_div friends_type_first">' +
-                			        '<div class="profile_function_div_main" style="display: none;">' +
-                			            '<div class="profile_function_div">' +
-                			                '<span>' + userName + '</span>' +
-                			                (flag ? 
-                			                    '<button onclick="onclickDeleteFriend(\'' + localId + '\', \'' + userId + '\', \'' + userName + '\')">친구삭제</button>' :
-                			                    '<button onclick="onclickAddFriend(\'' + localId + '\', \'' + userId + '\', \'' + userCharacter + '\', \'' + userName + '\')">친구추가</button>'
-                			                ) +
-                			                '<button onclick="onclickGoHomePage(\'' + userId + '\')">미니룸 구경가기</button>' +
-                			            '</div>' +
-                			        '</div>' +
-                			        '<img class="main_profile_friends" src="' + userCharacter + '">' +
-                			        '<span class="main_profile_friends_name">' + userName + '</span>' +
-                			    '</div>';
-                		    // 임시 div 생성
-                		    const tempDiv = document.createElement('div');
-                		    tempDiv.innerHTML = profileDiv;
+                    flag = false;
+                    userId = rawdata[1];
+                    userName = rawdata[2];
+                    userCharacter = rawdata[3];
+                    requestType = rawdata[4];
+                    flag = isFriend(localId,userId);
+                    
+                    const createProfileDiv = (userName, userId, userCharacter, localId, flag) => {
+                       const profileDiv = 
+                             '<div onclick="onclickMainProfileFriendsDiv(this)" class="main_profile_friends_div friends_type_first">' +
+                                 '<div class="profile_function_div_main" style="display: none;">' +
+                                     '<div class="profile_function_div">' +
+                                         '<span>' + userName + '</span>' +
+                                         (flag ? 
+                                             '<button onclick="onclickDeleteFriend(\'' + localId + '\', \'' + userId + '\', \'' + userName + '\')">친구삭제</button>' :
+                                             '<button onclick="onclickAddFriend(\'' + localId + '\', \'' + userId + '\', \'' + userCharacter + '\', \'' + userName + '\')">친구추가</button>'
+                                         ) +
+                                         '<button onclick="onclickGoHomePage(\'' + userId + '\')">미니룸 구경가기</button>' +
+                                     '</div>' +
+                                 '</div>' +
+                                 '<img class="main_profile_friends" src="' + userCharacter + '">' +
+                                 '<span class="main_profile_friends_name">' + userName + '</span>' +
+                             '</div>';
+                          // 임시 div 생성
+                          const tempDiv = document.createElement('div');
+                          tempDiv.innerHTML = profileDiv;
 
-                		    // 첫 번째 자식 요소를 반환
-                		    return tempDiv.firstChild;
-                		};
-                	const profileDiv = createProfileDiv(userName,userId,userCharacter,localId,flag);
-                	
-                	 if(requestType == "일촌"){
-              			friend_items_first.push(profileDiv)
-              			changeFriendType(1);
-              		}
-              		else if(requestType == "이촌"){
-              			friend_items_second.push(profileDiv)
-              			changeFriendType(2);
-              		}
+                          // 첫 번째 자식 요소를 반환
+                          return tempDiv.firstChild;
+                      };
+                   const profileDiv = createProfileDiv(userName,userId,userCharacter,localId,flag);
+                   
+                    if(requestType == "일촌"){
+                       friend_items_first.push(profileDiv)
+                       changeFriendType(1);
+                    }
+                    else if(requestType == "이촌"){
+                       friend_items_second.push(profileDiv)
+                       changeFriendType(2);
+                    }
                  }
             };
             ws.onclose = function() {
@@ -368,20 +368,20 @@ function clickAlarm(){
             };
         }
         function gamemainshow() {
-	        document.getElementById("main").style.display = "block";
-	        document.getElementById("game1-container").style.display = "none";
-	        document.getElementById("game2-container").style.display = "none";        
-	    }
+           document.getElementById("main").style.display = "block";
+           document.getElementById("game1-container").style.display = "none";
+           document.getElementById("game2-container").style.display = "none";        
+       }
         function sendFriendRequest(receiveId , request_type,comment){
-        	var message = "sendFriendRequest" + dataSeparator + localName +
-        	dataSeparator + localCharacter + dataSeparator + receiveId + 
-        	dataSeparator + request_type + dataSeparator + comment +
-        	dataSeparator + localId;
-        	ws.send(message);
+           var message = "sendFriendRequest" + dataSeparator + localName +
+           dataSeparator + localCharacter + dataSeparator + receiveId + 
+           dataSeparator + request_type + dataSeparator + comment +
+           dataSeparator + localId;
+           ws.send(message);
         }
         function submitFriendRequest(username,userid,usercharacter,requestType){
-        	var message = "submitFriendRequest" + dataSeparator + username + dataSeparator + userid + dataSeparator + usercharacter + dataSeparator + requestType;
-        	ws.send(message);
+           var message = "submitFriendRequest" + dataSeparator + username + dataSeparator + userid + dataSeparator + usercharacter + dataSeparator + requestType;
+           ws.send(message);
         }
         function sendMessage() {
             var message = "sendMessage" + dataSeparator +  localId + messageSeparator + document.getElementById("messageInput").value + messageSeparator + localName;
@@ -452,15 +452,15 @@ function clickAlarm(){
           
           reportBtn.onclick = (function(senduserid,receiveuserid) {
               return function() {
-            	  var xhr = new XMLHttpRequest();
-          	    	xhr.open("GET", "../miniroom/reportProc.jsp?report_senduserid="+senduserid+"&report_receiveuserid="+receiveuserid+"&report_type=chat", true); // Alarm 갱신Proc
-          	    	xhr.onreadystatechange = function () {
-          	        if (xhr.readyState === 4 && xhr.status === 200) {
-          	        	alert("신고가 완료되었습니다.");
-          	        	
-          	        }
-          	    };
-          	    xhr.send();
+                 var xhr = new XMLHttpRequest();
+                    xhr.open("GET", "../miniroom/reportProc.jsp?report_senduserid="+senduserid+"&report_receiveuserid="+receiveuserid+"&report_type=chat", true); // Alarm 갱신Proc
+                    xhr.onreadystatechange = function () {
+                     if (xhr.readyState === 4 && xhr.status === 200) {
+                        alert("신고가 완료되었습니다.");
+                        
+                     }
+                 };
+                 xhr.send();
                };
            })(localId,id);
           newDiv.appendChild(informationDiv);
@@ -480,7 +480,7 @@ function clickAlarm(){
             console.log(sayBoxId);
             if(document.getElementById(sayBoxId))
             {
-            	document.getElementById(sayBoxId).remove();
+               document.getElementById(sayBoxId).remove();
             }
             newDiv = document.createElement("div");
             newContent = document.createTextNode(comment);
@@ -526,7 +526,7 @@ function clickAlarm(){
           timeTextClass = name+year+month+day+hours+minutes;
           
           if(document.querySelectorAll("."+timeTextClass)){
-        	  Array.from(document.querySelectorAll("."+timeTextClass)).forEach((e) => e.remove());
+             Array.from(document.querySelectorAll("."+timeTextClass)).forEach((e) => e.remove());
           }
           timeNameText = newTimeNameText;
           userNameContent = document.createTextNode(timeNameText);
@@ -608,6 +608,7 @@ function clickAlarm(){
                </jsp:include>
             </div>
             <div id="profile" class="inner-box-2" style="display: none">
+            	<jsp:include page="../pjh/profile.jsp"></jsp:include>
             </div>
             <div id="inner-box-2-miniroom" class ="inner-box-2" style="display: none" >
                <jsp:include page="miniDesign.jsp"></jsp:include>
@@ -615,26 +616,26 @@ function clickAlarm(){
             <div id="game" class ="inner-box-2" style="display: none" >
                <jsp:include page="../yang/game.jsp"></jsp:include>
             </div>
-	         <div id="store" class="inner-box-2" style="display: none">
-	            <jsp:include page="../pjh/storeDesign.jsp"></jsp:include>
-	         </div>
-	         <div id="guestbook" class="inner-box-2" style="display: none">
+            <div id="store" class="inner-box-2" style="display: none">
+               <jsp:include page="../pjh/storeDesign.jsp"></jsp:include>
+            </div>
+            <div id="guestbook" class="inner-box-2" style="display: none">
                <jsp:include page="../eunhyo/guestbook.jsp">
                 <jsp:param name="ownerId" value="<%= url %>"/>
                 </jsp:include>
-	         </div> 
-	         <div id="board" class="inner-box-2" style="display: none">
-	         	<jsp:include page ="../seyoung/board.jsp"></jsp:include>
-	         </div>
-	         <div id="boardList" class ="inner-box-2" style="display:none">
-	         	<jsp:include page ="../seyoung/boardList.jsp"></jsp:include>
-	         </div>
-	         <div id="boardWrite" class ="inner-box-2" style="display:none">
-	         	<jsp:include page ="../seyoung/boardWrite.jsp"></jsp:include>
-	         </div>
-	         <div id="music" class="inner-box-2" style="display: none">
-	         	<jsp:include page="../yang/music1.jsp"></jsp:include>
-	         </div>
+            </div> 
+            <div id="board" class="inner-box-2" style="display: none">
+               <jsp:include page ="../seyoung/board.jsp"></jsp:include>
+            </div>
+            <div id="boardList" class ="inner-box-2" style="display:none">
+               <jsp:include page ="../seyoung/boardList.jsp"></jsp:include>
+            </div>
+            <div id="boardWrite" class ="inner-box-2" style="display:none">
+               <jsp:include page ="../seyoung/boardWrite.jsp"></jsp:include>
+            </div>
+            <div id="music" class="inner-box-2" style="display: none">
+               <jsp:include page="../yang/music1.jsp"></jsp:include>
+            </div>
          </div>
          <!-- 버튼 -->
          <div class="button-container">

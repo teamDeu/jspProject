@@ -14,6 +14,7 @@
 	
 	if(result == 2){  // 로그인 성공 시
 	  session.setAttribute("idKey", user_id);
+	  session.setAttribute("userId", user_id);
 	  msg = "로그인에 성공 하였습니다.";
 	  
 	  // 로그인 성공한 사용자의 정보를 DB에서 가져옴
