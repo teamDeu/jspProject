@@ -27,7 +27,7 @@
 <% 
         }
     } else { 
-%>
+%> 
     <tr>
             <td colspan="5" style="text-align: center;">등록된 게시물이 없습니다.</td>
     </tr>

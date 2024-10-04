@@ -667,7 +667,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        xhr.send(params);
 	    }
 	    
-	    function extractLatestBoardNum() {
+	    function extractLatestBoardNum() { 
 	        return <%= latestBoard.getBoard_num() %>;
 	    }
 	    

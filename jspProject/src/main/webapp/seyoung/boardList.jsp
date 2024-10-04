@@ -348,7 +348,7 @@ td a {
 
         // 선택한 게시글 번호들을 전송
         xhr.send("boardNums=" + encodeURIComponent(selectedIds.join(',')));
-
+ 
         return false; // 폼 제출 방지 (페이지 새로고침 방지)
     }
 
