@@ -525,7 +525,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
-	                bloadAnswers(); // 답글 추가 후 전체 댓글 목록을 다시 로드
+	                bloadAnswers(<%=latestBoard.getBoard_num()%>); // 답글 추가 후 전체 댓글 목록을 다시 로드
 	            }
 	        };
 

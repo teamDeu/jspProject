@@ -3,6 +3,7 @@ package board;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Vector;
 
 import miniroom.DBConnectionMgr;
 
@@ -56,6 +57,36 @@ public class BoardReAnswerMgr {
 	    }
 
 	    return result;
+	}
+	
+	public Vector<BoardReAnswerBean> getReAnswerList(int answer_num){
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		Vector<BoardReAnswerBean> vlist = new Vector<BoardReAnswerBean>();
+		try {
+			con = pool.getConnection();
+			sql = "select * from boardreanswer where answer_num = ? order by reanswer_at desc";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, answer_num);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				BoardReAnswerBean bean = new BoardReAnswerBean();
+				bean.setReanswer_num(rs.getInt(1));
+				bean.setAnswer_num(rs.getInt(2));
+				bean.setReanswer_content(rs.getString(3));
+				bean.setReanswer_id(rs.getString(4));
+				bean.setReanswer_at(rs.getString(5));
+				
+				vlist.add(bean);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return vlist;
 	}
 
 }
