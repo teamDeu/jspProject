@@ -68,14 +68,7 @@ function loadContent(url) {
     xhr.open("GET", url, true);
     xhr.send();
 }
-function clickOpenBox(id){
-   openBox = document.getElementById(id);
-   anotherBox = document.querySelectorAll(".inner-box-2");
-   for(i = 0 ; i < anotherBox.length ; i++){
-      anotherBox[i].style.display ="none";
-   }
-   openBox.style.display = "flex";
-}
+
 function clickUser(event){
    console.log(event);
 }
