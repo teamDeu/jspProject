@@ -554,6 +554,19 @@ function clickAlarm(){
                 window.location.href = 'logout.jsp';
             }
         }
+        function showSettingPage() {
+            // 모든 inner-box-1 및 inner-box-2를 숨김
+            const innerBoxes1 = document.querySelectorAll('.inner-box-1');
+            const innerBoxes2 = document.querySelectorAll('.inner-box-2');
+
+            innerBoxes1.forEach(box => box.style.display = 'none');
+            innerBoxes2.forEach(box => box.style.display = 'none');
+         // image-box 숨기기
+            document.querySelector('.image-box').style.display = 'none';
+         
+            // 설정 박스 표시
+            document.getElementById('settingBox').style.display = 'block';
+        }
     </script>
 
 </head>
@@ -562,13 +575,16 @@ function clickAlarm(){
       <div class="header">
          <img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
          <div class="settings">
-            <span></span> <a href="#">설정</a> <a href="../pjh/logout.jsp">로그아웃</a>
+            <span></span> <a href="javascript:void(0);" onclick="showSettingPage()">설정</a> <a href="../pjh/logout.jsp">로그아웃</a>
          </div>
       </div>
       <!-- 큰 점선 테두리 상자 -->
       <div class="dashed-box">
          <!-- 테두리 없는 상자 -->
          <div class="solid-box">
+         <div id="settingBox" class="inner-box-2" style="display: none; margin-left:20px; width:100%">
+             <jsp:include page="../eunhyo/setting.jsp"></jsp:include>
+         </div> 
          <!-- 방문자 수 표시 -->
             <div class="visitor-stats">
         <div class="today">
