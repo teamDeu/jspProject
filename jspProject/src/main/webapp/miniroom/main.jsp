@@ -217,19 +217,24 @@ function loadContent(url) {
 function clickOpenBox(id){
    openBox = document.getElementById(id);
    anotherBox = document.querySelectorAll(".inner-box-2");
+   anotherButton = document.querySelectorAll(".custom-button");
    for(i = 0 ; i < anotherBox.length ; i++){
       anotherBox[i].style.display ="none";
    }
    openBox.style.display = "flex";
-   
+   anotherButton.forEach((e) => e.style.backgroundColor = "#C0E5AF")
    if(id.includes("board")){
+	   openButton = document.getElementById("custom-button-board");
 	   document.getElementById("boardInnerBox").style.display = "block";
 	   document.getElementById("normalInnerBox").style.display = "none";
    }
    else{
+	   openButton = document.getElementById("custom-button-"+id);
 	   document.getElementById("boardInnerBox").style.display = "none";
 	   document.getElementById("normalInnerBox").style.display = "block";
    }
+   openButton.style.backgroundColor = "#F7F7F7";
+   
 }
 function clickUser(event){
    console.log(event);
@@ -604,7 +609,7 @@ function clickAlarm(){
             </div>
             <div id="profile" class="inner-box-2" style="display: none">
             </div>
-            <div id="Box_miniroom_design" class ="inner-box-2" style="display: none" >
+            <div id="miniroom" class ="inner-box-2" style="display: none" >
                <jsp:include page="miniDesign.jsp"></jsp:include>
             </div>
             <div id="game" class ="inner-box-2" style="display: none" >
@@ -633,16 +638,16 @@ function clickAlarm(){
          </div>
          <!-- 버튼 -->
          <div class="button-container">
-            <button onclick="javascript:clickOpenBox('chatBox')" class="custom-button">홈</button>
-            <button onclick="javascript:clickOpenBox('profile')" class="custom-button">프로필</button>
+            <button onclick="javascript:clickOpenBox('chatBox')" class="custom-button" id ="custom-button-chatBox" style ="background-color :#F7F7F7">홈</button>
+            <button onclick="javascript:clickOpenBox('profile')" class="custom-button " id ="custom-button-profile">프로필</button>
             <%if(url.equals(id)){ %>
-            <button onclick="javascript:clickOpenBox('Box_miniroom_design')" class="custom-button">미니룸</button>
+            <button onclick="javascript:clickOpenBox('Box_miniroom_design')" class="custom-button" id ="custom-button-miniroom">미니룸</button>
             <%} %>
-            <button onclick = "javascript:clickOpenBox('board')" class="custom-button">게시판</button>
-            <button onclick = "javascript:clickOpenBox('guestbook')" class="custom-button">방명록</button>
-            <button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
-            <button onclick = "javascript:clickOpenBox('game'); gamemainshow();" class="custom-button">게임</button>
-            <button onclick = "javascript:clickOpenBox('music')" class="custom-button">음악</button>
+            <button onclick = "javascript:clickOpenBox('board')" class="custom-button" id ="custom-button-board">게시판</button>
+            <button onclick = "javascript:clickOpenBox('guestbook')" class="custom-button" id ="custom-button-guestbook">방명록</button>
+            <button onclick = "javascript:clickOpenBox('store')" class="custom-button" id ="custom-button-store">상점</button>
+            <button onclick = "javascript:clickOpenBox('game'); gamemainshow();" class="custom-button" id ="custom-button-game">게임</button>
+            <button onclick = "javascript:clickOpenBox('music')" class="custom-button" id ="custom-button-music">음악</button>
          </div>
   
 
