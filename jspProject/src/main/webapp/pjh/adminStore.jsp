@@ -11,26 +11,85 @@
     <title>관리자 페이지</title>
 	 <link rel="stylesheet" href="./css/admin.css" />
 	 <style>
-	 .pagination {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        text-align: center;
-        background-color: #f1f1f1;
-        padding: 10px;
-    }
+	  html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .pagination a {
-        margin: 0 5px;
-        text-decoration: none;
-        color: #000;
-    }
+        /* 메인 콘텐츠가 화면 전체 높이를 차지하고 페이징이 하단에 고정되도록 설정 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* 상품 목록을 상단에 고정 */
+            min-height: 100vh; /* 전체 화면 높이 */
+            padding-bottom: 60px; /* 페이징 영역을 위해 여유 공간 확보 */
+        }
 
-    .pagination a.current-page {
-        font-weight: bold;
-        color: #007bff;
-    }
+        .product-list {
+            flex-grow: 1;
+            margin-top: 20px;
+        }
+
+        .product-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .product-list table th, .product-list table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        /* 페이징 영역을 화면 하단에 고정 */
+        .pagination-container {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination-container a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #000;
+            padding : 10px;
+            background-color : #C0E5AF;
+            border-radius : 10px;
+        }
+
+        .pagination-container a.current-page {
+            font-weight: bold;
+            color: #007bff;
+            background-color : #1abc9c;
+        }
+
+    .admin_input {
+	padding: 6px;
+	border-radius: 5px;
+	border: 1px solid black;
+	box-sizing: border-box;
+}
+
+.admin_select {
+	padding: 5px;
+	border-radius: 5px;
+	border: 1px solid black;
+	box-sizing: border-box;
+}
+
+.admin_submitBtn {
+	padding: 4px;
+	background: none;
+	border-radius: 5px;
+	box-sizing: border-box;
+	border: 1px solid black;
+}
 	 </style>
 </head>
 <body>
@@ -51,15 +110,14 @@
     <div id="store" class="main-content">
         <h1>상점 관리</h1>
 
-        <!-- 검색 폼 -->
-        <form method="get" action="adminMain.jsp">
-            <select name="keyField">
-                <option value="item_name">상품 이름</option>
-                <option value="item_type">상품 타입</option>
-            </select>
-            <input type="text" name="keyWord" placeholder="검색어 입력" />
-            <input type="submit" value="검색" />
-        </form>
+        <form method="get" action="adminStore.jsp">
+    <select class="admin_select" name="keyField">
+        <option value="item_name">상품 이름</option>
+        <option value="item_type">상품 타입</option>
+    </select> 
+    <input class="admin_input" type="text" name="keyWord" placeholder="검색어 입력" /> 
+    <input type="submit" class="admin_submitBtn" value="검색" />
+</form>
 		
         <!-- 상품 목록 출력 및 페이징 -->
         <div class="product-list">
@@ -149,7 +207,7 @@
             <button class="add-product-btn" onclick="openStoreManage()">상품 추가</button>
 
             <!-- 페이징 처리 -->
-            <div class="pagination">
+            <div class="pagination-container">
                 <%
                     for (int i = 1; i <= totalPages; i++) {
                 %>

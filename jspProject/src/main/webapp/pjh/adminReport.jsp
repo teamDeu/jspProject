@@ -21,6 +21,62 @@ String type = request.getParameter("type");
 <title>관리자 페이지</title>
 <link rel="stylesheet" href="./css/admin.css" />
 <style>
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 메인 콘텐츠가 화면 전체 높이를 차지하고 페이징이 하단에 고정되도록 설정 */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* 신고 목록을 상단에 고정 */
+    min-height: 100vh; /* 전체 화면 높이 */
+    padding-bottom: 60px; /* 페이징 영역을 위해 여유 공간 확보 */
+}
+
+.product-list {
+    flex-grow: 1;
+    margin-top: 20px;
+}
+
+.product-list-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.product-list-table th, .product-list-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.pagination-container {
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-container a {
+    margin: 0 5px;
+    text-decoration: none;
+    color: #000;
+    padding: 10px;
+    background-color: #C0E5AF;
+    border-radius: 10px;
+}
+
+.pagination-container a.current-page {
+    font-weight: bold;
+    color: #007bff;
+    background-color: #1abc9c;
+}
 .admin_userList_user_img {
 	width: 120px;
 }
@@ -138,25 +194,22 @@ String type = request.getParameter("type");
 	gap: 5px;
 }
 .pagination {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        text-align: center;
-        background-color: #f1f1f1;
-        padding: 10px;
-    }
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
 
-    .pagination a {
-        margin: 0 5px;
-        text-decoration: none;
-        color: #000;
-    }
+        .pagination a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #000;
+        }
 
-    .pagination a.current-page {
-        font-weight: bold;
-        color: #007bff;
-    }
+        .pagination a.current-page {
+            font-weight: bold;
+            color: #007bff;
+        }
 </style>
 </head>
 <body>
@@ -353,7 +406,7 @@ String type = request.getParameter("type");
 
 			<!-- 상품 추가 버튼 -->
 			<!-- 페이징 처리 -->
-			<div class="pagination">
+			<div class="pagination-container">
 				<%
 				for (int i = 1; i <= totalPages; i++) {
 				%>
