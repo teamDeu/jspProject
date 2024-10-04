@@ -259,7 +259,7 @@ html, body {
 					// 현재 페이지와 검색 조건을 받아옴
 					String pageStr = request.getParameter("page");
 					int userCurrentPage = (pageStr != null) ? Integer.parseInt(pageStr) : 1;
-					int userItemsPerPage = 15;
+					int userItemsPerPage = 12;
 					int start = (userCurrentPage - 1) * userItemsPerPage;
 
 					// 검색어와 검색 필드를 받아옴
