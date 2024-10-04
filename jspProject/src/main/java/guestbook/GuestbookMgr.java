@@ -161,5 +161,39 @@ public class GuestbookMgr {
         return writtenAt; // 가져온 written_at 반환
     }
     
-    
+    public GuestbookBean getGuestbookEntry(int guestbook_num) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        GuestbookBean bean = new GuestbookBean();
+        String sql = "SELECT * FROM guestbook WHERE guestbook_num = ?";
+        try {
+            con = pool.getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, guestbook_num);
+            rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                
+                bean.setGuestbookNum(rs.getInt("guestbook_num"));
+                bean.setGuestbookSecret(rs.getString("guestbook_secret"));
+                bean.setOwnerId(rs.getString("owner_id"));
+                bean.setWriterId(rs.getString("writer_id"));
+                bean.setGuestbookContent(rs.getString("guestbook_content"));
+                bean.setWrittenAt(rs.getTimestamp("written_at"));
+                bean.setModifiedAt(rs.getTimestamp("modified_at"));
+                
+                GuestbookprofileBean profile = profileMgr.getProfileByUserId(bean.getWriterId());
+                if (profile != null) {
+                    bean.setProfileName(profile.getProfileName());
+                    bean.setProfilePicture(profile.getProfilePicture());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return bean;
+    }
 }

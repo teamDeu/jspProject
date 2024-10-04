@@ -105,7 +105,7 @@ public class UtilMgr {
 		}
 		else if(nextMin >= 60) {
 			nextHour += 1;
-			prevMin -= 60;
+			nextMin -= 60;
 		}
 		String prevTime = Integer.toString(prevHour) +":"+ Integer.toString(prevMin) +":"+sec;
 		String nextTime = Integer.toString(nextHour) +":"+ Integer.toString(nextMin) +":"+ sec;
@@ -119,7 +119,7 @@ public class UtilMgr {
 	}
 	
 	public static void main(String[] args) {
-		setTimeRange("2024-10-02 11:33:35");
+		setTimeRange("2024-10-02 17:58:43");
 	}
 }
 

@@ -12,6 +12,7 @@
 		response.sendRedirect("../pjh/login.jsp");
 		return;
 	}
+	String type = request.getParameter("type");
 	MemberMgr mgr = new MemberMgr();
 	ItemMgr imgr = new ItemMgr();
 	FriendMgr fmgr = new FriendMgr();
@@ -54,12 +55,11 @@
 <style>
 .profile_function_div_main{
 	display:none;
-	
-}
+}	
 </style>
 </head>
 <div class="profile_function_div_main" style ="display : none">
-	<div class="profile_function_div">
+	<div class="profile_function_div <%if(type != null) {%>profile_function_div_<%=type%><%}%>">
 		<span><%=name%></span>
 		<%if(fmgr.isFriend(connectId,userId)){ %>
 			<button onclick = "onclickDeleteFriend('<%=connectId %>','<%=userId%>','<%=name%>')">친구삭제</button>

@@ -52,7 +52,7 @@
         <h1>상점 관리</h1>
 
         <!-- 검색 폼 -->
-        <form method="get" action="adminMain.jsp">
+        <form method="get" action="adminStore.jsp">
             <select name="keyField">
                 <option value="item_name">상품 이름</option>
                 <option value="item_type">상품 타입</option>
