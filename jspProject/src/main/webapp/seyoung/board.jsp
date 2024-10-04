@@ -437,7 +437,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 </head>
 <h1 class="board-title">게시판</h1>
 					<h2 class="board-recentpost"> | 최근게시물</h2>
-					<button type="button" class="list-button" onclick="clickOpenBox('BoardList');" >목록</button>
+					<button type="button" class="list-button">목록</button>
 					<div class="board-line"></div>
 					
 					<div class="board">
@@ -462,16 +462,56 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	
 	<script>
 		
-		<%-- function goToUserBoardList() {
-		    var userId = "<%= UserId %>"; // 현재 로그인된 사용자 ID를 가져옴
-		    if (userId) {
-		        // boardList.jsp로 사용자 ID를 넘겨 이동
-		        clickOpenBox('BoardList');
-		        window.location.href = 'boardList.jsp?userId=' + encodeURIComponent(userId);
-		        
-		    }
-		} --%>	
+			
 		
+		function clickOpenBox(id) {
+            var openBox = document.getElementById(id);
+            var anotherBox = document.querySelectorAll(".inner-box-2");
+            var anotherButton = document.querySelectorAll(".custom-button");
+
+            for (var i = 0; i < anotherBox.length; i++) {
+                anotherBox[i].style.display = "none";
+            }
+
+            openBox.style.display = "flex";
+            anotherButton.forEach((e) => e.style.backgroundColor = "#C0E5AF");
+
+            var openButton;
+
+            if (id.includes("board")) {
+                openButton = document.getElementById("custom-button-board");
+                document.getElementById("boardInnerBox").style.display = "block";
+                document.getElementById("normalInnerBox").style.display = "none";
+            } else {
+                openButton = document.getElementById("custom-button-" + id);
+                document.getElementById("boardInnerBox").style.display = "none";
+                document.getElementById("normalInnerBox").style.display = "block";
+            }
+
+            openButton.style.backgroundColor = "#F7F7F7";
+            
+            <%-- var userId = '<%= UserId %>';
+            loadBoardListAll(userId); --%>
+        }
+		
+		/* function loadBoardListAll(userId){
+	    	var xhr = new XMLHttpRequest();
+	        xhr.open('GET', '../seyoung/getBoardListAll.jsp?userId=' + encodeURIComponent(UserId), true);
+	        xhr.onreadystatechange = function() {
+	            if (xhr.readyState === 4 && xhr.status === 200) {
+	                // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
+	                document.getElementById('board-list-body').innerHTML = xhr.responseText;
+	            }
+	        };
+	        xhr.send(); // 목록 로드 요청
+	    } */
+		
+		
+		document.addEventListener('DOMContentLoaded', function () {
+		    document.querySelector('.list-button').addEventListener('click', function() {
+		    	clickOpenBox('BoardList');
+		    });
+		});
 	
 	
 		
@@ -574,8 +614,8 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        var replyIcon = document.createElement('img');
 	        replyIcon.src = '<%= request.getContextPath() %>/seyoung/img/reanswer.png'; 
 	        replyIcon.alt = 'reply icon';
-	        replyIcon.style.width = '20px';
-	        replyIcon.style.height = '20px';
+	        replyIcon.style.width = '10px';
+	        replyIcon.style.height = '10px';
 	        replyIcon.style.marginRight = '10px';
 
 	        var replyContent = document.createElement('div');
