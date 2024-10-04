@@ -126,6 +126,7 @@ ItemMgr iMgr = new ItemMgr();
 				<div onclick="clickAlarmlist_main_div_deleteAllBtn()"
 					class="alarmlist_main_div_deleteAllBtn">읽은 알림 모두 삭제</div>
 			</div>
+			<%if (vlist.size() > 0){ %>
 			<ul class="alarmlist_main_div_list">
 				<%
 				for (int i = 0; i < vlist.size(); i++) {
@@ -181,6 +182,9 @@ ItemMgr iMgr = new ItemMgr();
 				%>
 
 			</ul>
+			<%} else{ // if vlist.size() > 0%>
+			<h2 style = "text-align :center">새로운 알림이 없습니다.</h2>
+			<%} %>
 			<div class="alarm_pagination"></div>
 		</div>
 	</div>

@@ -437,9 +437,8 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 </head>
 <h1 class="board-title">게시판</h1>
 					<h2 class="board-recentpost"> | 최근게시물</h2>
-					<button type="button" class="list-button">목록</button>
+					<button type="button" onclick ="clickAllBoardList()" class="list-button">목록</button>
 					<div class="board-line"></div>
-					
 					<div class="board">
 					
 						<div class="bwrite-form" id="bwrite-form">
@@ -462,8 +461,12 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	
 	<script>
 		
-			
+		function clickAllBoardList(){
+			loadBoardListAll('<%=board_id%>');
+			clickOpenBox('boardList');
+		}
 		
+<<<<<<< HEAD
 		function clickOpenBox(id) {
             var openBox = document.getElementById(id);
             var anotherBox = document.querySelectorAll(".inner-box-2");
@@ -501,6 +504,19 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 		    	clickOpenBox('BoardList');
 		    });
 		});
+=======
+		function loadBoardListAll(userId){
+	    	var xhr = new XMLHttpRequest();
+	        xhr.open('GET', '../seyoung/getBoardListAll.jsp?userId=' + encodeURIComponent(userId), true);
+	        xhr.onreadystatechange = function() {
+	            if (xhr.readyState === 4 && xhr.status === 200) {
+	                // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
+	                document.getElementById('board-list-body').innerHTML = xhr.responseText;
+	            }
+	        };
+	        xhr.send(); // 목록 로드 요청
+	    }
+>>>>>>> branch 'main' of https://github.com/teamDeu/jspProject.git
 	
 	
 		
@@ -691,7 +707,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        xhr.send(params);
 	    }
 	    
-	    function extractLatestBoardNum() {
+	    function extractLatestBoardNum() { 
 	        return <%= latestBoard.getBoard_num() %>;
 	    }
 	    

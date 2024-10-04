@@ -348,25 +348,13 @@ td a {
 
         // 선택한 게시글 번호들을 전송
         xhr.send("boardNums=" + encodeURIComponent(selectedIds.join(',')));
-
+ 
         return false; // 폼 제출 방지 (페이지 새로고침 방지)
     }
 
     function loadBoardList(folderNum) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '../seyoung/getBoardList.jsp?folderNum=' + encodeURIComponent(folderNum), true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
-                document.getElementById('board-list-body').innerHTML = xhr.responseText;
-            }
-        };
-        xhr.send(); // 목록 로드 요청
-    }
-    
-    function loadBoardListAll(userId){
-    	var xhr = new XMLHttpRequest();
-        xhr.open('GET', '../seyoung/getBoardListAll.jsp?userId=' + encodeURIComponent(UserId), true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
