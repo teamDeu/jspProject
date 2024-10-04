@@ -33,7 +33,7 @@
 	   
    
    GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(id);
-// 페이지 소유자의 ID 가져오기
+   // 페이지 소유자의 ID 가져오기
    String pageOwnerId = request.getParameter("url");
 
    // 만약 url 파라미터가 없으면 페이지 소유자는 방문자(id)
@@ -55,10 +55,10 @@
 
    // 사용자 정보 가져오기
    MemberBean userBean = mMgr.getMember(id);
-// MemberMgr 객체 초기화
+   // MemberMgr 객체 초기화
    MemberMgr memberMgr = new MemberMgr();
 
-// 쿠키에서 마지막 방문 시간 확인
+   // 쿠키에서 마지막 방문 시간 확인
    String lastVisit = null;
    javax.servlet.http.Cookie[] cookies = request.getCookies();
    if (cookies != null) {
