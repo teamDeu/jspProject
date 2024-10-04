@@ -96,9 +96,19 @@ public class UtilMgr {
 		
 		int prevMin = Integer.parseInt(min) - 3;
 		int nextMin = Integer.parseInt(min) + 3;
+		int prevHour = Integer.parseInt(hour);
+		int nextHour = Integer.parseInt(hour);
 		
-		String prevTime = hour +":"+ Integer.toString(prevMin) +":"+sec;
-		String nextTime = hour +":"+ Integer.toString(nextMin) +":"+ sec;
+		if(prevMin < 0) {
+			prevHour -= 1 ; 
+			prevMin += 60;
+		}
+		else if(nextMin >= 60) {
+			nextHour += 1;
+			prevMin -= 60;
+		}
+		String prevTime = Integer.toString(prevHour) +":"+ Integer.toString(prevMin) +":"+sec;
+		String nextTime = Integer.toString(nextHour) +":"+ Integer.toString(nextMin) +":"+ sec;
 		prev = date + " " + prevTime;
 		next = date + " " + nextTime;
 		System.out.println(prev);
