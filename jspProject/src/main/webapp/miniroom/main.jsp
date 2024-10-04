@@ -609,7 +609,7 @@ function clickAlarm(){
             </div>
             <div id="profile" class="inner-box-2" style="display: none">
             </div>
-            <div id="miniroom" class ="inner-box-2" style="display: none" >
+            <div id="inner-box-2-miniroom" class ="inner-box-2" style="display: none" >
                <jsp:include page="miniDesign.jsp"></jsp:include>
             </div>
             <div id="game" class ="inner-box-2" style="display: none" >
@@ -641,7 +641,7 @@ function clickAlarm(){
             <button onclick="javascript:clickOpenBox('chatBox')" class="custom-button" id ="custom-button-chatBox" style ="background-color :#F7F7F7">홈</button>
             <button onclick="javascript:clickOpenBox('profile')" class="custom-button " id ="custom-button-profile">프로필</button>
             <%if(url.equals(id)){ %>
-            <button onclick="javascript:clickOpenBox('Box_miniroom_design')" class="custom-button" id ="custom-button-miniroom">미니룸</button>
+            <button onclick="javascript:clickOpenBox('inner-box-2-miniroom')" class="custom-button" id ="custom-button-inner-box-2-miniroom">미니룸</button>
             <%} %>
             <button onclick = "javascript:clickOpenBox('board')" class="custom-button" id ="custom-button-board">게시판</button>
             <button onclick = "javascript:clickOpenBox('guestbook')" class="custom-button" id ="custom-button-guestbook">방명록</button>
