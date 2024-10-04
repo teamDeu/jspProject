@@ -437,7 +437,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 </head>
 <h1 class="board-title">게시판</h1>
 					<h2 class="board-recentpost"> | 최근게시물</h2>
-					<button type="button" class="list-button" onclick="clickOpenBox('boardList')">목록</button>
+					<button type="button" class="list-button" onclick="clickOpenBox('BoardList');" >목록</button>
 					<div class="board-line"></div>
 					
 					<div class="board">
@@ -462,17 +462,18 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	
 	<script>
 		
+		<%-- function goToUserBoardList() {
+		    var userId = "<%= UserId %>"; // 현재 로그인된 사용자 ID를 가져옴
+		    if (userId) {
+		        // boardList.jsp로 사용자 ID를 넘겨 이동
+		        clickOpenBox('BoardList');
+		        window.location.href = 'boardList.jsp?userId=' + encodeURIComponent(userId);
+		        
+		    }
+		} --%>	
 		
-		/*  // 목록 버튼 클릭 시 현재 로그인된 사용자의 게시글 목록으로 이동
-	    document.querySelectorAll('.list-button').forEach(function(button) {
-	        button.addEventListener('click', function() {
-	            var boardId = this.getAttribute('data-board-id');
-	            if (boardId) {
-	                window.location.href = 'boardList.jsp?board_id=' + encodeURIComponent(boardId);
-	            }
-	        });
-	    }); */
-
+	
+	
 		
 		
 		// 폴더 클릭 시 폴더에 맞는 boardList.jsp로 이동

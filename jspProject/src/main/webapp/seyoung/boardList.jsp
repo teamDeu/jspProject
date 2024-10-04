@@ -11,7 +11,7 @@ String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 
 
-Vector<BoardWriteBean> boardList = mgr.getBoardListByUser(board_id); // 사용자 ID에 맞는 게시글 목록 가져오기
+Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); // 사용자 ID에 맞는 게시글 목록 가져오기
 %>
 
 <!DOCTYPE html>
@@ -274,9 +274,9 @@ td a {
                             
                             
                             <tbody id="board-list-body">
-                            	<% 
-				                if (boardList != null) {
-				                    for (BoardWriteBean board : boardList) { 
+                            	<%-- <% 
+                                if (boardListAll != null && !boardListAll.isEmpty()) {
+                                    for (BoardWriteBean board : boardListAll) {  
 				                %>
 				                <tr>
 				                    <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
@@ -292,7 +292,7 @@ td a {
 				                <tr>
 				                    <td colspan="5">게시글이 없습니다.</td>
 				                </tr>
-				                <% } %>
+				                <% } %> --%>
                             </tbody>
                         </table>
                     </div>
@@ -355,6 +355,18 @@ td a {
     function loadBoardList(folderNum) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '../seyoung/getBoardList.jsp?folderNum=' + encodeURIComponent(folderNum), true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
+                document.getElementById('board-list-body').innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send(); // 목록 로드 요청
+    }
+    
+    function loadBoardListAll(userId){
+    	var xhr = new XMLHttpRequest();
+        xhr.open('GET', '../seyoung/getBoardList.jsp?userId=' + encodeURIComponent(boardNum), true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
