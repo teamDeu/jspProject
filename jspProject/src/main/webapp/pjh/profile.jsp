@@ -1,5 +1,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="pjh.MemberMgr, pjh.ProfileBean" %>
+<%
+    // 세션에서 유저 ID 가져오기
+    String userId = (String) session.getAttribute("idKey");
+
+    if (userId == null) {
+        // 로그인이 안 되어 있을 때 처리
+        out.println("<script>alert('로그인 후 이용해주세요.'); location.href='login.jsp';</script>");
+        return;
+    }
+
+    // 유저 ID로 DB에서 프로필 정보 가져오기
+    MemberMgr mgr = new MemberMgr();
+    ProfileBean profileBean = mgr.getProfileByUserId(userId);
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,7 +60,7 @@
         }
 
         .profile-image-custom img {
-            width: 100%;
+            width: 63%;
             height: 100%;
             object-fit: cover;
         }
@@ -114,7 +129,7 @@
         .profile-status-message-custom textarea {
             width: 95%;
             height: 150px;
-            border: 2px solid #BAB9AA; /* 변경된 선 색상 */
+            border: 2px solid #BAB9AA;
             padding: 10px;
             border-radius: 20px;
             resize: none;
@@ -122,30 +137,23 @@
             font-size: 34px;
         }
 
-        .profile-btn-custom {
-            display: inline-block;
-            padding: 2px 10px;
-            background-color: #DCDCDC;
-            color: white;
-            text-align: center;
-            border-radius: 20px;
-            text-decoration: none;
-            margin-top: 10px;
-            font-family: 'NanumTobak';
-            font-size: 24px;
+		.profile-btn-custom {
+		    display: inline-block;
+		    padding: 2px 10px;
+		    background-color: #DCDCDC;
+		    color: white;
+		    text-align: center;
+		    border-radius: 20px;
+		    text-decoration: none;
+		    margin-top: 10px;
+		    font-family: 'NanumTobak';
+		    font-size: 24px;
+		    position: relative;
+		    right: -91%;
         }
 
         .profile-btn-custom:hover {
             background-color: #45a049;
-        }
-
-        /* 실선 스타일 */
-        .profile-line {
-            border-bottom: 2px solid #BAB9AA; /* 실선 색상 및 두께 */
-            width: 95%; /* 실선의 너비 */
-            position: absolute;
-            top: 70px;
-            left: 15px;
         }
     </style>
 </head>
@@ -153,24 +161,24 @@
     <div class="profile-container-custom">
         <form id="profileForm" method="POST" enctype="multipart/form-data">
             <div class="profile-header-custom">프로필</div>
-            <div class="profile-line"></div>
             <div class="profile-details-custom">
                 <div class="profile-image-custom">
-                    <img id="profileImg" src="img/clover1.png" alt="Profile Image">
+                    <!-- DB에서 가져온 이미지 경로 설정 -->
+                    <img id="profileImg" src="<%= profileBean.getProfile_picture() %>" alt="Profile Image">
                     <label for="imageUpload">사진 변경</label>
                     <input type="file" id="imageUpload" name="profile_picture" accept="image/*" onchange="loadFile(event)">
                 </div>
                 <div class="profile-info-custom">
-                    <div class="info-row"><span>닉네임:</span> <input type="text" name="profile_name" id="profile_name" value="흥길동동구리"></div>
-                    <div class="info-row"><span>이메일:</span> <input type="email" name="profile_email" id="profile_email" value="aaa@naver.com"></div>
-                    <div class="info-row"><span>생일:</span> <input type="date" name="profile_birth" id="profile_birth" value="1980-10-02"></div>
-                    <div class="info-row"><span>취미:</span> <input type="text" name="profile_hobby" id="profile_hobby" value="코파기"></div>
-                    <div class="info-row"><span>MBTI:</span> <input type="text" name="profile_mbti" id="profile_mbti" value="ENFJ"></div>
+                    <div class="info-row"><span>닉네임:</span> <input type="text" name="profile_name" id="profile_name" value="<%= profileBean.getProfile_name() %>"></div>
+                    <div class="info-row"><span>이메일:</span> <input type="email" name="profile_email" id="profile_email" value="<%= profileBean.getProfile_email() %>"></div>
+                    <div class="info-row"><span>생일:</span> <input type="date" name="profile_birth" id="profile_birth" value="<%= profileBean.getProfile_birth() %>"></div>
+                    <div class="info-row"><span>취미:</span> <input type="text" name="profile_hobby" id="profile_hobby" value="<%= profileBean.getProfile_hobby() %>"></div>
+                    <div class="info-row"><span>MBTI:</span> <input type="text" name="profile_mbti" id="profile_mbti" value="<%= profileBean.getProfile_mbti() %>"></div>
                 </div>
             </div>
             <div class="profile-status-message-custom">
-                <label for="statusMessage">상태메시지</label>
-                <textarea id="statusMessage" name="profile_content" placeholder="상태메시지를 입력하세요">후배적 후배적</textarea>
+                <label for="statusMessage">상태 메시지</label>
+                <textarea id="statusMessage" name="profile_content" placeholder="상태 메시지를 입력하세요"><%= profileBean.getProfile_content() %></textarea>
                 <button type="button" onclick="updateProfile()" class="profile-btn-custom">저장</button>
             </div>
         </form>
@@ -186,14 +194,9 @@
             }
         }
 
-     // 프로필 업데이트 함수
+        // 프로필 업데이트 함수
         async function updateProfile() {
             const formData = new FormData(document.getElementById('profileForm'));
-
-            // FormData로 전달되는 데이터 확인 (디버깅용)
-            for (let [key, value] of formData.entries()) {
-                console.log(`${key}: ${value}`);
-            }
 
             try {
                 const response = await fetch('<%=request.getContextPath()%>/pjh/updateProfile.jsp', {
@@ -205,6 +208,7 @@
                     const result = await response.json();
                     if (result.success) {
                         alert('프로필이 성공적으로 업데이트되었습니다.');
+                        location.reload();  // 페이지 새로고침
                     } else {
                         alert(result.message || '프로필 업데이트에 실패했습니다.');
                     }
@@ -216,7 +220,6 @@
                 alert('프로필 업데이트 중 오류가 발생했습니다.');
             }
         }
-
     </script>
 </body>
 </html>
