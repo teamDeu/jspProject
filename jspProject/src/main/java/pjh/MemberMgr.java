@@ -57,8 +57,10 @@ public class MemberMgr {
 	    Connection con = null;
 	    PreparedStatement pstmt1 = null;
 	    PreparedStatement pstmt2 = null;
+	    PreparedStatement pstmt3 = null;  // profile 테이블에 저장할 PreparedStatement
 	    String sql1 = null;
 	    String sql2 = null;
+	    String sql3 = null;  // profile 테이블에 저장할 SQL
 	    boolean flag = false;
 
 	    try {
@@ -90,8 +92,18 @@ public class MemberMgr {
 	            pstmt2.setString(1, bean.getUser_id());
 
 	            if (pstmt2.executeUpdate() == 1) {
-	                flag = true;
-	                con.commit(); // 트랜잭션 성공 시 커밋
+	                // profile 테이블에 user_id를 저장
+	                sql3 = "INSERT INTO profile(user_id) VALUES(?)";
+	                pstmt3 = con.prepareStatement(sql3);
+	                pstmt3.setString(1, bean.getUser_id());
+
+	                if (pstmt3.executeUpdate() == 1) {
+	                    flag = true;
+	                    con.commit(); // 트랜잭션 성공 시 커밋
+	                } else {
+	                    con.rollback(); // profile 테이블 저장 실패 시 롤백
+	                    System.out.println("Profile 테이블에 저장 실패");
+	                }
 	            } else {
 	                con.rollback(); // miniroom 저장 실패 시 롤백
 	                System.out.println("Miniroom 테이블에 저장 실패");
@@ -120,9 +132,12 @@ public class MemberMgr {
 	        }
 	        pool.freeConnection(con, pstmt1);
 	        pool.freeConnection(con, pstmt2);
+	        pool.freeConnection(con, pstmt3);  // profile 테이블 PreparedStatement 해제
 	    }
 	    return flag;
 	}
+
+
 
 	// 로그인
 
@@ -771,6 +786,37 @@ public class MemberMgr {
 	        }
 
 	        return totalMembers;
+	    }
+	    public boolean updateProfile(ProfileBean profile) throws Exception {
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        String sql = null;
+	        boolean isUpdated = false;
+
+	        try {
+	            con = pool.getConnection();
+	            sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ?, profile_picture = ? WHERE user_id = ?";
+	            pstmt = con.prepareStatement(sql);
+	            pstmt.setString(1, profile.getProfile_name());
+	            pstmt.setString(2, profile.getProfile_email());
+	            pstmt.setString(3, profile.getProfile_birth());
+	            pstmt.setString(4, profile.getProfile_hobby());
+	            pstmt.setString(5, profile.getProfile_mbti());
+	            pstmt.setString(6, profile.getProfile_content());
+	            pstmt.setString(7, profile.getProfile_picture());
+	            pstmt.setString(8, profile.getUser_id());
+
+	            int result = pstmt.executeUpdate();
+	            if (result == 1) {
+	                isUpdated = true;
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            pool.freeConnection(con, pstmt);
+	        }
+
+	        return isUpdated;
 	    }
 
 
