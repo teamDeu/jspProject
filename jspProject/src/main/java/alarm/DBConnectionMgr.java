@@ -35,11 +35,15 @@ import java.util.Vector;
  * @author  Anil Hemrajani
  */
 public class DBConnectionMgr {
+	public static String ip = "cdn.jspstudy.co.kr:6306";
+	public static String user = "dita";
+	public static String password = "dita2414";
+	
     private Vector connections = new Vector(10);
     private String _driver = "com.mysql.cj.jdbc.Driver",
-    _url = "jdbc:mysql://113.198.238.95:3306/cloverStory?characterEncoding=UTF-8&serverTimezone=UTC",
-    _user = "root",
-    _password = "1234";
+    _url = "jdbc:mysql://"+ip+"/cloverStory?characterEncoding=UTF-8&serverTimezone=UTC",
+    _user = user,
+    _password = password;
     
     private boolean _traceOn = false;
     private boolean initialized = false;
