@@ -1,3 +1,5 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.sql.Timestamp"%>
 <%@page import="board.BoardWriteMgr"%>
 <%@page import="board.BoardWriteBean"%>
 <%@page import="java.util.Vector"%>
@@ -16,12 +18,20 @@
 <% 
     if (boardListAll.size() > 0) {
         for (BoardWriteBean board : boardListAll) { 
+        	String formattedDate = "";
+            try {
+                Timestamp timestamp = Timestamp.valueOf(board.getBoard_at());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                formattedDate = sdf.format(timestamp);
+            } catch (Exception e) {
+                formattedDate = board.getBoard_at(); // 이미 String이라면 그대로 사용
+            }
 %>
         <tr>
             <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
             <td><a href="boardDetail.jsp?board_num=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
             <td><%= board.getBoard_id() %></td>
-            <td><%= board.getBoard_at() %></td>
+            <td><%= formattedDate %></td>
             <td><%= board.getBoard_views() %></td>
         </tr>
 <% 
