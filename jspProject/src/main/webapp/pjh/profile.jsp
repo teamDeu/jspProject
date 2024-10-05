@@ -6,139 +6,152 @@
     <meta charset="UTF-8">
     <title>프로필</title>
     <style>
-    @font-face {
-        font-family: 'NanumTobak';
-        src: url('나눔손글씨 또박또박.TTF') format('truetype');
-    }
+        @font-face {
+            font-family: 'NanumTobak';
+            src: url('나눔손글씨 또박또박.TTF') format('truetype');
+        }
 
-    .profile-container-custom {
-        background-color: white;
-        padding: 20px;
-        border-radius: 20px;
-        width: 850px;
-        height: 95%;
-    }
+        .profile-container-custom {
+            background-color: white;
+            padding: 20px;
+            border-radius: 20px;
+            width: 850px;
+            height: 95%;
+        }
 
-    .profile-header-custom {
-        font-size: 36px;
-        font-weight: 600;
-        color: #80A46F;
-        margin-bottom: 20px;
-        text-align: left;
-        font-family: 'NanumTobak';
-    }
+        .profile-header-custom {
+            font-size: 36px;
+            font-weight: 600;
+            color: #80A46F;
+            margin-bottom: 20px;
+            text-align: left;
+            font-family: 'NanumTobak';
+        }
 
-    .profile-details-custom {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
+        .profile-details-custom {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-    .profile-image-custom {
-        width: 40%; 
-        height: 40%; 
-        border: 2px solid #BAB9AA; /* 변경된 선 색상 */
-        overflow: hidden;
-        margin-right: 20px;
-        text-align: center;
-        position: relative;
-    }
+        .profile-image-custom {
+            width: 40%; 
+            height: 40%; 
+            border: 2px solid #BAB9AA; /* 변경된 선 색상 */
+            overflow: hidden;
+            margin-right: 20px;
+            text-align: center;
+            position: relative;
+        }
 
-    .profile-image-custom img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        
-    }
+        .profile-image-custom img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-    .profile-image-custom input {
-        display: none; /* 파일 선택 필드는 숨김 */
-    }
+        .profile-image-custom input {
+            display: none; /* 파일 선택 필드는 숨김 */
+        }
 
-    .profile-image-custom label {
-        position: absolute;
-        right: 10px;
-        bottom: 10px;
-        background-color: #DCDCDC;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-family: 'NanumTobak';
-        cursor: pointer;
-        font-size: 24px;
-    }
+        .profile-image-custom label {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            background-color: #DCDCDC;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-family: 'NanumTobak';
+            cursor: pointer;
+            font-size: 24px;
+        }
 
-    .profile-info-custom {
-        border: 2px dashed #BAB9AA; /* 변경된 선 색상 */
-        padding: 10px;
-        border-radius: 20px;
-        position: relative;
-        font-family: 'NanumTobak';
-        width: 451px;
-        height: 320px;	
-        font-size: 36px;
-    }
+        .profile-info-custom {
+            border: 2px dashed #BAB9AA; /* 변경된 선 색상 */
+            padding: 10px;
+            border-radius: 20px;
+            position: relative;
+            font-family: 'NanumTobak';
+            width: 451px;
+            height: 320px;    
+            font-size: 36px;
+        }
 
-    .profile-info-custom div {
-        margin-bottom: 25px;
-    }
+        .profile-info-custom .info-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
 
-    .profile-info-custom div span {
-        font-weight: bold;
-    }
+        .profile-info-custom .info-row span {
+            font-weight: bold;
+            width: 120px;
+            display: inline-block;
+            margin-right: 10px;
+        }
 
-    .profile-btn-custom {
-        display: inline-block;
-        padding: 2px 10px;
-        background-color: #DCDCDC;
-        color: white;
-        text-align: center;
-        border-radius: 20px;
-        text-decoration: none;
-        margin-top: 10px;
-        font-family: 'NanumTobak';
-        font-size : 24px;
-    }
+        /* 입력 필드에서 박스만 제거하고 폰트 크기를 36px로 설정 */
+        .profile-info-custom input {
+            border: none;
+            outline: none;
+            background-color: transparent;
+            font-family: 'NanumTobak';
+            font-size: 36px;
+            width: 100%;
+        }
 
-    .profile-btn-custom:hover {
-        background-color: #45a049;
-    }
+        .profile-info-custom input::placeholder {
+            color: #BAB9AA; /* Placeholder 색상 변경 */
+        }
 
-    .profile-status-message-custom {
-        margin-top: 20px;
-        text-align: left;
-        font-family: 'NanumTobak';
-    }
+        .profile-status-message-custom {
+            margin-top: 20px;
+            text-align: left;
+            font-family: 'NanumTobak';
+        }
 
-    .profile-status-message-custom textarea {
-        width: 95%;
-        height: 150px;
-        border: 2px solid #BAB9AA; /* 변경된 선 색상 */
-        padding: 10px;
-        border-radius: 20px;
-        resize: none;
-        font-family: 'NanumTobak';
-        font-size: 34px;
-    }
+        .profile-status-message-custom textarea {
+            width: 95%;
+            height: 150px;
+            border: 2px solid #BAB9AA; /* 변경된 선 색상 */
+            padding: 10px;
+            border-radius: 20px;
+            resize: none;
+            font-family: 'NanumTobak';
+            font-size: 34px;
+        }
 
-    .profile-edit-btn-custom {
-        position: absolute;
-        right: 10px;
-        bottom: 10px;
-    }
-    /* 실선 스타일 */
-	.profile-line {
-    border-bottom: 2px solid #BAB9AA; /* 실선 색상 및 두께 */
-    width: 95%; /* 실선의 너비 */
-    position: absolute;
-    top: 70px;
-    left: 15px;
-}
+        .profile-btn-custom {
+            display: inline-block;
+            padding: 2px 10px;
+            background-color: #DCDCDC;
+            color: white;
+            text-align: center;
+            border-radius: 20px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-family: 'NanumTobak';
+            font-size: 24px;
+        }
+
+        .profile-btn-custom:hover {
+            background-color: #45a049;
+        }
+
+        /* 실선 스타일 */
+        .profile-line {
+            border-bottom: 2px solid #BAB9AA; /* 실선 색상 및 두께 */
+            width: 95%; /* 실선의 너비 */
+            position: absolute;
+            top: 70px;
+            left: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="profile-container-custom">
-        <form id="profileForm" enctype="multipart/form-data">
+        <form id="profileForm" method="POST" enctype="multipart/form-data">
             <div class="profile-header-custom">프로필</div>
             <div class="profile-line"></div>
             <div class="profile-details-custom">
@@ -148,12 +161,11 @@
                     <input type="file" id="imageUpload" name="profile_picture" accept="image/*" onchange="loadFile(event)">
                 </div>
                 <div class="profile-info-custom">
-                    <div><span>닉네임:</span> <input type="text" name="profile_name" id="profile_name" value="흥길동동구리"></div>
-                    <div><span>이메일:</span> <input type="email" name="profile_email" id="profile_email" value="aaa@naver.com"></div>
-                    <div><span>생일:</span> <input type="date" name="profile_birth" id="profile_birth" value="1980-10-02"></div>
-                    <div><span>취미:</span> <input type="text" name="profile_hobby" id="profile_hobby" value="코파기"></div>
-                    <div><span>mbti:</span> <input type="text" name="profile_mbti" id="profile_mbti" value="ENFJ"></div>
-                    <button type="button" onclick="updateProfile()" class="profile-btn-custom profile-edit-btn-custom">저장</button>
+                    <div class="info-row"><span>닉네임:</span> <input type="text" name="profile_name" id="profile_name" value="흥길동동구리"></div>
+                    <div class="info-row"><span>이메일:</span> <input type="email" name="profile_email" id="profile_email" value="aaa@naver.com"></div>
+                    <div class="info-row"><span>생일:</span> <input type="date" name="profile_birth" id="profile_birth" value="1980-10-02"></div>
+                    <div class="info-row"><span>취미:</span> <input type="text" name="profile_hobby" id="profile_hobby" value="코파기"></div>
+                    <div class="info-row"><span>MBTI:</span> <input type="text" name="profile_mbti" id="profile_mbti" value="ENFJ"></div>
                 </div>
             </div>
             <div class="profile-status-message-custom">
@@ -174,9 +186,14 @@
             }
         }
 
-        // 프로필 업데이트 함수
+     // 프로필 업데이트 함수
         async function updateProfile() {
             const formData = new FormData(document.getElementById('profileForm'));
+
+            // FormData로 전달되는 데이터 확인 (디버깅용)
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
 
             try {
                 const response = await fetch('<%=request.getContextPath()%>/pjh/updateProfile.jsp', {
@@ -189,7 +206,7 @@
                     if (result.success) {
                         alert('프로필이 성공적으로 업데이트되었습니다.');
                     } else {
-                        alert('프로필 업데이트에 실패했습니다.');
+                        alert(result.message || '프로필 업데이트에 실패했습니다.');
                     }
                 } else {
                     alert('서버 오류 발생');
@@ -199,6 +216,7 @@
                 alert('프로필 업데이트 중 오류가 발생했습니다.');
             }
         }
+
     </script>
 </body>
 </html>

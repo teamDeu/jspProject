@@ -82,7 +82,7 @@ public class MemberMgr {
 	        pstmt1.setString(5, bean.getUser_phone());
 	        pstmt1.setString(6, bean.getUser_email());
 	        pstmt1.setInt(7, bean.getUser_clover());
-	        pstmt1.setInt(8, 1);
+	        pstmt1.setInt(8, 1); // 기본 캐릭터 설정
 	        pstmt1.setString(9, bean.getUser_date());  // 가입 날짜 추가
 
 	        if (pstmt1.executeUpdate() == 1) {
@@ -92,10 +92,18 @@ public class MemberMgr {
 	            pstmt2.setString(1, bean.getUser_id());
 
 	            if (pstmt2.executeUpdate() == 1) {
-	                // profile 테이블에 user_id를 저장
-	                sql3 = "INSERT INTO profile(user_id) VALUES(?)";
+	                // profile 테이블에 user_id와 기본값 저장
+	                sql3 = "INSERT INTO profile(user_id, profile_name, profile_email, profile_birth, profile_hobby, profile_mbti, profile_content, profile_picture) "
+	                     + "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 	                pstmt3 = con.prepareStatement(sql3);
 	                pstmt3.setString(1, bean.getUser_id());
+	                pstmt3.setString(2, "임시 닉네임");  // 기본 닉네임
+	                pstmt3.setString(3, "example@example.com");  // 기본 이메일
+	                pstmt3.setString(4, "2000-01-01");  // 기본 생일
+	                pstmt3.setString(5, "임시 취미");  // 기본 취미
+	                pstmt3.setString(6, "ENFJ");  // 기본 MBTI
+	                pstmt3.setString(7, "기본 상태 메시지");  // 기본 상태 메시지
+	                pstmt3.setString(8, "img/default_profile.png");  // 기본 프로필 사진
 
 	                if (pstmt3.executeUpdate() == 1) {
 	                    flag = true;
@@ -136,6 +144,7 @@ public class MemberMgr {
 	    }
 	    return flag;
 	}
+
 
 
 
@@ -787,6 +796,8 @@ public class MemberMgr {
 
 	        return totalMembers;
 	    }
+	    
+	    //프로필 업데이트 
 	    public boolean updateProfile(ProfileBean profile) throws Exception {
 	        Connection con = null;
 	        PreparedStatement pstmt = null;
@@ -817,6 +828,40 @@ public class MemberMgr {
 	        }
 
 	        return isUpdated;
+	    }
+	    
+	    public ProfileBean getProfileByUserId(String userId) throws Exception {
+	        ProfileBean profile = null;
+	        Connection con = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+
+	        try {
+	            con = pool.getConnection();
+	            String sql = "SELECT * FROM profile WHERE user_id = ?";
+	            pstmt = con.prepareStatement(sql);
+	            pstmt.setString(1, userId);
+	            rs = pstmt.executeQuery();
+
+	            if (rs.next()) {
+	                profile = new ProfileBean();
+	                profile.setUser_id(rs.getString("user_id"));
+	                profile.setProfile_name(rs.getString("profile_name"));
+	                profile.setProfile_email(rs.getString("profile_email"));
+	                profile.setProfile_birth(rs.getString("profile_birth"));
+	                profile.setProfile_hobby(rs.getString("profile_hobby"));
+	                profile.setProfile_mbti(rs.getString("profile_mbti"));
+	                profile.setProfile_content(rs.getString("profile_content"));
+	                profile.setProfile_picture(rs.getString("profile_picture"));
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            throw new Exception("프로필 정보를 불러오는 중 오류가 발생했습니다.");
+	        } finally {
+	            pool.freeConnection(con, pstmt, rs);
+	        }
+
+	        return profile;
 	    }
 
 
