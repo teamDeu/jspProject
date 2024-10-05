@@ -466,45 +466,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 			clickOpenBox('boardList');
 		}
 		
-<<<<<<< HEAD
-		function clickOpenBox(id) {
-            var openBox = document.getElementById(id);
-            var anotherBox = document.querySelectorAll(".inner-box-2");
-            var anotherButton = document.querySelectorAll(".custom-button");
-
-            for (var i = 0; i < anotherBox.length; i++) {
-                anotherBox[i].style.display = "none";
-            }
-
-            openBox.style.display = "flex";
-            anotherButton.forEach((e) => e.style.backgroundColor = "#C0E5AF");
-
-            var openButton;
-
-            if (id.includes("board")) {
-                openButton = document.getElementById("custom-button-board");
-                document.getElementById("boardInnerBox").style.display = "block";
-                document.getElementById("normalInnerBox").style.display = "none";
-            } else {
-                openButton = document.getElementById("custom-button-" + id);
-                document.getElementById("boardInnerBox").style.display = "none";
-                document.getElementById("normalInnerBox").style.display = "block";
-            }
-
-            openButton.style.backgroundColor = "#F7F7F7";
-            
-          
-        }
-		
-		
-		
-		
-		document.addEventListener('DOMContentLoaded', function () {
-		    document.querySelector('.list-button').addEventListener('click', function() {
-		    	clickOpenBox('BoardList');
-		    });
-		});
-=======
 		function loadBoardListAll(userId){
 	    	var xhr = new XMLHttpRequest();
 	        xhr.open('GET', '../seyoung/getBoardListAll.jsp?userId=' + encodeURIComponent(userId), true);
@@ -516,8 +477,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        };
 	        xhr.send(); // 목록 로드 요청
 	    }
->>>>>>> branch 'main' of https://github.com/teamDeu/jspProject.git
-	
 	
 		
 		
