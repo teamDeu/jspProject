@@ -769,7 +769,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
               </li>
           <% } %>
       </ul>
-      < <!-- 페이지네이션 -->
+       <!-- 페이지네이션 -->
     <div class="pagination" id ="guestbook_pagination">
         <% for (int i = 1; i <= totalPages; i++) { %>
             <span class="page <%= (i == 1) ? "active" : "" %>" onclick="changeGuestbookPage(<%= i %>)"><%= i %></span>
