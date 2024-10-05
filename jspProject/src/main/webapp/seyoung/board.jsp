@@ -466,45 +466,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 			clickOpenBox('boardList');
 		}
 		
-<<<<<<< HEAD
-		function clickOpenBox(id) {
-            var openBox = document.getElementById(id);
-            var anotherBox = document.querySelectorAll(".inner-box-2");
-            var anotherButton = document.querySelectorAll(".custom-button");
-
-            for (var i = 0; i < anotherBox.length; i++) {
-                anotherBox[i].style.display = "none";
-            }
-
-            openBox.style.display = "flex";
-            anotherButton.forEach((e) => e.style.backgroundColor = "#C0E5AF");
-
-            var openButton;
-
-            if (id.includes("board")) {
-                openButton = document.getElementById("custom-button-board");
-                document.getElementById("boardInnerBox").style.display = "block";
-                document.getElementById("normalInnerBox").style.display = "none";
-            } else {
-                openButton = document.getElementById("custom-button-" + id);
-                document.getElementById("boardInnerBox").style.display = "none";
-                document.getElementById("normalInnerBox").style.display = "block";
-            }
-
-            openButton.style.backgroundColor = "#F7F7F7";
-            
-          
-        }
-		
-		
-		
-		
-		document.addEventListener('DOMContentLoaded', function () {
-		    document.querySelector('.list-button').addEventListener('click', function() {
-		    	clickOpenBox('BoardList');
-		    });
-		});
-=======
 		function loadBoardListAll(userId){
 	    	var xhr = new XMLHttpRequest();
 	        xhr.open('GET', '../seyoung/getBoardListAll.jsp?userId=' + encodeURIComponent(userId), true);
@@ -516,7 +477,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        };
 	        xhr.send(); // 목록 로드 요청
 	    }
->>>>>>> branch 'main' of https://github.com/teamDeu/jspProject.git
 	
 	
 		
@@ -605,84 +565,27 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	    
 
 	    
-	    // 답글을 answerItem 아래에 추가하는 함수
-	    function baddReply(answerItem, replyText) {
-	        var replyItem = document.createElement('div');
-	        replyItem.className = 'reply-item';
-	        replyItem.style.display = 'flex';
-	        replyItem.style.alignItems = 'flex-start';
-	        replyItem.style.marginLeft = '60px'; // 부모 댓글에서 약간 들여쓰기
-	        replyItem.style.marginBottom = '10px';
-	        replyItem.style.width = '100%';
-
-	        // 화살표 이미지 추가
-	        var replyIcon = document.createElement('img');
-	        replyIcon.src = '<%= request.getContextPath() %>/seyoung/img/reanswer.png'; 
-	        replyIcon.alt = 'reply icon';
-	        replyIcon.style.width = '10px';
-	        replyIcon.style.height = '10px';
-	        replyIcon.style.marginRight = '10px';
-
-	        var replyContent = document.createElement('div');
-	        replyContent.className = 'reply-content';
-	        replyContent.style.backgroundColor = '#f9f9f9';
-	        replyContent.style.border = '1px solid #BAB9AA';
-	        replyContent.style.padding = '10px';
-	        replyContent.style.width = '515px';
-	        replyContent.style.display = 'flex';
-	        replyContent.style.flexDirection = 'column';
-
-	        var replyHeader = document.createElement('div');
-	        replyHeader.style.display = 'flex';
-	        replyHeader.style.alignItems = 'center';
-	        replyHeader.style.marginBottom = '5px';
-	        
-	        
-	        var reuserImage = document.createElement('img');
-	        reuserImage.src = '<%= request.getContextPath() %>/seyoung/img/character4.png'; // 사용자 이미지 경로
-	        reuserImage.style.width = '30px'; // 이미지 크기 설정
-	        reuserImage.style.height = '30px';
-	        reuserImage.style.marginRight = '10px'; // 사용자 이름과 이미지 간격 설정
-	        reuserImage.style.borderRadius = '50%'; // 둥근 이미지로 설정
-	        
-
-	        var reuserName = document.createElement('div');
-	        reuserName.className = 'reuser-name';
-	        reuserName.textContent = '사용자'; // 여기에 실제 사용자 이름을 넣을 수 있음
-	        reuserName.style.fontWeight = 'bold';
-	        reuserName.style.marginRight = '10px';
-	        reuserName.style.fontSize = '16px';
-
-	        var replyTime = document.createElement('div');
-	        replyTime.className = 'reply-time';
-	        replyTime.textContent = new Date().toLocaleString(); // 현재 시간
-	        replyTime.style.fontSize = '15px';
-	        replyTime.style.color = 'black';
-	        replyTime.style.marginTop = '5px';
-
-	        replyHeader.appendChild(reuserImage);
-	        replyHeader.appendChild(reuserName);
-	        replyHeader.appendChild(replyTime);
-
-	        var replyTextNode = document.createElement('div');
-	        replyTextNode.className = 'reply-text';
-	        replyTextNode.textContent = replyText;
-	        replyTextNode.style.fontSize = '18px';
-	        replyTextNode.style.color = 'black';
-	        replyTextNode.style.marginTop = '5px';
-	        replyTextNode.style.textAlign = 'left';
-
-	        replyContent.appendChild(replyHeader); // 사용자 이름과 시간 추가
-	        replyContent.appendChild(replyTextNode);
-
-	        replyItem.appendChild(replyIcon); // 화살표 이미지 추가
-	        replyItem.appendChild(replyContent);
-
-	        // 답글을 answerItem 바로 아래에 추가
-	        answerItem.parentNode.insertBefore(replyItem, answerItem.nextSibling);
-	    }
 	    
+	    
+	    function bdeleteReAnswer(reAnswerNum) {
+	        var xhr = new XMLHttpRequest();
+	        xhr.open("POST", "<%= cPath %>/seyoung/bReAnswerDelProc.jsp", true); // 답글 삭제 처리 파일 호출
+	        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
+	        xhr.onreadystatechange = function () {
+	            if (xhr.readyState === 4 && xhr.status === 200) {
+	                if (xhr.responseText.trim() === 'success') {
+	                    alert("답글이 성공적으로 삭제되었습니다.");
+	                    bloadAnswers(); // 답글을 삭제한 후 다시 로드
+	                } else {
+	                    alert("답글 삭제에 실패했습니다.");
+	                }
+	            }
+	        };
+
+	        var params = "reanswer_num=" + encodeURIComponent(reAnswerNum); // 삭제할 답글 번호
+	        xhr.send(params);
+	    }
 	   
 		
 		

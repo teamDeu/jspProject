@@ -21,8 +21,8 @@
 
 /* 사용자 이미지 스타일 */
 .user-image {
-	width: 40px;
-	height: 40px;
+	width: 30px;
+	height: 30px;
 	margin-right: 10px;
 	border-radius: 50%;
 }
@@ -36,33 +36,33 @@
 
 /* 댓글 컨텐츠 스타일 */
 .answer-content {
-	display: flex; /* 이미지와 텍스트를 가로로 배치 */
-	align-items: flex-start;
-	background-color: #f9f9f9;
-	border: 1px solid #BAB9AA;
-	padding: 10px;
-	width: 600px;
-	box-sizing: border-box;
+	display: flex;
+    flex-direction: column; /* 댓글 내용과 헤더를 세로로 배치 */
+    background-color: #f9f9f9;
+    border: 1px solid #BAB9AA;
+
+    width: 690px;
+    box-sizing: border-box;
 }
 
-/* 댓글 헤더 스타일 (이름과 시간) */
+/* 댓글 헤더 스타일 */
 .answer-header {
 	display: flex;
 	align-items: center;
-	width: 100%;
+	margin-bottom: 5px;
 }
 
 /* 사용자 이름 스타일 */
 .user-name {
 	font-weight: bold;
-	font-size: 16px;
+	font-size: 18px;
 	margin-right: 10px;
 }
 
 /* 댓글 시간 스타일 */
 .answer-time {
-	font-size: 14px;
-	color: #666;
+	font-size: 18px;
+	color: black;
 	margin-left: 0px; /* 자동으로 오른쪽에 정렬 */
 }
 
@@ -72,15 +72,31 @@
 	cursor: pointer;
 	border: none;
 	background: none;
-	font-size: 15px;
+	font-size: 20px;
+	
+}
+
+.delete-btn2 {
+	color: #FF5A5A;
+	cursor: pointer;
+	border: none;
+	background: none;
+	font-size: 20px;
+	margin-left: 400px;
+	
+}
+
+.answer-time-container {
+    margin-left: auto; /* 삭제 버튼을 오른쪽으로 정렬 */
 }
 
 /* 댓글 내용 텍스트 스타일 */
 .answer-text {
-	font-size: 18px;
+	font-size: 20px;
 	color: black;
 	margin-top: 5px;
 	text-align: left;
+	width: 100%; /* 왼쪽 정렬을 위해 100% 너비 설정 */
 }
 
 /* 답글 입력 폼 스타일 */
@@ -146,17 +162,18 @@
 
 .reuser-name {
 	font-weight: bold;
-	font-size: 16px;
+	font-size: 18px;
 	margin-right: 10px;
 }
 
 .reply-time {
-	font-size: 15px;
+	font-size: 18px;
 	color: black;
+	margin-left: 0px; /* 자동으로 오른쪽에 정렬 */
 }
 
 .reply-text {
-	font-size: 18px;
+	font-size: 20px;
 	color: black;
 	margin-top: 5px;
 	text-align: left;
@@ -193,14 +210,17 @@ for (BoardAnswerBean answer : answers) {
 	Vector<BoardReAnswerBean> reanswerList = rMgr.getReAnswerList(answer.getAnswerNum());
 %>
 <div class="answer-item" data-answer-num="<%=answer.getAnswerNum()%>">
-	<!-- 사용자 이미지 -->
-	<img src="<%=request.getContextPath()%>/seyoung/img/character2.png"
-		alt="사용자 이미지" class="user-image" />
+	
 
 	<div class="answer-content-container">
 		<!-- 댓글 내용 -->
 		<div class="answer-content">
+			
 			<div class="answer-header">
+				<!-- 사용자 이미지 -->
+				<img src="<%=request.getContextPath()%>/seyoung/img/character2.png"
+					alt="사용자 이미지" class="user-image" />
+			
 				<!-- 사용자 이름 -->
 				<div class="user-name">
 					<%=answer.getAnswerId()%>
@@ -235,14 +255,13 @@ for (BoardAnswerBean answer : answers) {
 			int reAnswerNum = reAnswerBean.getReanswer_num();
 		%>
 		<div class="reply-item">
-			<img class="reply-icon" src="../seyoung/img/reanswer.png"
-				alt="reply icon">
+			<img class="reply-icon" src="../seyoung/img/reanswer.png" alt="reply icon">
 			<div class="reply-content">
 				<div class="reply-header">
 					<img class="reuser-image" src="../miniroom/<%=img%>">
 					<div class="reuser-name"><%=name %></div>
 					<div class="reply-time"><%=at %></div>
-					<!-- 예시 시간 -->
+					<button class="delete-btn2" onclick="bdeleteReAnswer(<%=reAnswerNum%>)">삭제</button>
 				</div>
 				<div class="reply-text"><%=content %></div>
 				<!-- replyText에 해당하는 내용 -->
