@@ -37,6 +37,8 @@ public class MypageMgr {
                 bean.setUserBirth(rs.getDate("user_birth"));
                 bean.setUserPhone(rs.getString("user_phone"));
                 bean.setUserEmail(rs.getString("user_email"));
+
+                System.out.println("User Info Retrieved: " + bean.getUserId() + ", " + bean.getUserName());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -75,6 +77,7 @@ public class MypageMgr {
             System.out.println("Executing SQL: " + pstmt.toString()); // SQL 쿼리 디버깅
             
             int count = pstmt.executeUpdate();
+            System.out.println("Affected rows: " + count); // 영향받은 행의 수 확인
             if (count > 0) {
                 isUpdated = true;
             }
