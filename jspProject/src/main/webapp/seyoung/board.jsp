@@ -465,11 +465,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 			loadBoardListAll('<%=board_id%>');
 			clickOpenBox('boardList');
 		}
-<<<<<<< HEAD
-		
-=======
-		
->>>>>>> branch 'main' of https://github.com/teamDeu/jspProject.git
 		function loadBoardListAll(userId){
 	    	var xhr = new XMLHttpRequest();
 	        xhr.open('GET', '../seyoung/getBoardListAll.jsp?userId=' + encodeURIComponent(userId), true);
@@ -481,13 +476,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        };
 	        xhr.send(); // 목록 로드 요청
 	    }
-<<<<<<< HEAD
-	
-=======
->>>>>>> branch 'main' of https://github.com/teamDeu/jspProject.git
-	
-		
-		
 		// 폴더 클릭 시 폴더에 맞는 boardList.jsp로 이동
 	    document.querySelectorAll('.folder-item').forEach(function(folderItem) {
 	        folderItem.addEventListener('click', function() {
