@@ -35,11 +35,14 @@ import java.util.Vector;
  * @author  Anil Hemrajani
  */
 public class DBConnectionMgr {
+	private String ip = alarm.DBConnectionMgr.ip;
+	private String user = alarm.DBConnectionMgr.user;
+	private String password = alarm.DBConnectionMgr.password;
     private Vector connections = new Vector(10);
     private String _driver = "com.mysql.cj.jdbc.Driver",
-    _url = "jdbc:mysql://113.198.238.95/cloverstory?characterEncoding=UTF-8&serverTimezone=UTC",
-    _user = "root",
-    _password = "1234";
+    _url = "jdbc:mysql://"+ip+"/cloverstory?characterEncoding=UTF-8&serverTimezone=UTC",
+    _user = user,
+    _password = password;
     
     private boolean _traceOn = false;
     private boolean initialized = false;
