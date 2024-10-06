@@ -14,7 +14,7 @@ String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 
 
-BoardWriteBean latestBoard = mgr.getLatestBoard();
+BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
 
 %>
 <style>

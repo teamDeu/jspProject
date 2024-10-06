@@ -225,15 +225,16 @@ public class BoardWriteMgr {
     }
     
     //최근 게시물 불러오는 메서드
-    public BoardWriteBean getLatestBoard() {
+    public BoardWriteBean getLatestBoard(String userId) {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         BoardWriteBean board = null;
         try {
             con = pool.getConnection();
-            String sql = "SELECT * FROM board ORDER BY board_at DESC LIMIT 1"; // 최근 게시된 글 1개 가져오기
+            String sql = "SELECT * FROM board WHERE board_id = ? ORDER BY board_at DESC LIMIT 1";
             pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, userId); // 현재 로그인한 사용자와 게시글 작성자 ID 비교
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 board = new BoardWriteBean();
@@ -255,6 +256,7 @@ public class BoardWriteMgr {
         }
         return board;
     }
+
     
     // userId에 해당하는 사용자의 게시글 목록을 가져오는 메서드 추가
     public Vector<BoardWriteBean> getBoardListByUser(String userId) {

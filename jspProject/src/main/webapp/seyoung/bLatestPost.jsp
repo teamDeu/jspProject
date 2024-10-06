@@ -8,9 +8,10 @@
 
 	//현재 로그인한 사용자 ID 가져오기
 	String userId = (String) session.getAttribute("idKey");
+    String board_id = request.getParameter("board_id");
 
     // 최신 게시글 불러오기
-    BoardWriteBean latestBoard = mgr.getLatestBoard();
+    BoardWriteBean latestBoard = mgr.getLatestBoard(userId);
 %>
 
 <%if (latestBoard != null && userId != null && userId.equals(latestBoard.getBoard_id())) { %>
