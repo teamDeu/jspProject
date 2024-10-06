@@ -186,6 +186,7 @@
 </head>
 
 <%
+
 String boardNum = request.getParameter("board_num"); // 게시글 번호를 받음
 String answerNum = request.getParameter("answer_num");
 String userId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID

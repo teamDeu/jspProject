@@ -32,9 +32,8 @@
             <img src="<%=Bean.getBoard_image()%>"   style="width: 300px; height: 200px; border: 1px solid #CCC; padding: 5px;">
         </div>
     <% } %>
-
     <!-- 내용 부분 -->
-    <div class="bwrite-content">
+    <div id=<%=latestBoard.getBoard_num()%> class="bwrite-content">
         <%= latestBoard.getBoard_content() %>
     </div>
 <% } else { %>

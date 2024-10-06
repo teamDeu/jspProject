@@ -500,18 +500,8 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	                	var response = xhr.responseText.trim();
 	                    if (response.startsWith('success')) {
 	                        alert("게시글이 삭제되었습니다.");
-	                        var parts = response.split(';');
-	                        var nextBoardNum = parts[1];
-	                        var nextBoardTitle = parts[2];
-	                        var nextBoardContent = parts[3];
-	                        var nextBoardAt = parts[4];
-
-	                        // 다음 최신 게시글로 화면을 업데이트
-	                        document.querySelector('.bwrite-header h3').innerText = nextBoardTitle;
-	                        document.querySelector('.bwrite-content').innerText = nextBoardContent;
-	                        document.querySelector('.bwrite-header span').innerText = nextBoardAt.substring(0, 10);
-	                  
-	                        bloadAnswers(nextBoardNum);
+	                        loadLatestPost();
+	                        bloadAnswers();
 	                    } else {
 	                        alert("게시글 삭제에 실패했습니다.");
 	                    }
@@ -539,15 +529,14 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	                if (xhr.readyState === 4 && xhr.status === 200) {
 	                    input.value = ''; // 입력 필드를 비움
 	                    
-	                    if(latestBoard !== null){
-		                    bloadAnswers(<%= latestBoard.getBoard_num() %>); // 댓글을 추가한 후 댓글 목록을 다시 로드
-	                
-	                    }
+
+		                    bloadAnswers(); // 댓글을 추가한 후 댓글 목록을 다시 로드
+
 	                }
 	            };
 
 	            // Ajax 요청 본문에 데이터 전달
-	            var boardNum = <%= latestBoard.getBoard_num() %>; // 최신 게시글 번호를 가져옴
+	            var boardNum = document.querySelector(".bwrite-form").querySelector(".bwrite-content").id; // 최신 게시글 번호를 가져옴
 	            var answerId = "<%= UserId %>"; 
 	            var params = "board_num=" + encodeURIComponent(boardNum) +
 	                         "&answer_content=" + encodeURIComponent(answerText) +
@@ -557,10 +546,10 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	    }
 
 	    //댓글 로드 함수
-	    function bloadAnswers(boardNum) {
+	    function bloadAnswers() {
 	    	
 	        var xhr = new XMLHttpRequest();
-	        xhr.open("GET", "../seyoung/bLatestPostComments.jsp?board_num=" + encodeURIComponent(boardNum), true);
+	        xhr.open("GET", "../seyoung/bLatestPostComments.jsp?board_num=" + encodeURIComponent(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id), true);
 
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
@@ -583,7 +572,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                if (xhr.responseText.trim() === 'success') {
 	                    alert("댓글이 삭제되었습니다.");
-	                    bloadAnswers(<%= latestBoard.getBoard_num() %>); 
+	                    bloadAnswers(); 
 	                } else {
 	                    alert("댓글 삭제에 실패했습니다.");
 	                }
@@ -606,7 +595,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
-	                bloadAnswers(<%= latestBoard.getBoard_num() %>); // 답글 추가 후 전체 댓글 목록을 다시 로드
+	                bloadAnswers(); // 답글 추가 후 전체 댓글 목록을 다시 로드
 	            }
 	        };
 
@@ -638,7 +627,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	                    if (reanswerElement) {
 	                        reanswerElement.remove(); // 답글 삭제
 	                    }
-	                    bloadAnswers(<%= latestBoard.getBoard_num() %>);
+	                    bloadAnswers();
 	                } else {
 	                    alert("답글 삭제에 실패했습니다.");
 	                }
@@ -650,12 +639,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	    }
 	    
 	    
-	    
-	    
-
-		
-	    
-	    
 	 	// 최신 게시글이 로드된 후 댓글을 불러오는 함수 호출
 	    function loadLatestPost() {
 	        var xhr = new XMLHttpRequest();
@@ -665,9 +648,10 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
 	                
-	                if (<%= latestBoard.getBoard_num() %>) {
-	                    bloadAnswers(<%= latestBoard.getBoard_num() %>); // 댓글 로드
-	                }
+	                console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
+	     
+	                bloadAnswers(); // 댓글 로드
+	                
 	            }
 	        };
 
@@ -677,7 +661,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	    
 	    
 	    document.addEventListener('DOMContentLoaded', function () {
-	    	bloadAnswers(<%= latestBoard.getBoard_num() %>); // 페이지가 로드될 때 댓글 목록을 불러오는 함수 호출
+	    	bloadAnswers();
 	    	loadLatestPost(); // 페이지가 로드될 때 최신 게시글을 불러옴
 		})
 

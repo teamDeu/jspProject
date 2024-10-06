@@ -536,14 +536,14 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
                             <!-- 공개 설정 -->
                             <div class="options-group">
                                 <label>공개 설정 |</label>
-                                <input type="radio" name="board_visibility" value="0"> 전체
+                                <input type="radio" name="board_visibility" value="0" checked="checked"> 전체
                                 <input type="radio" name="board_visibility" value="1"> 일촌
                             </div>
 
                             <!-- 댓글 허용 여부 -->
                             <div class="options-group2">
                                 <label>댓글 |</label>
-                                <input type="radio" name="board_answertype" value="1"> 허용
+                                <input type="radio" name="board_answertype" value="1" checked="checked"> 허용
                                 <input type="radio" name="board_answertype" value="0"> 비허용
                             </div>
 
