@@ -10,9 +10,9 @@
 String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 
-//BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
+BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
 
-Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); // 사용자 ID에 맞는 게시글 목록 가져오기
+Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(UserId); // 사용자 ID에 맞는 게시글 목록 가져오기
 %>
 
 <!DOCTYPE html>
@@ -324,7 +324,7 @@ td a {
                     loadBoardList(selectedFolderItem.getAttribute("data-folder-num"));
                     console.log(selectedFolderItem.getAttribute("data-folder-num"));
                     
-                    //loadLatestPost();
+                    loadLatestPost();
                     
                 } else {
                 	alert("게시글 삭제에 실패했습니다.");

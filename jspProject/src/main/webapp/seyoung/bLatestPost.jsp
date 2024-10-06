@@ -30,7 +30,7 @@
     <!-- 이미지가 있을 경우 표시 -->
     <% if (latestBoard.getBoard_image() != null && !latestBoard.getBoard_image().isEmpty()) { %>
         <div style="text-align: center; margin-top: 10px;">
-            <img src="<%=Bean.getBoard_image()%>"   style="width: 300px; height: 200px; border: 1px solid #CCC; padding: 5px;">
+            <img alt="" src="<%=latestBoard.getBoard_image()%>"   style="width: 300px; height: 200px; border: 1px solid #CCC; padding: 5px;">
         </div>
     <% } %>
     <!-- 내용 부분 -->

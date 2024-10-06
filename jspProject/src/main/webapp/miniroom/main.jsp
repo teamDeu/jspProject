@@ -609,7 +609,9 @@ function clickAlarm(){
                </jsp:include>
             </div>
             <div id = "boardInnerBox" class="inner-box-1" style = "display :none">
-               <jsp:include page="../seyoung/bInnerbox1.jsp"></jsp:include>
+               <jsp:include page="../seyoung/bInnerbox1.jsp">
+               	<jsp:param value="<%=url %>" name="board_id"/>
+               </jsp:include>
             </div>
             <!-- 이미지가 박스 -->
             <div class="image-box">
