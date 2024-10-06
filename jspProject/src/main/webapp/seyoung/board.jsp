@@ -24,7 +24,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 <style>
 
 
-
+ 
 .folder-container {
     width: 230px;
     height: 700px;
@@ -179,7 +179,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	white-space: nowrap;
 }
 
-.delete-btn {
+.latestDel-btn {
 	margin-right: 5px;
 	background: none;
     color: #FF5A5A;
@@ -460,7 +460,8 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 					</div>
 	
 	<script>
-		
+		var latestBoard = <%= latestBoard != null ? latestBoard.getBoard_num() : "null" %>;	
+	
 		function clickAllBoardList(){
 			loadBoardListAll('<%=board_id%>');
 			clickOpenBox('boardList');
@@ -476,7 +477,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        };
 	        xhr.send(); // 목록 로드 요청
 	    }
-		// 폴더 클릭 시 폴더에 맞는 boardList.jsp로 이동
 	    document.querySelectorAll('.folder-item').forEach(function(folderItem) {
 	        folderItem.addEventListener('click', function() {
 	            var folderId = this.getAttribute('data-folder-id'); // 폴더 ID를 가져옴
@@ -487,8 +487,45 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        });
 	    });
 	
+		
+	    // 게시글 삭제 함수
+	    function bdellatestPost(boardNum) {
+	        if (confirm("정말로 게시글을 삭제하시겠습니까?")) {
+	            var xhr = new XMLHttpRequest();
+	            xhr.open("POST", "<%= cPath %>/seyoung/bLatestDelProc.jsp", true); // 게시글 삭제 처리 JSP 호출
+	            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+	            xhr.onreadystatechange = function () {
+	                if (xhr.readyState === 4 && xhr.status === 200) {
+	                	var response = xhr.responseText.trim();
+	                    if (response.startsWith('success')) {
+	                        alert("게시글이 삭제되었습니다.");
+	                        var parts = response.split(';');
+	                        var nextBoardNum = parts[1];
+	                        var nextBoardTitle = parts[2];
+	                        var nextBoardContent = parts[3];
+	                        var nextBoardAt = parts[4];
+
+	                        // 다음 최신 게시글로 화면을 업데이트
+	                        document.querySelector('.bwrite-header h3').innerText = nextBoardTitle;
+	                        document.querySelector('.bwrite-content').innerText = nextBoardContent;
+	                        document.querySelector('.bwrite-header span').innerText = nextBoardAt.substring(0, 10);
+	                  
+	                        bloadAnswers(nextBoardNum);
+	                    } else {
+	                        alert("게시글 삭제에 실패했습니다.");
+	                    }
+	                }
+	            };
+
+	            // 서버에 게시글 번호 전달
+	            var params = "board_num=" + encodeURIComponent(boardNum);
+	            xhr.send(params);
+	        }
+	    }
+		
 	    
-	    
+	    //댓글 추가 함수
 	    function baddAnswer() {
 	        var input = document.getElementById('ansewerinput');
 	        var answerText = input.value.trim();
@@ -502,7 +539,10 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	                if (xhr.readyState === 4 && xhr.status === 200) {
 	                    input.value = ''; // 입력 필드를 비움
 	                    
-	                    bloadAnswers(<%= latestBoard.getBoard_num() %>); // 댓글을 추가한 후 댓글 목록을 다시 로드
+	                    if(latestBoard !== null){
+		                    bloadAnswers(<%= latestBoard.getBoard_num() %>); // 댓글을 추가한 후 댓글 목록을 다시 로드
+	                
+	                    }
 	                }
 	            };
 
@@ -516,6 +556,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        }
 	    }
 
+	    //댓글 로드 함수
 	    function bloadAnswers(boardNum) {
 	    	
 	        var xhr = new XMLHttpRequest();
@@ -532,10 +573,30 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        xhr.send();
 	    }
 	    
-	    function extractLatestBoardNum() {
-	        // bLatestPost.jsp에서 가져온 최신 게시물의 번호를 추출하는 함수
-	        return document.querySelector('.bwrite-form [data-board-num]').getAttribute('data-board-num');
+	    //댓글 삭제 함수
+	    function bdeleteAnswer(answerNum) {
+	        var xhr = new XMLHttpRequest();
+	        xhr.open("POST", "<%= cPath %>/seyoung/bAnswerDelProc.jsp", true); // 서버 측 댓글 삭제 처리 파일
+	        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+	        xhr.onreadystatechange = function () {
+	            if (xhr.readyState === 4 && xhr.status === 200) {
+	                if (xhr.responseText.trim() === 'success') {
+	                    alert("댓글이 삭제되었습니다.");
+	                    bloadAnswers(<%= latestBoard.getBoard_num() %>); 
+	                } else {
+	                    alert("댓글 삭제에 실패했습니다.");
+	                }
+	            }
+	        };
+
+	        var params = "answer_num=" + encodeURIComponent(answerNum); // 삭제할 댓글 번호
+	        xhr.send(params);
 	    }
+	    
+	   
+	    
+	    
 	    
 	    // 답글을 서버에 저장하는 함수
 	    function baddReAnswer(answerNum, replyText) {
@@ -558,58 +619,44 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        xhr.send(params);
 	    }
 	    
-
 	    
 	    
 	    
+	    // 답글 삭제 함수
 	    function bdeleteReAnswer(reAnswerNum) {
 	        var xhr = new XMLHttpRequest();
-	        xhr.open("POST", "<%= cPath %>/seyoung/bReAnswerDelProc.jsp", true); // 답글 삭제 처리 파일 호출
+	        xhr.open("POST", "<%= cPath %>/seyoung/bReAnswerDelProc.jsp", true);
 	        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
+	            	console.log(xhr.responseText);  // 서버 응답 값 확인
 	                if (xhr.responseText.trim() === 'success') {
-	                    alert("답글이 성공적으로 삭제되었습니다.");
-	                    bloadAnswers(); // 답글을 삭제한 후 다시 로드
+	                    alert("답글이 삭제되었습니다.");
+	                    // 해당 답글 DOM 요소를 삭제
+	                    var reanswerElement = document.querySelector(`[data-reanswer-num="${reAnswerNum}"]`);
+	                    if (reanswerElement) {
+	                        reanswerElement.remove(); // 답글 삭제
+	                    }
+	                    bloadAnswers(<%= latestBoard.getBoard_num() %>);
 	                } else {
 	                    alert("답글 삭제에 실패했습니다.");
 	                }
 	            }
 	        };
 
-	        var params = "reanswer_num=" + encodeURIComponent(reAnswerNum); // 삭제할 답글 번호
-	        xhr.send(params);
-	    }
-	   
-		
-		
-
-	    function bdeleteAnswer(answerNum) {
-	        var xhr = new XMLHttpRequest();
-	        xhr.open("POST", "<%= cPath %>/seyoung/bAnswerDelProc.jsp", true); // 서버 측 댓글 삭제 처리 파일
-	        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-	        xhr.onreadystatechange = function () {
-	            if (xhr.readyState === 4 && xhr.status === 200) {
-	                if (xhr.responseText === 'success') {
-	                    alert("댓글이 성공적으로 삭제되었습니다.");
-	                    bloadAnswers(); 
-	                } else {
-	                    alert("댓글 삭제에 실패했습니다.");
-	                }
-	            }
-	        };
-
-	        var params = "answer_num=" + encodeURIComponent(answerNum); // 삭제할 댓글 번호
+	        var params = "reanswer_num=" + encodeURIComponent(reAnswerNum);
 	        xhr.send(params);
 	    }
 	    
-	    function extractLatestBoardNum() { 
-	        return <%= latestBoard.getBoard_num() %>;
-	    }
 	    
-	 // 최신 게시글이 로드된 후 댓글을 불러오는 함수 호출
+	    
+	    
+
+		
+	    
+	    
+	 	// 최신 게시글이 로드된 후 댓글을 불러오는 함수 호출
 	    function loadLatestPost() {
 	        var xhr = new XMLHttpRequest();
 	        xhr.open("GET", "../seyoung/bLatestPost.jsp", true);
@@ -617,9 +664,9 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
-	                var latestBoardNum = extractLatestBoardNum(); // 최신 게시글 번호 추출
-	                if (latestBoardNum) {
-	                    bloadAnswers(latestBoardNum); // 댓글 로드
+	                
+	                if (<%= latestBoard.getBoard_num() %>) {
+	                    bloadAnswers(<%= latestBoard.getBoard_num() %>); // 댓글 로드
 	                }
 	            }
 	        };

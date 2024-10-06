@@ -35,7 +35,7 @@ import java.util.Vector;
  * @author  Anil Hemrajani
  */
 public class DBConnectionMgr {
-	public static String ip = "113.198.238.95";
+	public static String ip = "113.198.238.95:3306";
 	public static String user = "root";
 	public static String password = "1234";
 	

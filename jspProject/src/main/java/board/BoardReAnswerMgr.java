@@ -28,12 +28,7 @@ public class BoardReAnswerMgr {
 	        
 	        // PreparedStatement 생성
 	        pstmt = con.prepareStatement(sql);
-	        
-	        // 전달받은 데이터를 로그로 출력 (디버깅 용도)
-	        System.out.println("Inserting answer_num: " + reAnswerBean.getAnswer_num());
-	        System.out.println("Inserting reanswer_content: " + reAnswerBean.getReanswer_content());
-	        System.out.println("Inserting reanswer_id: " + reAnswerBean.getReanswer_id());
-	        
+	       
 	        // 파라미터 설정
 	        pstmt.setInt(1, reAnswerBean.getAnswer_num());
 	        pstmt.setString(2, reAnswerBean.getReanswer_content());
@@ -48,8 +43,6 @@ public class BoardReAnswerMgr {
 	            System.out.println("답글 저장에 실패하였습니다.");
 	        }
 	    } catch (Exception e) {
-	        // 예외 발생 시 스택 트레이스를 출력하고 구체적인 에러 메시지 출력
-	        System.out.println("Error occurred while inserting reAnswer: " + e.getMessage());
 	        e.printStackTrace();
 	    } finally {
 	        // 자원 반환
@@ -59,6 +52,8 @@ public class BoardReAnswerMgr {
 	    return result;
 	}
 	
+	
+	//답글 리스트 불러오는 메소드
 	public Vector<BoardReAnswerBean> getReAnswerList(int answer_num){
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -88,6 +83,37 @@ public class BoardReAnswerMgr {
 		}
 		return vlist;
 	}
+	
+	
+	// 답글 삭제 메소드 
+	public boolean deleteReAnswer(int reanswerNum) {
+	    Connection con = null;
+	    PreparedStatement pstmt = null;
+	    String sql = "DELETE FROM boardreanswer WHERE reanswer_num = ?";
+	    boolean result = false;
+
+	    try {
+	        con = pool.getConnection();
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setInt(1, reanswerNum);
+	        // 쿼리 실행 및 결과 확인
+	        int rowsAffected = pstmt.executeUpdate();
+	        if (rowsAffected > 0) {
+	            result = true;  // 삭제 성공
+	            System.out.println("답글이 성공적으로 삭제되었습니다.");
+	        } else {
+	            System.out.println("답글 삭제에 실패하였습니다.");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        // 자원 반환
+	        pool.freeConnection(con, pstmt);
+	    }
+
+	    return result;
+	}
+	
 
 }
     
