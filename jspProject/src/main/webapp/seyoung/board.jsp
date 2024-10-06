@@ -24,7 +24,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard();
 <style>
 
 
-
+ 
 .folder-container {
     width: 230px;
     height: 700px;
