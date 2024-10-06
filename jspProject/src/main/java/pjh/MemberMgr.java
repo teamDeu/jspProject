@@ -1,5 +1,6 @@
 package pjh;
 
+import java.net.http.HttpRequest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import net.nurigo.sdk.NurigoApp;
@@ -22,7 +29,9 @@ public class MemberMgr {
 
 	private DBConnectionMgr pool;
 	private DefaultMessageService messageService;
-
+	public static final String  SAVEFOLDER = "C:/Jsp/jspProject/jspProject/src/main/webapp/miniroom/img";
+	public static final String ENCTYPE = "UTF-8";
+	public static int MAXSIZE = 300*1024*1024;//50mb
 	public MemberMgr() {
 		pool = DBConnectionMgr.getInstance();
 		// 메시지 서비스 초기화
@@ -798,7 +807,7 @@ public class MemberMgr {
 	    }
 	    
 	    //프로필 업데이트 
-	    public boolean updateProfile(ProfileBean profile) throws Exception {
+	    public boolean updateProfile(MultipartRequest multi, String user_id, String profilePicturePath) throws Exception {
 	        Connection con = null;
 	        PreparedStatement pstmt = null;
 	        String sql = null;
@@ -806,16 +815,32 @@ public class MemberMgr {
 
 	        try {
 	            con = pool.getConnection();
-	            sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ?, profile_picture = ? WHERE user_id = ?";
-	            pstmt = con.prepareStatement(sql);
-	            pstmt.setString(1, profile.getProfile_name());
-	            pstmt.setString(2, profile.getProfile_email());
-	            pstmt.setString(3, profile.getProfile_birth());
-	            pstmt.setString(4, profile.getProfile_hobby());
-	            pstmt.setString(5, profile.getProfile_mbti());
-	            pstmt.setString(6, profile.getProfile_content());
-	            pstmt.setString(7, profile.getProfile_picture());
-	            pstmt.setString(8, profile.getUser_id());
+
+	            // 이미지 파일 경로가 존재하지 않는 경우
+	            if (profilePicturePath == null) {
+	                sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ? WHERE user_id = ?";
+	                pstmt = con.prepareStatement(sql);
+	                pstmt.setString(1, multi.getParameter("profile_name"));
+	                pstmt.setString(2, multi.getParameter("profile_email"));
+	                pstmt.setString(3, multi.getParameter("profile_birth"));
+	                pstmt.setString(4, multi.getParameter("profile_hobby"));
+	                pstmt.setString(5, multi.getParameter("profile_mbti"));
+	                pstmt.setString(6, multi.getParameter("profile_content"));
+	                pstmt.setString(7, user_id);
+	            } 
+	            // 이미지 파일 경로가 존재하는 경우
+	            else {
+	                sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ?, profile_picture = ? WHERE user_id = ?";
+	                pstmt = con.prepareStatement(sql);
+	                pstmt.setString(1, multi.getParameter("profile_name"));
+	                pstmt.setString(2, multi.getParameter("profile_email"));
+	                pstmt.setString(3, multi.getParameter("profile_birth"));
+	                pstmt.setString(4, multi.getParameter("profile_hobby"));
+	                pstmt.setString(5, multi.getParameter("profile_mbti"));
+	                pstmt.setString(6, multi.getParameter("profile_content"));
+	                pstmt.setString(7, profilePicturePath); // 이미지 경로
+	                pstmt.setString(8, user_id);
+	            }
 
 	            int result = pstmt.executeUpdate();
 	            if (result == 1) {
