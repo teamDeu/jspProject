@@ -1,3 +1,4 @@
+<%@page import="board.BoardWriteBean"%>
 <%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="board.BoardReAnswerBean"%>
 <%@page import="board.BoardAnswerBean"%>
@@ -9,6 +10,7 @@
 <jsp:useBean id="mgr" class="board.BoardAnswerMgr" />
 <jsp:useBean id="rMgr" class="board.BoardReAnswerMgr" />
 <jsp:useBean id="pMgr" class="guestbook.GuestbookprofileMgr"/>
+<jsp:useBean id="wmgr" class="board.BoardWriteMgr" />
 <head>
 <style>
 /* 댓글 항목 스타일 */
@@ -162,18 +164,18 @@
 
 .reuser-name {
 	font-weight: bold;
-	font-size: 18px;
+	font-size: 16px;
 	margin-right: 10px;
 }
 
 .reply-time {
-	font-size: 18px;
+	font-size: 16px;
 	color: black;
 	margin-left: 0px; /* 자동으로 오른쪽에 정렬 */
 }
 
 .reply-text {
-	font-size: 20px;
+	font-size: 19px;
 	color: black;
 	margin-top: 5px;
 	text-align: left;
@@ -185,8 +187,14 @@
 
 <%
 String boardNum = request.getParameter("board_num"); // 게시글 번호를 받음
+String answerNum = request.getParameter("answer_num");
+String userId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
+
 
 Vector<BoardAnswerBean> answers = null;
+
+//최신 게시글 불러오기
+BoardWriteBean latestBoard = wmgr.getLatestBoard();
 
 //게시글 번호가 유효한지 확인
 if (boardNum != null && !boardNum.isEmpty()) {
@@ -203,7 +211,7 @@ if (boardNum != null && !boardNum.isEmpty()) {
 
 
 <%
-if (answers != null && answers.size() > 0) {
+if (answers != null && answers.size() > 0 && latestBoard != null && userId != null && userId.equals(latestBoard.getBoard_id())) { // 게시글 작성자와 로그인 사용자 일치 여부 추가
 %>
 <%
 for (BoardAnswerBean answer : answers) {
@@ -233,9 +241,11 @@ for (BoardAnswerBean answer : answers) {
 
 				<!-- 삭제 버튼 -->
 				<div class="answer-time-container">
-					<button class="delete-btn"
-						onclick="bdeleteAnswer(<%=answer.getAnswerNum()%>)">삭제
-					</button>
+					<% if (userId != null && userId.equals(answer.getAnswerId())) { %>
+						<button class="delete-btn"
+							onclick="bdeleteAnswer(<%=answer.getAnswerNum()%>)">삭제
+						</button>
+					<% } %>
 				</div>
 			</div>
 
@@ -261,7 +271,9 @@ for (BoardAnswerBean answer : answers) {
 					<img class="reuser-image" src="../miniroom/<%=img%>">
 					<div class="reuser-name"><%=name %></div>
 					<div class="reply-time"><%=at %></div>
-					<button class="delete-btn2" onclick="bdeleteReAnswer(<%=reAnswerNum%>)">삭제</button>
+					<% if (userId != null && userId.equals(reAnswerBean.getReanswer_id())) { %>
+						<button class="delete-btn2" onclick="bdeleteReAnswer(<%=reAnswerNum%>)">삭제</button>
+					<% } %>
 				</div>
 				<div class="reply-text"><%=content %></div>
 				<!-- replyText에 해당하는 내용 -->
@@ -289,3 +301,7 @@ for (BoardAnswerBean answer : answers) {
 <%
 }
 %>
+
+
+
+

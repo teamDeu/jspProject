@@ -254,7 +254,7 @@ td a {
 <form class = "bListForm" action="../seyoung/bDelProc.jsp" method="post" onsubmit="return delbList();">
                     <h1 class="board-title">게시판</h1>
                     <div class="button-group">
-                        <button onclick = "delbList()" type="submit" class="delete-button2">삭제</button>
+                        <button onclick = "delbList()" type="button" class="delete-button2">삭제</button>
                          <button onclick ="clickOpenBox('boardWrite')" type="button" class="write-button">작성</button>
                         </a>
                     </div>
@@ -274,25 +274,7 @@ td a {
                             
                             
                             <tbody id="board-list-body">
-                            	<%-- <% 
-						        if (boardListAll != null && !boardListAll.isEmpty()) {
-						            for (BoardWriteBean board : boardListAll) { 
-						        %>
-						            <tr>
-						                <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
-						                <td><a href="boardDetail.jsp?board_num=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
-						                <td><%= board.getBoard_id() %></td>
-						                <td><%= board.getBoard_at() %></td>
-						                <td><%= board.getBoard_views() %></td>
-						            </tr>
-						        <% 
-						            }
-						        } else { 
-						        %>
-						        <tr>
-						            <td colspan="5">게시글이 없습니다.</td>
-						        </tr>
-						        <% } %> --%>
+                            	
                             </tbody>
                         </table>
                     </div>
@@ -316,9 +298,6 @@ td a {
             return false;
         }
         
-        // 버튼을 비활성화하여 중복 요청 방지
-        var deleteButton = document.querySelector('.delete-button2');
-        deleteButton.disabled = true; // 버튼 비활성화
 
         // 선택한 게시글의 번호를 수집
         var selectedIds = [];
@@ -334,12 +313,14 @@ td a {
         // 삭제할 게시글 번호를 서버로 전송
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
-            	console.log("응답 내용: " + xhr.responseText.trim());  // 응답 내용을 콘솔에 출력
                 var responseText = xhr.responseText.trim();  // 공백 제거 후 응답 확인
                 if (responseText === "success") {
-
-                    loadBoardList(currentFolderNum);
+                  
                     alert("게시글이 삭제되었습니다.");
+                    
+                 
+                 
+                    loadBoardList(currentFolderNum);
                 } else {
                 	alert("게시글 삭제에 실패했습니다.");
                 }

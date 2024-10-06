@@ -1,3 +1,4 @@
+<%@page import="board.BoardWriteBean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -7,9 +8,13 @@
 <title>CloverStory</title>
 <!-- Linking the CSS file -->
 <link rel="stylesheet" type="text/css" href="../seyoung/css/boardWrite.css">
+<jsp:useBean id="mgr" class="board.BoardWriteMgr"/>
 <%
 String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
+
+
+BoardWriteBean latestBoard = mgr.getLatestBoard();
 
 %>
 <style>
@@ -464,12 +469,15 @@ String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 �
 
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
+            	
+            	
   	
                 // 성공적으로 게시글 등록 후 목록 갱신
                 loadBoardList(formData.get('board_folder')); // 폴더 번호에 맞는 게시물 목록 로드
                 clickOpenBox('boardList'); // 게시판 목록으로 돌아가기
                 
-                loadLatestPost(); 
+                loadLatestPost();
+                
                 resetForm(); // 게시글 작성 후 폼 초기화
             }
         };
@@ -477,6 +485,7 @@ String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 �
         xhr.send(formData); // 폼 데이터 전송
     }
     
+   
     function resetForm() {
         document.querySelector(".bWriteAddForm").reset(); // 폼 초기화
         document.getElementById('image-preview-container').style.display = 'none'; // 이미지 미리보기 숨김
