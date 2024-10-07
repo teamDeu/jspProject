@@ -9,10 +9,12 @@
 <%
 String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
+String folderName = request.getParameter("folderName");
+System.out.println("boardList 폴더명 : " + folderName);
 
-BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
+BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 
-Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(UserId); // 사용자 ID에 맞는 게시글 목록 가져오기
+Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); // 사용자 ID에 맞는 게시글 목록 가져오기
 %>
 
 <!DOCTYPE html>
@@ -27,6 +29,18 @@ Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(UserId); // 사용�
     font-family: 'NanumTobak';
     src: url('../나눔손글씨 또박또박.TTF') format('truetype');
 }
+
+.board-recentpost {
+   color: black; 
+    text-align: center; 
+    font-size: 20px; 
+    font-weight: 300; 
+    position: absolute; 
+    top: 15px; 
+    left: 100px;
+	display: inline-block; 
+}
+
 .board-title {
     color: #80A46F; 
     text-align: center; 
@@ -252,8 +266,10 @@ td a {
 </style>
 </head>
 
-<form class = "bListForm" action="../seyoung/bDelProc.jsp" method="post" onsubmit="return delbList();">
-                    <h1 class="board-title">게시판</h1>
+<div class = "bListForm">
+                    <h1 class="board-title">게시판 </h1>
+                    <h2 class="board-recentpost" id="board-recentpost"></h2>
+
                     <div class="button-group">
                         <button onclick = "delbList()" type="button" class="delete-button2">삭제</button>
                          <button onclick ="clickOpenBox('boardWrite')" type="button" class="write-button">작성</button>
@@ -279,8 +295,11 @@ td a {
                             </tbody>
                         </table>
                     </div>
-                    </form>     
+                    </div>     
     <script>     
+    
+    var folderName = '<%= folderName %>';
+    //console.log("선택된 폴더 이름:", folderName);
     
     var currentFolderNum = 1;
 	// 체크박스 모두 선택/해제
@@ -290,7 +309,9 @@ td a {
             checkbox.checked = this.checked;
         }
     }
-
+	
+	
+	
     // 게시글 삭제 함수 (AJAX 사용)
     function delbList() {
         var checkboxes = document.querySelectorAll('input[name="boardNum"]:checked');
@@ -322,7 +343,7 @@ td a {
                  
                  
                     loadBoardList(selectedFolderItem.getAttribute("data-folder-num"));
-                    console.log(selectedFolderItem.getAttribute("data-folder-num"));
+                    //console.log(selectedFolderItem.getAttribute("data-folder-num"));
                     
                     loadLatestPost();
                     
@@ -336,9 +357,8 @@ td a {
         xhr.send("boardNums=" + encodeURIComponent(selectedIds.join(',')));
  
         return false; // 폼 제출 방지 (페이지 새로고침 방지)
-    }
     
-    
+        
     
 
     function loadBoardList(folderNum) {
@@ -352,6 +372,7 @@ td a {
         };
         xhr.send(); // 목록 로드 요청
     }
+    
     
 
     

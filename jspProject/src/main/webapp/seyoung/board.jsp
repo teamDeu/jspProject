@@ -6,10 +6,8 @@
 
 <%
 String cPath = request.getContextPath();
-
 String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
-
 //가장 최근 게시글 불러오기
 BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 %>
@@ -129,6 +127,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
     cursor: pointer;
     width: 14px;
     height: 14px;
+    
 }
 
 .bwrite-form {
@@ -442,7 +441,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 					<div class="board">
 					
 						<div class="bwrite-form" id="bwrite-form">
-							<jsp:include page="bLatestPost.jsp" />
 							
 						
 						
@@ -466,9 +464,10 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 			loadBoardListAll('<%=board_id%>');
 			clickOpenBox('boardList');
 		}
+		
 		function loadBoardListAll(userId){
 	    	var xhr = new XMLHttpRequest();
-	        xhr.open('GET', '../seyoung/getBoardListAll.jsp?userId=' + encodeURIComponent(userId), true);
+	        xhr.open('GET', '../seyoung/getBoardListAll.jsp?board_id=' + encodeURIComponent(board_id), true);
 	        xhr.onreadystatechange = function() {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
@@ -477,6 +476,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	        };
 	        xhr.send(); // 목록 로드 요청
 	    }
+		
 	    document.querySelectorAll('.folder-item').forEach(function(folderItem) {
 	        folderItem.addEventListener('click', function() {
 	            var folderId = this.getAttribute('data-folder-id'); // 폴더 ID를 가져옴
@@ -642,7 +642,26 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	 	// 최신 게시글이 로드된 후 댓글을 불러오는 함수 호출
 	    function loadLatestPost() {
 	        var xhr = new XMLHttpRequest();
-	        xhr.open("GET", "../seyoung/bLatestPost.jsp", true);
+	        xhr.open("GET", "../seyoung/bLatestPost.jsp?type=latest", true);
+
+	        xhr.onreadystatechange = function () {
+	            if (xhr.readyState === 4 && xhr.status === 200) {
+	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
+	                
+	                console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
+	     
+	                bloadAnswers(); // 댓글 로드
+	                
+	            }
+	        };
+
+	        xhr.send();
+	    }
+	 	
+	    //게시글이 로드된 후 댓글을 불러오는 함수 호출
+	    function loadPost(board_num) {
+	        var xhr = new XMLHttpRequest();
+	        xhr.open("GET", "../seyoung/bLatestPost.jsp?type=get&board_num="+board_num, true);
 
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {

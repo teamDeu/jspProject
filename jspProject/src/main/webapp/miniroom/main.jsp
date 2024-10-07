@@ -646,13 +646,19 @@ function clickAlarm(){
                 </jsp:include>
             </div> 
             <div id="board" class="inner-box-2" style="display: none">
-               <jsp:include page ="../seyoung/board.jsp"></jsp:include>
+               <jsp:include page ="../seyoung/board.jsp">
+               	<jsp:param value="<%= url %>" name="board_id"/>
+               </jsp:include>
             </div>
             <div id="boardList" class ="inner-box-2" style="display:none">
-               <jsp:include page ="../seyoung/boardList.jsp"></jsp:include>
+               <jsp:include page ="../seyoung/boardList.jsp">
+               <jsp:param value="<%= url %>" name="board_id"/>
+               </jsp:include>
             </div>
             <div id="boardWrite" class ="inner-box-2" style="display:none">
-               <jsp:include page ="../seyoung/boardWrite.jsp"></jsp:include>
+               <jsp:include page ="../seyoung/boardWrite.jsp">
+               <jsp:param value="<%= url %>" name="board_id"/>
+               </jsp:include>
             </div>
             <div id="music" class="inner-box-2" style="display: none">
                <jsp:include page="../yang/music1.jsp"></jsp:include>

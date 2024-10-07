@@ -75,6 +75,7 @@
 	border: none;
 	background: none;
 	font-size: 20px;
+	margin-left: -50px;
 	
 }
 
@@ -192,10 +193,14 @@ String answerNum = request.getParameter("answer_num");
 String userId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 String board_id = request.getParameter("board_id");
 
-Vector<BoardAnswerBean> answers = null;
 
 //최신 게시글 불러오기
 BoardWriteBean latestBoard = wmgr.getLatestBoard(userId);
+
+//댓글 허용 여부
+int answerType = latestBoard.getBoard_answertype();
+
+Vector<BoardAnswerBean> answers = null;
 
 //게시글 번호가 유효한지 확인
 if (boardNum != null && !boardNum.isEmpty()) {
@@ -211,98 +216,69 @@ if (boardNum != null && !boardNum.isEmpty()) {
 
 
 
-<%
-if (answers != null && answers.size() > 0 && latestBoard != null && userId != null && userId.equals(latestBoard.getBoard_id())) { // 게시글 작성자와 로그인 사용자 일치 여부 추가
-%>
-<%
-for (BoardAnswerBean answer : answers) {
-	Vector<BoardReAnswerBean> reanswerList = rMgr.getReAnswerList(answer.getAnswerNum());
-%>
-<div class="answer-item" data-answer-num="<%=answer.getAnswerNum()%>">
-	
-
-	<div class="answer-content-container">
-		<!-- 댓글 내용 -->
-		<div class="answer-content">
-			
-			<div class="answer-header">
-				<!-- 사용자 이미지 -->
-				<img src="<%=request.getContextPath()%>/seyoung/img/character2.png"
-					alt="사용자 이미지" class="user-image" />
-			
-				<!-- 사용자 이름 -->
-				<div class="user-name">
-					<%=answer.getAnswerId()%>
-				</div>
-
-				<!-- 댓글 시간 -->
-				<div class="answer-time">
-					<%=answer.getAnswerAt()%>
-				</div>
-
-				<!-- 삭제 버튼 -->
-				<div class="answer-time-container">
-					<% if (userId != null && userId.equals(answer.getAnswerId())) { %>
-						<button class="delete-btn"
-							onclick="bdeleteAnswer(<%=answer.getAnswerNum()%>)">삭제
-						</button>
-					<% } %>
-				</div>
-			</div>
-
-			<!-- 댓글 내용 텍스트 -->
-			<div class="answer-text">
-				<%=answer.getAnswerContent()%>
-			</div>
-		</div>
-		<%
-		for (BoardReAnswerBean reAnswerBean : reanswerList) {
-			
-			String content = reAnswerBean.getReanswer_content();
-			String at = reAnswerBean.getReanswer_at();
-			GuestbookprofileBean pBean = pMgr.getProfileByUserId(reAnswerBean.getReanswer_id());
-			String name = pBean.getProfileName();
-			String img = pBean.getProfilePicture();
-			int reAnswerNum = reAnswerBean.getReanswer_num();
-		%>
-		<div class="reply-item">
-			<img class="reply-icon" src="../seyoung/img/reanswer.png" alt="reply icon">
-			<div class="reply-content">
-				<div class="reply-header">
-					<img class="reuser-image" src="../miniroom/<%=img%>">
-					<div class="reuser-name"><%=name %></div>
-					<div class="reply-time"><%=at %></div>
-					<% if (userId != null && userId.equals(reAnswerBean.getReanswer_id())) { %>
-						<button class="delete-btn2" onclick="bdeleteReAnswer(<%=reAnswerNum%>)">삭제</button>
-					<% } %>
-				</div>
-				<div class="reply-text"><%=content %></div>
-				<!-- replyText에 해당하는 내용 -->
-			</div>
-		</div>
-		<%
-		}
-		%>
-		<!-- 답글 입력 폼 -->
-		<div class="reanswer-form">
-			<input type="text" class="reanswer-input" placeholder="답글을 입력하세요" />
-			<button class="reanswer-button"
-				onclick="baddReAnswer(<%=answer.getAnswerNum()%>, this.previousElementSibling.value)">
-				등록</button>
-		</div>
-	</div>
-</div>
-<%
-}
-%>
-<%
-} else {
-%>
-<div class="no-comments">댓글이 없습니다.</div>
-<%
-}
-%>
-
-
-
-
+<% 
+// 댓글 허용 여부 확인 후 처리
+if (answerType == 0) { %>
+    <div class="Prohibited">댓글 비허용 글입니다.</div>
+<% } else { 
+    // 댓글이 있을 경우 처리
+    if (answers != null && answers.size() > 0 && latestBoard != null && userId != null && userId.equals(latestBoard.getBoard_id())) { %>
+        <% for (BoardAnswerBean answer : answers) { 
+            Vector<BoardReAnswerBean> reanswerList = rMgr.getReAnswerList(answer.getAnswerNum());
+        %>
+        <div class="answer-item" data-answer-num="<%=answer.getAnswerNum()%>">
+            <div class="answer-content-container">
+                <!-- 댓글 내용 -->
+                <div class="answer-content">
+                    <div class="answer-header">
+                        <!-- 사용자 이미지 -->
+                        <img src="<%=request.getContextPath()%>/seyoung/img/character2.png" alt="사용자 이미지" class="user-image" />
+                        <!-- 사용자 이름 -->
+                        <div class="user-name"><%=answer.getAnswerId()%></div>
+                        <!-- 댓글 시간 -->
+                        <div class="answer-time"><%=answer.getAnswerAt()%></div>
+                        <!-- 삭제 버튼 -->
+                        <div class="answer-time-container">
+                            <% if (userId != null && userId.equals(answer.getAnswerId())) { %>
+                                <button class="delete-btn" onclick="bdeleteAnswer(<%=answer.getAnswerNum()%>)">삭제</button>
+                            <% } %>
+                        </div>
+                    </div>
+                    <!-- 댓글 내용 텍스트 -->
+                    <div class="answer-text"><%=answer.getAnswerContent()%></div>
+                </div>
+                <% for (BoardReAnswerBean reAnswerBean : reanswerList) { 
+                    String content = reAnswerBean.getReanswer_content();
+                    String at = reAnswerBean.getReanswer_at();
+                    GuestbookprofileBean pBean = pMgr.getProfileByUserId(reAnswerBean.getReanswer_id());
+                    String name = pBean.getProfileName();
+                    String img = pBean.getProfilePicture();
+                    int reAnswerNum = reAnswerBean.getReanswer_num();
+                %>
+                <div class="reply-item">
+                    <img class="reply-icon" src="../seyoung/img/reanswer.png" alt="reply icon">
+                    <div class="reply-content">
+                        <div class="reply-header">
+                            <img class="reuser-image" src="../miniroom/<%=img%>">
+                            <div class="reuser-name"><%=name %></div>
+                            <div class="reply-time"><%=at %></div>
+                            <% if (userId != null && userId.equals(reAnswerBean.getReanswer_id())) { %>
+                                <button class="delete-btn2" onclick="bdeleteReAnswer(<%=reAnswerNum%>)">삭제</button>
+                            <% } %>
+                        </div>
+                        <div class="reply-text"><%=content %></div>
+                    </div>
+                </div>
+                <% } %>
+                <!-- 답글 입력 폼 -->
+                <div class="reanswer-form">
+                    <input type="text" class="reanswer-input" placeholder="답글을 입력하세요" />
+                    <button class="reanswer-button" onclick="baddReAnswer(<%=answer.getAnswerNum()%>, this.previousElementSibling.value)">등록</button>
+                </div>
+            </div>
+        </div>
+        <% } %>
+    <% } else { %>
+        <div class="no-comments">댓글이 없습니다.</div>
+    <% } 
+} %>

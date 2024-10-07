@@ -1,3 +1,4 @@
+<%@page import="miniroom.UtilMgr"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="board.BoardWriteBean" %>
@@ -9,19 +10,27 @@
 	//현재 로그인한 사용자 ID 가져오기
 	String userId = (String) session.getAttribute("idKey");
     String board_id = request.getParameter("board_id");
+	String type = request.getParameter("type");
+	
+	BoardWriteBean latestBoard = null;
+	if(type.equals("latest")){
+		latestBoard = mgr.getLatestBoard(board_id);
+	}
+	else if(type.equals("get")){
+		int board_num = UtilMgr.parseInt(request, "board_num");
+		latestBoard = mgr.getBoard(board_num);
+	}
+    
 
-    // 최신 게시글 불러오기
-    BoardWriteBean latestBoard = mgr.getLatestBoard(userId);
 %>
-
-<%if (latestBoard != null && userId != null && userId.equals(latestBoard.getBoard_id())) { %>
+<% if (latestBoard != null && board_id != null && board_id.equals(latestBoard.getBoard_id())) { %>
     <!-- 제목과 작성일을 상단에 배치하고 삭제 버튼 추가 -->
     <div class="bwrite-header" style="display: flex; align-items: center; width: 100%;">
         <h3 ><%= latestBoard.getBoard_title() %></h3>
         <div style="flex-grow: 1; border-bottom: 1px dotted #BAB9AA; margin: 0 10px;"></div>
         <div>
             <span><%= latestBoard.getBoard_at().substring(0, 10) %></span>
-            <% if (userId != null && userId.equals(latestBoard.getBoard_id())) { %>
+            <% if (board_id != null && board_id.equals(latestBoard.getBoard_id())) { %>
                 <button class="latestDel-btn" onclick="bdellatestPost(<%= latestBoard.getBoard_num() %>)">삭제</button>
             <% } %>
         </div>

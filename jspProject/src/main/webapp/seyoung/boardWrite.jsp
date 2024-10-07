@@ -12,7 +12,7 @@
 <%
 String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
-
+String folderName = request.getParameter("folderName"); // 폴더 이름 받기
 
 BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
 
@@ -28,6 +28,17 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
     top: 0px; 
     left: 30px; 
     display: inline-block;
+}
+
+.board-recentpost {
+   color: black; 
+    text-align: center; 
+    font-size: 20px; 
+    font-weight: 300; 
+    position: absolute; 
+    top: 15px; 
+    left: 100px;
+	display: inline-block; 
 }
 
 
@@ -391,6 +402,8 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
 
 
 <script>
+	var folderName = '<%= folderName %>';
+
     let currentSelected = null;
 
     // 파일 선택 창 열기 및 파일 선택 시 이미지 삽입
@@ -501,6 +514,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
 				<!-- 게시글 작성 폼 -->
                 <form class = "bWriteAddForm"  method="post" enctype="multipart/form-data" target="blankifr" >
                     <h1 class="board-title">게시판</h1>
+                    <h2 class="board-recentpost"> <% if (folderName != null && !folderName.isEmpty()) { %>| <%= folderName %><% } %></h2>
                     <button type="button" class="list-button" onclick="clickOpenBox('boardList')">목록</button>
 					
 					<input type="hidden" name="board_id" value="<%= UserId %>">
