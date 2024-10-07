@@ -151,6 +151,49 @@ public class BoardWriteMgr {
         }
         return boardList;
     }
+    
+    // 특정 폴더에 해당하는 게시글 목록을 가져오는 메서드 (친구 관계에 따른 필터링 포함)
+    public Vector<BoardWriteBean> getBoardList2(int boardFolder, String userId) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Vector<BoardWriteBean> boardList = new Vector<>();
+        
+        try {
+            con = pool.getConnection();
+            // 친구 관계에 따라 게시글을 필터링하는 SQL
+            String sql = "SELECT b.* FROM board b " +
+                    "LEFT JOIN friendinfo f ON (b.board_id = f.user_id1 AND f.user_id2 = ?) " +
+                    "WHERE b.board_folder = ? " +
+                    "AND (b.board_visibility = 1 OR (b.board_visibility = 0 AND f.friend_type = 1))";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, userId); // 현재 로그인한 사용자
+            pstmt.setInt(2, boardFolder);
+            
+            rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                BoardWriteBean board = new BoardWriteBean();
+                board.setBoard_num(rs.getInt("board_num"));
+                board.setBoard_visibility(rs.getInt("board_visibility"));
+                board.setBoard_answertype(rs.getInt("board_answertype"));
+                board.setBoard_folder(rs.getInt("board_folder"));
+                board.setBoard_id(rs.getString("board_id"));
+                board.setBoard_title(rs.getString("board_title"));
+                board.setBoard_content(rs.getString("board_content"));
+                board.setBoard_at(rs.getTimestamp("board_at").toString());
+                board.setBoard_image(rs.getString("board_image"));
+                board.setBoard_views(rs.getInt("board_views"));
+                boardList.add(board);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return boardList;
+    }
+
 	
     
     

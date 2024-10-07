@@ -1,3 +1,4 @@
+<%@page import="miniroom.UtilMgr"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="board.BoardWriteBean" %>
@@ -9,9 +10,17 @@
 	//현재 로그인한 사용자 ID 가져오기
 	String userId = (String) session.getAttribute("idKey");
     String board_id = request.getParameter("board_id");
-
-   
-    BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
+	String type = request.getParameter("type");
+	
+	BoardWriteBean latestBoard = null;
+	if(type.equals("latest")){
+		latestBoard = mgr.getLatestBoard(board_id);
+	}
+	else if(type.equals("get")){
+		int board_num = UtilMgr.parseInt(request, "board_num");
+		latestBoard = mgr.getBoard(board_num);
+	}
+    
 
 %>
 <% if (latestBoard != null && board_id != null && board_id.equals(latestBoard.getBoard_id())) { %>

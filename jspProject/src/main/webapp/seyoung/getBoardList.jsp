@@ -1,13 +1,22 @@
+
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.sql.Timestamp"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="board.BoardWriteMgr"%>
 <%@ page import="board.BoardWriteBean"%>
 <%@ page import="java.util.Vector"%>
-
+<head>
+<script>
+	function clickBoard_boardNum(board_num){
+		console.log(board_num);
+	}
+</script>
+</head>
 <%
     
-
+    String folderName = request.getParameter("folderName"); // 폴더 이름 받기
+    System.out.println("getBoardList 폴더 이름: " + folderName);
+    
     int folderNum = 0;
     try {
         folderNum = Integer.parseInt(request.getParameter("folderNum"));
@@ -30,10 +39,12 @@
                     formattedDate = board.getBoard_at();
                 }
 %>
+
                 <tr>
+                
                     <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
                     <td>
-                        <a href=".jsp?board_num=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a>
+                        <button onclick="clickBoard_boardNum('<%= board.getBoard_num() %>')"><%= board.getBoard_title() %></button>
                     </td>
                     <td><%= board.getBoard_id() %></td>
                     <td><%= formattedDate %></td>

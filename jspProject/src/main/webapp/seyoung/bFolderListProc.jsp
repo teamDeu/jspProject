@@ -8,7 +8,7 @@
     // 클라이언트에서 전달된 user_id 파라미터를 가져옴
     String user_id = request.getParameter("user_id");
 	String board_id = request.getParameter("board_id");
-	System.out.println("board_id = " + board_id);
+
     try {
         // user_id가 null이 아니고 비어있지 않을 때만 처리
         if (board_id != null && !board_id.trim().isEmpty()) {
