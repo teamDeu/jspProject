@@ -46,6 +46,15 @@
 		display:flex;
 		justify-content:space-between;
 		align-items:center;
+		border-bottom : 2px solid #BAB9AA;
+		margin-bottom : 15px;
+		padding-bottom : 15px;
+	}
+	.miniroom_design_title{
+	    color: #80A46F;
+    text-align: center;
+    font-size: 36px;
+    font-weight: 600;
 	}
 	.miniroom_design_main{
 		position:relative;
@@ -146,18 +155,20 @@
 		object-fit : cover;
 	}
 	.miniroom_saveBtn{
-		position:relative;
-		border : none;	
-		border-radius:10px;
-		width:87px;
-		height:45px;
-		top:5px;
+		position: relative;
+	    border: none;
+	    font-size: 20px;
+	    border-radius: 10px;
+	    padding: 5px 10px;
+	    cursor: pointer;
+}
 	}
 	.miniroom_saveBtn:hover{
 		background-color : #9B9B9B;
 	}
-	.miniroom_design_title{
+	.miniroom_design_semi_title{
 		font-size:24px;
+		font-color :#80A46F;
 	}
 </style>
 <script>
@@ -203,10 +214,9 @@
 	<div id ="miniroom_design">
 		<div class ="miniroom_design_header">
 		<div class ="miniroom_header_section">
-		<font class = "miniroom_design_title" size = "18" color ="#80A46F">내 미니룸</font>
+		<font class = "miniroom_design_title">내 미니룸</font>
 		<button onclick = "clickSaveBtn()" class="miniroom_saveBtn">저장</button>
 		</div>
-			<hr color = "#BAB9AA" width = "100%">
 		</div>
 		<div class ="miniroom_design_main">
 			<img class ="miniroom_design_main_img" src ="<%=usingBackground.getItem_path()%>">
@@ -214,7 +224,7 @@
 			
 		</div>
 		<section class ="miniroom_design_character_section">
-			<font class = "miniroom_design_title" size ="18" color ="#0C6FC0">내 캐릭터</font>
+			<font class = "miniroom_design_semi_title">내 캐릭터</font>
 			<hr color = "#BAB9AA" width = "100%"/>
 			<div class ="miniroom_design_character_div">
 				<button onclick ="clickPrevIndex('character')"class ="index_button index_button_left"><img class ="index_button_img" src ="./img/Left.png"></button>
@@ -222,7 +232,7 @@
 			</div>
 		</section>
 		<section class ="miniroom_design_background_section">
-			<font class = "miniroom_design_title" size ="18" color ="#0C6FC0">내 배경화면</font>
+			<font class = "miniroom_design_semi_title">내 배경화면</font>
 			<hr color = "#BAB9AA" width = "100%">
 			<div class ="miniroom_design_background_div">
 				<button onclick ="clickPrevIndex('background')"class ="index_button index_button_left"><img class ="index_button_img" src ="./img/Left.png"></button>
