@@ -40,11 +40,12 @@ public class ReportMgr {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "insert report values(null,?,?,now(),?,0)";
+			sql = "insert report values(null,?,?,now(),?,0,?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1,bean.getReport_senduserid());
 			pstmt.setString(2, bean.getReport_receiveuserid());
 			pstmt.setString(3, bean.getReport_type());
+			pstmt.setInt(4, bean.getReport_contentnum());
 			if(pstmt.executeUpdate() == 1) flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -86,6 +87,7 @@ public class ReportMgr {
 	            	bean.setReport_at(rs.getString(4));
 	            	bean.setReport_type(rs.getString(5));
 	            	bean.setReport_complete(rs.getBoolean(6));
+	            	bean.setReport_contentnum(rs.getInt(7));
 	            	reportList.add(bean);
 	            }
 	        } catch (Exception e) {
