@@ -16,6 +16,7 @@ import java.util.Random;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
@@ -508,8 +509,8 @@ public class MemberMgr {
 
 	        return totalCount;  // 총 상품 수 반환
 	    }
-	 // 페이지 소유자별 방문자 수 업데이트
-	    public void updateVisitorCount(String pageOwnerId, String visitorId) {
+	 // 페이지 소유자별 방문자 수 업데이트 (유니크 방문자)
+	    public void updateVisitorCount(String pageOwnerId, String visitorId, HttpServletResponse response) {
 	        Connection con = null;
 	        PreparedStatement pstmt = null;
 	        ResultSet rs = null;
@@ -520,26 +521,24 @@ public class MemberMgr {
 	            con = pool.getConnection();
 
 	            // 오늘의 방문자 수를 조회
-	            sql = "SELECT * FROM visitCount WHERE visit_date = now() AND page_owner_id = ? AND visitor_id = ?";
-	            pstmt = con.prepareStatement(sql);	         
+	            sql = "SELECT * FROM visitCount WHERE visit_date = CURDATE() AND page_owner_id = ? AND visitor_id = ?";
+	            pstmt = con.prepareStatement(sql);
 	            pstmt.setString(1, pageOwnerId);
 	            pstmt.setString(2, visitorId);
 	            rs = pstmt.executeQuery();
 
-	            if (rs.next()) {
-	                // 이미 방문한 경우 visit_count 증가
-	                sql = "UPDATE visitCount SET visit_count = visit_count + 1 WHERE visit_date = now() AND page_owner_id = ? AND visitor_id = ?";
+	            if (!rs.next()) {
+	                // 방문 기록이 없으면 레코드 삽입
+	                sql = "INSERT INTO visitCount (visit_date, visit_count, page_owner_id, visitor_id) VALUES (CURDATE(), 1, ?, ?)";
 	                pstmt = con.prepareStatement(sql);
 	                pstmt.setString(1, pageOwnerId);
 	                pstmt.setString(2, visitorId);
 	                pstmt.executeUpdate();
-	            } else {
-	                // 첫 방문이면 레코드 삽입
-	                sql = "INSERT INTO visitCount (visit_date, visit_count, page_owner_id, visitor_id) VALUES (now(), 1, ?, ?)";
-	                pstmt = con.prepareStatement(sql);
-	                pstmt.setString(1, pageOwnerId);
-	                pstmt.setString(2, visitorId);
-	                pstmt.executeUpdate();
+
+	                // 방문 기록이 성공하면 유니크 방문자 쿠키 설정 (하루 동안 유지)
+	                javax.servlet.http.Cookie uniqueVisitorCookie = new javax.servlet.http.Cookie("uniqueVisitor_" + pageOwnerId, "visited");
+	                uniqueVisitorCookie.setMaxAge(60 * 60 * 24);  // 쿠키 유효기간 하루
+	                response.addCookie(uniqueVisitorCookie);  // response 객체를 통해 쿠키를 클라이언트에 추가
 	            }
 	        } catch (Exception e) {
 	            e.printStackTrace();
@@ -547,6 +546,8 @@ public class MemberMgr {
 	            pool.freeConnection(con, pstmt, rs);
 	        }
 	    }
+
+
 
 	    // 페이지 소유자별 오늘의 방문자 수 조회
 	    public int getTodayVisitorCount(String pageOwnerId) {
@@ -889,7 +890,7 @@ public class MemberMgr {
 	        return profile;
 	    }
 
-
+	    
 
 	}
 	

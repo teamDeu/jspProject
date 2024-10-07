@@ -31,21 +31,23 @@
         }
 
         .profile-container-custom {
-            background-color: white;
+            background-color: #F7F7F7;
             padding: 20px;
             border-radius: 20px;
             width: 850px;
-            height: 95%;
+            height: 75%;
+            border-radius: 30px;
         }
 
         .profile-header-custom {
-            font-size: 36px;
-            font-weight: 600;
-            color: #80A46F;
-            margin-bottom: 20px;
-            text-align: left;
-            font-family: 'NanumTobak';
-        }
+           color: #80A46F;
+		   text-align: center;
+		   font-size: 36px;
+		   font-weight: 600;
+		   position: absolute;
+		   top: 20px;
+		   left: 30px;
+		}
 
         .profile-details-custom {
             display: flex;
