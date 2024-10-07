@@ -112,6 +112,8 @@
 	function closeUserSearch(){
 		document.getElementById("user_search_modal").style.display = "none";
 	}
+	
+	const user_search_input_section_input = document.querySelector(".user_search_input_section_input");
 </script>
 </head>
 

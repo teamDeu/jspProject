@@ -405,7 +405,6 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	}
 	
 	function userSearchClick(){
-		console.log("클릭됨");
 		document.getElementById("user_search_modal").style.display = "flex";
 	}
 	document.addEventListener('DOMContentLoaded', function () {
@@ -414,6 +413,16 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 		friend_items = friend_items_first;
 		friend_displayItems();
 	})
+	
+	const main_profile_friends_search_text = document.querySelector(".main_profile_friends_search_text");
+	main_profile_friends_search_text.addEventListener('keypress', function(key){
+
+		// key.key 의 값이 Enter 일 경우 코드 실행
+	        // key.keyCode == 13 도 동일한 기능을 한다.
+	        if(key.key == 'Enter'){
+	        	friendSearchClick();
+	            }
+	        })
 	</script>
 	<form name ="friend_delete_form" action = "./friendRequestProc.jsp" target ="blankifr">
 		<input type = "hidden" name = "request_senduserid" value = "">
