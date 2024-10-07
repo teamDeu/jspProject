@@ -94,8 +94,9 @@
 	}
     .content-input {
 	    margin-left: 20px;
+	    margin-top:10px;
 	    padding: 5px;
-	    font-size: 14px;
+	    font-size: 17px;
 	    border-radius: 5px;
 	    border: 1px solid #ccc;
 	    width:300px;
@@ -111,11 +112,52 @@
 	    transform: scale(1.2);
 	    margin-right: 2px; 
 	}
+	
+    /* 드롭다운 스타일 수정 */
+    select.content-input {
+        font-size: 17px;
+	    border-radius: 5px;
+	    border: 1px solid #ccc;
+	    background-color: #fff;
+	    width: 315px;
+	    position: absolute;
+	    left: 52px;
+	    height: 32px;
+	    text-align: left;
+	    line-height:32px;
+    }
+
+    .content-item {
+        position: relative;
+
+    }
+    
+    /*카테고리 리스트*/
+    .category-item {
+	    position: relative; /* 삭제 버튼의 위치 설정을 위한 상대 위치 */
+	    padding: 7px;
+	    border-bottom: 1px dashed #ccc;
+	    font-size: 19px;
+	    justify-content: space-between; 
+	    margin-bottom: 5px; 
+	    margin-top: 5px;
+	    margin-left: 10px;
+	    width: 80%;
+    }
+	.category-item:hover {
+	    background-color: #f0f0f0; /* 마우스를 올렸을 때 배경색 변경 */
+	    cursor: pointer; /* 마우스를 올렸을 때 커서 모양 변경 */
+	}
+    .category-item-number {
+        margin-right: 0px; /* 번호와 내용 사이 간격 */
+    }
+    
     
 </style>
 </head>
 <body>
-<form id="category-form">
+<form id="category-form" action="../eunhyo/categoryAdd.jsp" method="POST" onsubmit="event.preventDefault();">
+
     <!-- 현재 카테고리 -->
     <div class="category-current">
         <div class="category-label">현재 카테고리</div>
@@ -126,40 +168,59 @@
     <div class="category-section">
         <!-- 카테고리 추가 -->
         <div class="category-add category-box">
-            <div class="category-label">카테고리 추가</div>
-            <div class="category-box-content">
-                <div class="content-item">카테고리</div>
-                <div class="content-item">카테고리명
-                	<input type="text" class="content-input">
-                </div>
-                <div class="content-item">공개설정
-                	<div class="checkbox-group">
-				        <label><input type="checkbox"> 전체</label>
-				        <label><input type="checkbox"> 일촌</label>
-				    </div>
-                </div>
-            </div>
-            <button type="button" class="category-button">추가</button>
-        </div>
+		    <div class="category-label">카테고리 추가</div>
+		    <div class="category-box-content">
+		        <div class="content-item">카테고리
+		            <!-- 카테고리 선택 드롭다운 -->
+		            <select name="categoryType" class="content-input">
+					    <option value="" disabled selected>카테고리를 선택해주세요.</option> <!-- 안내 문구 추가 -->
+					    <option value="홈">홈</option>
+					    <option value="프로필">프로필</option>
+					    <option value="미니룸">미니룸</option>
+					    <option value="게시판">게시판</option>
+					    <option value="방명록">방명록</option>
+					    <option value="상점">상점</option>
+					    <option value="게임">게임</option>
+					    <option value="음악">음악</option>
+					</select>
+
+
+		        </div>
+		        <div class="content-item">카테고리명
+		            <input type="text" name="categoryName" class="content-input">
+		        </div>
+		        <div class="content-item">공개설정
+		            <!-- 공개설정 체크박스 -->
+					<div class="checkbox-group">
+					    <label><input type="checkbox" name="categorySecret" value="0" onclick="toggleCheckbox(this)"> 전체</label>
+					    <label><input type="checkbox" name="categorySecret" value="1" onclick="toggleCheckbox(this)"> 일촌</label>
+					</div>
+		        </div>
+		    </div>
+		    <button type="button" class="category-button" onclick="addCategory()">추가</button>
+
+		</div>
 
         <!-- 카테고리 수정 -->
         <div class="category-edit category-box">
             <div class="category-label">카테고리 수정</div>
-            <div class="category-box-content">
-                <div class="content-item">카테고리명
-                	<input type="text" class="content-input">
-                </div>
-                <div class="content-item">공개설정
-                	<div class="checkbox-group">
-				        <label><input type="checkbox"> 전체</label>
-				        <label><input type="checkbox"> 일촌</label>
-				    </div>
-                </div>
+			<div class="category-box-content">
+			    <div class="content-item">카테고리명
+			        <input type="text" id="edit-category-name" class="content-input">
+			    </div>
+			    <div class="content-item">공개설정
+			        <div class="checkbox-group">
+			            <label><input type="checkbox" id="public-check" name="categorySecret" value="0" onclick="toggleCheckbox(this)"> 전체</label>
+			            <label><input type="checkbox" id="private-check" name="categorySecret" value="1" onclick="toggleCheckbox(this)"> 일촌</label>
+			        </div>
+			    </div>
+			</div>
 
-            </div>
-            <button type="button" class="category-button">저장</button>
+            <button type="button" class="category-button" onclick="updateCategory()">저장</button>
+
         </div>
     </div>
 </form>
+
 </body>
 </html>

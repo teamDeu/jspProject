@@ -38,6 +38,7 @@
     .active-btn {
         background-color: #e3e3e3;
     } 
+    
 </style>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -57,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function() {
         setActiveButton(categoryBtn, mypageBtn);
         loadContent("../eunhyo/loadCategory.jsp");
     });
+    //loadCategoryList(); //카테고리 리스트 로드
 });
 
 // 활성화 버튼 설정 함수
@@ -65,17 +67,24 @@ function setActiveButton(activeBtn, inactiveBtn) {
     inactiveBtn.classList.remove("active-btn");
 }
 
+
 // custom-box에 페이지 내용을 로드하는 함수
 function loadContent(url) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             document.getElementById("custom-box").innerHTML = xhr.responseText;
+
+            // loadCategory.jsp를 로드했을 때만 카테고리 리스트 로드
+            if (url.includes("loadCategory.jsp")) {
+                loadCategoryList();
+            }
         }
     };
     xhr.open("GET", url, true);
     xhr.send();
 }
+
 function enableEditing() {
     // userIdDisplay를 제외한 모든 input 필드를 활성화
     var inputs = document.querySelectorAll("#mypage-form input:not([name='userIdDisplay'])");
@@ -119,6 +128,309 @@ function disableEditing() {
     document.getElementById("edit-btn").style.display = "inline-block";
     document.getElementById("save-btn").style.display = "none";
 }
+
+function addCategory() {
+    // 폼 데이터 가져오기
+    var formData = new FormData(document.getElementById('category-form'));
+
+    // Debugging: formData 내용 확인
+    console.log("FormData - categoryType:", formData.get("categoryType"));
+    console.log("FormData - categoryName:", formData.get("categoryName"));
+
+    var categoryType = formData.get("categoryType");
+    var categoryName = formData.get("categoryName");
+
+    // 카테고리 선택이 되었는지 확인
+    if (!categoryType) {
+        alert("카테고리를 선택해주세요.");
+        return; // 함수 종료
+    }
+
+    // 카테고리 명이 입력되었는지 확인
+    if (!categoryName || categoryName.trim() === "") {
+        alert("카테고리명을 입력해주세요.");
+        return; // 함수 종료
+    }
+
+    var checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
+    var isChecked = false;
+
+    // 체크박스가 하나라도 선택되었는지 확인
+    checkboxes.forEach(function(checkbox) {
+        if (checkbox.checked) {
+            isChecked = true;
+        }
+    });
+
+    // 공개 설정이 선택되지 않았다면 경고창을 띄움
+    if (!isChecked) {
+        alert("공개설정을 선택해주세요.");
+        return; // 함수 종료
+    }
+
+    // AJAX 요청 생성
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // 서버 응답에 따라 알림창 띄우기
+            if (xhr.responseText.trim() === "success") {
+                alert("카테고리가 성공적으로 추가되었습니다.");
+
+                // 카테고리 항목 생성
+                var categoryItem = document.createElement('div');
+                categoryItem.classList.add('category-item');
+
+                // 카테고리 번호
+                var number = document.createElement('span');
+                number.classList.add('category-item-number');
+                var categoryListDiv = document.querySelector(".category-list");
+                number.innerText = (categoryListDiv.children.length + 1) + " . ";
+
+                // 카테고리 내용
+                var content = document.createElement('span');
+                content.innerText = categoryType + ": " + categoryName;
+
+                // 기존 deleteButton 생성 코드를 찾아 수정
+                var deleteButton = document.createElement('img');
+                deleteButton.src = "../eunhyo/img/bin.png"; // 이미지 경로 설정
+                deleteButton.alt = "삭제";
+                deleteButton.classList.add('delete-button');
+                deleteButton.style.cursor = "pointer";
+                deleteButton.style.width = "12px"; // 원하는 크기로 조정
+                deleteButton.style.height = "15px"; // 원하는 크기로 조정
+
+                // 버튼을 오른쪽에 배치하기 위해 스타일 설정
+                deleteButton.style.position = "absolute"; // 절대 위치로 설정
+                deleteButton.style.right = "0px"; 
+                deleteButton.style.top = "50%"; // 수직 가운데 정렬을 위해 설정
+                deleteButton.style.transform = "translateY(-50%)"; // 수직 가운데 정렬을 위한 변환
+
+                // deleteButton.onclick 함수에서 categoryType, categoryName 직접 참조
+                deleteButton.onclick = (function(type, name, item) {
+                    return function() {
+                        deleteCategory(type, name, item);
+                    };
+                })(categoryType, categoryName, categoryItem);
+
+                // 항목에 번호, 내용, 삭제 버튼 추가
+                categoryItem.appendChild(number);
+                categoryItem.appendChild(content);
+                categoryItem.appendChild(deleteButton);
+
+                // 리스트의 맨 아래에 항목 추가
+                categoryListDiv.appendChild(categoryItem);
+
+                // 리스트 스크롤을 맨 아래로 이동
+                categoryListDiv.scrollTop = categoryListDiv.scrollHeight;
+            } else {
+                alert("카테고리가 이미 존재합니다.");
+            }
+        }
+    };
+
+    // POST 요청으로 categoryAdd.jsp에 데이터 전송
+    xhr.open("POST", "../eunhyo/categoryAdd.jsp", true);
+    xhr.send(new URLSearchParams(formData));
+}
+
+
+
+//카테고리 리스트를 로드하는 함수
+function loadCategoryList() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var categoryListDiv = document.querySelector(".category-list");
+            categoryListDiv.innerHTML = ''; // 기존 리스트 비우기
+
+            var categories = JSON.parse(xhr.responseText);
+
+            categories.forEach(function(category, index) {
+                // 카테고리 항목 생성
+                var categoryItem = document.createElement('div');
+                categoryItem.classList.add('category-item');
+
+                // 카테고리 타입 속성 추가
+                categoryItem.setAttribute('data-category-type', category.type);
+
+                // 카테고리 번호
+                var number = document.createElement('span');
+                number.classList.add('category-item-number');
+                number.innerText = (index + 1) + " . ";
+
+                // 카테고리 내용
+                var content = document.createElement('span');
+                content.innerText = category.type + " : " + category.name;
+
+                // deleteButton 생성 및 스타일 설정
+                var deleteButton = document.createElement('img');
+                deleteButton.src = "../eunhyo/img/bin.png"; // 이미지 경로 설정
+                deleteButton.alt = "삭제";
+                deleteButton.classList.add('delete-button');
+                deleteButton.style.cursor = "pointer";
+                deleteButton.style.width = "12px"; // 원하는 크기로 조정
+                deleteButton.style.height = "15px"; // 원하는 크기로 조정
+
+                // 버튼을 오른쪽에 배치하기 위해 스타일 설정
+                deleteButton.style.position = "absolute"; // 절대 위치로 설정
+                deleteButton.style.right = "0px"; 
+                deleteButton.style.top = "50%"; // 수직 가운데 정렬을 위해 설정
+                deleteButton.style.transform = "translateY(-50%)"; // 수직 가운데 정렬을 위한 변환
+
+                // deleteButton.onclick 함수에서 category.type, category.name 직접 참조
+                deleteButton.onclick = (function(type, name, item) {
+                    return function() {
+                        deleteCategory(type, name, item);
+                    };
+                })(category.type, category.name, categoryItem);
+
+                // 항목 클릭 시 수정 섹션에 값 반영하는 이벤트 리스너 추가
+                categoryItem.addEventListener('click', function() {
+			    // 이전 선택 해제
+			    document.querySelectorAll('.category-item').forEach(function(item) {
+			        item.classList.remove('selected');
+			    });
+			
+			    // 현재 선택된 카테고리에 'selected' 클래스 추가
+			    categoryItem.classList.add('selected');
+			
+			    // 카테고리 수정 영역의 input과 체크박스에 값을 반영
+			    document.querySelector('.category-edit .content-input').value = category.name;
+			
+			    // 공개 설정 체크박스 값을 반영
+			    if (category.secret === 0) {
+			        document.querySelector('.category-edit input[name="categorySecret"][value="0"]').checked = true;
+			        document.querySelector('.category-edit input[name="categorySecret"][value="1"]').checked = false;
+			    } else if (category.secret === 1) {
+			        document.querySelector('.category-edit input[name="categorySecret"][value="0"]').checked = false;
+			        document.querySelector('.category-edit input[name="categorySecret"][value="1"]').checked = true;
+			    }
+			});
+
+
+                // 항목에 번호, 내용, 삭제 버튼 추가
+                categoryItem.appendChild(number);
+                categoryItem.appendChild(content);
+                categoryItem.appendChild(deleteButton);
+
+                // 리스트에 항목 추가
+                categoryListDiv.appendChild(categoryItem);
+            });
+        }
+    };
+    xhr.open("GET", "../eunhyo/categoryList.jsp", true);
+    xhr.send();
+}
+
+
+
+function deleteCategory(categoryType, categoryName, categoryItem) {
+    // 확인창을 띄워서 사용자가 삭제를 확인하도록 함
+    if (confirm("삭제하시겠습니까?")) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200 && xhr.responseText.trim() === "success") {
+                    // 삭제 성공 시 알림창을 띄우고 항목을 제거
+                    alert("카테고리가 삭제되었습니다.");
+                    categoryItem.remove();
+
+                    // 번호 재할당
+                    updateCategoryNumbers();
+                } else {
+                    // 삭제 실패 시 알림창을 띄움
+                    alert("카테고리 삭제에 실패했습니다. 다시 시도해주세요.");
+                    console.error("Failed to delete category. Response:", xhr.responseText);
+                }
+            }
+        };
+
+        // 삭제 요청을 서버로 전송
+        xhr.open("POST", "../eunhyo/deleteCategory.jsp", true);
+        // Content-Type 설정
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        xhr.send("categoryType=" + encodeURIComponent(categoryType) + "&categoryName=" + encodeURIComponent(categoryName));
+    }
+}
+
+//카테고리 번호 재할당 함수
+function updateCategoryNumbers() {
+    var categoryListDiv = document.querySelector(".category-list");
+    var categoryItems = categoryListDiv.querySelectorAll('.category-item');
+
+    // 각 카테고리 항목의 번호 업데이트
+    categoryItems.forEach(function(item, index) {
+        var number = item.querySelector('.category-item-number');
+        number.innerText = (index + 1) + " . ";
+    });
+}
+
+function updateCategory() {
+    // 선택된 카테고리 요소 가져오기
+    var selectedCategory = document.querySelector('.category-item.selected');
+    if (!selectedCategory) {
+        console.error("선택된 카테고리를 찾을 수 없습니다.");
+        return; // 선택된 카테고리가 없으면 중단
+    }
+
+    // 폼 데이터 가져오기
+    var categoryName = document.querySelector('.category-edit .content-input').value.trim();
+    var categoryType = selectedCategory.getAttribute('data-category-type'); // 선택된 카테고리의 타입 가져오기
+    var categorySecret = document.querySelector('.category-edit input[name="categorySecret"]:checked')?.value;
+
+    // 유효성 검사: 모든 필드가 제대로 입력되어 있는지 확인
+    if (!categoryName) {
+        alert("카테고리명을 입력해주세요.");
+        return;
+    }
+
+    if (!categorySecret) {
+        alert("공개설정을 선택해주세요.");
+        return;
+    }
+
+    // 폼 데이터 생성
+    var formData = new FormData();
+    formData.append("categoryName", categoryName);
+    formData.append("categoryType", categoryType);
+    formData.append("categorySecret", categorySecret);
+
+    // AJAX 요청 생성
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            if (xhr.responseText.trim() === "success") {
+                alert("카테고리가 성공적으로 업데이트되었습니다.");
+                loadCategoryList(); // 업데이트 후 리스트 새로고침
+            } else {
+                alert("카테고리 업데이트에 실패했습니다.");
+            }
+        }
+    };
+
+    // POST 요청으로 데이터 전송
+    xhr.open("POST", "../eunhyo/updateCategory.jsp", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // 데이터 형식 설정
+    xhr.send(new URLSearchParams(formData).toString());
+}
+
+
+
+
+function toggleCheckbox(currentCheckbox) {
+    // 모든 체크박스를 가져옴
+    var checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
+    
+    checkboxes.forEach(function(checkbox) {
+        // 현재 체크한 체크박스가 아니면 해제
+        if (checkbox !== currentCheckbox) {
+            checkbox.checked = false;
+        }
+    });
+}
+
+
+
 </script>
 </head>
 <body>
