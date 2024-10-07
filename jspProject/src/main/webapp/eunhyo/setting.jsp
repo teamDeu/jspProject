@@ -37,7 +37,7 @@
     }
     .active-btn {
         background-color: #e3e3e3;
-    }
+    } 
 </style>
 <script>
 document.addEventListener("DOMContentLoaded", function() {

@@ -78,7 +78,7 @@
         display: flex;
         flex-direction: column; /* 세로 배치 */
     }
-
+ 
     /* 각 텍스트 스타일 */
     .content-item {
 	    font-size: 22px;
