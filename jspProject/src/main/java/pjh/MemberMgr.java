@@ -67,10 +67,12 @@ public class MemberMgr {
 	    Connection con = null;
 	    PreparedStatement pstmt1 = null;
 	    PreparedStatement pstmt2 = null;
-	    PreparedStatement pstmt3 = null;  // profile 테이블에 저장할 PreparedStatement
+	    PreparedStatement pstmt3 = null;  
+	    PreparedStatement pstmt4 = null;  // itemhold 테이블에 저장할 PreparedStatement
 	    String sql1 = null;
 	    String sql2 = null;
-	    String sql3 = null;  // profile 테이블에 저장할 SQL
+	    String sql3 = null;  
+	    String sql4 = null;  // itemhold 테이블에 저장할 SQL
 	    boolean flag = false;
 
 	    try {
@@ -114,10 +116,25 @@ public class MemberMgr {
 	                pstmt3.setString(6, "ENFJ");  // 기본 MBTI
 	                pstmt3.setString(7, "기본 상태 메시지");  // 기본 상태 메시지
 	                pstmt3.setString(8, "img/default_profile.png");  // 기본 프로필 사진
-
+	                
 	                if (pstmt3.executeUpdate() == 1) {
-	                    flag = true;
-	                    con.commit(); // 트랜잭션 성공 시 커밋
+	                    // itemhold 테이블에 user_id와 item_num을 각각 1과 6으로 저장
+	                    sql4 = "INSERT INTO itemhold(user_id, item_num, item_using) VALUES(?, ?, ?), (?, ?, ?)";
+	                    pstmt4 = con.prepareStatement(sql4);
+	                    pstmt4.setString(1, bean.getUser_id());
+	                    pstmt4.setInt(2, 1);  // 임시 item_num 1
+	                    pstmt4.setInt(3, 0);  // item_using 기본값
+	                    pstmt4.setString(4, bean.getUser_id());
+	                    pstmt4.setInt(5, 6);  // 임시 item_num 6
+	                    pstmt4.setInt(6, 0);  // item_using 기본값
+	                    
+	                    if (pstmt4.executeUpdate() == 2) {
+	                        flag = true;
+	                        con.commit(); // 트랜잭션 성공 시 커밋
+	                    } else {
+	                        con.rollback(); // itemhold 테이블 저장 실패 시 롤백
+	                        System.out.println("Itemhold 테이블에 저장 실패");
+	                    }
 	                } else {
 	                    con.rollback(); // profile 테이블 저장 실패 시 롤백
 	                    System.out.println("Profile 테이블에 저장 실패");
@@ -150,10 +167,12 @@ public class MemberMgr {
 	        }
 	        pool.freeConnection(con, pstmt1);
 	        pool.freeConnection(con, pstmt2);
-	        pool.freeConnection(con, pstmt3);  // profile 테이블 PreparedStatement 해제
+	        pool.freeConnection(con, pstmt3);
+	        pool.freeConnection(con, pstmt4);  // itemhold 테이블 PreparedStatement 해제
 	    }
 	    return flag;
 	}
+
 
 
 
@@ -521,7 +540,7 @@ public class MemberMgr {
 	            con = pool.getConnection();
 
 	            // 오늘의 방문자 수를 조회
-	            sql = "SELECT * FROM visitCount WHERE visit_date = CURDATE() AND page_owner_id = ? AND visitor_id = ?";
+	            sql = "SELECT * FROM visitCount WHERE DATE(visit_date) = CURDATE() AND page_owner_id = ? AND visitor_id = ?";
 	            pstmt = con.prepareStatement(sql);
 	            pstmt.setString(1, pageOwnerId);
 	            pstmt.setString(2, visitorId);
@@ -529,7 +548,7 @@ public class MemberMgr {
 
 	            if (!rs.next()) {
 	                // 방문 기록이 없으면 레코드 삽입
-	                sql = "INSERT INTO visitCount (visit_date, visit_count, page_owner_id, visitor_id) VALUES (CURDATE(), 1, ?, ?)";
+	                sql = "INSERT INTO visitCount (visit_date, visit_count, page_owner_id, visitor_id) VALUES (now(), 1, ?, ?)";
 	                pstmt = con.prepareStatement(sql);
 	                pstmt.setString(1, pageOwnerId);
 	                pstmt.setString(2, visitorId);

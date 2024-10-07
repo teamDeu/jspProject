@@ -95,6 +95,7 @@ try {
     padding: 10px;
     border-radius: 10px;
     position: relative;
+    padding-bottom: 30px; /* 페이지네이션을 위한 공간 확보 */
     height: 660px; /* vh에서 px로 변경 */
     max-height: 700px; /* 최대 높이 역시 px로 변경 */
     border-radius: 30px;
@@ -248,24 +249,26 @@ try {
     margin-right: 5px;
 }
 /* 페이지네이션 */
-.pagination {
+.store-pagination {
+    position: absolute;
+    bottom: 0; /* 하단에 고정 */
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
-    padding: 20px;
+    align-items: center;
+    background-color: #C0E5AF;
+    border-radius: 30px;
+    padding: 1px 10px;
+    gap: 5px;
+}
+.store-pagination span {
+	padding: 10px;
+	cursor: pointer;
 }
 
-.pagination span {
-    padding: 5px 10px;
-    margin: 0 5px;
-    cursor: pointer;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.pagination span.active {
-    background-color: green;
-    color: #FFF;
-    border-color: green;
+.store-pagination span.active {
+	color: red;
 }
 
 /* 팝업 */
@@ -311,6 +314,7 @@ try {
     filter: blur(8px);
     transition: filter 0.3s ease;
 }
+
 
 </style>
 
@@ -737,7 +741,9 @@ function refundStoreItem(itemNum, itemPrice) {
     %>
 </div>
 		<!-- 페이지네이션 -->
-		<div id ="store_pagination" class="pagination"></div>
+		<div style ="display:flex ; align-items:center">
+		<div id ="store_pagination" class="store-pagination"></div>
+		</div>
 	</div>
 
 </div>

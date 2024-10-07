@@ -352,7 +352,7 @@ label[for="secretCheckbox"] {
 }
 
 /* 현재 페이지 버튼 스타일 */
-.active {
+.guestbook-active {
     background-color: #DCDCDC;
     color: #000000;
 }
@@ -722,7 +722,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
               })(i);
 
               if (i === currentPage) {
-                  button.classList.add('active'); // 현재 페이지 스타일 추가
+                  button.classList.add('guestbook-active'); // 현재 페이지 스타일 추가
               }
 
               paginationContainer.appendChild(button);
