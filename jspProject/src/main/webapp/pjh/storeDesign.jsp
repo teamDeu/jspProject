@@ -73,6 +73,7 @@ try {
 <head>
 <meta charset="UTF-8">
 <title>스토어</title>
+
 <style>
 @font-face {
 	font-family: 'NanumTobak';
@@ -80,13 +81,12 @@ try {
 }
 
 .store {
-	font-family: 'NanumTobak';
-	background-color: #F7F7F7;
-	text-align: center;
-	min-height: 70vh; /* 전체 화면을 차지하도록 설정 */
-	margin: 0;
-	padding: 0;	
-	border-radius:30px;
+    font-family: 'NanumTobak';
+    background-color: #F7F7F7;
+    text-align: center;
+    margin: 0;
+    padding: 0;	
+    border-radius: 30px;
 }
 
 .storecontainer {
@@ -95,85 +95,111 @@ try {
     padding: 10px;
     border-radius: 10px;
     position: relative;
-    height: 70vh; /* 고정된 높이 설정 */
-    max-height: 70vh; /* 최대 높이 설정 */
-    border-radius:30px;
+    padding-bottom: 30px; /* 페이지네이션을 위한 공간 확보 */
+    height: 660px; /* vh에서 px로 변경 */
+    max-height: 700px; /* 최대 높이 역시 px로 변경 */
+    border-radius: 30px;
 }
+
 /* 상점 제목 */
 .store-title {
-	font-size: 30px;
-	color: black;
-	font-weight: bold;
-	text-align: left;
-	margin-bottom: 10px;
-	position: absolute;
-	top: 20px;
-	left: 20px;
-	border-bottom: 2px solid #ccc; /* 제목 아래 줄 추가 */
+    font-size: 36px;
+    color: #80A46F;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 10px;
+    position: absolute;
+    top: -20px;
+    left: 20px;
+    border-left: 2px solid #BAB9AA;
+    border-right: 2px solid #BAB9AA;
+    border-top: 2px solid #BAB9AA;
+    padding: 10px;
+    padding-bottom: 0px;
+}
+
+/* store-title과 연결되는 선 */
+.store-line {
+    border-top: 2px solid #BAB9AA;
+    width: calc(932px - 150px);
+    position: absolute;
+    top: 31px;
+    left: calc(-53px + 133px);
 }
 /* 클로버 금액 */
 .clover-amount {
-	font-size: 18px;
-	color: green;
-	position: absolute;
-	top: 20px;
-	right: 60px;
+    font-size: 18px;
+    color: green;
+    position: absolute;
+    top: -10px;
+    right: 60px;
 }
+
 /* 카테고리 탭 */
 .nav-tabs {
-	display: flex;
-	justify-content: left;
-	list-style: none;
-	padding: 0;
-	margin-bottom: 20px;
-	margin-top: 50px;
-	border-bottom: 2px solid #ccc; /* 카테고리 아래 줄 추가 */
+    display: flex;
+    justify-content: left;
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+    margin-top: 30px;
+    border-bottom: 2px solid #BAB9AA;
 }
 
 .nav-tabs li {
-	padding: 10px 30px;
-	cursor: pointer;
-	font-size: 18px;
-	color: #888;
-	transition: color 0.3s ease;
+    padding: 10px 30px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #888;
+    transition: color 0.3s ease;
+    border-right: 1px solid #BAB9AA;
+}
+
+.nav-tabs li:last-child {
+    border-right: none;
 }
 
 .nav-tabs li.active {
-	color: green;
-	border-bottom: 2px solid green;
+    color: green;
+    border-bottom: 2px solid green;
 }
 /* 인기순, 가격순, 클로버 충전 */
 .sort-options {
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	gap: 20px;
-	margin-bottom: 20px;
-	margin-right: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    margin-right: 20px;
 }
 
 .sort-buttons {
-	display: flex;
-	gap: 20px;
+    display: flex;
 }
 
 .sort-buttons span {
-	font-size: 18px;
-	cursor: pointer;
-	color: #888;
+    font-size: 18px;
+    cursor: pointer;
+    color: #888;
+    padding: 0 10px;
+    border-left: 1px solid #ccc;
+}
+
+.sort-buttons span:first-child {
+    border-left: none;
 }
 
 .sort-buttons span.active {
-	color: green;
+    color: green;
 }
 
 .search button {
-	padding: 10px 20px;
-	background-color: #90EE90;
-	border: none;
-	color: white;
-	cursor: pointer;
-	border-radius: 20px;
+    padding: 10px 20px;
+    background-color: #90EE90;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 20px;
 }
 /* 상품 목록 */
 .items-container {
@@ -182,68 +208,70 @@ try {
     gap: 20px;
     padding: 20px;
     border: 1px solid #ccc;
-    min-height: 300px; /* 최소 높이 설정 */
+    min-height: 300px;
 }
 
-
 .item {
-	background-color: #FFF;
-	border-radius: 10px;
-	padding: 10px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	text-align: center;
-	border: 1px solid #ccc; /* 상품에 네모난 테두리 추가 */
+    background-color: #FFF;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 1px solid #ccc;
 }
 
 .product-img {
-   	width: 165px;
+    width: 165px;
     height: 130px;
-    border-radius: 10px; /* 상품 이미지 모서리 둥글게 */
+    border-radius: 10px;
 }
 
 .clover-icon {
-    width: 20px; /* 클로버 아이콘 크기 */
+    width: 20px;
     height: 20px;
-    margin-right: 5px; /* 텍스트와 약간의 간격 */
+    margin-right: 5px;
 }
 
-
 .item-title {
-	font-size: 16px;
-	margin-top: 10px;
+    font-size: 16px;
+    margin-top: 10px;
 }
 
 .item-price {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
 }
 
 .item-price img {
-	width: 20px;
-	margin-right: 5px;
+    width: 20px;
+    margin-right: 5px;
 }
 /* 페이지네이션 */
-.pagination {
-	display: flex;
-	justify-content: center;
-	padding: 20px;
+.store-pagination {
+    position: absolute;
+    bottom: 0; /* 하단에 고정 */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #C0E5AF;
+    border-radius: 30px;
+    padding: 1px 10px;
+    gap: 5px;
 }
-
-.pagination span {
-	padding: 5px 10px;
-	margin: 0 5px;
+.store-pagination span {
+	padding: 10px;
 	cursor: pointer;
-	border: 1px solid #ccc;
-	border-radius: 5px;
 }
 
-.pagination span.active {
-	background-color: green;
-	color: #FFF;
-	border-color: green;
+.store-pagination span.active {
+	color: red;
 }
+
+/* 팝업 */
 .popup {
     position: fixed;
     top: 50%;
@@ -280,10 +308,11 @@ try {
     font-size: 16px;
     margin: 5px 0;
 }
+
 /* 배경 모자이크 효과를 위한 클래스 */
 .mosaic-background {
-    filter: blur(8px); /* 모자이크처럼 보이도록 blur 효과 적용 */
-    transition: filter 0.3s ease; /* 부드럽게 효과 적용 */
+    filter: blur(8px);
+    transition: filter 0.3s ease;
 }
 
 
@@ -577,6 +606,7 @@ function refundStoreItem(itemNum, itemPrice) {
 	<div class="storecontainer">
 		<!-- 상점 제목 -->
 		<div class="store-title">상점</div>
+		<div class="store-line"></div>
 
 		<!-- 클로버 금액 -->
 		<div class="clover-amount">
@@ -711,7 +741,9 @@ function refundStoreItem(itemNum, itemPrice) {
     %>
 </div>
 		<!-- 페이지네이션 -->
-		<div id ="store_pagination" class="pagination"></div>
+		<div style ="display:flex ; align-items:center">
+		<div id ="store_pagination" class="store-pagination"></div>
+		</div>
 	</div>
 
 </div>

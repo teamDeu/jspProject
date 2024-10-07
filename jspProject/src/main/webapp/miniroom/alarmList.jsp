@@ -1,4 +1,5 @@
 
+<%@page import="guestbook.GuestbookanswerBean"%>
 <%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="guestbook.GuestbookprofileMgr"%>
 <%@page import="guestbook.GuestbookBean"%>
@@ -13,6 +14,7 @@
 <jsp:useBean id="uMgr" class="pjh.MemberMgr" />
 <jsp:useBean id="aMgr" class="alarm.AlarmMgr" />
 <jsp:useBean id="gMgr" class="guestbook.GuestbookMgr" />
+<jsp:useBean id="gaMgr" class="guestbook.GuestbookanswerMgr"/>
 <%
 String id = (String) session.getAttribute("idKey");
 String url = request.getParameter("url");
@@ -93,7 +95,7 @@ ItemMgr iMgr = new ItemMgr();
 	cursor: pointer;
 }
 
-.alarm_pagination span.active {
+.alarm_pagination span.alarm_pagination_active {
 	color: red;
 }
 
@@ -177,8 +179,19 @@ ItemMgr iMgr = new ItemMgr();
 						방명록을 작성하였습니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
 				</li>
 				<%
-				}
-				} // for (alarmList)
+				}else if(alarmType.equals("방명록댓글")){
+					GuestbookanswerBean gaBean = null;
+					gaBean = gaMgr.getAnswersByNum(alarmContentNum);
+					GuestbookprofileBean gpBean = gpMgr.getProfileByUserId(gaBean.getGanswerId());
+				%>
+					<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><span
+						class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
+						<span onclick="clickAlarmGuestbook(event)"
+						class="alarmlist_main_div_item_title"><%=gpBean.getProfileName()%>님이
+							방명록댓글을 작성하였습니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
+					</li>
+				<%
+				}} // for (alarmList)
 				%>
 
 			</ul>
@@ -212,8 +225,6 @@ function alarm_changePage(page) {
     alarm_currentPage = page;
     displayalarm_items();
     alarm_updatePagination();
-    
-    
 }
 
 // 아이템을 보여주는 함수
@@ -253,7 +264,7 @@ function alarm_updatePagination() {
         const pageSpan = document.createElement('span');
         const separatorSpan = document.createElement('div');
         pageSpan.textContent = i;
-        pageSpan.classList.toggle('active', i === alarm_currentPage);
+        pageSpan.classList.toggle('alarm_pagination_active', i === alarm_currentPage);
         pageSpan.onclick = () => alarm_changePage(i);
         separatorSpan.textContent = "ㅣ";
         separatorSpan.style.color = "#BAB9AA";
@@ -310,7 +321,7 @@ function clickAlarmItem(event){
     
 }
 function clickAlarmGuestbook(event){
-	clickOpenBox('guestbook');
+	
 	let fr_form = event.target.parentElement;
 	var xhr = new XMLHttpRequest();
     xhr.open("GET", "../miniroom/alarmProc.jsp?type=read&num="+fr_form.id, true); // Alarm 갱신Proc
@@ -320,6 +331,12 @@ function clickAlarmGuestbook(event){
     };
     xhr.send();
     fr_form.querySelector(".alarmlist_main_div_item_readbool").classList.add("alarmlist_main_div_item_read");
+    if("<%=url%>" == "<%=id%>"){
+		clickOpenBox('guestbook');
+	}
+	else{
+		location.href = "http://"+location.host+"/jspProject/miniroom/main.jsp?url=" + "<%=id%>" +"&section=guestbook";
+	}
 }
 // 페이지가 로드될 때 초기화
 document.addEventListener('DOMContentLoaded', function () {

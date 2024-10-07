@@ -12,14 +12,14 @@
 <%
    // 세션에서 idKey 가져오기
    String id = (String)session.getAttribute("idKey");
+   String section = request.getParameter("section");
    if(id == null){
       response.sendRedirect("../pjh/login.jsp");
       return;
    }
-   
+   System.out.println("request.getContextPath : " + request.getContextPath());
    boolean isSuspension = false;
    SuspensionBean suspensionBean = reportMgr.isSuspension(id);
-   System.out.println("이사람은 정지인가 ? : " + suspensionBean.getSuspension_num());
    if(suspensionBean.getSuspension_num() != 0){
       isSuspension = true;
       if(suspensionBean.getSuspension_type() == 1){
@@ -74,7 +74,7 @@
 
    if (lastVisit == null || (currentTime - Long.parseLong(lastVisit)) > 10000) { // 10초 이상 경과 시
        // 페이지 소유자별 방문자 수 업데이트
-       memberMgr.updateVisitorCount(pageOwnerId, id); // 방문자 ID는 세션의 id
+       memberMgr.updateVisitorCount(pageOwnerId, id, response); // 방문자 ID는 세션의 id
 
        // 마지막 방문 시간을 현재 시간으로 쿠키에 저장
        javax.servlet.http.Cookie visitCookie = new javax.servlet.http.Cookie("lastVisit_" + pageOwnerId, Long.toString(currentTime));
@@ -264,8 +264,12 @@ function clickAlarm(){
         var dataSeparator = "㉠"
         var messageSeparator = "㉡";
         var timeNameText = "";
+        var section = "<%=section%>";
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
+            if(section != "null" ){
+            	clickOpenBox(section);
+            }
             ws.onopen = function() {
                 document.getElementById("status").textContent = "서버와 연결됨";
                 if(localId == "null") localId = "비회원";
@@ -453,7 +457,7 @@ function clickAlarm(){
           reportBtn.onclick = (function(senduserid,receiveuserid) {
               return function() {
                  var xhr = new XMLHttpRequest();
-                    xhr.open("GET", "../miniroom/reportProc.jsp?report_senduserid="+senduserid+"&report_receiveuserid="+receiveuserid+"&report_type=chat", true); // Alarm 갱신Proc
+                    xhr.open("GET", "../miniroom/reportProc.jsp?report_senduserid="+senduserid+"&report_receiveuserid="+receiveuserid+"&report_type=채팅", true); // Alarm 갱신Proc
                     xhr.onreadystatechange = function () {
                      if (xhr.readyState === 4 && xhr.status === 200) {
                         alert("신고가 완료되었습니다.");
@@ -683,6 +687,10 @@ function clickAlarm(){
    
    <div id = "friend_request_modal_receive" class ="friend_request_modal" style = "display:none">
          <jsp:include page="friendRequestReceive.jsp"></jsp:include>
+   </div>
+   
+   <div id = "user_search_modal" class ="friend_request_modal" style = "display:none">
+   	
    </div>
 </body>
 </html> 

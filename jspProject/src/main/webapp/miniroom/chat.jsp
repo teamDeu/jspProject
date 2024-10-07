@@ -156,15 +156,26 @@
 		justify-content : space-between;
 		align-items:center;
 	}
+	.miniroom_board_title{
+	    color: #80A46F;
+    text-align: center;
+    font-size: 36px;
+    font-weight: 600;
+	}
+	.miniroom_board_line{
+	    border-bottom: 1px solid #BAB9AA;
+	    margin : 10px 0px 20px 0px;
+    	width: 100%;
+	}
 	</style>
 </head>
 <body onload="connect();">
 	<div class ="miniroom_header">
 	<div class ="miniroom_header_title">
-	<font size = "24" color ="#80A46F">미니룸</font>
+	<font class ="miniroom_board_title">미니룸</font>
 	<span id="status">서버에 연결되지 않음</span>
 	</div>	
-    	<hr color = "#BAB9AA" width = "100%">
+    	<div class="miniroom_board_line"></div>
 	</div>
     <div id = "miniroom">
     	<img id ="miniroom_background" src="<%=backgroundImg%>">

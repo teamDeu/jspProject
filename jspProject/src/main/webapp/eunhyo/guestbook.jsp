@@ -22,31 +22,20 @@ String cPath = request.getContextPath();
 String ownerId = request.getParameter("ownerId");
 String sessionUserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 
-ArrayList<GuestbookBean> entries = mgr.getGuestbookEntries(ownerId);
+int currentPage = 1; // 기본값은 1페이지
+int entriesPerPage = 3; // 한 페이지당 방명록 항목 수
+int totalPages = mgr.getTotalPages(ownerId);  // 총 페이지 수 가져오기 
+// page 파라미터가 있을 경우 해당 값을 현재 페이지로 사용
+if (request.getParameter("page") != null) {
+    currentPage = Integer.parseInt(request.getParameter("page"));
+}
+
+// 가져올 항목의 시작 인덱스를 계산
+int startIndex = (currentPage - 1) * entriesPerPage;
+
+ArrayList<GuestbookBean> entries = mgr.getGuestbookEntries(ownerId, startIndex, entriesPerPage);
 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 dateFormat.setTimeZone(seoulTimeZone);
-
-int itemsPerPage = 4; // 페이지당 방명록 개수
-int currentGuestbookPage = 1; // 현재 페이지
-int totalEntries = entries.size(); // 전체 방명록 수
-int totalPages = (int) Math.ceil((double) totalEntries / itemsPerPage); // 총 페이지 수
-
-// 현재 페이지 파라미터를 가져와서 설정
-if (request.getParameter("page") != null) {
-    currentGuestbookPage = Integer.parseInt(request.getParameter("page")); // URL 파라미터로 페이지 번호 받기
-}
-
-// 방명록 항목의 시작 인덱스 계산
-int startIndex = (currentGuestbookPage - 1) * itemsPerPage;
-int endIndex = Math.min(startIndex + itemsPerPage, totalEntries);
-
-// 현재 페이지에 해당하는 방명록만 표시
-ArrayList<GuestbookBean> currentEntries;
-if (startIndex < totalEntries) {
-    currentEntries = new ArrayList<>(entries.subList(startIndex, endIndex));
-} else {
-    currentEntries = new ArrayList<>(); // 페이지 수가 초과할 경우 빈 리스트
-}
 %>
 
 
@@ -128,14 +117,12 @@ if (startIndex < totalEntries) {
    height: 560px;
    margin-top: 0px;
    background-color: #F7F7F7;
-   overflow-y: auto; /* 세로 스크롤 활성화 */
-   overflow-x: hidden; /* 가로 스크롤 숨김 */
 }
 /* 리스트 스타일 제거 */
 #guestbookList {
    list-style-type: none; /* 동그라미 모양 제거 */
    padding: 0; /* 리스트의 기본 패딩 제거 */
-   margin: 0px; /* 리스트의 기본 마진 제거 */
+   margin-top: 90px; /* 리스트의 기본 마진 제거 */
 }
 
 #guestbookList li {
@@ -174,7 +161,6 @@ if (startIndex < totalEntries) {
    font-size: 22px;
    font-weight: bold;
    display: inline; /* 같은 줄에 표시 */
-   cursor : pointer;
 }
 
 .author-underline {
@@ -345,15 +331,38 @@ label[for="secretCheckbox"] {
     font-size: 16px; /* 버튼 글자 크기 */
     padding: 5px 10px; /* 버튼 안쪽 여백 */
 }
+#paginationButtons {
+    position: absolute; 
+    bottom: 70px; /* 버튼과 리스트 사이의 간격 조정 */
+    left: 50%; /* 부모 요소의 왼쪽 50% 위치 */
+    transform: translateX(-50%); /* 자신의 폭의 절반만큼 왼쪽으로 이동 */
+    text-align: center; /* 버튼들을 중앙 정렬 */
+}
 
+/* 페이지 버튼 스타일 */
+.pagination-button {
+    background-color: #ffffff; /* 배경색 */
+    color: #000000; /* 글자색 */
+    border: 1px solid #DCDCDC;
+    border-radius: 5px; /* 둥근 모서리 */
+    padding: 2px 8px; /* 안쪽 여백 */
+    margin: 0 5px; /* 버튼 간 간격 */
+    cursor: pointer; /* 커서 변경 */
+    font-size: 16px; /* 글자 크기 */
+}
+
+/* 현재 페이지 버튼 스타일 */
+.guestbook-active {
+    background-color: #DCDCDC;
+    color: #000000;
+}
 
 </style>
 <meta charset="UTF-8">
 <title>Guestbook</title>
 <script>
-     // AJAX를 이용한 방명록 작성 함수
-        // 방명록 작성 함수 (AJAX 사용)
-   function addGuestbookEntry() {
+//AJAX를 이용한 방명록 작성 함수
+function addGuestbookEntry() {
     var content = document.getElementById("guestbookContent").value;
     var ownerId = "<%=ownerId%>";
     var isSecret = document.getElementById("secretCheckbox").checked ? 1 : 0; // 체크박스 상태 (0 또는 1)
@@ -369,16 +378,11 @@ label[for="secretCheckbox"] {
                 try {
                     var response = JSON.parse(xhr.responseText);
                     if (response.guestbookNum !== 0) {
-                       alert("방명록이 작성되었습니다.");
-                        appendGuestbookEntry(
-                              response.guestbookNum, 
-                                response.writerId, 
-                                response.content, 
-                                response.writtenAt, 
-                                isSecret,
-                                response.profileName, // 프로필 이름 추가
-                                response.profilePicture // 프로필 사진 추가
-                        );
+                        alert("방명록이 작성되었습니다.");
+
+                        // 방명록이 작성되면 전체 페이지를 다시 로드
+                        loadGuestbookPage(1);
+
                         // 입력 필드 초기화
                         document.getElementById("guestbookContent").value = '';
                         document.getElementById("secretCheckbox").checked = false;
@@ -397,6 +401,8 @@ label[for="secretCheckbox"] {
     };
     xhr.send("content=" + encodeURIComponent(content) + "&ownerId=" + encodeURIComponent(ownerId) + "&secret=" + isSecret);
 }
+
+
 
      
      // 새 방명록 항목을 페이지에 추가하는 함수
@@ -467,22 +473,22 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
     
     // 답글 목록 및 답글 작성 폼 추가
     var answerList = document.createElement("ul");
-    answerList.id = "answerList-" + guestbookNum;
-    answerList.classList.add('alist'); // 클래스 추가
+    answerList.id = "a-List-" + guestbookNum;
+    answerList.classList.add('a-list'); // 클래스 추가
 
     // 답글 작성 폼
     var answerForm = document.createElement("div");
-    answerForm.classList.add('an-form');
+    answerForm.classList.add('a-form');
 
     var answerTextarea = document.createElement("textarea");
-    answerTextarea.id = "answerContent-" + guestbookNum;
+    answerTextarea.id = "aContent-" + guestbookNum;
     answerTextarea.classList.add('a-textarea'); // 클래스 추가
     answerTextarea.placeholder = "답글 내용을 입력하세요";
 
     var answerButton = document.createElement("button");
     answerButton.type = "button";
     answerButton.textContent = "등록";
-    answerButton.classList.add('a-submit-btn'); // 클래스 추가
+    answerButton.classList.add('a-submit-btn');
     answerButton.onclick = function() {
         adAnswer(guestbookNum);
     };
@@ -496,28 +502,36 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
     li.appendChild(contentElem);
     li.appendChild(answerList); // 답글 목록 추가
     li.appendChild(answerForm); // 답글 작성 폼 추가
-
+   
     ul.prepend(li); // 새 항목을 목록의 맨 위에 추가
+    
+ // 새로 생성된 li 요소에 대해 리렌더링 강제
+    li.offsetHeight; // 리플로우 강제 트리거
+
 }
 
+
+
      
-        // AJAX를 이용한 방명록 삭제 함수
-        function deleteGuestbookEntry(guestbookNum) {
-            if (confirm("정말 삭제하시겠습니까?")) {
-                var xhr = new XMLHttpRequest();
-                var cPath = "<%=cPath%>";
-                xhr.open("POST", cPath + "/eunhyo/deleteguestbook.jsp", true);
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        // 삭제 성공 시 해당 목록 삭제
-                        alert("방명록이 삭제되었습니다.");
-                        document.getElementById("entry-" + guestbookNum).remove();
-                    }
-                };
-                xhr.send("guestbookNum=" + guestbookNum);
-            }
-        }
+      //AJAX를 이용한 방명록 삭제 함수
+      function deleteGuestbookEntry(guestbookNum) {
+          if (confirm("정말 삭제하시겠습니까?")) {
+              var xhr = new XMLHttpRequest();
+              var cPath = "<%=cPath%>";
+              xhr.open("POST", cPath + "/eunhyo/deleteguestbook.jsp", true);
+              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+              xhr.onreadystatechange = function() {
+                  if (xhr.readyState === 4 && xhr.status === 200) {
+                      // 삭제 성공 시 해당 목록을 새로 로드
+                      alert("방명록이 삭제되었습니다.");
+                      // 현재 페이지를 가져와서 새로 고침
+                      loadGuestbookPage(<%=currentPage%>);
+                  }
+              };
+              xhr.send("guestbookNum=" + guestbookNum);
+          }
+      }
+
         
      // 새 답글 항목을 페이지에 추가하는 함수
       function appendAnswer(answerNum, guestbookNum, ganswerId, comment, ganswerAt, profileName) {
@@ -568,7 +582,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
 
       // 답글 작성 함수
       function adAnswer(guestbookNum) {
-          var comment = document.getElementById("answerContent-" + guestbookNum).value;
+          var comment = document.getElementById("aContent-" + guestbookNum).value;
           var xhr = new XMLHttpRequest();
           var cPath = "<%=cPath%>";
       
@@ -590,7 +604,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
                                   response.profileName // 프로필 이름 추가
                               );
                               // 입력 필드 초기화
-                              document.getElementById("answerContent-" + guestbookNum).value = '';
+                              document.getElementById("aContent-" + guestbookNum).value = '';
                           } else {
                               alert("답글 작성에 실패하였습니다.");
                           }
@@ -623,7 +637,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
                           var response = JSON.parse(xhr.responseText);
                           if (response.success) {
                               alert("답글이 삭제되었습니다.");
-                              document.getElementById("a-" + answerNum).remove();
+                              document.getElementById("answer-" + answerNum).remove();
                           } else {
                               alert("답글 삭제에 실패하였습니다.");
                           }
@@ -637,37 +651,107 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
           }
       }
 
-      function changeGuestbookPage(page) {
-           const xhr = new XMLHttpRequest();
-           xhr.open("GET", "../eunhyo/guestbook.jsp?page=" + page + "&ownerId=" + '<%=ownerId%>', true); // 페이지 요청
-           xhr.onreadystatechange = function() {
-               if (xhr.readyState === 4 && xhr.status === 200) {
-                   // AJAX 요청의 응답을 HTML로 파싱
-                   const response = xhr.responseText;
-                   const parser = new DOMParser();
-                   const doc = parser.parseFromString(response, "text/html");
+      // 페이지 버튼 클릭 시 페이지 로드
+      function loadGuestbookPage(pageNumber) {
+          console.log("Requesting page:", pageNumber);
+          var ownerId = "<%=ownerId%>";
+          var xhr = new XMLHttpRequest();
+          var cPath = "<%=cPath%>";
 
-                   // 방명록 리스트와 페이지네이션 업데이트
-                   document.getElementById("guestbookList").innerHTML = doc.getElementById("guestbookList").innerHTML;
-                   document.querySelector('#guestbook_pagination').innerHTML = doc.querySelector('.pagination').innerHTML;
-
-                   updateGuestbookPagination(page); // 현재 페이지를 업데이트
-               }
-           };
-           xhr.send();
-       }
-
-       function updateGuestbookPagination(currentPage) {
-           const pagination = document.querySelector('#guestbook_pagination');
-           pagination.querySelectorAll('.page').forEach(span => {
-              if(span.textContent == currentPage){
-                  span.classList.add('active'); // 현재 페이지 강조;
+          xhr.open("GET", cPath + "/eunhyo/guestbookData.jsp?ownerId=" + ownerId + "&page=" + pageNumber, true);
+          xhr.onreadystatechange = function() {
+              if (xhr.readyState === 4) {
+                  console.log("Loading page:", pageNumber);
+                  if (xhr.status === 200) {
+                      try {
+                          var response = JSON.parse(xhr.responseText);
+                          console.log("Response data:", response);
+                          updateGuestbookEntries(response.entries);
+                          // entries 배열의 길이를 전달
+                          updatePaginationButtons(response.totalPages, pageNumber, response.entries.length);
+                      } catch (e) {
+                          console.error("응답 처리 중 오류 발생:", e);
+                      }
+                  } else {
+                      console.error("AJAX 요청 실패:", xhr.status, xhr.statusText);
+                  }
               }
-              else{
-                 span.classList.remove('active');
+          };
+          xhr.send();
+      }
+
+
+      // 방명록 목록을 업데이트하는 함수
+      function updateGuestbookEntries(entries) {
+          var ul = document.getElementById("guestbookList");
+          ul.innerHTML = ""; // 기존 항목 초기화
+
+          // 최신 방명록이 위로 오도록 하기 위해
+          entries.reverse().forEach(function(entry) {
+              appendGuestbookEntry(
+                  entry.guestbookNum, 
+                  entry.writerId, 
+                  entry.content, 
+                  entry.writtenAt, 
+                  entry.isSecret, 
+                  entry.profileName, 
+                  entry.profilePicture
+              );
+          });
+      }
+
+
+
+      // AJAX를 이용한 페이지 버튼 업데이트
+      function updatePaginationButtons(totalPages, currentPage, entriesLength) {
+          var paginationContainer = document.getElementById("paginationButtons");
+          paginationContainer.innerHTML = ""; // 기존 버튼 초기화
+
+          console.log("Total pages:", totalPages);
+
+          for (var i = 1; i <= totalPages; i++) {
+              var button = document.createElement("button");
+              button.textContent = i;
+              button.classList.add('pagination-button');
+
+              button.disabled = false; // 모든 페이지 버튼 활성화
+              button.onclick = (function(pageNumber) {
+                  return function() {
+                      loadGuestbookPage(pageNumber); // 클릭 시 해당 페이지 로드
+                  };
+              })(i);
+
+              if (i === currentPage) {
+                  button.classList.add('guestbook-active'); // 현재 페이지 스타일 추가
               }
-           });
-       }
+
+              paginationContainer.appendChild(button);
+          }
+
+          // 현재 페이지가 마지막 페이지일 때
+          if (currentPage === totalPages) {
+              // 마지막 페이지 항목 수가 2개 이상일 경우
+              if (entriesLength < 3) {
+                  // 이전 페이지 버튼은 활성화
+                  paginationContainer.childNodes.forEach(function(btn) {
+                      if (btn.textContent === (currentPage - 1).toString()) {
+                          btn.disabled = false;
+                      }
+                  });
+              }
+          }
+      }
+
+
+
+
+
+      // 페이지가 로드될 때 버튼 초기화
+      document.addEventListener("DOMContentLoaded", function() {
+          console.log("DOM fully loaded and parsed.");
+          updatePaginationButtons(<%= totalPages %>, <%= currentPage %>); // 현재 페이지 설정
+      });
+
 
     </script>
 </head>
@@ -675,11 +759,10 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
    <h1 class="guestbook-title">방명록</h1>
    <div class="guestbook-line"></div>
 
-   <div class="entry-container">
+   <div class="entry-container" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
        <!-- 방명록 항목 리스트 -->
       <ul id="guestbookList">
-          <% for (GuestbookBean entry : currentEntries) { 
-             
+          <% for (GuestbookBean entry : entries) { 
               // 작성자의 프로필 정보를 가져옴
               GuestbookprofileBean profile = profileMgr.getProfileByUserId(entry.getWriterId());
               ArrayList<GuestbookanswerBean> answers = answerMgr.getAnswersForGuestbook(entry.getGuestbookNum());
@@ -700,23 +783,25 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
                           <!-- 프로필 사진 -->
                           <img src="<%=profile.getProfilePicture()%>" alt="프로필 사진" class="profile-image">
                           <!-- 프로필 이름과 작성자 아이디, 날짜 함께 표시 -->
-                          <p class="author">
+                          <p class="author" >
                               <%=profile.getProfileName()%> (<%=entry.getWriterId()%>) 
-                              <span class="date"><%=entry.getWrittenAt() != null ? dateFormat.format(entry.getWrittenAt()) : ""%></span>
+                              <span class="date"><%= entry.getWrittenAt() != null ? new SimpleDateFormat("yyyy-MM-dd").format(entry.getWrittenAt()) : ""%></span>
+
                           </p>
                       <% } else { %>
                           <!-- 프로필이 null인 경우 작성자 아이디와 날짜만 표시 -->
                           <p class="author">
                               <%=entry.getWriterId()%> 
-                              <span class="date"><%=entry.getWrittenAt() != null ? dateFormat.format(entry.getWrittenAt()) : ""%></span>
+                              <span class="date"><%= entry.getWrittenAt() != null ? new SimpleDateFormat("yyyy-MM-dd").format(entry.getWrittenAt()) : ""%></span>
+
                           </p>
                       <% } %>
-                      <div>
-                         <jsp:include page="../miniroom/profileFunctionDiv.jsp">
-                        <jsp:param value="<%=entry.getWriterId()%>" name="profileId"/>
-                        <jsp:param value="guestbook" name ="type"/>
-                     </jsp:include>
-                      </div>
+                      	<div>
+			                <jsp:include page="../miniroom/profileFunctionDiv.jsp">
+								<jsp:param value="<%=entry.getWriterId()%>" name="profileId"/>
+								<jsp:param value="guestbook" name ="type"/>
+							</jsp:include>
+		               </div>
                       <div class="author-underline"></div>
                   </div>
       
@@ -738,30 +823,30 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
       
                      <!-- 답글 목록 (방명록 항목 내부로 이동) -->
                   <ul id="a-list-<%=entry.getGuestbookNum()%>" class="a-list">
-                <% for (GuestbookanswerBean answer : answers) { 
-                    // 답글 작성자의 프로필 정보 가져오기
-                    GuestbookprofileBean answerProfile = profileMgr.getProfileByUserId(answer.getGanswerId());
-                    String answerProfileName = (answerProfile != null) ? answerProfile.getProfileName() : null;
-                    String ganswerId = answer.getGanswerId();
-                %>
-                    <li id="a-<%=answer.getGanswerNum()%>" class="a-item">
-                        <!-- 프로필 이름이 있을 때와 없을 때 각각의 형식으로 출력 -->
-                        <p>
-                            ↳ <%= (answerProfileName != null && !answerProfileName.isEmpty()) ? answerProfileName + " (" + ganswerId + ") :" : ganswerId + " :" %> 
-                            <%= answer.getGanswerComment() %> (<%= answer.getGanswerAt() %>)
-                            
-                            <!-- 삭제 버튼: sessionUserId가 답글 작성자(ganswerId) 또는 방명록 주인(ownerId)인 경우에만 표시 -->
-                            <% if (sessionUserId != null && (sessionUserId.equals(ganswerId) || sessionUserId.equals(ownerId))) { %>
-                                <button type="button" class="delete-a-btn" onclick="deleteAnswer(<%=answer.getGanswerNum()%>, <%=entry.getGuestbookNum()%>)">삭제</button>
-                            <% } %>
-                        </p>
-                    </li>
-                <% } %>
-            </ul>
+                      <% for (GuestbookanswerBean answer : answers) { 
+                          // 답글 작성자의 프로필 정보 가져오기
+                          GuestbookprofileBean answerProfile = profileMgr.getProfileByUserId(answer.getGanswerId());
+                          String answerProfileName = (answerProfile != null) ? answerProfile.getProfileName() : "";
+                          String ganswerId = answer.getGanswerId();
+                      %>
+                          <li id="a-<%=answer.getGanswerNum()%>" class="a-item">
+                              <!-- 프로필 이름이 있을 때와 없을 때 각각의 형식으로 출력 -->
+                              <p>
+                                  ↳ <%= !answerProfileName.isEmpty() ? answerProfileName + " (" + ganswerId + ") :" : ganswerId + " :" %> 
+                                  <%= answer.getGanswerComment() %> (<%= answer.getGanswerAt() %>)
+                                  
+                                  <!-- 삭제 버튼: sessionUserId가 답글 작성자(ganswerId) 또는 방명록 주인(ownerId)인 경우에만 표시 -->
+                                  <% if (sessionUserId != null && (sessionUserId.equals(ganswerId) || sessionUserId.equals(ownerId))) { %>
+                                      <button type="button" class="delete-a-btn" onclick="deleteAnswer(<%=answer.getGanswerNum()%>, <%=entry.getGuestbookNum()%>)">삭제</button>
+                                  <% } %>
+                              </p>
+                          </li>
+                      <% } %>
+                  </ul>
                   
                   <!-- 답글 작성 폼 (방명록 항목 내부로 이동) -->
                   <div class="a-form">
-                      <textarea id="answerContent-<%=entry.getGuestbookNum()%>" class="a-textarea" placeholder="답글 내용을 입력하세요"></textarea>
+                      <textarea id="aContent-<%=entry.getGuestbookNum()%>" class="a-textarea" placeholder="답글 내용을 입력하세요"></textarea>
                       <button type="button" class="a-submit-btn" onclick="adAnswer(<%=entry.getGuestbookNum()%>)">등록</button>
                   </div>
 
@@ -769,13 +854,8 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
               </li>
           <% } %>
       </ul>
-       <!-- 페이지네이션 -->
-    <div class="pagination" id ="guestbook_pagination">
-        <% for (int i = 1; i <= totalPages; i++) { %>
-            <span class="page <%= (i == 1) ? "active" : "" %>" onclick="changeGuestbookPage(<%= i %>)"><%= i %></span>
-        <% } %>
-    </div>
-      
+   <div id="paginationButtons"></div> <!-- 페이지 버튼 -->
+
 </div>
    <div class="guestbook-form">
       <form id="guestbookForm" onsubmit="addGuestbookEntry(); return false;">
