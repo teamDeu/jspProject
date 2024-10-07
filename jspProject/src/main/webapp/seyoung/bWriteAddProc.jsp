@@ -8,11 +8,12 @@
 <jsp:useBean id="mgr" class="board.BoardWriteMgr" scope="request"/>
 
 <%
+	
     // 세션에서 사용자 ID 가져오기 (로그인된 사용자라 가정)
     String boardId = (String) session.getAttribute("idKey");
-
+	String saveFolder = application.getRealPath("/miniroom/img");
     // 폼 데이터 가져오기 (MultipartRequest를 사용하여 파일 업로드와 폼 데이터 처리)
-    MultipartRequest multi = new MultipartRequest(request, BoardWriteMgr.SAVEFOLDER, 1024*1024*10, "UTF-8", new DefaultFileRenamePolicy());
+    MultipartRequest multi = new MultipartRequest(request, saveFolder, 1024*1024*10, "UTF-8", new DefaultFileRenamePolicy());
 
     String boardFolderStr = multi.getParameter("board_folder");
     String boardTitle = multi.getParameter("board_title");

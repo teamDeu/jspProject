@@ -29,7 +29,7 @@
 %>
         <tr>
             <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
-            <td><a href="boardDetail.jsp?board_num=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
+            <td> <button onclick="clickBoard_boardNum('<%= board.getBoard_num() %>')"><%= board.getBoard_title() %></button></td>
             <td><%= board.getBoard_id() %></td>
             <td><%= formattedDate %></td>
             <td><%= board.getBoard_views() %></td>

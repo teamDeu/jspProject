@@ -638,20 +638,21 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	        xhr.send(params);
 	    }
 	    
+	    function clickBoard_boardNum(board_num){
+			clickOpenBox('board');
+			loadPost(board_num);
+		}
 	    
 	 	// 최신 게시글이 로드된 후 댓글을 불러오는 함수 호출
 	    function loadLatestPost() {
 	        var xhr = new XMLHttpRequest();
-	        xhr.open("GET", "../seyoung/bLatestPost.jsp?type=latest", true);
-
+	        xhr.open("GET", "../seyoung/bLatestPost.jsp?type=latest&board_id="+encodeURIComponent('<%=board_id%>'), true);
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
 	                
 	                console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
-	     
 	                bloadAnswers(); // 댓글 로드
-	                
 	            }
 	        };
 
@@ -666,9 +667,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
-	                
 	                console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
-	     
 	                bloadAnswers(); // 댓글 로드
 	                
 	            }
@@ -676,8 +675,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 
 	        xhr.send();
 	    }
-
-	    
 	    
 	    document.addEventListener('DOMContentLoaded', function () {
 	    	bloadAnswers();

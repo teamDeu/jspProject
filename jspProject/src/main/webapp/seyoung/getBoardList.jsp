@@ -5,13 +5,14 @@
 <%@ page import="board.BoardWriteMgr"%>
 <%@ page import="board.BoardWriteBean"%>
 <%@ page import="java.util.Vector"%>
+<html>
 <head>
-<script>
-	function clickBoard_boardNum(board_num){
-		console.log(board_num);
-	}
-</script>
+	<script>
+	
+	</script>
 </head>
+
+
 <%
     
     String folderName = request.getParameter("folderName"); // 폴더 이름 받기
@@ -67,3 +68,4 @@
 <%
     }
 %>
+</html>

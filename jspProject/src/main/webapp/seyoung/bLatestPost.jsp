@@ -12,6 +12,7 @@
     String board_id = request.getParameter("board_id");
 	String type = request.getParameter("type");
 	
+	System.out.println("type : " + type);
 	BoardWriteBean latestBoard = null;
 	if(type.equals("latest")){
 		latestBoard = mgr.getLatestBoard(board_id);
@@ -23,7 +24,7 @@
     
 
 %>
-<% if (latestBoard != null && board_id != null && board_id.equals(latestBoard.getBoard_id())) { %>
+<% if (latestBoard != null) { %>
     <!-- 제목과 작성일을 상단에 배치하고 삭제 버튼 추가 -->
     <div class="bwrite-header" style="display: flex; align-items: center; width: 100%;">
         <h3 ><%= latestBoard.getBoard_title() %></h3>
