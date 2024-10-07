@@ -778,12 +778,12 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
                       </div>
                   <% } else { %>
                       <!-- 작성자의 프로필 사진과 이름, 날짜를 표시 -->
-                      <div class="author-container">
+                      <div class="author-container" onclick = "onclickMainProfileFriendsDiv(this)">
                       <% if (profile != null) { %>
                           <!-- 프로필 사진 -->
                           <img src="<%=profile.getProfilePicture()%>" alt="프로필 사진" class="profile-image">
                           <!-- 프로필 이름과 작성자 아이디, 날짜 함께 표시 -->
-                          <p class="author">
+                          <p class="author" >
                               <%=profile.getProfileName()%> (<%=entry.getWriterId()%>) 
                               <span class="date"><%= entry.getWrittenAt() != null ? new SimpleDateFormat("yyyy-MM-dd").format(entry.getWrittenAt()) : ""%></span>
 
@@ -796,6 +796,12 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
 
                           </p>
                       <% } %>
+                      	<div>
+			                <jsp:include page="../miniroom/profileFunctionDiv.jsp">
+								<jsp:param value="<%=entry.getWriterId()%>" name="profileId"/>
+								<jsp:param value="guestbook" name ="type"/>
+							</jsp:include>
+		               </div>
                       <div class="author-underline"></div>
                   </div>
       
