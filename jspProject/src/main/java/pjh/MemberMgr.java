@@ -834,14 +834,14 @@ public class MemberMgr {
     	    String sql = null;
     	    boolean isUpdated = false;
 
-    	    // 서버 내 이미지 경로 (AItemMgr와 동일한 방식으로 설정)
+    	    // 상대 경로 설정
     	    String saveFolder = "/miniroom/img";  // 이미지가 저장될 기본 폴더
 
     	    try {
     	        con = pool.getConnection();
 
     	        // 이미지 파일 경로가 존재하지 않는 경우
-    	        if (profilePicturePath == null) {
+    	        if (profilePicturePath == null || multi.getFilesystemName("profile_picture") == null) {
     	            sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ? WHERE user_id = ?";
     	            pstmt = con.prepareStatement(sql);
     	            pstmt.setString(1, multi.getParameter("profile_name"));
@@ -851,11 +851,11 @@ public class MemberMgr {
     	            pstmt.setString(5, multi.getParameter("profile_mbti"));
     	            pstmt.setString(6, multi.getParameter("profile_content"));
     	            pstmt.setString(7, user_id);
-    	        } 
-    	        // 이미지 파일 경로가 존재하는 경우
-    	        else {
-    	            // 서버 내 경로에서 상대 경로로 이미지 경로 수정
-    	            String relativePath = saveFolder + "/" + multi.getFilesystemName("profile_picture");
+    	        } else {
+    	            // 이미지 파일 저장 경로를 상대 경로로 저장
+    	            String fileName = multi.getFilesystemName("profile_picture");
+    	            String relativeImagePath = saveFolder + "/" + fileName;
+
     	            sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ?, profile_picture = ? WHERE user_id = ?";
     	            pstmt = con.prepareStatement(sql);
     	            pstmt.setString(1, multi.getParameter("profile_name"));
@@ -864,7 +864,7 @@ public class MemberMgr {
     	            pstmt.setString(4, multi.getParameter("profile_hobby"));
     	            pstmt.setString(5, multi.getParameter("profile_mbti"));
     	            pstmt.setString(6, multi.getParameter("profile_content"));
-    	            pstmt.setString(7, relativePath);  // 상대 경로로 저장
+    	            pstmt.setString(7, relativeImagePath); // 상대 경로로 저장
     	            pstmt.setString(8, user_id);
     	        }
 
@@ -880,6 +880,7 @@ public class MemberMgr {
 
     	    return isUpdated;
     	}
+
        
        public ProfileBean getProfileByUserId(String userId) throws Exception {
            ProfileBean profile = null;
