@@ -1,3 +1,5 @@
+<%@page import="alarm.AlarmMgr"%>
+<%@page import="alarm.AlarmBean"%>
 <%@page import="guestbook.GuestbookprofileMgr"%>
 <%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="guestbook.GuestbookanswerBean"%>
@@ -26,6 +28,13 @@
         // 답글 작성자의 프로필 정보 가져오기
         GuestbookprofileBean profile = profileMgr.getProfileByUserId(ganswerId);
         String profileName = profile != null ? profile.getProfileName() : "";
+        
+        AlarmBean alarmBean = new AlarmBean();
+        alarmBean.setAlarm_content_num(answerMgr.getLatestGuestbookAnswer());
+        alarmBean.setAlarm_type("방명록댓글");
+        alarmBean.setAlarm_user_id(ganswerId);
+        AlarmMgr alarmMgr = new AlarmMgr();
+        alarmMgr.insertAlarm(alarmBean);
 
         // 성공적으로 추가되었을 경우 JSON 응답 생성
         String jsonResponse = String.format(

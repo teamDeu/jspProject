@@ -1,4 +1,5 @@
 
+<%@page import="guestbook.GuestbookanswerBean"%>
 <%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="guestbook.GuestbookprofileMgr"%>
 <%@page import="guestbook.GuestbookBean"%>
@@ -13,6 +14,7 @@
 <jsp:useBean id="uMgr" class="pjh.MemberMgr" />
 <jsp:useBean id="aMgr" class="alarm.AlarmMgr" />
 <jsp:useBean id="gMgr" class="guestbook.GuestbookMgr" />
+<jsp:useBean id="gaMgr" class="guestbook.GuestbookanswerMgr"/>
 <%
 String id = (String) session.getAttribute("idKey");
 String url = request.getParameter("url");
@@ -177,8 +179,19 @@ ItemMgr iMgr = new ItemMgr();
 						방명록을 작성하였습니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
 				</li>
 				<%
-				}
-				} // for (alarmList)
+				}else if(alarmType.equals("방명록댓글")){
+					GuestbookanswerBean gaBean = null;
+					gaBean = gaMgr.getAnswersByNum(alarmContentNum);
+					GuestbookprofileBean gpBean = gpMgr.getProfileByUserId(gaBean.getGanswerId());
+				%>
+					<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><span
+						class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
+						<span onclick="clickAlarmGuestbook(event)"
+						class="alarmlist_main_div_item_title"><%=gpBean.getProfileName()%>님이
+							방명록댓글을 작성하였습니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
+					</li>
+				<%
+				}} // for (alarmList)
 				%>
 
 			</ul>

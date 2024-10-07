@@ -20,7 +20,6 @@
    
    boolean isSuspension = false;
    SuspensionBean suspensionBean = reportMgr.isSuspension(id);
-   System.out.println("이사람은 정지인가 ? : " + suspensionBean.getSuspension_num());
    if(suspensionBean.getSuspension_num() != 0){
       isSuspension = true;
       if(suspensionBean.getSuspension_type() == 1){
@@ -458,7 +457,7 @@ function clickAlarm(){
           reportBtn.onclick = (function(senduserid,receiveuserid) {
               return function() {
                  var xhr = new XMLHttpRequest();
-                    xhr.open("GET", "../miniroom/reportProc.jsp?report_senduserid="+senduserid+"&report_receiveuserid="+receiveuserid+"&report_type=chat", true); // Alarm 갱신Proc
+                    xhr.open("GET", "../miniroom/reportProc.jsp?report_senduserid="+senduserid+"&report_receiveuserid="+receiveuserid+"&report_type=채팅", true); // Alarm 갱신Proc
                     xhr.onreadystatechange = function () {
                      if (xhr.readyState === 4 && xhr.status === 200) {
                         alert("신고가 완료되었습니다.");

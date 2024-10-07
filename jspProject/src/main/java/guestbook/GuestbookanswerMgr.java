@@ -80,7 +80,37 @@ public class GuestbookanswerMgr {
         }
         return list;
     }
+    
+    public GuestbookanswerBean getAnswersByNum(int ganswer_num) {
+    	Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		GuestbookanswerBean bean = new GuestbookanswerBean();
+		try {
+			con = pool.getConnection();
+			sql = "select * from guestbookanswer where ganswer_num = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, ganswer_num);
+			rs = pstmt.executeQuery();
 
+			while (rs.next()) {
+				bean.setGanswerNum(rs.getInt("ganswer_num"));
+                bean.setGuestbookNum(rs.getInt("guestbook_num"));
+                bean.setGanswerComment(rs.getString("ganswer_comment"));
+                bean.setGanswerId(rs.getString("ganswer_id"));
+                bean.setGanswerAt(rs.getDate("ganswer_at"));
+                // 프로필 정보 추가
+                bean.setProfileName(rs.getString("profile_name"));
+                bean.setProfilePicture(rs.getString("profile_picture"));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return bean;
+    }
 
 
     // Delete a specific reply
@@ -119,5 +149,27 @@ public class GuestbookanswerMgr {
             pool.freeConnection(con, pstmt);
         }
         return false;
+    }
+    
+    public int getLatestGuestbookAnswer() {
+    	Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		int ganswer_num = 0;
+		try {
+			con = pool.getConnection();
+			sql = "select ganswer_num from guestbookanswer order by ganswer_num desc limit 1";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				ganswer_num = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return ganswer_num;
     }
 }
