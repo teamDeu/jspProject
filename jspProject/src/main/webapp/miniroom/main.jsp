@@ -75,7 +75,7 @@
 
    if (lastVisit == null || (currentTime - Long.parseLong(lastVisit)) > 10000) { // 10초 이상 경과 시
        // 페이지 소유자별 방문자 수 업데이트
-       memberMgr.updateVisitorCount(pageOwnerId, id); // 방문자 ID는 세션의 id
+       memberMgr.updateVisitorCount(pageOwnerId, id, response); // 방문자 ID는 세션의 id
 
        // 마지막 방문 시간을 현재 시간으로 쿠키에 저장
        javax.servlet.http.Cookie visitCookie = new javax.servlet.http.Cookie("lastVisit_" + pageOwnerId, Long.toString(currentTime));
