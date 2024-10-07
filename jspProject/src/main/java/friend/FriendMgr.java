@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Vector;
 
+import pjh.MemberBean;
+
 public class FriendMgr {
 	private DBConnectionMgr pool;
 	
@@ -321,4 +323,34 @@ public class FriendMgr {
 		}
 		return flag;
 	}
+	
+    public Vector<UserSearchBean> searchUser(String user_search_name){
+ 	   Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		Vector<UserSearchBean> vlist = new Vector<UserSearchBean>();
+		try {
+			con = pool.getConnection();
+			sql = "select u.user_id, u.user_name, p.profile_name from user u join profile p ON u.user_id = p.user_id WHERE u.user_id LIKE ? OR u.user_name LIKE ? OR p.profile_name LIKE ?  order BY u.user_id";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, "%" + user_search_name + "%");
+			pstmt.setString(2, "%" + user_search_name + "%");
+			pstmt.setString(3, "%" + user_search_name + "%");
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				UserSearchBean bean = new UserSearchBean();
+				bean.setUser_id(rs.getString(1));
+				bean.setUser_name(rs.getString(2));
+				bean.setProfile_name(rs.getString(3));
+				
+				vlist.add(bean);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return vlist;
+    } 
 }

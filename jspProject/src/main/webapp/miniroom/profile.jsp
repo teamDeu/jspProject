@@ -403,6 +403,11 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 		});
 		document.querySelector(".main_profile_friend_count").innerText = friend_items.length + "명";
 	}
+	
+	function userSearchClick(){
+		console.log("클릭됨");
+		document.getElementById("user_search_modal").style.display = "flex";
+	}
 	document.addEventListener('DOMContentLoaded', function () {
 		friend_items_first = Array.from(document.querySelectorAll('.friends_type_first'));
 		friend_items_second = Array.from(document.querySelectorAll('.friends_type_second'));

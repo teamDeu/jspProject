@@ -11,6 +11,13 @@
 	border: 1px solid black;
 	padding: 20px;
 	box-sizing: border-box;
+	background-color : white;
+	position:relative;
+	border-radius : 10px;
+}
+
+.user_search_div *{
+	font-size: 24px;
 }
 
 .user_search_input_section {
@@ -19,15 +26,15 @@
 }
 
 .user_search_input_section_input {
+	font-size : 18px;
 	padding: 5px;
-	font-size: 12px;
 	width: 80%;
 	box-sizing: border-box;
 }
 
 .user_search_input_section_button {
+	font-size : 18px;
 	padding: 5px 10px;
-	font-size: 12px;
 	box-sizing: border-box;
 }
 
@@ -57,10 +64,12 @@
 
 .user_search_output_info_profile_img_box {
 	width: 60px;
+	height:60px;
 }
 
 .user_search_output_info_profile_img {
 	width: 100%;
+	height:100%;
 	object-fit: contain;
 }
 
@@ -76,86 +85,45 @@
 	font-size: 16px;
 	border-radius: 10px;
 }
+.user_search_close_btn{
+	position:absolute;
+	cursor : pointer;
+	padding : 5px 10px;
+	background:none;
+	font-size : 16px;
+	border:none;
+	right:5px;
+	top:5px;
+}
 </style>
+<script>
+	function clickUserSearch(){
+		const user_search_name = document.querySelector(".user_search_input_section_input").value;
+		var xhr = new XMLHttpRequest();
+        xhr.open('GET', '../miniroom/userSearchProc.jsp?user_search_name=' + encodeURIComponent(user_search_name), true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
+                document.querySelector('.user_search_output_section').innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send(); // 목록 로드 요청
+	}
+	function closeUserSearch(){
+		document.getElementById("user_search_modal").style.display = "none";
+	}
+</script>
 </head>
 
 <div class="user_search_div">
 	<div class="user_search_input_section">
 		<input class="user_search_input_section_input" type="text"
-			placeholder="이름이나 아이디를 검색하세요" name="user_search_name"> <input
-			class="user_search_input_section_button" type="button" value="검색하기">
+			placeholder="이름이나 아이디,닉네임을 검색하세요" name="user_search_name"> <input
+			class="user_search_input_section_button" type="button" onclick ="clickUserSearch()" value="검색하기">
+		<button class ="user_search_close_btn" onclick ="closeUserSearch()">X</button>
 	</div>
 	<div class="user_search_output_section">
-		<div class="user_search_output_items">
-			<div class="user_search_output_info_div">
-				<div class="user_search_output_info_profile_img_box">
-					<img class="user_search_output_info_profile_img"
-						src="./img/character1.png">
-				</div>
-				<div class="user_search_output_info_profile_text">
-					als981209(KIDALI) 김민석</div>
-			</div>
-			<div class="user_search_output_function_div">
-				<button>친구요청</button>
-				<button>미니룸 가기</button>
-			</div>
-		</div>
-		<div class="user_search_output_items">
-			<div class="user_search_output_info_div">
-				<div class="user_search_output_info_profile_img_box">
-					<img class="user_search_output_info_profile_img"
-						src="./img/character1.png">
-				</div>
-				<div class="user_search_output_info_profile_text">als(KIDALI)
-					김민석</div>
-			</div>
-			<div class="user_search_output_function_div">
-				<button>친구요청</button>
-				<button>미니룸 가기</button>
-			</div>
-		</div>
-		<div class="user_search_output_items">
-			<div class="user_search_output_info_div">
-				<div class="user_search_output_info_profile_img_box">
-					<img class="user_search_output_info_profile_img"
-						src="./img/character1.png">
-				</div>
-				<div class="user_search_output_info_profile_text">
-					als981209sdgasd(KIDALI) 김민석</div>
-			</div>
-			<div class="user_search_output_function_div">
-				<button>친구요청</button>
-				<button>미니룸 가기</button>
-			</div>
-		</div>
-		<div class="user_search_output_items">
-			<div class="user_search_output_info_div">
-				<div class="user_search_output_info_profile_img_box">
-					<img class="user_search_output_info_profile_img"
-						src="./img/character1.png">
-				</div>
-				<div class="user_search_output_info_profile_text">
-					a209(KIDALI) 김민석</div>
-			</div>
-			<div class="user_search_output_function_div">
-				<button>친구요청</button>
-				<button>미니룸 가기</button>
-			</div>
-		</div>
-		<div class="user_search_output_items">
-			<div class="user_search_output_info_div">
-				<div class="user_search_output_info_profile_img_box">
-					<img class="user_search_output_info_profile_img"
-						src="./img/character1.png">
-				</div>
-				<div class="user_search_output_info_profile_text">
-					als981209(ALI) 김민석</div>
-			</div>
-			<div class="user_search_output_function_div">
-				<button>친구요청</button>
-				<button>미니룸 가기</button>
-			</div>
-		</div>
+		<h3 align = "center">이름이나 아이디,닉네임을 검색하세요</h3>
 	</div>
 </div>
 </html>
