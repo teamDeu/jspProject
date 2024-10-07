@@ -65,6 +65,7 @@
 .user_search_output_info_profile_img_box {
 	width: 60px;
 	height:60px;
+	margin-right : 5px;
 }
 
 .user_search_output_info_profile_img {
@@ -113,7 +114,15 @@
 		document.getElementById("user_search_modal").style.display = "none";
 	}
 	
-	const user_search_input_section_input = document.querySelector(".user_search_input_section_input");
+	document.addEventListener('DOMContentLoaded', function() {
+	    const user_search_input_section_input = document.querySelector(".user_search_input_section_input");
+	    user_search_input_section_input.addEventListener('keypress', function(key) {
+	        // key.key 의 값이 Enter 일 경우 코드 실행
+	        if (key.key === 'Enter') {
+	            clickUserSearch();
+	        }
+	    });
+	});
 </script>
 </head>
 
