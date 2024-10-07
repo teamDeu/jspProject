@@ -260,7 +260,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 				<img class="main_profile_img" src="./<%=profileBean.getProfilePicture()%>">
 			</div>
 			<div class="main_profile_comment">
-				<span style="font-size: 22px"><%=profileBean.getProfileContent()%></span>
+				<%=profileBean.getProfileContent()%>
 			</div>
 			<div class="main_profile_main_bottom">
 				<%

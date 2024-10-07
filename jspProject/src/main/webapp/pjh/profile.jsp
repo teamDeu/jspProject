@@ -203,18 +203,21 @@
 
     <script>
         // 이미지 미리보기 함수
+        var uploadFile = null;
         function loadFile(event) {
             var output = document.getElementById('profileImg');
             output.src = URL.createObjectURL(event.target.files[0]);
+            uploadFile = URL.createObjectURL(event.target.files[0]);
             output.onload = function() {
                 URL.revokeObjectURL(output.src); // 메모리 해제
-            }
+            }  
         }
-
+	
         // 프로필 수정 제출 함수
         function submitProfile() {
             var formData = new FormData(document.getElementById("profileForm"));
-
+            const profileContent = document.getElementById("statusMessage").value;
+            
             // AJAX 요청을 사용하여 데이터 전송
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "../pjh/updateProfile.jsp", true);
@@ -237,6 +240,14 @@
             };
 
             xhr.send(formData);
+            console.log(document.querySelector('.main_profile_comment').innerText);
+            console.log(profileContent);
+            document.querySelector('.main_profile_comment').innerHTML = profileContent;
+            if(uploadFile != null){
+            	document.querySelector(".main_profile_img").src = uploadFile;
+            }
+            
+			
         }
     </script>
 </body>
