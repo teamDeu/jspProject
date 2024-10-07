@@ -102,7 +102,7 @@
 			<td>정지 기간</td><td><%=suspensionBean.getSuspension_date()%> 까지</td>
 		</tr>
 	</table>
-	<%if(reportBean.getReport_type().equals("chat")){ %>
+	<%if(reportBean.getReport_type().equals("채팅")){ %>
 		<h1>채팅 내역</h1>
 		<div class ="report_chatLogBox_content_box">
 							<%if(chatLogList.size() == 0){ %>

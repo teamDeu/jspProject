@@ -7,7 +7,14 @@ public class ReportBean {
 	private String report_at;
 	private String report_type;
 	private boolean report_complete;
+	private int report_contentnum;
 	
+	public int getReport_contentnum() {
+		return report_contentnum;
+	}
+	public void setReport_contentnum(int report_contentnum) {
+		this.report_contentnum = report_contentnum;
+	}
 	public boolean isReport_complete() {
 		return report_complete;
 	}

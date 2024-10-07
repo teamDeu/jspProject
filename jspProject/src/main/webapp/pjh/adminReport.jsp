@@ -1,3 +1,8 @@
+<%@page import="guestbook.GuestbookBean"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="guestbook.GuestbookanswerBean"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="report.SuspensionBean"%>
 <%@page import="report.ChatLogBean"%>
 <%@page import="report.ReportBean"%>
@@ -10,6 +15,9 @@
 <%@ page import="pjh.ItemBean, pjh.AItemMgr"%>
 <%@ page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<jsp:useBean id="profileMgr" class="guestbook.GuestbookprofileMgr" />
+<jsp:useBean id="answerMgr" class="guestbook.GuestbookanswerMgr" />
+<jsp:useBean id="gMgr" class="guestbook.GuestbookMgr" />
 <%
 String type = request.getParameter("type");
 %>
@@ -23,61 +31,62 @@ String type = request.getParameter("type");
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <style>
 html, body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
+	height: 100%;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
 }
 
 /* 메인 콘텐츠가 화면 전체 높이를 차지하고 페이징이 하단에 고정되도록 설정 */
 .main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* 신고 목록을 상단에 고정 */
-    min-height: 100vh; /* 전체 화면 높이 */
-    padding-bottom: 60px; /* 페이징 영역을 위해 여유 공간 확보 */
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start; /* 신고 목록을 상단에 고정 */
+	min-height: 100vh; /* 전체 화면 높이 */
+	padding-bottom: 60px; /* 페이징 영역을 위해 여유 공간 확보 */
 }
 
 .product-list {
-    flex-grow: 1;
-    margin-top: 20px;
+	flex-grow: 1;
+	margin-top: 20px;
 }
 
 .product-list-table {
-    width: 100%;
-    border-collapse: collapse;
+	width: 100%;
+	border-collapse: collapse;
 }
 
 .product-list-table th, .product-list-table td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: center;
+	padding: 10px;
+	border: 1px solid #ddd;
+	text-align: center;
 }
 
 .pagination-container {
-    position: absolute;
-    bottom: 30px;
-    width: 100%;
-    padding: 10px;
-    display: flex;
-    justify-content: center;
+	position: absolute;
+	bottom: 30px;
+	width: 100%;
+	padding: 10px;
+	display: flex;
+	justify-content: center;
 }
 
 .pagination-container a {
-    margin: 0 5px;
-    text-decoration: none;
-    color: #000;
-    padding: 10px;
-    background-color: #C0E5AF;
-    border-radius: 10px;
+	margin: 0 5px;
+	text-decoration: none;
+	color: #000;
+	padding: 10px;
+	background-color: #C0E5AF;
+	border-radius: 10px;
 }
 
 .pagination-container a.current-page {
-    font-weight: bold;
-    color: #007bff;
-    background-color: #27ae60;
+	font-weight: bold;
+	color: #007bff;
+	background-color: #27ae60;
 }
+
 .admin_userList_user_img {
 	width: 120px;
 }
@@ -194,28 +203,45 @@ html, body {
 	align-items: center;
 	gap: 5px;
 }
-.pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
 
-        .pagination a {
-            margin: 0 5px;
-            text-decoration: none;
-            color: #000;
-        }
+.author-container{
+	display: flex;
+    flex-direction: column;
+}
 
-        .pagination a.current-page {
-            font-weight: bold;
-            color: #007bff;
-        }
+.guestbook_mainDiv{
+	display: flex;
+    flex-direction: column;
+}
+.author-underline{
+	    border-bottom: 1px solid black;
+    width: 100%;
+}
+.content{
+	align-self: flex-start;
+	padding : 15px 5px;
+}
+.a-list{
+	list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.author-box{
+	display:flex;
+	align-items:center;
+}
+
+.profile-image{
+	width:50px;
+}
+
+.a-item{
+	padding : 5px 10px;
+}
 </style>
-<link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
-  />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
 </head>
 <body>
 
@@ -223,12 +249,19 @@ html, body {
 	<div class="sidebar">
 		<h2>관리자 패널</h2>
 		<ul>
-            <li onclick="showCategory(event)" data="adminMain.jsp" id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
-            <li onclick="showCategory(event)" data="adminUser.jsp" id="userTab"><i class="fa fa-users"></i> 유저관리</li> <!-- 유저관리 아이콘 추가 -->
-            <li onclick="showCategory(event)" data="adminStore.jsp" id="storeTab"><i class="fa fa-store"></i> 상점관리</li>
-            <li onclick="showCategory(event)" data="adminReport.jsp" class = "active" id="reportTab"><i class="fa fa-exclamation-triangle"></i> 신고관리</li> <!-- 신고관리 아이콘 추가 -->
-            <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
-        </ul>
+			<li onclick="showCategory(event)" data="adminMain.jsp"
+				id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
+			<li onclick="showCategory(event)" data="adminUser.jsp" id="userTab"><i
+				class="fa fa-users"></i> 유저관리</li>
+			<!-- 유저관리 아이콘 추가 -->
+			<li onclick="showCategory(event)" data="adminStore.jsp" id="storeTab"><i
+				class="fa fa-store"></i> 상점관리</li>
+			<li onclick="showCategory(event)" data="adminReport.jsp"
+				class="active" id="reportTab"><i
+				class="fa fa-exclamation-triangle"></i> 신고관리</li>
+			<!-- 신고관리 아이콘 추가 -->
+			<li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
+		</ul>
 	</div>
 	<div class="main-content">
 		<h1>유저 관리</h1>
@@ -287,6 +320,7 @@ html, body {
 							String reportReceiveUserId = report.getReport_receiveuserid();
 							String reportAt = report.getReport_at();
 							String reportType = report.getReport_type();
+							int reportContent = report.getReport_contentnum();
 							boolean reportComplete = report.isReport_complete();
 							Vector<ChatLogBean> chatLogList = reportMgr.getChatLogByReport(report);
 							Vector<SuspensionBean> suspensionList = reportMgr.getSuspesionList(reportReceiveUserId);
@@ -294,6 +328,9 @@ html, body {
 					<tr>
 
 						<td>
+							<%
+							if (reportType.equals("채팅")) {
+							%>
 							<div class="report_chatLogModal" id="chatLogBox-<%=reportNum%>"
 								style="display: none">
 								<div class="report_chatLogBox">
@@ -334,8 +371,10 @@ html, body {
 											SuspensionBean suspensionBean = suspensionList.get(i);
 										%>
 										<div class="report_chatLogBox_content">
-											<%=suspensionBean.getSuspension_date()%> 까지 
-											<%=suspensionBean.getSuspension_type() == 1 ? "계정" : "채팅"%> 정지
+											<%=suspensionBean.getSuspension_date()%>
+											까지
+											<%=suspensionBean.getSuspension_type() == 1 ? "계정" : "채팅"%>
+											정지
 										</div>
 										<%
 										}
@@ -343,7 +382,8 @@ html, body {
 										%>
 									</div>
 									<div class="report_manage_div">
-										<section class="suspension_setting_section" id ="settingSection-<%=reportNum%>">
+										<section class="suspension_setting_section"
+											id="settingSection-<%=reportNum%>">
 											<select class="suspension_period">
 												<option value=3>3일</option>
 												<option value=5>5일</option>
@@ -375,6 +415,133 @@ html, body {
 
 							</div> <span class="report_num_span"
 							onclick="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')"><%=reports.size() - j%></span>
+							<%
+							} else if (reportType.equals("방명록")) {
+							GuestbookBean entry = gMgr.getGuestbookEntry(reportContent);
+							GuestbookprofileBean profile = profileMgr.getProfileByUserId(entry.getWriterId());
+							ArrayList<GuestbookanswerBean> answers = answerMgr.getAnswersForGuestbook(entry.getGuestbookNum());
+							%>
+							<div class="report_chatLogModal" id="chatLogBox-<%=reportNum%>"
+								style="display: none">
+								<div class="report_chatLogBox">
+								<div class ="guestbook_mainDiv" id="entry-<%=entry.getGuestbookNum()%>">
+									<!-- 작성자의 프로필 사진과 이름, 날짜를 표시 -->
+									<div class="author-container">
+										<%
+										if (profile != null) {
+										%>
+										<!-- 프로필 사진 -->
+										<div class ="author-box">
+											<img src="<%=profile.getProfilePicture()%>" alt="프로필 사진"
+											class="profile-image">
+										<!-- 프로필 이름과 작성자 아이디, 날짜 함께 표시 -->
+										<p class="author">
+											<%=profile.getProfileName()%>
+											(<%=entry.getWriterId()%>) <span class="date"><%=entry.getWrittenAt() != null ? new SimpleDateFormat("yyyy-MM-dd").format(entry.getWrittenAt()) : ""%></span>
+
+										</p>
+										</div>
+										
+										<%
+										} else {
+										%>
+										<!-- 프로필이 null인 경우 작성자 아이디와 날짜만 표시 -->
+										<p class="author">
+											<%=entry.getWriterId()%>
+											<span class="date"><%=entry.getWrittenAt() != null ? new SimpleDateFormat("yyyy-MM-dd").format(entry.getWrittenAt()) : ""%></span>
+
+										</p>
+										<%
+										}
+										%>
+										<div class="author-underline"></div>
+									</div> <!-- 비밀글이 아니거나, 작성자 또는 방명록 주인인 경우 내용 표시 -->
+									<p class="content"><%=entry.getGuestbookContent()%></p> <!-- 비밀글이면 방명록 주인 또는 작성자에게만 secret.png 아이콘 표시 -->
+									<!-- 답글 목록 (방명록 항목 내부로 이동) -->
+									<ul id="a-list-<%=entry.getGuestbookNum()%>" class="a-list">
+										<%
+										for (GuestbookanswerBean answer : answers) {
+											// 답글 작성자의 프로필 정보 가져오기
+											GuestbookprofileBean answerProfile = profileMgr.getProfileByUserId(answer.getGanswerId());
+											String answerProfileName = (answerProfile != null) ? answerProfile.getProfileName() : "";
+											String ganswerId = answer.getGanswerId();
+										%>
+										<li id="a-<%=answer.getGanswerNum()%>" class="a-item">
+											<!-- 프로필 이름이 있을 때와 없을 때 각각의 형식으로 출력 -->
+											<p>
+												↳
+												<%=!answerProfileName.isEmpty() ? answerProfileName + " (" + ganswerId + ") :" : ganswerId + " :"%>
+												<%=answer.getGanswerComment()%>
+												(<%=answer.getGanswerAt()%>)
+											</p>
+										</li>
+										<%
+										}
+										%>
+										</ul>
+										</div>
+										<div class="report_chatLogBox_Header">정지 내역</div>
+									<div class="report_chatLogBox_content_box">
+										<%
+										if (suspensionList.size() == 0) {
+										%>
+										<div class="report_chatLogBox_content">정지내역이 없습니다.</div>
+										<%
+										} else {
+										%>
+										<%
+										for (int i = 0; i < suspensionList.size(); i++) {
+											SuspensionBean suspensionBean = suspensionList.get(i);
+										%>
+										<div class="report_chatLogBox_content">
+											<%=suspensionBean.getSuspension_date()%>
+											까지
+											<%=suspensionBean.getSuspension_type() == 1 ? "계정" : "채팅"%>
+											정지
+										</div>
+										<%
+										}
+										}
+										%>
+									</div>
+										<div class="report_manage_div">
+										<section class="suspension_setting_section"
+											id="settingSection-<%=reportNum%>">
+											<select class="suspension_period">
+												<option value=3>3일</option>
+												<option value=5>5일</option>
+												<option value=7>7일</option>
+												<option value=30>30일</option>
+											</select>
+											<div class="suspension_type_box">
+												<input name="suspension_type" id="suspension_type0<%=j%>"
+													onchange="onchangeType(event)" type="radio" value=0
+													hidden="true"><label class="suspension_type"
+													for="suspension_type0<%=j%>">채팅정지</label> <input
+													name="suspension_type" id="suspension_type1<%=j%>"
+													onchange="onchangeType(event)" type="radio" value=1
+													hidden="true"><label class="suspension_type"
+													for="suspension_type1<%=j%>">계정정지</label>
+											</div>
+										</section>
+										<div class="report_manage_div_btn_box">
+											<button onclick="clickReportSubmit('<%=reportNum%>')"
+												class="report_manage_div_btn_submit">제출하기</button>
+											<button onclick="clickReportReject('<%=reportNum%>')">신고반려</button>
+											<button
+												onclick="clickReportChatLogBoxExitBtn('chatLogBox-<%=reportNum%>')"
+												class="report_manage_div_btn_cancel">취소하기</button>
+
+										</div>
+									</div>
+									</div>
+							</div>
+							 <span class="report_num_span"
+							onclick="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')"><%=reports.size() - j%></span>
+							<%
+							}
+							%>
+
 						</td>
 						<td><%=reportSendUserId%></td>
 						<td><%=reportReceiveUserId%></td>
