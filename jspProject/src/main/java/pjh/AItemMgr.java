@@ -108,6 +108,7 @@ public class AItemMgr {
         try {
             // 서블릿 컨텍스트에서 웹 애플리케이션의 실제 경로를 가져옴
             String saveFolder = req.getServletContext().getRealPath("/miniroom/img");
+            System.out.println(saveFolder);
 
             MultipartRequest multi = new MultipartRequest(req, saveFolder, MAXSIZE, ENCTYPE, new DefaultFileRenamePolicy());
             con = pool.getConnection();
@@ -131,7 +132,9 @@ public class AItemMgr {
             pool.freeConnection(con, pstmt);
         }
         return flag;
+        
     }
+    
     
     public boolean updateProduct(HttpServletRequest req) {
         Connection con = null;

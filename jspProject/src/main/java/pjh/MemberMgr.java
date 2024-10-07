@@ -835,7 +835,7 @@ public class MemberMgr {
     	    boolean isUpdated = false;
 
     	    // 상대 경로 설정
-    	    String saveFolder = "/miniroom/img";  // 이미지가 저장될 기본 폴더
+    	    String saveFolder = "../miniroom/img";  // 이미지가 저장될 기본 폴더
 
     	    try {
     	        con = pool.getConnection();

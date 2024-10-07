@@ -33,9 +33,10 @@
         if (fileName != null) {
             filePath = "miniroom/img/" + fileName; // 상대 경로 설정
         }
-
+		
         // MultipartRequest에서 가져온 파라미터들을 사용하여 프로필 업데이트 수행
         boolean result = mgr.updateProfile(multi, userId, filePath); // 이미지 경로를 매개변수로 넘김
+        
 
         if (result) {
             jsonResponse.put("success", true);

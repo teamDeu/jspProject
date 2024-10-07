@@ -198,7 +198,7 @@
                 <textarea id="statusMessage" name="profile_content" placeholder="상태 메시지를 입력하세요" <% if (!isOwnProfile) { %> readonly <% } %>><%= profileBean.getProfile_content() %></textarea>
                 <% if (isOwnProfile) { %>
                 <!-- 자신의 프로필일 때만 저장 버튼 표시 -->
-                <button type="submit" class="profile-btn-custom">저장</button>
+                <button type="submit" class="profile-btn-custom">수정</button>
                 <% } %>
             </div>
         </form>
