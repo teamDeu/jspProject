@@ -83,7 +83,7 @@ public class CategoryMgr {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
+        } finally { 
             pool.freeConnection(conn, pstmt, rs); // Connection 반환
         }
         return categoryList;

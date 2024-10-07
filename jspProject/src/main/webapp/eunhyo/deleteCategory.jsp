@@ -19,5 +19,5 @@
     } else {
         out.print("failure");
         System.out.println("Category deletion failed.");
-    }
+    } 
 %>

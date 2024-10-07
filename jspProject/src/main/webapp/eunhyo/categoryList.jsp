@@ -6,7 +6,7 @@
 <%
     response.setContentType("application/json; charset=UTF-8");
     String userId = (String) session.getAttribute("userId");
-    CategoryMgr categoryMgr = new CategoryMgr();
+    CategoryMgr categoryMgr = new CategoryMgr(); 
     
     // userId를 기준으로 카테고리 리스트를 정렬해서 가져옴 (생성된 순서대로)
     List<CategoryBean> categoryList = categoryMgr.getCategoriesByUserId(userId);

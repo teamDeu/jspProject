@@ -167,7 +167,7 @@
     <!-- 카테고리 추가 및 수정 섹션 -->
     <div class="category-section">
         <!-- 카테고리 추가 -->
-        <div class="category-add category-box">
+        <div class="category-add category-box"> 
 		    <div class="category-label">카테고리 추가</div>
 		    <div class="category-box-content">
 		        <div class="content-item">카테고리

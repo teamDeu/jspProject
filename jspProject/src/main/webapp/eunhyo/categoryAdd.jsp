@@ -17,7 +17,7 @@
     }
     CategoryBean category = new CategoryBean();
     category.setUserId(userId);
-    category.setCategoryType(categoryType);
+    category.setCategoryType(categoryType); 
     category.setCategoryName(categoryName);
     category.setCategorySecret(categorySecret);
 
