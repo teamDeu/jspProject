@@ -12,6 +12,7 @@
 <%
    // 세션에서 idKey 가져오기
    String id = (String)session.getAttribute("idKey");
+   String section = request.getParameter("section");
    if(id == null){
       response.sendRedirect("../pjh/login.jsp");
       return;
@@ -264,8 +265,12 @@ function clickAlarm(){
         var dataSeparator = "㉠"
         var messageSeparator = "㉡";
         var timeNameText = "";
+        var section = "<%=section%>";
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
+            if(section != "null" ){
+            	clickOpenBox(section);
+            }
             ws.onopen = function() {
                 document.getElementById("status").textContent = "서버와 연결됨";
                 if(localId == "null") localId = "비회원";
