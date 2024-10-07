@@ -331,6 +331,7 @@ function clickAlarmGuestbook(event){
     };
     xhr.send();
     fr_form.querySelector(".alarmlist_main_div_item_readbool").classList.add("alarmlist_main_div_item_read");
+    displayalarm_items();
     if("<%=url%>" == "<%=id%>"){
 		clickOpenBox('guestbook');
 	}

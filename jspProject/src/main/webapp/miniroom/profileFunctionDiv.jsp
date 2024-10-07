@@ -29,6 +29,7 @@
 <head>
 <script>
 	function onclickAddFriend(requestSendUser, requestReciveUser,character,name) {
+			document.getElementById("user_search_modal").style.display = "none";
             fr_modal = document.getElementById("friend_request_modal_send");
             fr_form = document.friend_request_form_send;
             fr_form.request_senduserid.value = requestSendUser;

@@ -684,7 +684,7 @@ function clickAlarm(){
    </div>
    
    <div id = "user_search_modal" class ="friend_request_modal" style = "display:none">
-   	
+   		<jsp:include page="userSearchModal.jsp"></jsp:include>
    </div>
 </body>
 </html> 
