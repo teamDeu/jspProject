@@ -29,10 +29,9 @@ import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
 public class MemberMgr {
 
 	private DBConnectionMgr pool;
-	private DefaultMessageService messageService;
-	public static final String  SAVEFOLDER = "C:/Jsp/jspProject/jspProject/src/main/webapp/miniroom/img";
-	public static final String ENCTYPE = "UTF-8";
-	public static int MAXSIZE = 300*1024*1024;//50mb
+    private DefaultMessageService messageService;
+    public static final String ENCTYPE = "UTF-8";
+    public static int MAXSIZE = 300 * 1024 * 1024; // 300MB
 	public MemberMgr() {
 		pool = DBConnectionMgr.getInstance();
 		// 메시지 서비스 초기화
@@ -833,7 +832,7 @@ public class MemberMgr {
 	        String sql = null;
 	        boolean isUpdated = false;
 
-	        try {
+	        try {	
 	            con = pool.getConnection();
 
 	            // 이미지 파일 경로가 존재하지 않는 경우
