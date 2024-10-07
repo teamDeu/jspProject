@@ -12,7 +12,7 @@
 	String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 
     // 모든 게시글을 불러오기
-    Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(UserId); 
+    Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); 
 %>
 
 <% 

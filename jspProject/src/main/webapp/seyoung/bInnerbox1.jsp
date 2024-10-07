@@ -6,10 +6,12 @@
 	int latestNum = mgr.getLatestBoardFolder().getFolder_num();
 	String id = (String)session.getAttribute("idKey");
 	String board_id = request.getParameter("board_id");
+	
 
 %>
 <!-- bInnerbox1.jsp -->
 <div class="folder-container">
+	<input type="hidden" id="selectedFolderName" name="selectedFolderName">
     <div class="folder-input-container" id="folderInputContainer">
         <img src="../seyoung/img/folder.png" alt="Folder Icon">
         <input type="text" id="folderNameInput" placeholder="폴더명을 입력하세요.">
@@ -25,6 +27,7 @@
     var selectedFolderItem = null; // 현재 선택된 폴더를 저장할 변수
     var board_id = '<%=board_id%>';
 	var latestNum = <%=latestNum%>;
+	
     function toggleFolderInput() {
         var inputContainer = document.getElementById('folderInputContainer');
         var deleteButtons = document.querySelectorAll('.delete-button'); // 모든 삭제 버튼을 가져옴
@@ -122,6 +125,8 @@
     function selectFolder(folderItem) {
         var folderIcon = folderItem.querySelector('img');
         var folderNum = folderItem.getAttribute('data-folder-num');
+        
+        
         // 폴더 번호가 유효하지 않을 경우 처리
         if (!folderNum || isNaN(folderNum)) {
             console.error("폴더 번호가 유효하지 않습니다.");
@@ -142,9 +147,12 @@
             selectedFolderItem = folderItem; // 현재 선택된 폴더 갱신
             
 			clickOpenBox('boardList');
-			loadBoardList(folderNum);
+			loadBoardList(selectedFolderItem.getAttribute("data-folder-name"));
 			
 			document.getElementById("selectedFolderNum").value = folderNum;
+			
+
+	        
 			
 			//document.getElementById("board-folder").value = selectedFolderItem;
             // AJAX 요청을 통해 서버에서 폴더 정보 가져오기
@@ -153,6 +161,14 @@
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     console.log('선택된 폴더 정보:', xhr.responseText);
+                    var folderInfo = JSON.parse(xhr.responseText);
+                    
+                    if (folderInfo.error) {
+                        console.error("폴더 정보를 가져오는 데 실패했습니다.");
+                    } else {
+                        var folderName = folderInfo.folder_name; // 폴더 이름 가져오기
+                        loadBoardList(folderNum, folderName); // 폴더 이름과 번호를 boardList.jsp로 전달
+                    }
                 }
             };
             xhr.send(); // 요청 전송
@@ -164,6 +180,19 @@
             selectedFolderItem = null; // 선택 해제
             clickOpenBox('board');
         }
+    }
+    
+    function loadBoardList(folderNum, folderName) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '../seyoung/getBoardList.jsp?folderNum=' + encodeURIComponent(folderNum) + '&folderName=' + encodeURIComponent(folderName), true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
+                document.getElementById('board-list-body').innerHTML = xhr.responseText;
+                
+            }
+        };
+        xhr.send(); // 목록 로드 요청
     }
 
     // 폴더 목록 로드

@@ -9,10 +9,12 @@
 <%
 String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
+String folderName = request.getParameter("folderName");
 
-BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
 
-Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(UserId); // 사용자 ID에 맞는 게시글 목록 가져오기
+BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
+
+Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); // 사용자 ID에 맞는 게시글 목록 가져오기
 %>
 
 <!DOCTYPE html>
@@ -253,7 +255,7 @@ td a {
 </head>
 
 <form class = "bListForm" action="../seyoung/bDelProc.jsp" method="post" onsubmit="return delbList();">
-                    <h1 class="board-title">게시판</h1>
+                    <h1 class="board-title">게시판 <% if (folderName != null && !folderName.isEmpty()) { %>| <%= folderName %><% } %></h1>
                     <div class="button-group">
                         <button onclick = "delbList()" type="button" class="delete-button2">삭제</button>
                          <button onclick ="clickOpenBox('boardWrite')" type="button" class="write-button">작성</button>
@@ -322,7 +324,7 @@ td a {
                  
                  
                     loadBoardList(selectedFolderItem.getAttribute("data-folder-num"));
-                    console.log(selectedFolderItem.getAttribute("data-folder-num"));
+                    //console.log(selectedFolderItem.getAttribute("data-folder-num"));
                     
                     loadLatestPost();
                     

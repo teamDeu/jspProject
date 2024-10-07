@@ -12,7 +12,7 @@
 <%
 String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
-
+String folderName = request.getParameter("selectedFolderName");
 
 BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
 
@@ -500,7 +500,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
 </head>
 				<!-- 게시글 작성 폼 -->
                 <form class = "bWriteAddForm"  method="post" enctype="multipart/form-data" target="blankifr" >
-                    <h1 class="board-title">게시판</h1>
+                    <h1 class="board-title">게시판 <% if (folderName != null && !folderName.isEmpty()) { %>| <%= folderName %><% } %></h1>
                     <button type="button" class="list-button" onclick="clickOpenBox('boardList')">목록</button>
 					
 					<input type="hidden" name="board_id" value="<%= UserId %>">

@@ -256,6 +256,48 @@ public class BoardWriteMgr {
         }
         return board;
     }
+    
+    public BoardWriteBean getBoard(int board_num) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        BoardWriteBean board = null;
+        try {
+            con = pool.getConnection();
+            String sql = "SELECT * FROM board WHERE board_num = ?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, board_num); // 현재 로그인한 사용자와 게시글 작성자 ID 비교
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                board = new BoardWriteBean();
+                board.setBoard_num(rs.getInt("board_num"));
+                board.setBoard_visibility(rs.getInt("board_visibility"));
+                board.setBoard_answertype(rs.getInt("board_answertype"));
+                board.setBoard_folder(rs.getInt("board_folder"));
+                board.setBoard_id(rs.getString("board_id"));
+                board.setBoard_title(rs.getString("board_title"));
+                board.setBoard_content(rs.getString("board_content"));
+                board.setBoard_at(rs.getTimestamp("board_at").toString());
+                board.setBoard_image(rs.getString("board_image"));
+                board.setBoard_views(rs.getInt("board_views"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return board;
+    }
+    
+    // 최신글 여부에 따른 메소드 구분
+    public BoardWriteBean getBoardBasedOnType(String userId, int board_num, boolean isLatest) {
+        // 최신글일 경우
+        if (isLatest) {
+            return getLatestBoard(userId);
+        }
+        // 특정 게시글 번호에 해당하는 게시물을 불러올 경우
+        return getBoard(board_num);
+    }
 
     
     // userId에 해당하는 사용자의 게시글 목록을 가져오는 메서드 추가
