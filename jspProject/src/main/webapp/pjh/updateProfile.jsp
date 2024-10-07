@@ -36,11 +36,13 @@
 		
         // MultipartRequest에서 가져온 파라미터들을 사용하여 프로필 업데이트 수행
         boolean result = mgr.updateProfile(multi, userId, filePath); // 이미지 경로를 매개변수로 넘김
-        
 
         if (result) {
             jsonResponse.put("success", true);
             jsonResponse.put("message", "수정이 완료되었습니다.");
+            if (filePath != null) {
+                jsonResponse.put("updatedImagePath", filePath);
+            }
         } else {
             jsonResponse.put("success", false);
             jsonResponse.put("message", "프로필 업데이트에 실패했습니다.");
@@ -51,5 +53,5 @@
         e.printStackTrace();
     }
 
-    out.print(jsonResponse);
+    out.print(jsonResponse);  // JSON 응답 반환
 %>

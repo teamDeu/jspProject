@@ -172,15 +172,13 @@
 </head>
 <body>
     <div class="profile-container-custom">
-        <form id="profileForm" method="POST" target="blankifr" action="../pjh/updateProfile.jsp" enctype="multipart/form-data">
+        <form id="profileForm" enctype="multipart/form-data">
             <div class="profile-header-custom">프로필</div>
             <div class="profile-line"></div>
             <div class="profile-details-custom">
                 <div class="profile-image-custom">
-                    <!-- DB에서 가져온 이미지 경로 설정 -->
                     <img id="profileImg" src="../miniroom/<%= profileBean.getProfile_picture() %>" alt="Profile Image">
                     <% if (isOwnProfile) { %>
-                    <!-- 자신의 프로필일 때만 사진 변경 버튼 표시 -->
                     <label for="imageUpload">사진 변경</label>
                     <input type="file" id="imageUpload" name="profile_picture" accept="image/*" onchange="loadFile(event)">
                     <% } %>
@@ -197,8 +195,7 @@
                 <label for="statusMessage">상태 메시지</label>
                 <textarea id="statusMessage" name="profile_content" placeholder="상태 메시지를 입력하세요" <% if (!isOwnProfile) { %> readonly <% } %>><%= profileBean.getProfile_content() %></textarea>
                 <% if (isOwnProfile) { %>
-                <!-- 자신의 프로필일 때만 저장 버튼 표시 -->
-                <button type="submit" class="profile-btn-custom">수정</button>
+                <button type="button" class="profile-btn-custom" onclick="submitProfile()">수정</button>
                 <% } %>
             </div>
         </form>
@@ -212,6 +209,34 @@
             output.onload = function() {
                 URL.revokeObjectURL(output.src); // 메모리 해제
             }
+        }
+
+        // 프로필 수정 제출 함수
+        function submitProfile() {
+            var formData = new FormData(document.getElementById("profileForm"));
+
+            // AJAX 요청을 사용하여 데이터 전송
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "../pjh/updateProfile.jsp", true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // 응답이 성공적으로 왔을 때
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        alert(response.message);  // 수정 완료 메시지
+                        // 이미지 미리보기 업데이트
+                        var newImagePath = response.updatedImagePath;
+                        if (newImagePath) {
+                            document.getElementById('profileImg').src = "../" + newImagePath;
+                        }
+                    } else {
+                        alert(response.message);  // 에러 메시지
+                    }
+                }
+            };
+
+            xhr.send(formData);
         }
     </script>
 </body>
