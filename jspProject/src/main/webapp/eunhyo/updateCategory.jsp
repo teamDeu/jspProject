@@ -15,7 +15,7 @@
     System.out.println("updateCategory.jsp - Received categorySecret: " + categorySecret);
 
     CategoryBean category = new CategoryBean();
-    category.setUserId(userId);
+    category.setUserId(userId); 
     category.setCategoryType(categoryType);
     category.setCategoryName(categoryName);
     category.setCategorySecret(categorySecret);

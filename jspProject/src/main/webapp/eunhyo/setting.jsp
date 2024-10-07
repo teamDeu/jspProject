@@ -139,6 +139,7 @@ function addCategory() {
 
     var categoryType = formData.get("categoryType");
     var categoryName = formData.get("categoryName");
+    var categorySecret = formData.get("categorySecret");
 
     // 카테고리 선택이 되었는지 확인
     if (!categoryType) {
@@ -153,7 +154,7 @@ function addCategory() {
     }
 
     var checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
-    var isChecked = false;
+    var isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
 
     // 체크박스가 하나라도 선택되었는지 확인
     checkboxes.forEach(function(checkbox) {
@@ -222,6 +223,35 @@ function addCategory() {
 
                 // 리스트 스크롤을 맨 아래로 이동
                 categoryListDiv.scrollTop = categoryListDiv.scrollHeight;
+                
+            	 // 카테고리 항목 클릭 시 수정란에 반영하는 이벤트 리스너 추가
+                categoryItem.addEventListener('click', function() {
+                    // 이전 선택 해제
+                    document.querySelectorAll('.category-item').forEach(function(item) {
+                        item.classList.remove('selected');
+                    });
+                    
+                    // 현재 선택된 카테고리에 'selected' 클래스 추가
+                    categoryItem.classList.add('selected');
+                    
+                    // 카테고리 수정 영역의 input과 체크박스에 값을 반영
+                    document.querySelector('.category-edit .content-input').value = categoryName;
+                    
+                    // 공개 설정 체크박스 값을 반영
+                    if (categorySecret === 0) {
+                        document.querySelector('.category-edit input[name="categorySecret"][value="0"]').checked = true;
+                        document.querySelector('.category-edit input[name="categorySecret"][value="1"]').checked = false;
+                    } else if (categorySecret === 1) {
+                        document.querySelector('.category-edit input[name="categorySecret"][value="0"]').checked = false;
+                        document.querySelector('.category-edit input[name="categorySecret"][value="1"]').checked = true;
+                    }
+                
+                });
+                document.querySelector('select[name="categoryType"]').selectedIndex = 0;
+                document.querySelector('input[name="categoryName"]').value = '';
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.checked = false;
+                });
             } else {
                 alert("카테고리가 이미 존재합니다.");
             }
@@ -326,7 +356,7 @@ function loadCategoryList() {
 
 function deleteCategory(categoryType, categoryName, categoryItem) {
     // 확인창을 띄워서 사용자가 삭제를 확인하도록 함
-    if (confirm("삭제하시겠습니까?")) {
+    if (confirm("삭제하시겠습니까?")) { 
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
@@ -335,8 +365,14 @@ function deleteCategory(categoryType, categoryName, categoryItem) {
                     alert("카테고리가 삭제되었습니다.");
                     categoryItem.remove();
 
-                    // 번호 재할당
+                    // 번호 재할당 
                     updateCategoryNumbers();
+                    
+                 	// **필드 초기화**
+                    document.getElementById('edit-category-name').value = ''; // 카테고리명 필드 초기화
+                    document.querySelectorAll('.category-edit input[type="checkbox"]').forEach(function(checkbox) {
+                        checkbox.checked = false; // 체크박스 초기화
+                    });
                 } else {
                     // 삭제 실패 시 알림창을 띄움
                     alert("카테고리 삭제에 실패했습니다. 다시 시도해주세요.");
@@ -402,6 +438,11 @@ function updateCategory() {
             if (xhr.responseText.trim() === "success") {
                 alert("카테고리가 성공적으로 업데이트되었습니다.");
                 loadCategoryList(); // 업데이트 후 리스트 새로고침
+            
+                document.getElementById('edit-category-name').value = '';
+                document.querySelectorAll('.category-edit input[type="checkbox"]').forEach(function(checkbox) {
+                    checkbox.checked = false;
+                });
             } else {
                 alert("카테고리 업데이트에 실패했습니다.");
             }

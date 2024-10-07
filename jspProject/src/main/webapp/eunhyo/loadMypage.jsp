@@ -19,7 +19,7 @@
         margin-left:230px;
         margin-right:-10px;
         font-size: 24px;
-        text-align: left;
+        text-align: left; 
     }
     #mypage-form input {
         margin-bottom: 10px;
