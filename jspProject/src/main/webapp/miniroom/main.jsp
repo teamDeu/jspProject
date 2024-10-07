@@ -17,7 +17,7 @@
       response.sendRedirect("../pjh/login.jsp");
       return;
    }
-   
+   System.out.println("request.getContextPath : " + request.getContextPath());
    boolean isSuspension = false;
    SuspensionBean suspensionBean = reportMgr.isSuspension(id);
    if(suspensionBean.getSuspension_num() != 0){
@@ -681,6 +681,10 @@ function clickAlarm(){
    
    <div id = "friend_request_modal_receive" class ="friend_request_modal" style = "display:none">
          <jsp:include page="friendRequestReceive.jsp"></jsp:include>
+   </div>
+   
+   <div id = "user_search_modal" class ="friend_request_modal" style = "display:none">
+   	
    </div>
 </body>
 </html> 

@@ -177,6 +177,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	border-bottom: none;
 	font-size: 18px;
 	display: flex;
+		cursor : pointer;
 }
 .main_profile_frinds_button_div{
 	display:flex;
@@ -185,6 +186,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	border-radius:1px;
 	background : none;
 	border : 1px solid #DCDCDC;
+
 }
 .main_profile_friendtype_btn:hover{
 	background-color: #C0E5AF;
@@ -194,7 +196,13 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	width: 100%;
 	object-fit: cover;
 }
+.main_profile_friends_search_button{
+	cursor : pointer;
+}
 
+.main_profile_friends_search_button:hover{
+	background-color : rgba(0,0,0,0.2);
+}
 .main_profile_setting_button {
 	display: flex;
 	align-items: center;
@@ -203,7 +211,10 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	gap: 5px;
 	font-size: 18px;
 }
-
+#main_profile_user_search_btn{
+	position :absolute;
+	right:10px;
+}
 .main_profile_setting_button_img {
 	width: 10px;
 }
@@ -280,11 +291,12 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 		<div class="main_profile_friends_main_div" style="margin-top:10px">
 			<div class="main_profile_friends_search_div">
 				<input class ="main_profile_friends_search_text" type="text" placeholder="닉네임을 입력해주세요.">
-				<button onclick = "friendSearchClick()">검색</button>
+				<button class ="main_profile_friends_search_button" onclick = "friendSearchClick()">검색</button>
 			</div>
 			<div class="main_profile_friends_list_friendtype_btns">
 				<button style = "background-color : #C0E5AF" id = "main_profile_friendtype_btn1" class ="main_profile_friendtype_btn" onclick = "changeFriendType(1)">일촌</button>
 				<button class ="main_profile_friendtype_btn" id ="main_profile_friendtype_btn2" onclick = "changeFriendType(2)">이촌</button>
+				<button id ="main_profile_user_search_btn" class ="main_profile_friendtype_btn" onclick ="userSearchClick()">친구 찾기</button>
 			</div>
 			<div class="main_profile_friends_list_div">
 
