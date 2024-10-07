@@ -155,27 +155,34 @@ public class BoardWriteMgr {
     
     
     
-    
+    //boardList.jsp에서 체크박스로 게시물 삭제 -> 배열로
     public boolean deleteMultipleBoards(int[] boardNums) {
         Connection con = null;
         PreparedStatement pstmt = null;
-        String sql = "";
         boolean isAllDeleted = true; // 모두 성공적으로 삭제되었는지 확인
         try {
             con = pool.getConnection();
 
-            // 1. 각 게시글의 댓글을 먼저 삭제
-            sql = "DELETE FROM boardanswer WHERE board_num = ?";
-            pstmt = con.prepareStatement(sql);
+            // 1. 각 게시글의 댓글과 대댓글을 먼저 삭제
             for (int boardNum : boardNums) {
+                // 1.1 대댓글 삭제
+                String deleteReAnswersSql = "DELETE FROM boardreanswer WHERE answer_num IN (SELECT answer_num FROM boardanswer WHERE board_num = ?)";
+                pstmt = con.prepareStatement(deleteReAnswersSql);
                 pstmt.setInt(1, boardNum);
-                pstmt.executeUpdate(); // 댓글 삭제
+                pstmt.executeUpdate();
+                pstmt.close();
+
+                // 1.2 댓글 삭제
+                String deleteAnswersSql = "DELETE FROM boardanswer WHERE board_num = ?";
+                pstmt = con.prepareStatement(deleteAnswersSql);
+                pstmt.setInt(1, boardNum);
+                pstmt.executeUpdate();
+                pstmt.close();
             }
-            pstmt.close();
 
             // 2. 그 다음에 게시글 삭제
-            sql = "DELETE FROM board WHERE board_num = ?";
-            pstmt = con.prepareStatement(sql);
+            String deleteBoardsSql = "DELETE FROM board WHERE board_num = ?";
+            pstmt = con.prepareStatement(deleteBoardsSql);
             for (int boardNum : boardNums) {
                 pstmt.setInt(1, boardNum);
                 int result = pstmt.executeUpdate();
@@ -191,6 +198,7 @@ public class BoardWriteMgr {
         }
         return isAllDeleted;
     }
+
 	
     // 특정 board_num에 해당하는 게시물의 조회수를 1 증가시키는 메서드
     public boolean increaseViews(int boardNum) {
@@ -217,15 +225,16 @@ public class BoardWriteMgr {
     }
     
     //최근 게시물 불러오는 메서드
-    public BoardWriteBean getLatestBoard() {
+    public BoardWriteBean getLatestBoard(String userId) {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         BoardWriteBean board = null;
         try {
             con = pool.getConnection();
-            String sql = "SELECT * FROM board ORDER BY board_at DESC LIMIT 1"; // 최근 게시된 글 1개 가져오기
+            String sql = "SELECT * FROM board WHERE board_id = ? ORDER BY board_at DESC LIMIT 1";
             pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, userId); // 현재 로그인한 사용자와 게시글 작성자 ID 비교
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 board = new BoardWriteBean();
@@ -247,6 +256,7 @@ public class BoardWriteMgr {
         }
         return board;
     }
+
     
     // userId에 해당하는 사용자의 게시글 목록을 가져오는 메서드 추가
     public Vector<BoardWriteBean> getBoardListByUser(String userId) {
@@ -282,5 +292,94 @@ public class BoardWriteMgr {
         }
         return boardList;
     }
+    
+    
+    // 게시글 삭제 메서드 (댓글과 대댓글도 함께 삭제) (board.jsp)
+    public boolean deletePostAndComments(int boardNum) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        boolean isDeleted = false;
+        String deleteReAnswersSql = "DELETE FROM boardreanswer WHERE answer_num IN (SELECT answer_num FROM boardanswer WHERE board_num = ?)";
+        String deleteAnswersSql = "DELETE FROM boardanswer WHERE board_num = ?";
+        String deleteBoardSql = "DELETE FROM board WHERE board_num = ?";
+
+        try {
+            con = pool.getConnection();
+            con.setAutoCommit(false); // 트랜잭션 시작
+
+            // 1. 댓글에 달린 대댓글 삭제
+            pstmt = con.prepareStatement(deleteReAnswersSql);
+            pstmt.setInt(1, boardNum);
+            pstmt.executeUpdate();
+            pstmt.close();
+
+            // 2. 댓글 삭제
+            pstmt = con.prepareStatement(deleteAnswersSql);
+            pstmt.setInt(1, boardNum);
+            pstmt.executeUpdate();
+            pstmt.close();
+
+            // 3. 게시글 삭제
+            pstmt = con.prepareStatement(deleteBoardSql);
+            pstmt.setInt(1, boardNum);
+            int rowsAffected = pstmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                isDeleted = true;
+                con.commit(); // 트랜잭션 커밋
+            } else {
+                con.rollback(); // 삭제 실패 시 롤백
+            }
+
+        } catch (Exception e) {
+            try {
+                if (con != null) con.rollback(); // 오류 발생 시 롤백
+            } catch (Exception rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt);
+        }
+
+        return isDeleted;
+    }
+    
+    
+    // 삭제된 게시글 다음 최신 게시글을 불러오는 메서드  (board.jsp)
+    public BoardWriteBean getNextLatestBoard(int deletedBoardNum) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        BoardWriteBean board = null;
+        try {
+            con = pool.getConnection();
+            // 삭제된 게시글 다음으로 최신 게시글을 불러옴
+            String sql = "SELECT * FROM board WHERE board_num < ? ORDER BY board_num DESC LIMIT 1";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, deletedBoardNum);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                board = new BoardWriteBean();
+                board.setBoard_num(rs.getInt("board_num"));
+                board.setBoard_visibility(rs.getInt("board_visibility"));
+                board.setBoard_answertype(rs.getInt("board_answertype"));
+                board.setBoard_folder(rs.getInt("board_folder"));
+                board.setBoard_id(rs.getString("board_id"));
+                board.setBoard_title(rs.getString("board_title"));
+                board.setBoard_content(rs.getString("board_content"));
+                board.setBoard_at(rs.getTimestamp("board_at").toString());
+                board.setBoard_image(rs.getString("board_image"));
+                board.setBoard_views(rs.getInt("board_views"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return board;
+    }
+
+    
     
 }

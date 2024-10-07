@@ -1,3 +1,4 @@
+<%@page import="pjh.MemberMgr"%>
 <%@ page import="com.oreilly.servlet.multipart.DefaultFileRenamePolicy"%>
 <%@ page import="com.oreilly.servlet.MultipartRequest"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -11,7 +12,7 @@
     String boardId = (String) session.getAttribute("idKey");
 
     // 폼 데이터 가져오기 (MultipartRequest를 사용하여 파일 업로드와 폼 데이터 처리)
-    MultipartRequest multi = new MultipartRequest(request, getServletContext().getRealPath("/") + "img", 1024*1024*10, "UTF-8", new DefaultFileRenamePolicy());
+    MultipartRequest multi = new MultipartRequest(request, BoardWriteMgr.SAVEFOLDER, 1024*1024*10, "UTF-8", new DefaultFileRenamePolicy());
 
     String boardFolderStr = multi.getParameter("board_folder");
     String boardTitle = multi.getParameter("board_title");

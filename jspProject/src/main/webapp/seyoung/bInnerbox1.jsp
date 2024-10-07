@@ -5,7 +5,8 @@
 	BoardFolderMgr mgr = new BoardFolderMgr();
 	int latestNum = mgr.getLatestBoardFolder().getFolder_num();
 	String id = (String)session.getAttribute("idKey");
-	
+	String board_id = request.getParameter("board_id");
+
 %>
 <!-- bInnerbox1.jsp -->
 <div class="folder-container">
@@ -22,6 +23,7 @@
 <script>
     var userId = '<%=id%>'; // 실제로는 세션에서 사용자 ID를 가져와야 합니다.
     var selectedFolderItem = null; // 현재 선택된 폴더를 저장할 변수
+    var board_id = '<%=board_id%>';
 	var latestNum = <%=latestNum%>;
     function toggleFolderInput() {
         var inputContainer = document.getElementById('folderInputContainer');
@@ -167,7 +169,7 @@
     // 폴더 목록 로드
 	function loadFolders() {
 	    var xhr = new XMLHttpRequest();
-	    xhr.open('GET', '../seyoung/bFolderListProc.jsp?user_id=' + encodeURIComponent(userId), true);
+	    xhr.open('GET', '../seyoung/bFolderListProc.jsp?board_id=' + encodeURIComponent(board_id), true);
 	    xhr.onreadystatechange = function() {
 	        if (xhr.readyState === 4 && xhr.status === 200) {
 	            var folderContainer = document.querySelector('.folder-container');

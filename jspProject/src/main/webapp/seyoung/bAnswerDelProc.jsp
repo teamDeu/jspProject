@@ -5,19 +5,19 @@
 <%@page import="board.BoardAnswerBean"%>
 <%
     String answerNum = request.getParameter("answer_num");
-    boolean success = false;
+    boolean suc2 = false;
     
     if (answerNum != null && !answerNum.isEmpty()) {
     	
     	int answerNumInt = Integer.parseInt(answerNum);
     	
     	BoardAnswerMgr mgr = new BoardAnswerMgr();
-    	success = mgr.bdeleteAnswer(Integer.parseInt(answerNum));
+    	suc2 = mgr.bdeleteAnswer(Integer.parseInt(answerNum));
     	
     }
     	
 
-    if (success) {
+    if (suc2) {
         out.print("success");
     } else {
         out.print("failure");

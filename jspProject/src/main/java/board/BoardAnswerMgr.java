@@ -34,35 +34,75 @@ public class BoardAnswerMgr {
         }
     }
 
-    // 댓글 삭제
+	/*
+	 * // 댓글 삭제 public boolean bdeleteAnswer(int answerNum) { Connection con = null;
+	 * PreparedStatement pstmt = null; String sql =
+	 * "DELETE FROM boardanswer WHERE answer_num = ?"; boolean isDeleted = false;
+	 * 
+	 * try { con = pool.getConnection(); pstmt = con.prepareStatement(sql);
+	 * pstmt.setInt(1, answerNum); int rowsAffected = pstmt.executeUpdate();
+	 * 
+	 * if (rowsAffected > 0) { // 댓글이 삭제되었을 경우 isDeleted = true;
+	 * System.out.println("Successfully deleted comment with answer_num: " +
+	 * answerNum); } else {
+	 * System.out.println("No comment found to delete with answer_num: " +
+	 * answerNum); } } catch (Exception e) {
+	 * System.out.println("Error while deleting answer: " + e.getMessage());
+	 * e.printStackTrace(); } finally { pool.freeConnection(con, pstmt); }
+	 * 
+	 * return isDeleted; // 삭제 성공 여부 반환 }
+	 */
+	
+	
+	// 댓글 삭제 메소드 수정 (댓글에 달린 답글도 함께 삭제)
 	public boolean bdeleteAnswer(int answerNum) {
 	    Connection con = null;
 	    PreparedStatement pstmt = null;
-	    String sql = "DELETE FROM boardanswer WHERE answer_num = ?";
 	    boolean isDeleted = false;
+	    String deleteReAnswersSql = "DELETE FROM boardreanswer WHERE answer_num = ?";
+	    String deleteAnswerSql = "DELETE FROM boardanswer WHERE answer_num = ?";
 
 	    try {
 	        con = pool.getConnection();
-	        pstmt = con.prepareStatement(sql);
+	        con.setAutoCommit(false); // 트랜잭션 시작
+
+	        // 먼저 해당 댓글에 달린 답글을 삭제
+	        pstmt = con.prepareStatement(deleteReAnswersSql);
+	        pstmt.setInt(1, answerNum);
+	        pstmt.executeUpdate();
+	        pstmt.close();
+
+	        // 댓글을 삭제
+	        pstmt = con.prepareStatement(deleteAnswerSql);
 	        pstmt.setInt(1, answerNum);
 	        int rowsAffected = pstmt.executeUpdate();
 	        
 	        if (rowsAffected > 0) {
-	            // 댓글이 삭제되었을 경우
 	            isDeleted = true;
-	            System.out.println("Successfully deleted comment with answer_num: " + answerNum);
+	            con.commit(); // 트랜잭션 커밋
+	            System.out.println("댓글과 답글이 성공적으로 삭제되었습니다.");
 	        } else {
-	            System.out.println("No comment found to delete with answer_num: " + answerNum);
+	            con.rollback(); // 트랜잭션 롤백
+	            System.out.println("댓글 삭제에 실패했습니다.");
 	        }
+
 	    } catch (Exception e) {
-	        System.out.println("Error while deleting answer: " + e.getMessage());
+	        try {
+	            if (con != null) con.rollback(); // 오류 발생 시 롤백
+	        } catch (Exception rollbackEx) {
+	            rollbackEx.printStackTrace();
+	        }
 	        e.printStackTrace();
 	    } finally {
 	        pool.freeConnection(con, pstmt);
 	    }
 
-	    return isDeleted; // 삭제 성공 여부 반환
+	    return isDeleted;
 	}
+
+	
+	
+	
 
     // 댓글 목록 불러오기 (특정 게시물에 달린 댓글)
     public Vector<BoardAnswerBean> bgetAnswers(int boardNum) {

@@ -51,7 +51,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 }
 
 .main_profile_img {
-	object-fit: cover;
+	object-fit: contain;
 	width:100%;
 }
 

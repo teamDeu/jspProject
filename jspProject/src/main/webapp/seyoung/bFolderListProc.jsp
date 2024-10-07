@@ -7,14 +7,15 @@
 <%
     // 클라이언트에서 전달된 user_id 파라미터를 가져옴
     String user_id = request.getParameter("user_id");
-
+	String board_id = request.getParameter("board_id");
+	System.out.println("board_id = " + board_id);
     try {
         // user_id가 null이 아니고 비어있지 않을 때만 처리
-        if (user_id != null && !user_id.trim().isEmpty()) {
+        if (board_id != null && !board_id.trim().isEmpty()) {
             BoardFolderMgr folderMgr = new BoardFolderMgr(); // BoardFolderMgr 인스턴스 생성
             
             // user_id에 해당하는 폴더 목록 가져오기
-            Vector<BoardFolderBean> folderList = folderMgr.getFolderList(user_id);
+            Vector<BoardFolderBean> folderList = folderMgr.getFolderList(board_id);
 
             if (folderList != null && !folderList.isEmpty()) {
                 // 폴더 목록을 JSON 형식으로 변환하여 반환

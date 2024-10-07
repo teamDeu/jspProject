@@ -6,7 +6,9 @@
 <%
     int boardNum = Integer.parseInt(request.getParameter("boardNum"));
     BoardWriteMgr boardMgr = new BoardWriteMgr();
-    BoardWriteBean board = null;
+    BoardWriteBean board = null ;
+    String board_id = request.getParameter("board_id");
+    String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
     
     // 조회수 증가 메서드 호출
     boardMgr.increaseViews(boardNum);
@@ -21,16 +23,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title><%= board.getBoard_title() %></title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>CloverStory</title>
 </head>
 <body>
-    <div class="container">
-        <h1><%= board.getBoard_title() %></h1>
-        <p>작성자: <%= board.getBoard_id() %></p>
-        <p>작성일: <%= board.getBoard_at() %></p>
-        <p>조회수: <%= board.getBoard_views() %></p> <!-- 조회수 표시 -->
-        <p><%= board.getBoard_content() %></p>
-    </div>
+	<h1 class="board-title">게시판</h1>
+	<button type="button" onclick ="clickAllBoardList()" class="list-button">목록</button>
+	<div class="board-line"></div>
+	<div class="board">
+					
+		<div class="bwrite-form" id="bwrite-form">
+	
+							
+						
+						
+	</div>
+						
+	<div class="banswer-form" id="banswer-form">
+							
+						
+	</div>
+						
+	<div class="wanswer-form">
+		<input type="text" id="ansewerinput" placeholder="  게시판에 댓글을 남겨주세요.">
+		<button type="button" onclick="baddAnswer()">등록</button>
+	</div>
+	</div>
 </body>
 </html>

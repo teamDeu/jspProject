@@ -1,5 +1,6 @@
 package pjh;
 
+import java.net.http.HttpRequest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import net.nurigo.sdk.NurigoApp;
@@ -22,7 +30,9 @@ public class MemberMgr {
 
 	private DBConnectionMgr pool;
 	private DefaultMessageService messageService;
-
+	public static final String  SAVEFOLDER = "C:/Jsp/jspProject/jspProject/src/main/webapp/miniroom/img";
+	public static final String ENCTYPE = "UTF-8";
+	public static int MAXSIZE = 300*1024*1024;//50mb
 	public MemberMgr() {
 		pool = DBConnectionMgr.getInstance();
 		// 메시지 서비스 초기화
@@ -499,8 +509,8 @@ public class MemberMgr {
 
 	        return totalCount;  // 총 상품 수 반환
 	    }
-	 // 페이지 소유자별 방문자 수 업데이트
-	    public void updateVisitorCount(String pageOwnerId, String visitorId) {
+	 // 페이지 소유자별 방문자 수 업데이트 (유니크 방문자)
+	    public void updateVisitorCount(String pageOwnerId, String visitorId, HttpServletResponse response) {
 	        Connection con = null;
 	        PreparedStatement pstmt = null;
 	        ResultSet rs = null;
@@ -511,26 +521,24 @@ public class MemberMgr {
 	            con = pool.getConnection();
 
 	            // 오늘의 방문자 수를 조회
-	            sql = "SELECT * FROM visitCount WHERE visit_date = now() AND page_owner_id = ? AND visitor_id = ?";
-	            pstmt = con.prepareStatement(sql);	         
+	            sql = "SELECT * FROM visitCount WHERE visit_date = CURDATE() AND page_owner_id = ? AND visitor_id = ?";
+	            pstmt = con.prepareStatement(sql);
 	            pstmt.setString(1, pageOwnerId);
 	            pstmt.setString(2, visitorId);
 	            rs = pstmt.executeQuery();
 
-	            if (rs.next()) {
-	                // 이미 방문한 경우 visit_count 증가
-	                sql = "UPDATE visitCount SET visit_count = visit_count + 1 WHERE visit_date = now() AND page_owner_id = ? AND visitor_id = ?";
+	            if (!rs.next()) {
+	                // 방문 기록이 없으면 레코드 삽입
+	                sql = "INSERT INTO visitCount (visit_date, visit_count, page_owner_id, visitor_id) VALUES (CURDATE(), 1, ?, ?)";
 	                pstmt = con.prepareStatement(sql);
 	                pstmt.setString(1, pageOwnerId);
 	                pstmt.setString(2, visitorId);
 	                pstmt.executeUpdate();
-	            } else {
-	                // 첫 방문이면 레코드 삽입
-	                sql = "INSERT INTO visitCount (visit_date, visit_count, page_owner_id, visitor_id) VALUES (now(), 1, ?, ?)";
-	                pstmt = con.prepareStatement(sql);
-	                pstmt.setString(1, pageOwnerId);
-	                pstmt.setString(2, visitorId);
-	                pstmt.executeUpdate();
+
+	                // 방문 기록이 성공하면 유니크 방문자 쿠키 설정 (하루 동안 유지)
+	                javax.servlet.http.Cookie uniqueVisitorCookie = new javax.servlet.http.Cookie("uniqueVisitor_" + pageOwnerId, "visited");
+	                uniqueVisitorCookie.setMaxAge(60 * 60 * 24);  // 쿠키 유효기간 하루
+	                response.addCookie(uniqueVisitorCookie);  // response 객체를 통해 쿠키를 클라이언트에 추가
 	            }
 	        } catch (Exception e) {
 	            e.printStackTrace();
@@ -538,6 +546,8 @@ public class MemberMgr {
 	            pool.freeConnection(con, pstmt, rs);
 	        }
 	    }
+
+
 
 	    // 페이지 소유자별 오늘의 방문자 수 조회
 	    public int getTodayVisitorCount(String pageOwnerId) {
@@ -798,7 +808,7 @@ public class MemberMgr {
 	    }
 	    
 	    //프로필 업데이트 
-	    public boolean updateProfile(ProfileBean profile) throws Exception {
+	    public boolean updateProfile(MultipartRequest multi, String user_id, String profilePicturePath) throws Exception {
 	        Connection con = null;
 	        PreparedStatement pstmt = null;
 	        String sql = null;
@@ -806,16 +816,32 @@ public class MemberMgr {
 
 	        try {
 	            con = pool.getConnection();
-	            sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ?, profile_picture = ? WHERE user_id = ?";
-	            pstmt = con.prepareStatement(sql);
-	            pstmt.setString(1, profile.getProfile_name());
-	            pstmt.setString(2, profile.getProfile_email());
-	            pstmt.setString(3, profile.getProfile_birth());
-	            pstmt.setString(4, profile.getProfile_hobby());
-	            pstmt.setString(5, profile.getProfile_mbti());
-	            pstmt.setString(6, profile.getProfile_content());
-	            pstmt.setString(7, profile.getProfile_picture());
-	            pstmt.setString(8, profile.getUser_id());
+
+	            // 이미지 파일 경로가 존재하지 않는 경우
+	            if (profilePicturePath == null) {
+	                sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ? WHERE user_id = ?";
+	                pstmt = con.prepareStatement(sql);
+	                pstmt.setString(1, multi.getParameter("profile_name"));
+	                pstmt.setString(2, multi.getParameter("profile_email"));
+	                pstmt.setString(3, multi.getParameter("profile_birth"));
+	                pstmt.setString(4, multi.getParameter("profile_hobby"));
+	                pstmt.setString(5, multi.getParameter("profile_mbti"));
+	                pstmt.setString(6, multi.getParameter("profile_content"));
+	                pstmt.setString(7, user_id);
+	            } 
+	            // 이미지 파일 경로가 존재하는 경우
+	            else {
+	                sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ?, profile_picture = ? WHERE user_id = ?";
+	                pstmt = con.prepareStatement(sql);
+	                pstmt.setString(1, multi.getParameter("profile_name"));
+	                pstmt.setString(2, multi.getParameter("profile_email"));
+	                pstmt.setString(3, multi.getParameter("profile_birth"));
+	                pstmt.setString(4, multi.getParameter("profile_hobby"));
+	                pstmt.setString(5, multi.getParameter("profile_mbti"));
+	                pstmt.setString(6, multi.getParameter("profile_content"));
+	                pstmt.setString(7, profilePicturePath); // 이미지 경로
+	                pstmt.setString(8, user_id);
+	            }
 
 	            int result = pstmt.executeUpdate();
 	            if (result == 1) {
@@ -864,7 +890,7 @@ public class MemberMgr {
 	        return profile;
 	    }
 
-
+	    
 
 	}
 	

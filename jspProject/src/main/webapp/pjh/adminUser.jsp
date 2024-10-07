@@ -136,10 +136,10 @@
     <div class="sidebar">
         <h2>관리자 패널</h2>
         <ul>
-            <li onclick="showCategory(event)" data = "adminMain.jsp" id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
-            <li onclick="showCategory(event)" data = "adminUser.jsp" class="active" ><i class="fa-solid fa-users"></i> 유저관리</li>
-            <li onclick="showCategory(event)" data = "adminStore.jsp" id="storeTab"><i class="fa fa-store"></i> 상점관리</li>
-            <li onclick="showCategory(event)" data = "adminReport.jsp"><i class="fa-solid fa-lightbulb"></i> 신고관리</li>
+            <li onclick="showCategory(event)" data="adminMain.jsp"  id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
+            <li onclick="showCategory(event)" data="adminUser.jsp" class="active" id="userTab"><i class="fa fa-users"></i> 유저관리</li> <!-- 유저관리 아이콘 추가 -->
+            <li onclick="showCategory(event)" data="adminStore.jsp" id="storeTab"><i class="fa fa-store"></i> 상점관리</li>
+            <li onclick="showCategory(event)" data="adminReport.jsp" id="reportTab"><i class="fa fa-exclamation-triangle"></i> 신고관리</li> <!-- 신고관리 아이콘 추가 -->
             <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
         </ul>
     </div>
