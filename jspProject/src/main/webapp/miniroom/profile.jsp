@@ -77,6 +77,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	display: flex;
 	position: relative;
 	height: 100px;
+	font-size : 16px;
 }
 
 .main_profile_alram {
