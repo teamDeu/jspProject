@@ -1,3 +1,4 @@
+<%@page import="guestbook.GuestbookBean"%>
 <%@page import="alarm.AlarmMgr"%>
 <%@page import="alarm.AlarmBean"%>
 <%@page import="guestbook.GuestbookprofileMgr"%>
@@ -8,6 +9,7 @@
 
 <jsp:useBean id="answerMgr" class="guestbook.GuestbookanswerMgr" />
 <jsp:useBean id="profileMgr" class="guestbook.GuestbookprofileMgr" />
+<jsp:useBean id="guestbookMgr" class ="guestbook.GuestbookMgr"/>
 <%
     out.clear();
     response.setContentType("application/json; charset=UTF-8");
@@ -17,6 +19,7 @@
     String ganswerId = (String) session.getAttribute("idKey");
 
     GuestbookanswerBean answer = new GuestbookanswerBean();
+    GuestbookBean guestbook = guestbookMgr.getGuestbookEntry(guestbookNum);
     answer.setGuestbookNum(guestbookNum);
     answer.setGanswerComment(comment);
     answer.setGanswerId(ganswerId);
@@ -32,7 +35,7 @@
         AlarmBean alarmBean = new AlarmBean();
         alarmBean.setAlarm_content_num(answerMgr.getLatestGuestbookAnswer());
         alarmBean.setAlarm_type("방명록댓글");
-        alarmBean.setAlarm_user_id(ganswerId);
+        alarmBean.setAlarm_user_id(guestbook.getOwnerId());
         AlarmMgr alarmMgr = new AlarmMgr();
         alarmMgr.insertAlarm(alarmBean);
 
