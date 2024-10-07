@@ -19,11 +19,11 @@
             return;
         }
 
-        // 파일이 저장될 실제 경로 설정
-        String saveFolder = application.getRealPath("img"); // 실제 저장 경로
+        // 파일이 저장될 실제 경로 설정 (프로젝트 내의 "img" 폴더)
+        String saveFolder = application.getRealPath("/miniroom/img"); // 실제 저장 경로
         
         // MultipartRequest를 사용하여 파일을 처리
-        MultipartRequest multi = new MultipartRequest(request, MemberMgr.SAVEFOLDER, MemberMgr.MAXSIZE, MemberMgr.ENCTYPE, new DefaultFileRenamePolicy());
+        MultipartRequest multi = new MultipartRequest(request, saveFolder, MemberMgr.MAXSIZE, MemberMgr.ENCTYPE, new DefaultFileRenamePolicy());
 
         // 업로드된 파일 이름을 가져옴
         String fileName = multi.getFilesystemName("profile_picture");
@@ -31,15 +31,18 @@
 
         // 파일이 업로드된 경우 경로를 설정
         if (fileName != null) {
-            filePath = "img/" + fileName;
+            filePath = "miniroom/img/" + fileName; // 상대 경로 설정
         }
-
+		
         // MultipartRequest에서 가져온 파라미터들을 사용하여 프로필 업데이트 수행
         boolean result = mgr.updateProfile(multi, userId, filePath); // 이미지 경로를 매개변수로 넘김
 
         if (result) {
             jsonResponse.put("success", true);
             jsonResponse.put("message", "수정이 완료되었습니다.");
+            if (filePath != null) {
+                jsonResponse.put("updatedImagePath", filePath);
+            }
         } else {
             jsonResponse.put("success", false);
             jsonResponse.put("message", "프로필 업데이트에 실패했습니다.");
@@ -50,5 +53,5 @@
         e.printStackTrace();
     }
 
-    out.print(jsonResponse);
+    out.print(jsonResponse);  // JSON 응답 반환
 %>

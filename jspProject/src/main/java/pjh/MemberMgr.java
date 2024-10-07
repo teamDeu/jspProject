@@ -31,7 +31,7 @@ public class MemberMgr {
 
    private DBConnectionMgr pool;
    private DefaultMessageService messageService;
-   public static final String  SAVEFOLDER = "C:/Jsp/jspProject/jspProject/src/main/webapp/miniroom/img";
+  
    public static final String ENCTYPE = "UTF-8";
    public static int MAXSIZE = 300*1024*1024;//50mb
    public MemberMgr() {
@@ -829,56 +829,58 @@ public class MemberMgr {
        
        //프로필 업데이트 
        public boolean updateProfile(MultipartRequest multi, String user_id, String profilePicturePath) throws Exception {
-           Connection con = null;
-           PreparedStatement pstmt = null;
-           String sql = null;
-           boolean isUpdated = false;
+    	    Connection con = null;
+    	    PreparedStatement pstmt = null;
+    	    String sql = null;
+    	    boolean isUpdated = false;
 
+    	    // 상대 경로 설정
+    	    String saveFolder = "../miniroom/img";  // 이미지가 저장될 기본 폴더
 
-           try {
-               con = pool.getConnection();
+    	    try {
+    	        con = pool.getConnection();
 
+    	        // 이미지 파일 경로가 존재하지 않는 경우
+    	        if (profilePicturePath == null || multi.getFilesystemName("profile_picture") == null) {
+    	            sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ? WHERE user_id = ?";
+    	            pstmt = con.prepareStatement(sql);
+    	            pstmt.setString(1, multi.getParameter("profile_name"));
+    	            pstmt.setString(2, multi.getParameter("profile_email"));
+    	            pstmt.setString(3, multi.getParameter("profile_birth"));
+    	            pstmt.setString(4, multi.getParameter("profile_hobby"));
+    	            pstmt.setString(5, multi.getParameter("profile_mbti"));
+    	            pstmt.setString(6, multi.getParameter("profile_content"));
+    	            pstmt.setString(7, user_id);
+    	        } else {
+    	            // 이미지 파일 저장 경로를 상대 경로로 저장
+    	            String fileName = multi.getFilesystemName("profile_picture");
+    	            String relativeImagePath = saveFolder + "/" + fileName;
 
-               // 이미지 파일 경로가 존재하지 않는 경우
-               if (profilePicturePath == null) {
-                   sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ? WHERE user_id = ?";
-                   pstmt = con.prepareStatement(sql);
-                   pstmt.setString(1, multi.getParameter("profile_name"));
-                   pstmt.setString(2, multi.getParameter("profile_email"));
-                   pstmt.setString(3, multi.getParameter("profile_birth"));
-                   pstmt.setString(4, multi.getParameter("profile_hobby"));
-                   pstmt.setString(5, multi.getParameter("profile_mbti"));
-                   pstmt.setString(6, multi.getParameter("profile_content"));
-                   pstmt.setString(7, user_id);
-               } 
-               // 이미지 파일 경로가 존재하는 경우
-               else {
-                   // 서버 내 경로에서 상대 경로로 이미지 경로 수정
-                   String relativePath = profilePicturePath.replace(SAVEFOLDER, "/miniroom/img");
-                   sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ?, profile_picture = ? WHERE user_id = ?";
-                   pstmt = con.prepareStatement(sql);
-                   pstmt.setString(1, multi.getParameter("profile_name"));
-                   pstmt.setString(2, multi.getParameter("profile_email"));
-                   pstmt.setString(3, multi.getParameter("profile_birth"));
-                   pstmt.setString(4, multi.getParameter("profile_hobby"));
-                   pstmt.setString(5, multi.getParameter("profile_mbti"));
-                   pstmt.setString(6, multi.getParameter("profile_content"));
-                   pstmt.setString(7, relativePath); // 상대 경로로 저장
-                   pstmt.setString(8, user_id);
-               }
+    	            sql = "UPDATE profile SET profile_name = ?, profile_email = ?, profile_birth = ?, profile_hobby = ?, profile_mbti = ?, profile_content = ?, profile_picture = ? WHERE user_id = ?";
+    	            pstmt = con.prepareStatement(sql);
+    	            pstmt.setString(1, multi.getParameter("profile_name"));
+    	            pstmt.setString(2, multi.getParameter("profile_email"));
+    	            pstmt.setString(3, multi.getParameter("profile_birth"));
+    	            pstmt.setString(4, multi.getParameter("profile_hobby"));
+    	            pstmt.setString(5, multi.getParameter("profile_mbti"));
+    	            pstmt.setString(6, multi.getParameter("profile_content"));
+    	            pstmt.setString(7, relativeImagePath); // 상대 경로로 저장
+    	            pstmt.setString(8, user_id);
+    	        }
 
-               int result = pstmt.executeUpdate();
-               if (result == 1) {
-                   isUpdated = true;
-               }
-           } catch (SQLException e) {
-               e.printStackTrace();
-           } finally {
-               pool.freeConnection(con, pstmt);
-           }
+    	        int result = pstmt.executeUpdate();
+    	        if (result == 1) {
+    	            isUpdated = true;
+    	        }
+    	    } catch (SQLException e) {
+    	        e.printStackTrace();
+    	    } finally {
+    	        pool.freeConnection(con, pstmt);
+    	    }
 
-           return isUpdated;
-       }
+    	    return isUpdated;
+    	}
+
        
        public ProfileBean getProfileByUserId(String userId) throws Exception {
            ProfileBean profile = null;

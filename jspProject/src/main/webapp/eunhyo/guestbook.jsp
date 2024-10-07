@@ -117,6 +117,7 @@ dateFormat.setTimeZone(seoulTimeZone);
    height: 560px;
    margin-top: 0px;
    background-color: #F7F7F7;
+   border-radius: 30px;
 }
 /* 리스트 스타일 제거 */
 #guestbookList {

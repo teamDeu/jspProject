@@ -260,7 +260,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 				<img class="main_profile_img" src="./<%=profileBean.getProfilePicture()%>">
 			</div>
 			<div class="main_profile_comment">
-				<span style="font-size: 22px"><%=profileBean.getProfileContent()%></span>
+				<%=profileBean.getProfileContent()%>
 			</div>
 			<div class="main_profile_main_bottom">
 				<%
@@ -403,12 +403,26 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 		});
 		document.querySelector(".main_profile_friend_count").innerText = friend_items.length + "명";
 	}
+	
+	function userSearchClick(){
+		document.getElementById("user_search_modal").style.display = "flex";
+	}
 	document.addEventListener('DOMContentLoaded', function () {
 		friend_items_first = Array.from(document.querySelectorAll('.friends_type_first'));
 		friend_items_second = Array.from(document.querySelectorAll('.friends_type_second'));
 		friend_items = friend_items_first;
 		friend_displayItems();
 	})
+	
+	const main_profile_friends_search_text = document.querySelector(".main_profile_friends_search_text");
+	main_profile_friends_search_text.addEventListener('keypress', function(key){
+
+		// key.key 의 값이 Enter 일 경우 코드 실행
+	        // key.keyCode == 13 도 동일한 기능을 한다.
+	        if(key.key == 'Enter'){
+	        	friendSearchClick();
+	            }
+	        })
 	</script>
 	<form name ="friend_delete_form" action = "./friendRequestProc.jsp" target ="blankifr">
 		<input type = "hidden" name = "request_senduserid" value = "">
