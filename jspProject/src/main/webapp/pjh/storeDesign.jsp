@@ -111,21 +111,11 @@ try {
     position: absolute;
     top: -20px;
     left: 20px;
-    border-left: 2px solid #BAB9AA;
-    border-right: 2px solid #BAB9AA;
-    border-top: 2px solid #BAB9AA;
     padding: 10px;
     padding-bottom: 0px;
 }
 
-/* store-title과 연결되는 선 */
-.store-line {
-    border-top: 2px solid #BAB9AA;
-    width: calc(932px - 150px);
-    position: absolute;
-    top: 31px;
-    left: calc(-53px + 133px);
-}
+
 /* 클로버 금액 */
 .clover-amount {
     font-size: 18px;
@@ -606,7 +596,7 @@ function refundStoreItem(itemNum, itemPrice) {
 	<div class="storecontainer">
 		<!-- 상점 제목 -->
 		<div class="store-title">상점</div>
-		<div class="store-line"></div>
+
 
 		<!-- 클로버 금액 -->
 		<div class="clover-amount">

@@ -129,6 +129,7 @@ public class MemberMgr {
                        pstmt4.setInt(5, 6);  // 임시 item_num 6
                        pstmt4.setInt(6, 0);  // item_using 기본값
                        
+                       
                        if (pstmt4.executeUpdate() == 2) {
                            flag = true;
                            con.commit(); // 트랜잭션 성공 시 커밋
