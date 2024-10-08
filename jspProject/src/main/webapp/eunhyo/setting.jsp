@@ -249,6 +249,7 @@ function addCategory() {
                 });
                 document.querySelector('select[name="categoryType"]').selectedIndex = 0;
                 document.querySelector('input[name="categoryName"]').value = '';
+                mainCategoryLoad();
                 checkboxes.forEach(function(checkbox) {
                     checkbox.checked = false;
                 });
@@ -367,7 +368,7 @@ function deleteCategory(categoryType, categoryName, categoryItem) {
 
                     // 번호 재할당 
                     updateCategoryNumbers();
-                    
+                    mainCategoryLoad();
                  	// **필드 초기화**
                     document.getElementById('edit-category-name').value = ''; // 카테고리명 필드 초기화
                     document.querySelectorAll('.category-edit input[type="checkbox"]').forEach(function(checkbox) {
@@ -438,7 +439,7 @@ function updateCategory() {
             if (xhr.responseText.trim() === "success") {
                 alert("카테고리가 성공적으로 업데이트되었습니다.");
                 loadCategoryList(); // 업데이트 후 리스트 새로고침
-            
+                mainCategoryLoad();
                 document.getElementById('edit-category-name').value = '';
                 document.querySelectorAll('.category-edit input[type="checkbox"]').forEach(function(checkbox) {
                     checkbox.checked = false;
@@ -448,7 +449,7 @@ function updateCategory() {
             }
         }
     };
-
+	
     // POST 요청으로 데이터 전송
     xhr.open("POST", "../eunhyo/updateCategory.jsp", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // 데이터 형식 설정

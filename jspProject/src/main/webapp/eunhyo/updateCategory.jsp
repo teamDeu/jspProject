@@ -1,3 +1,4 @@
+<%@page import="miniroom.UtilMgr"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="Category.CategoryMgr, Category.CategoryBean" %>
 
@@ -7,6 +8,7 @@
     String categoryType = request.getParameter("categoryType");
     String categoryName = request.getParameter("categoryName");
     String categorySecretParam = request.getParameter("categorySecret");
+    int categoryIndex = UtilMgr.parseInt(request, "catogoryIndex");
     int categorySecret = (categorySecretParam != null && categorySecretParam.equals("1")) ? 1 : 0;
 
     // 로그 출력
@@ -19,6 +21,7 @@
     category.setCategoryType(categoryType);
     category.setCategoryName(categoryName);
     category.setCategorySecret(categorySecret);
+    category.setCategoryIndex(categoryIndex);
 
     // CategoryMgr 객체를 통해 업데이트
     CategoryMgr categoryMgr = new CategoryMgr();

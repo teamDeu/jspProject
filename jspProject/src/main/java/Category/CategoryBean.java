@@ -5,8 +5,17 @@ public class CategoryBean {
     private String categoryType;
     private String categoryName;
     private int categorySecret;
+    private int categoryIndex;
+    
+    public int getCategoryIndex() {
+		return categoryIndex;
+	}
 
-    public String getUserId() {
+	public void setCategoryIndex(int categoryIndex) {
+		this.categoryIndex = categoryIndex;
+	}
+
+	public String getUserId() {
         return userId;
     }
 
