@@ -156,13 +156,6 @@ function addCategory() {
     var checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
     var isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
 
-    // 체크박스가 하나라도 선택되었는지 확인
-    checkboxes.forEach(function(checkbox) {
-        if (checkbox.checked) {
-            isChecked = true;
-        }
-    });
-
     // 공개 설정이 선택되지 않았다면 경고창을 띄움
     if (!isChecked) {
         alert("공개설정을 선택해주세요.");
@@ -180,18 +173,23 @@ function addCategory() {
                 // 카테고리 항목 생성
                 var categoryItem = document.createElement('div');
                 categoryItem.classList.add('category-item');
+                
+                var categoryListDiv = document.querySelector(".category-list");
+                var categoryIndex = categoryListDiv.children.length + 1; // Index 값을 리스트 길이로 계산
+                categoryItem.setAttribute('data-category-index', categoryIndex); // Index 값 저장
+                categoryItem.setAttribute('data-category-name', categoryName); // Name 값 저장
+                categoryItem.setAttribute('data-category-type', categoryType); // Type 값 저장
 
                 // 카테고리 번호
                 var number = document.createElement('span');
                 number.classList.add('category-item-number');
-                var categoryListDiv = document.querySelector(".category-list");
-                number.innerText = (categoryListDiv.children.length + 1) + " . ";
+                number.innerText = categoryIndex + " . ";
 
                 // 카테고리 내용
                 var content = document.createElement('span');
                 content.innerText = categoryType + ": " + categoryName;
 
-                // 기존 deleteButton 생성 코드를 찾아 수정
+                // 삭제 버튼 생성
                 var deleteButton = document.createElement('img');
                 deleteButton.src = "../eunhyo/img/bin.png"; // 이미지 경로 설정
                 deleteButton.alt = "삭제";
@@ -199,8 +197,6 @@ function addCategory() {
                 deleteButton.style.cursor = "pointer";
                 deleteButton.style.width = "12px"; // 원하는 크기로 조정
                 deleteButton.style.height = "15px"; // 원하는 크기로 조정
-
-                // 버튼을 오른쪽에 배치하기 위해 스타일 설정
                 deleteButton.style.position = "absolute"; // 절대 위치로 설정
                 deleteButton.style.right = "0px"; 
                 deleteButton.style.top = "50%"; // 수직 가운데 정렬을 위해 설정
@@ -212,7 +208,7 @@ function addCategory() {
                         deleteCategory(type, name, item);
                     };
                 })(categoryType, categoryName, categoryItem);
-
+        
                 // 항목에 번호, 내용, 삭제 버튼 추가
                 categoryItem.appendChild(number);
                 categoryItem.appendChild(content);
@@ -224,32 +220,29 @@ function addCategory() {
                 // 리스트 스크롤을 맨 아래로 이동
                 categoryListDiv.scrollTop = categoryListDiv.scrollHeight;
                 
-            	 // 카테고리 항목 클릭 시 수정란에 반영하는 이벤트 리스너 추가
+                // 카테고리 항목 클릭 시 수정란에 반영하는 이벤트 리스너 추가
                 categoryItem.addEventListener('click', function() {
                     // 이전 선택 해제
                     document.querySelectorAll('.category-item').forEach(function(item) {
                         item.classList.remove('selected');
                     });
-                    
+
                     // 현재 선택된 카테고리에 'selected' 클래스 추가
                     categoryItem.classList.add('selected');
-                    
-                    // 카테고리 수정 영역의 input과 체크박스에 값을 반영
-                    document.querySelector('.category-edit .content-input').value = categoryName;
-                    
-                    // 공개 설정 체크박스 값을 반영
-                    if (categorySecret === 0) {
-                        document.querySelector('.category-edit input[name="categorySecret"][value="0"]').checked = true;
-                        document.querySelector('.category-edit input[name="categorySecret"][value="1"]').checked = false;
-                    } else if (categorySecret === 1) {
-                        document.querySelector('.category-edit input[name="categorySecret"][value="0"]').checked = false;
-                        document.querySelector('.category-edit input[name="categorySecret"][value="1"]').checked = true;
-                    }
-                
+
+                    // 카테고리 수정 영역에 'category_name (category_index)' 형태로 표시
+                    var selectedName = categoryItem.getAttribute('data-category-name');
+                    var selectedIndex = categoryItem.getAttribute('data-category-index');
+                    var selectedType = categoryItem.getAttribute('data-category-type'); // 카테고리 타입 추가
+                    document.querySelector('.category-edit .content-input').value = selectedName + " (" + selectedIndex + ")";
+
+                    // 카테고리 타입도 표시하고 싶다면 여기에 추가적으로 반영
+                    document.querySelector('select[name="categoryType"]').value = selectedType;
                 });
+
+                // 입력 필드 및 체크박스 초기화
                 document.querySelector('select[name="categoryType"]').selectedIndex = 0;
                 document.querySelector('input[name="categoryName"]').value = '';
-                mainCategoryLoad();
                 checkboxes.forEach(function(checkbox) {
                     checkbox.checked = false;
                 });
@@ -263,6 +256,8 @@ function addCategory() {
     xhr.open("POST", "../eunhyo/categoryAdd.jsp", true);
     xhr.send(new URLSearchParams(formData));
 }
+
+
 
 
 

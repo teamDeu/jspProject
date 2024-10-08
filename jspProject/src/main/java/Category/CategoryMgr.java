@@ -235,7 +235,7 @@ public class CategoryMgr {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String sql = "";
-		int maxIndex = 1;
+		int maxIndex = 0;
 		try {
 			con = pool.getConnection();
 			sql = "SELECT MAX(category_index) FROM category WHERE user_id = ?";
