@@ -134,8 +134,8 @@ public class MemberMgr {
                        
                        if (pstmt4.executeUpdate() == 2) {
                            flag = true;
-                           cMgr.initCategory(bean.getUser_id());
                            con.commit(); // 트랜잭션 성공 시 커밋
+                           cMgr.initCategory(bean.getUser_id());
                        } else {
                            con.rollback(); // itemhold 테이블 저장 실패 시 롤백
                            System.out.println("Itemhold 테이블에 저장 실패");

@@ -14,6 +14,6 @@
 <script>
 	alert('<%=msg%>');
 	self.close();
-	opener.location.href = "adminMain.jsp?type=store";
+	opener.location.href = "adminStore.jsp?type=store";
 	opener.redirect();
 </script>

@@ -127,11 +127,13 @@ try {
         }
         
         .game-title span {
-            position: absolute;
-            top: -40px; /* 텍스트를 줄과 멀리 떨어뜨리기 */
-            left: 0; /* 텍스트를 왼쪽 끝으로 이동 */
-            font-size: 35px;
-            color: #80A46F;
+           color: #80A46F;
+		   text-align: center;
+		   font-size: 36px;
+		   font-weight: 600;
+		   position: absolute;
+		   top: 20px;
+		   left: 30px;
         }
 
         .box-image {
