@@ -305,6 +305,10 @@ try {
     transition: filter 0.3s ease;
 }
 
+.buylistItems {
+    cursor: pointer;
+    pointer-events: auto; /* 이 속성을 명시적으로 추가 */
+}
 
 </style>
 
@@ -563,6 +567,7 @@ function showPurchaseCompletePopup(itemName, itemImage, itemPrice) {
 }
 
 function refundStoreItem(itemNum, itemPrice) {
+    console.log("환불 함수 호출됨:", itemNum, itemPrice);  // 이 부분을 추가해서 호출 여부 확인
     if (confirm("정말로 환불하시겠습니까?")) {
         // 환불 처리 AJAX 요청
         const xhr = new XMLHttpRequest();
@@ -588,6 +593,8 @@ function refundStoreItem(itemNum, itemPrice) {
         xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
     }
 }
+
+
 
 </script>
 </head>
@@ -718,12 +725,12 @@ function refundStoreItem(itemNum, itemPrice) {
     while (rs.next()) {
     %>
     <div class="buylistItems" onclick="refundStoreItem(<%= rs.getInt("item_num") %>, <%= rs.getInt("item_price") %>)">
-        <img src="<%= rs.getString("item_image") %>" alt="<%= rs.getString("item_name") %>" style="width:186px;height:145px;"/>
-        <div class="item-title"><%= rs.getString("item_name") %></div>
-        <div class="item-price">
-            <img src="./img/clover_icon.png" alt="클로버" style="width:20px; height:20px;"> <%= rs.getInt("item_price") %>개
-        </div>
+    <img src="<%= rs.getString("item_image") %>" alt="<%= rs.getString("item_name") %>" style="width:186px;height:145px;"/>
+    <div class="item-title"><%= rs.getString("item_name") %></div>
+    <div class="item-price">
+        <img src="./img/clover_icon.png" alt="클로버" style="width:20px; height:20px;"> <%= rs.getInt("item_price") %>개
     </div>
+</div>
     <%
     }
     rs.close();
