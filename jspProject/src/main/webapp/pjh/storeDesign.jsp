@@ -563,7 +563,7 @@ function showPurchaseCompletePopup(itemName, itemImage, itemPrice) {
         document.getElementById('purchasePopup').remove();
         // 배경에서 모자이크 효과 제거
         document.querySelector('.storecontainer').classList.remove('mosaic-background');
-    }, 2000); // 2초 후에 팝업 제거 및 모자이크 해제
+    }, 1000); // 2초 후에 팝업 제거 및 모자이크 해제
 }
 
 function refundStoreItem(itemNum, itemPrice) {
