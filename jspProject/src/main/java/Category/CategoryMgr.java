@@ -200,14 +200,4 @@ public class CategoryMgr {
 			pool.freeConnection(con, pstmt);
 		}
     }
-
-    public static void main(String[] args) {
-		MemberMgr mMgr = new MemberMgr();
-		Vector<MemberBean> userList = mMgr.getAllUserList();
-		CategoryMgr cMgr = new CategoryMgr();
-		for(int i = 0 ; i < userList.size() ; i++) {
-			MemberBean bean = userList.get(i);
-			cMgr.initCategory(bean.getUser_id());
-		}
-	}
 }
