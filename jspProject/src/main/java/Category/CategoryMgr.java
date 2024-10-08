@@ -6,6 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+
+import pjh.MemberBean;
+import pjh.MemberMgr;
 
 public class CategoryMgr {
     private DBConnectionMgr pool;
@@ -174,6 +178,36 @@ public class CategoryMgr {
         
         return categoryList;
     }
+    
+    public void initCategory(String user_id) {
+    	Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = "";
+		String[] category = {"홈","프로필","미니룸","게시판","방명록","상점","게임","음악"};
+		try {
+			con = pool.getConnection();
+			sql = "insert category values(?,?,?,0,now())";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, user_id);
+			for(int i = 0 ; i < category.length ; i++) {
+				pstmt.setString(2,category[i]);
+				pstmt.setString(3,category[i]);
+				pstmt.executeUpdate();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+    }
 
-
+    public static void main(String[] args) {
+		MemberMgr mMgr = new MemberMgr();
+		Vector<MemberBean> userList = mMgr.getAllUserList();
+		CategoryMgr cMgr = new CategoryMgr();
+		for(int i = 0 ; i < userList.size() ; i++) {
+			MemberBean bean = userList.get(i);
+			cMgr.initCategory(bean.getUser_id());
+		}
+	}
 }
