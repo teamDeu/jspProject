@@ -24,7 +24,7 @@ public class CategoryMgr {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         String checkSql = "SELECT COUNT(*) FROM category WHERE user_id = ? AND category_type = ?";
-        String sql = "INSERT INTO category (user_id, category_type, category_name, category_secret,category_index) VALUES (?, ?, ?, ?,?)";
+        String sql = "INSERT INTO category (user_id, category_type, category_name, category_secret, category_index) VALUES (?, ?, ?, ?, ?)";
 
         try {
             conn = pool.getConnection();
@@ -36,8 +36,8 @@ public class CategoryMgr {
             pstmt = conn.prepareStatement(checkSql);
             pstmt.setString(1, category.getUserId());
             pstmt.setString(2, category.getCategoryType());
-
             rs = pstmt.executeQuery();
+            
             if (rs.next() && rs.getInt(1) > 0) {
                 // 중복된 경우 삽입하지 않고 false 반환
                 System.out.println("Duplicate category entry found for user_id: " + category.getUserId() + " and category_type: " + category.getCategoryType());
@@ -50,7 +50,10 @@ public class CategoryMgr {
             pstmt.setString(2, category.getCategoryType());
             pstmt.setString(3, category.getCategoryName());
             pstmt.setInt(4, category.getCategorySecret());
+
+            // category_index를 자동으로 부여 (가장 큰 index 값을 +1)
             pstmt.setInt(5, maxIndex(category.getUserId()) + 1);
+            
             int count = pstmt.executeUpdate();
             return count > 0;
         } catch (SQLException e) {
@@ -70,8 +73,7 @@ public class CategoryMgr {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         ArrayList<CategoryBean> categoryList = new ArrayList<>();
-        String sql = "SELECT * FROM category WHERE user_id = ? ORDER BY category_index ASC, created_at asc"; // 오름차순으로 가져옴
-        
+        String sql = "SELECT * FROM category WHERE user_id = ? ORDER BY category_index ASC, created_at ASC";
         try {
             conn = pool.getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -83,6 +85,7 @@ public class CategoryMgr {
                 category.setCategoryType(rs.getString("category_type"));
                 category.setCategoryName(rs.getString("category_name"));
                 category.setCategorySecret(rs.getInt("category_secret"));
+                category.setCategoryIndex(rs.getInt("category_index"));
                 categoryList.add(category);
             }
         } catch (SQLException e) {
@@ -100,32 +103,50 @@ public class CategoryMgr {
     public boolean updateCategory(CategoryBean category) {
         Connection conn = null;
         PreparedStatement pstmt = null;
-        String sql = "UPDATE category SET category_name = ?, category_secret = ? ,category_index = ? WHERE user_id = ? AND category_type = ?";
+        ResultSet rs = null;
+        boolean success = false;
         
+        String checkSql = "SELECT COUNT(*) FROM category WHERE user_id = ? AND category_index = ? AND category_type != ?";
+        String updateSql = "UPDATE category SET category_name = ?, category_secret = ?, category_index = ? WHERE user_id = ? AND category_type = ?";
+
         try {
             conn = pool.getConnection();
-            pstmt = conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(checkSql);
+            pstmt.setString(1, category.getUserId());
+            pstmt.setInt(2, category.getCategoryIndex());
+            pstmt.setString(3, category.getCategoryType()); // 같은 카테고리 타입은 제외
+            rs = pstmt.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                // 이미 같은 category_index를 가진 다른 카테고리가 있는 경우, 해당 카테고리들의 index를 조정
+                String adjustSql = "UPDATE category SET category_index = category_index + 1 WHERE user_id = ? AND category_index >= ? AND category_type != ?";
+                pstmt = conn.prepareStatement(adjustSql);
+                pstmt.setString(1, category.getUserId());
+                pstmt.setInt(2, category.getCategoryIndex()); // 중복된 index 값부터 모든 index 증가
+                pstmt.setString(3, category.getCategoryType()); // 수정 중인 카테고리 제외
+                pstmt.executeUpdate();
+            }
+
+            // 카테고리 업데이트 쿼리 실행
+            pstmt = conn.prepareStatement(updateSql);
             pstmt.setString(1, category.getCategoryName());
             pstmt.setInt(2, category.getCategorySecret());
             pstmt.setInt(3, category.getCategoryIndex());
             pstmt.setString(4, category.getUserId());
             pstmt.setString(5, category.getCategoryType());
             int count = pstmt.executeUpdate();
-            
-            System.out.println("Number of rows updated: " + count); // 업데이트 성공 여부 확인
-            if(count > 0) {
-            	updateIndex(category.getUserId(),category.getCategoryIndex());
-            }
-            return count > 0;
+
+            System.out.println("Number of rows updated: " + count); // 로그 출력
+            success = (count > 0);
             
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            pool.freeConnection(conn, pstmt); // Connection 반환
+            pool.freeConnection(conn, pstmt, rs); // Connection 반환
         }
-        return false;
+        return success;
     }
 
     // Delete Category
@@ -217,7 +238,7 @@ public class CategoryMgr {
 		int maxIndex = 1;
 		try {
 			con = pool.getConnection();
-			sql = "select max(category_index) from category where user_id = ?";
+			sql = "SELECT MAX(category_index) FROM category WHERE user_id = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, user_id);
 			rs = pstmt.executeQuery();
