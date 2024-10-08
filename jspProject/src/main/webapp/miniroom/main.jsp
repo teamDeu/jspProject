@@ -1,3 +1,6 @@
+<%@page import="java.util.HashMap"%>
+<%@page import="Category.CategoryBean"%>
+<%@page import="java.util.List"%>
 <%@page import="report.SuspensionBean"%>
 <%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="pjh.MemberMgr"%>
@@ -9,6 +12,7 @@
 <jsp:useBean id="fMgr" class ="friend.FriendMgr"/>
 <jsp:useBean id="profileMgr" class ="guestbook.GuestbookprofileMgr"/>
 <jsp:useBean id="reportMgr" class ="report.ReportMgr"/>
+<jsp:useBean id="categoryMgr" class ="Category.CategoryMgr"/>
 <%
    // 세션에서 idKey 가져오기
    String id = (String)session.getAttribute("idKey");
@@ -30,18 +34,15 @@
          
       }
    }
-      
-   
    GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(id);
    // 페이지 소유자의 ID 가져오기
    String pageOwnerId = request.getParameter("url");
+   
 
    // 만약 url 파라미터가 없으면 페이지 소유자는 방문자(id)
    if(pageOwnerId == null || pageOwnerId.trim().isEmpty()) {
       pageOwnerId = id;
    }
-
-
    // 캐릭터 및 배경 이미지 설정
    String character = iMgr.getUsingCharacter(id).getItem_path();
    String url = request.getParameter("url");
@@ -249,6 +250,16 @@ function clickAlarm(){
       alarmDiv.style.display = "none"
    }
 }
+function mainCategoryLoad(){
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState === 4 && xhr.status === 200){
+			document.querySelector(".button-container").innerHTML = xhr.responseText;
+		}
+	};
+	xhr.open("GET","../miniroom/mainCategoryLoad.jsp?url="+url,true);
+	xhr.send();
+}
 </script>
 <!-- 웹소켓통신 자바스크립트 -->
 
@@ -268,9 +279,10 @@ function clickAlarm(){
         var section = "<%=section%>";
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
-            if(section != "null" ){
+            if(section != "null"){
             	clickOpenBox(section);
             }
+            mainCategoryLoad();
             ws.onopen = function() {
                 document.getElementById("status").textContent = "서버와 연결됨";
                 if(localId == "null") localId = "비회원";
@@ -544,9 +556,7 @@ function clickAlarm(){
            chatArea2.appendChild(chatBoxDiv);
            chatArea2.scrollTop = chatArea2.scrollHeight;
         }
-        
-        
-        
+      
         function disconnect(){
            var message = "disconnect"+ dataSeparator + localId + dataSeparator + localName;
            ws.send(message);
@@ -667,16 +677,6 @@ function clickAlarm(){
          </div>
          <!-- 버튼 -->
          <div class="button-container">
-            <button onclick="javascript:clickOpenBox('chatBox')" class="custom-button" id ="custom-button-chatBox" style ="background-color :#F7F7F7">홈</button>
-            <button onclick="javascript:clickOpenBox('profile')" class="custom-button " id ="custom-button-profile">프로필</button>
-            <%if(url.equals(id)){ %>
-            <button onclick="javascript:clickOpenBox('inner-box-2-miniroom')" class="custom-button" id ="custom-button-inner-box-2-miniroom">미니룸</button>
-            <%} %>
-            <button onclick = "javascript:clickOpenBox('board')" class="custom-button" id ="custom-button-board">게시판</button>
-            <button onclick = "javascript:clickOpenBox('guestbook')" class="custom-button" id ="custom-button-guestbook">방명록</button>
-            <button onclick = "javascript:clickOpenBox('store')" class="custom-button" id ="custom-button-store">상점</button>
-            <button onclick = "javascript:clickOpenBox('game'); gamemainshow();" class="custom-button" id ="custom-button-game">게임</button>
-            <button onclick = "javascript:clickOpenBox('music')" class="custom-button" id ="custom-button-music">음악</button>
          </div>
   
 

@@ -24,7 +24,7 @@ public class CategoryMgr {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         String checkSql = "SELECT COUNT(*) FROM category WHERE user_id = ? AND category_type = ?";
-        String sql = "INSERT INTO category (user_id, category_type, category_name, category_secret) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO category (user_id, category_type, category_name, category_secret,category_index) VALUES (?, ?, ?, ?,?)";
 
         try {
             conn = pool.getConnection();
@@ -36,6 +36,7 @@ public class CategoryMgr {
             pstmt = conn.prepareStatement(checkSql);
             pstmt.setString(1, category.getUserId());
             pstmt.setString(2, category.getCategoryType());
+
             rs = pstmt.executeQuery();
             if (rs.next() && rs.getInt(1) > 0) {
                 // 중복된 경우 삽입하지 않고 false 반환
@@ -49,6 +50,7 @@ public class CategoryMgr {
             pstmt.setString(2, category.getCategoryType());
             pstmt.setString(3, category.getCategoryName());
             pstmt.setInt(4, category.getCategorySecret());
+            pstmt.setInt(5, maxIndex(category.getUserId()) + 1);
             int count = pstmt.executeUpdate();
             return count > 0;
         } catch (SQLException e) {
@@ -68,7 +70,7 @@ public class CategoryMgr {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         ArrayList<CategoryBean> categoryList = new ArrayList<>();
-        String sql = "SELECT * FROM category WHERE user_id = ? ORDER BY created_at ASC"; // 오름차순으로 가져옴
+        String sql = "SELECT * FROM category WHERE user_id = ? ORDER BY category_index ASC, created_at asc"; // 오름차순으로 가져옴
         
         try {
             conn = pool.getConnection();
@@ -98,19 +100,24 @@ public class CategoryMgr {
     public boolean updateCategory(CategoryBean category) {
         Connection conn = null;
         PreparedStatement pstmt = null;
-        String sql = "UPDATE category SET category_name = ?, category_secret = ? WHERE user_id = ? AND category_type = ?";
+        String sql = "UPDATE category SET category_name = ?, category_secret = ? ,category_index = ? WHERE user_id = ? AND category_type = ?";
         
         try {
             conn = pool.getConnection();
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, category.getCategoryName());
             pstmt.setInt(2, category.getCategorySecret());
-            pstmt.setString(3, category.getUserId());
-            pstmt.setString(4, category.getCategoryType());
+            pstmt.setInt(3, category.getCategoryIndex());
+            pstmt.setString(4, category.getUserId());
+            pstmt.setString(5, category.getCategoryType());
             int count = pstmt.executeUpdate();
             
             System.out.println("Number of rows updated: " + count); // 업데이트 성공 여부 확인
+            if(count > 0) {
+            	updateIndex(category.getUserId(),category.getCategoryIndex());
+            }
             return count > 0;
+            
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -158,7 +165,7 @@ public class CategoryMgr {
         try {
             conn = pool.getConnection();
             // 카테고리를 생성 순서대로 정렬하여 가져오기 (예시: created_at 컬럼을 기준으로 정렬)
-            String sql = "SELECT category_type, category_name, category_secret FROM category WHERE user_id = ? ORDER BY created_at ASC";
+            String sql = "SELECT category_type, category_name, category_secret FROM category WHERE user_id = ? ORDER BY category_index ASC, created_at asc";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
@@ -186,12 +193,13 @@ public class CategoryMgr {
 		String[] category = {"홈","프로필","미니룸","게시판","방명록","상점","게임","음악"};
 		try {
 			con = pool.getConnection();
-			sql = "insert category values(?,?,?,0,now())";
+			sql = "insert category values(?,?,?,0,?,now())";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, user_id);
 			for(int i = 0 ; i < category.length ; i++) {
 				pstmt.setString(2,category[i]);
 				pstmt.setString(3,category[i]);
+				pstmt.setInt(4,i+1);
 				pstmt.executeUpdate();
 			}
 		} catch (Exception e) {
@@ -200,14 +208,56 @@ public class CategoryMgr {
 			pool.freeConnection(con, pstmt);
 		}
     }
-
-    public static void main(String[] args) {
-		MemberMgr mMgr = new MemberMgr();
-		Vector<MemberBean> userList = mMgr.getAllUserList();
-		CategoryMgr cMgr = new CategoryMgr();
-		for(int i = 0 ; i < userList.size() ; i++) {
-			MemberBean bean = userList.get(i);
-			cMgr.initCategory(bean.getUser_id());
+    
+    public int maxIndex(String user_id) {
+    	Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		int maxIndex = 1;
+		try {
+			con = pool.getConnection();
+			sql = "select max(category_index) from category where user_id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, user_id);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				maxIndex = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
 		}
+		return maxIndex;
+    }
+    
+    public void updateIndex(String user_id,int index) {
+    	Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = "";
+		try {
+			con = pool.getConnection();
+			sql = "update category set category_index = category_index + 1 where category_index >= ? and user_id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, index);
+			pstmt.setString(2, user_id);
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+    }
+    public static void main(String[] args) {
+		MemberMgr mgr = new MemberMgr();
+		Vector<MemberBean> vlist= mgr.getAllUserList();
+		for(int i = 0 ; i < vlist.size(); i ++) {
+			MemberBean bean = vlist.get(i);
+			
+		}
+		CategoryMgr cMgr = new CategoryMgr();
+		cMgr.initCategory("als981209");
 	}
+
 }

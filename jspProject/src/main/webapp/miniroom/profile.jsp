@@ -160,7 +160,8 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 
 .main_profile_friends {
 	width: 100%;
-	object-fit: cover;
+	height: 50px;
+	object-fit: contain;
 }
 
 .main_profile_friends_list_friendtype_btns {
