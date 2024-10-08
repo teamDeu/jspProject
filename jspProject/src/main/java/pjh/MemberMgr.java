@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
+import Category.CategoryMgr;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import net.nurigo.sdk.NurigoApp;
@@ -70,6 +71,7 @@ public class MemberMgr {
        PreparedStatement pstmt2 = null;
        PreparedStatement pstmt3 = null;  
        PreparedStatement pstmt4 = null;  // itemhold 테이블에 저장할 PreparedStatement
+       CategoryMgr cMgr = new CategoryMgr();
        String sql1 = null;
        String sql2 = null;
        String sql3 = null;  
@@ -132,6 +134,7 @@ public class MemberMgr {
                        
                        if (pstmt4.executeUpdate() == 2) {
                            flag = true;
+                           cMgr.initCategory(bean.getUser_id());
                            con.commit(); // 트랜잭션 성공 시 커밋
                        } else {
                            con.rollback(); // itemhold 테이블 저장 실패 시 롤백
@@ -917,7 +920,38 @@ public class MemberMgr {
            return profile;
        }
 
-       
+       public Vector<MemberBean> getAllUserList(){
+    	Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		Vector<MemberBean> vlist = new Vector<MemberBean>();
+		try {
+			con = pool.getConnection();
+			sql = "select * from user";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				MemberBean bean = new MemberBean();
+				bean.setUser_id(rs.getString("user_id"));
+	            bean.setUser_pwd(rs.getString("user_pwd"));
+	            bean.setUser_name(rs.getString("user_name"));
+	            bean.setUser_birth(rs.getString("user_birth"));
+	            bean.setUser_phone(rs.getString("user_phone"));
+	            bean.setUser_email(rs.getString("user_email"));
+	            bean.setUser_clover(rs.getInt("user_clover"));
+	            bean.setUser_character(rs.getInt("user_character"));
+	            
+	            vlist.add(bean);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return vlist;
+       }
 
    }
    
