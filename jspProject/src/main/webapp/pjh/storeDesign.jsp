@@ -185,7 +185,7 @@ try {
 
 .search button {
     padding: 10px 20px;
-    background-color: #90EE90;
+    background-color: #C0E5AF;
     border: none;
     color: white;
     cursor: pointer;
@@ -718,7 +718,7 @@ function refundStoreItem(itemNum, itemPrice) {
     while (rs.next()) {
     %>
     <div class="buylistItems" onclick="refundStoreItem(<%= rs.getInt("item_num") %>, <%= rs.getInt("item_price") %>)">
-        <img src="<%= rs.getString("item_image") %>" alt="<%= rs.getString("item_name") %>" style="width:186px;height:165px;"/>
+        <img src="<%= rs.getString("item_image") %>" alt="<%= rs.getString("item_name") %>" style="width:186px;height:145px;"/>
         <div class="item-title"><%= rs.getString("item_name") %></div>
         <div class="item-price">
             <img src="./img/clover_icon.png" alt="클로버" style="width:20px; height:20px;"> <%= rs.getInt("item_price") %>개
