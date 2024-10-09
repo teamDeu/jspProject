@@ -10,7 +10,6 @@
 String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 String folderName = request.getParameter("folderName");
-System.out.println("boardList 폴더명 : " + folderName);
 
 BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 
@@ -264,16 +263,20 @@ td a {
     height: 25px; 
 }
 </style>
+
+
+
+
 </head>
 
-<div class = "bListForm">
+<form  class = "bListForm" action="../seyoung/bDelProc.jsp" method="post" onsubmit="return bdelList();">
                     <h1 class="board-title">게시판 </h1>
                     <h2 class="board-recentpost" id="board-recentpost"></h2>
 
                     <div class="button-group">
                         <button onclick = "delbList()" type="button" class="delete-button2">삭제</button>
                          <button onclick ="clickOpenBox('boardWrite')" type="button" class="write-button">작성</button>
-                        </a>
+                        
                     </div>
                     <div class="boardlist-line"></div>
                     <div class="board-box">
@@ -295,7 +298,8 @@ td a {
                             </tbody>
                         </table>
                     </div>
-                    </div>     
+                    </form>     
+    
     <script>     
     
     var folderName = '<%= folderName %>';
@@ -341,9 +345,9 @@ td a {
                     alert("게시글이 삭제되었습니다.");
                     
                  
-                 
-                    loadBoardList(selectedFolderItem.getAttribute("data-folder-num"));
-                    //console.log(selectedFolderItem.getAttribute("data-folder-num"));
+                    var folderNum = selectedFolderItem.getAttribute("data-folder-num");
+                    loadBoardList(folderNum);
+                    
                     
                     loadLatestPost();
                     
@@ -357,7 +361,7 @@ td a {
         xhr.send("boardNums=" + encodeURIComponent(selectedIds.join(',')));
  
         return false; // 폼 제출 방지 (페이지 새로고침 방지)
-    
+    }
         
     
 
@@ -376,7 +380,6 @@ td a {
 
     
 </script>
-
 
 </html>
 

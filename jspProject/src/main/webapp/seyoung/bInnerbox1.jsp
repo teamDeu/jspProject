@@ -150,10 +150,13 @@
 		
 			
 			loadBoardList(folderNum);
-			//loadBoardList2(folderName);
+
 			
 			document.getElementById("selectedFolderNum").value = folderNum;
-			document.getElementById("board-recentpost").innerText = "| "+folderName;
+			document.getElementById("board-recentpost").innerText = "| "+ folderName;
+			document.getElementById("board-recentpost2").innerText = "| "+ folderName;
+			
+			
             // AJAX 요청을 통해 서버에서 폴더 정보 가져오기
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '../seyoung/bgetFolderProc.jsp?folderNum=' + encodeURIComponent(folderNum), true);
@@ -178,22 +181,13 @@
             folderItem.querySelector('span').style.fontWeight = 'normal'; // 글자 굵기 원래대로
             selectedFolderItem = null; // 선택 해제
             clickOpenBox('board');
+            loadLatestPost();
         }
     }
     
-    function loadBoardList2(folderName) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '../seyoung/boardList.jsp?folderName=' + encodeURIComponent(folderName), true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                
-                document.getElementById('board-recentpost').innerHTML = xhr.responseText;
-            }
-        };
-        xhr.send(); // 목록 로드 요청
-    }
     
-    function loadBoardList(folderNum,folderName) {	
+    
+    function loadBoardList(folderNum) {	
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '../seyoung/getBoardList.jsp?folderNum=' + encodeURIComponent(folderNum), true);
         xhr.onreadystatechange = function() {

@@ -29,7 +29,7 @@
 %>
         <tr>
             <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
-            <td> <button onclick="clickBoard_boardNum('<%= board.getBoard_num() %>')"><%= board.getBoard_title() %></button></td>
+            <td> <span onclick="clickBoard_boardNum('<%= board.getBoard_num() %>')"><%= board.getBoard_title() %></span></td>
             <td><%= board.getBoard_id() %></td>
             <td><%= formattedDate %></td>
             <td><%= board.getBoard_views() %></td>
@@ -42,3 +42,26 @@
             <td colspan="5" style="text-align: center;">등록된 게시물이 없습니다.</td>
     </tr>
 <% } %>
+
+
+<script>
+    // 조회수 증가와 게시글 보기로 이동하는 함수
+    function clickBoard_boardNum(boardNum) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "../seyoung/increaseBoardViews.jsp", true); // 조회수 증가 JSP 파일 호출
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // 조회수 업데이트
+                var response = xhr.responseText.trim();
+                document.getElementById("views-" + boardNum).innerText = response; // 조회수 업데이트
+                
+                
+            }
+        };
+
+        // 조회수 증가 요청을 서버로 전송
+        xhr.send("boardNum=" + encodeURIComponent(boardNum));
+    }
+</script>

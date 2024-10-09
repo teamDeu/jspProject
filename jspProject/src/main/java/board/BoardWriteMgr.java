@@ -65,7 +65,49 @@ public class BoardWriteMgr {
         return flag;
     }
 
+	// 특정 사용자와 관련된 게시글 목록을 가져오는 메서드 (board_visibility와 friend_type 조건 추가)
+	public Vector<BoardWriteBean> getBoardListByUserWithVisibility(String userId) {
+	    Connection con = null;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    Vector<BoardWriteBean> boardList = new Vector<>();
+	    try {
+	        con = pool.getConnection();
 
+	        // SQL문: board_visibility 값과 friend_type에 따라 게시글을 필터링
+	        String sql = "SELECT b.* FROM board b " +
+	                     "LEFT JOIN friendinfo f ON (b.board_id = f.user_id1 AND f.user_id2 = ?) " +
+	                     "WHERE (b.board_visibility = 0 OR " + // 모두 공개
+	                     "(b.board_visibility = 1 AND f.friend_type = 1)) " + // 친구에게만 공개
+	                     "ORDER BY b.board_at DESC";
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setString(1, userId);  // 현재 로그인한 사용자 ID
+	        rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            BoardWriteBean board = new BoardWriteBean();
+	            board.setBoard_num(rs.getInt("board_num"));
+	            board.setBoard_visibility(rs.getInt("board_visibility"));
+	            board.setBoard_answertype(rs.getInt("board_answertype"));
+	            board.setBoard_folder(rs.getInt("board_folder"));
+	            board.setBoard_id(rs.getString("board_id"));
+	            board.setBoard_title(rs.getString("board_title"));
+	            board.setBoard_content(rs.getString("board_content"));
+	            board.setBoard_at(rs.getTimestamp("board_at").toString());
+	            board.setBoard_image(rs.getString("board_image"));
+	            board.setBoard_views(rs.getInt("board_views"));
+	            boardList.add(board);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        pool.freeConnection(con, pstmt, rs);
+	    }
+	    return boardList;
+	}
+
+
+	
 	
 	
 	// user_id에 해당하는 유효한 folder_num을 가져오는 메서드
@@ -91,29 +133,7 @@ public class BoardWriteMgr {
         return folderNum;
     }
 
-    // user_id와 folder_num이 유효한지 확인하는 메서드
-    public boolean isFolderValid(String userId, int folderNum) {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        boolean isValid = false;
-        try {
-            con = pool.getConnection();
-            String sql = "SELECT COUNT(*) FROM boardfolder WHERE user_id = ? AND folder_num = ?";
-            pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, userId);
-            pstmt.setInt(2, folderNum);
-            rs = pstmt.executeQuery();
-            if (rs.next() && rs.getInt(1) > 0) {
-                isValid = true; // 유효한 폴더가 있으면 true 반환
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            pool.freeConnection(con, pstmt, rs);
-        }
-        return isValid;
-    }
+   
 	
     // 특정 폴더에 해당하는 게시글 목록을 가져오는 메서드
     public Vector<BoardWriteBean> getBoardList(int boardFolder) {
@@ -151,47 +171,7 @@ public class BoardWriteMgr {
         return boardList;
     }
     
-    // 특정 폴더에 해당하는 게시글 목록을 가져오는 메서드 (친구 관계에 따른 필터링 포함)
-    public Vector<BoardWriteBean> getBoardList2(int boardFolder, String userId) {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Vector<BoardWriteBean> boardList = new Vector<>();
-        
-        try {
-            con = pool.getConnection();
-            // 친구 관계에 따라 게시글을 필터링하는 SQL
-            String sql = "SELECT b.* FROM board b " +
-                    "LEFT JOIN friendinfo f ON (b.board_id = f.user_id1 AND f.user_id2 = ?) " +
-                    "WHERE b.board_folder = ? " +
-                    "AND (b.board_visibility = 1 OR (b.board_visibility = 0 AND f.friend_type = 1))";
-            pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, userId); // 현재 로그인한 사용자
-            pstmt.setInt(2, boardFolder);
-            
-            rs = pstmt.executeQuery();
-            
-            while (rs.next()) {
-                BoardWriteBean board = new BoardWriteBean();
-                board.setBoard_num(rs.getInt("board_num"));
-                board.setBoard_visibility(rs.getInt("board_visibility"));
-                board.setBoard_answertype(rs.getInt("board_answertype"));
-                board.setBoard_folder(rs.getInt("board_folder"));
-                board.setBoard_id(rs.getString("board_id"));
-                board.setBoard_title(rs.getString("board_title"));
-                board.setBoard_content(rs.getString("board_content"));
-                board.setBoard_at(rs.getTimestamp("board_at").toString());
-                board.setBoard_image(rs.getString("board_image"));
-                board.setBoard_views(rs.getInt("board_views"));
-                boardList.add(board);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            pool.freeConnection(con, pstmt, rs);
-        }
-        return boardList;
-    }
+    
 
 	
     
@@ -331,15 +311,7 @@ public class BoardWriteMgr {
         return board;
     }
     
-    // 최신글 여부에 따른 메소드 구분
-    public BoardWriteBean getBoardBasedOnType(String userId, int board_num, boolean isLatest) {
-        // 최신글일 경우
-        if (isLatest) {
-            return getLatestBoard(userId);
-        }
-        // 특정 게시글 번호에 해당하는 게시물을 불러올 경우
-        return getBoard(board_num);
-    }
+    
 
     
     // userId에 해당하는 사용자의 게시글 목록을 가져오는 메서드 추가
