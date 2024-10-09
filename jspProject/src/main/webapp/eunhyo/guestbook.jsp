@@ -830,11 +830,20 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
               }
           }
       }
-
-
-
-
-
+      
+      function checkEnterAnswer(event, guestbookNum) {
+    	    if (event.key === 'Enter') {
+    	        event.preventDefault(); // 기본 엔터키 동작 방지 (줄 바꿈 방지)
+    	        adAnswer(guestbookNum); // 버튼 클릭 함수 호출
+    	    }
+    	}
+	
+      function checkEnterGuestbook(event) {
+    	    if (event.key === 'Enter') {
+    	        event.preventDefault(); // 기본 엔터키 동작 방지 (줄 바꿈 방지)
+    	        document.getElementById('guestbookForm').dispatchEvent(new Event('submit')); // 폼 제출
+    	    }
+    	}
       // 페이지가 로드될 때 버튼 초기화
       document.addEventListener("DOMContentLoaded", function() {
           console.log("DOM fully loaded and parsed.");
@@ -935,7 +944,8 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
                   
                   <!-- 답글 작성 폼 (방명록 항목 내부로 이동) -->
                   <div class="a-form">
-                      <textarea id="aContent-<%=entry.getGuestbookNum()%>" class="a-textarea" placeholder="답글 내용을 입력하세요"></textarea>
+                      <textarea id="aContent-<%=entry.getGuestbookNum()%>" class="a-textarea" placeholder="답글 내용을 입력하세요" 
+    onkeydown="checkEnterAnswer(event, <%=entry.getGuestbookNum()%>)"></textarea>
                       <button type="button" class="a-submit-btn" onclick="adAnswer(<%=entry.getGuestbookNum()%>)">등록</button>
                   </div>
 
@@ -950,7 +960,8 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
       <form id="guestbookForm" onsubmit="addGuestbookEntry(); return false;">
          <label for="secretCheckbox">비밀글</label> <input type="checkbox"
             id="secretCheckbox" name="secretCheckbox">
-         <textarea id="guestbookContent" rows="5" placeholder="방명록 내용을 입력하세요"></textarea>
+         <textarea id="guestbookContent" rows="5" placeholder="방명록 내용을 입력하세요" 
+            onkeydown="checkEnterGuestbook(event)"></textarea>
          <br> <input type="hidden" name="ownerId" value="<%=ownerId%>">
          <input type="submit" id="submitButton" value="등록">
 

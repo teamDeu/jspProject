@@ -2,6 +2,8 @@
     pageEncoding="UTF-8"%>
 <%
 	String backgroundImg = request.getParameter("backgroundImg");
+	String id = (String)session.getAttribute("idKey");
+	String url = request.getParameter("url");
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -181,7 +183,9 @@
     	<img id ="miniroom_background" src="<%=backgroundImg%>">
     </div>
     <div class ="setting">
-    	<button onclick = "clickOpenBox('Box_miniroom_design')">미니룸 설정</button>
+    	<%if(url.equals(id)){ %>
+    	<button onclick = "clickOpenBox('inner-box-2-miniroom')">미니룸 설정</button>
+    	<%} %>
     	<div id ="nowvisit">NOW 0</div>
     </div>
     <div id ="chatArea2"></div>

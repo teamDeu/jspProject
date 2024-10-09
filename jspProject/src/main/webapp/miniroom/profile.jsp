@@ -212,6 +212,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	border: none;
 	gap: 5px;
 	font-size: 18px;
+	cursor:pointer;
 }
 #main_profile_user_search_btn{
 	position :absolute;
@@ -268,7 +269,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 				<%
 				if (isUserHome) {
 				%>
-				<button class="main_profile_setting_button">
+				<button onclick ="clickOpenBox('profile')" class="main_profile_setting_button">
 					<img class="main_profile_setting_button_img"
 						src="./img/profileSetting.png">프로필 설정
 				</button>

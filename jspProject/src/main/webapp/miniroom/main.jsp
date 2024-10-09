@@ -16,7 +16,7 @@
 <%
    // 세션에서 idKey 가져오기
    String id = (String)session.getAttribute("idKey");
-   String section = request.getParameter("section");
+   String category = request.getParameter("category");
    if(id == null){
       response.sendRedirect("../pjh/login.jsp");
       return;
@@ -106,6 +106,24 @@
 * {
     font-family: 'NanumTobak', sans-serif;
 }
+.sayBox {
+	position: absolute;
+	border: 1px solid black;
+	background-color: white;
+	padding: 5px;
+	border-radius: 5px;
+	animation: fadeout 1.5s;
+	-moz-animation: fadeout 1.5s; /* Firefox */
+	-webkit-animation: fadeout 1.5s; /* Safari and Chrome */
+	-o-animation: fadeout 1.5s; /* Opera */
+	animation-fill-mode: forwards;
+	overflow-x: hidden;
+	word-break: break-all;
+	word-wrap: break-word;
+	font-size:20px;
+	z-index: 6;
+}
+
 .profile_function_div {
    display: flex;
    z-index:3;
@@ -202,6 +220,10 @@
     .chat_reportBtn{
        color: red;
     }
+    .userNameTag{
+    	font-weight : bold;
+    	font-size : 24px;
+    }
 </style>
 <script>
 function loadContent(url) {
@@ -276,13 +298,9 @@ function mainCategoryLoad(){
         var dataSeparator = "㉠"
         var messageSeparator = "㉡";
         var timeNameText = "";
-        var section = "<%=section%>";
+        var section = "<%=category%>";
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
-            if(section != "null"){
-            	clickOpenBox(section);
-            }
-            mainCategoryLoad();
             ws.onopen = function() {
                 document.getElementById("status").textContent = "서버와 연결됨";
                 if(localId == "null") localId = "비회원";
@@ -325,6 +343,8 @@ function mainCategoryLoad(){
                     user = document.getElementById(data);
                     user.remove();
                     userNum --;
+                    nowvisit = document.getElementById("nowvisit");
+                    nowvisit.innerText = "Now " + userNum; 
                  }
                  else if(command == ("sendFriendRequest")){
                     sendUserName = rawdata[1];
@@ -411,6 +431,7 @@ function mainCategoryLoad(){
         function printUser(id,character,name){
            newDiv = document.createElement("div");
            newImg = document.createElement("img");
+           newNameTag = document.createElement("span");
            newImg.classList.add("userCharacter");
            newImg.src =character;
            nowvisit = document.getElementById("nowvisit");
@@ -419,8 +440,12 @@ function mainCategoryLoad(){
             // add the text node to the newly created div
           newDiv.id = id;
           newContent = document.createTextNode(name);
-          newDiv.appendChild(newContent);
+          newNameTag.appendChild(newContent);
+          
+          newDiv.appendChild(newNameTag);
           newDiv.appendChild(newImg);
+          
+          newNameTag.classList.add("userNameTag");
           newDiv.classList.add("user");
           
           informationDiv = document.createElement("div");
@@ -581,7 +606,16 @@ function mainCategoryLoad(){
          
             // 설정 박스 표시
             document.getElementById('settingBox').style.display = 'block';
+            
+            
         }
+        document.addEventListener("DOMContentLoaded", function() {
+        	mainCategoryLoad();
+        	if(section != "null"){
+        		clickOpenBox(section);
+        	}
+        });
+        
     </script>
 
 </head>
@@ -637,6 +671,7 @@ function mainCategoryLoad(){
             <div id="chatBox" class="inner-box-2">
                <jsp:include page="chat.jsp">
                   <jsp:param value="<%=background%>" name="backgroundImg"/>
+                  <jsp:param value="<%=url %>" name="url"/>
                </jsp:include>
             </div>
             <div id="profile" class="inner-box-2" style="display: none">
