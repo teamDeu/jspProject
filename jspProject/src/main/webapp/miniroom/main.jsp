@@ -222,10 +222,17 @@ function clickOpenBox(id){
    if(id.includes("board")){
 	   document.getElementById("boardInnerBox").style.display = "block";
 	   document.getElementById("normalInnerBox").style.display = "none";
+	   document.getElementById("musicInnerBox").style.display = "none";
    }
    else{
 	   document.getElementById("boardInnerBox").style.display = "none";
 	   document.getElementById("normalInnerBox").style.display = "block";
+	   document.getElementById("musicInnerBox").style.display = "none";
+   }
+   
+   if(id.includes("music")){
+	   document.getElementById("musicInnerBox").style.display = "block";
+	   document.getElementById("normalInnerBox").style.display = "none";
    }
 }
 function clickUser(event){
@@ -587,6 +594,9 @@ function clickAlarm(){
             <div id = "boardInnerBox" class="inner-box-1" style = "display :none">
                <jsp:include page="../seyoung/bInnerbox1.jsp"></jsp:include>
             </div>
+            <div id = "musicInnerBox" class="inner-box-1" style = "display :none">
+               <jsp:include page="../yang/music_side.jsp"></jsp:include>
+            </div>
             <!-- 이미지가 박스 -->
             <div class="image-box">
                <img src="img/img1.png" alt="Image between boxes 1"
@@ -637,8 +647,8 @@ function clickAlarm(){
             <button onclick = "javascript:clickOpenBox('board')" class="custom-button">게시판</button>
             <button onclick = "javascript:clickOpenBox('guestbook')" class="custom-button">방명록</button>
             <button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
-            <button onclick = "javascript:clickOpenBox('game'); gamemainshow();" class="custom-button">게임</button>
-            <button onclick = "javascript:clickOpenBox('music')" class="custom-button">음악</button>
+            <button onclick = "javascript:clickOpenBox('game'); gamemainshow()" class="custom-button">게임</button>
+            <button onclick = "javascript:clickOpenBox('music');"  class="custom-button">음악</button>
          </div>
   
 

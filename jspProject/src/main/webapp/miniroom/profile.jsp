@@ -269,8 +269,8 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 		
 		<div class="music-player" style="width: 100%; height: 75px; background-color: #f1f3f4; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 5px; box-sizing: border-box; margin: auto; margin-top: 2px;">
 	        <div class="song-info" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 30px;">
-	            <div class="title" style="font-size: 20px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;margin-bottom: -20px;">곡명</div>
-	            <div class="artist" style="font-size: 16px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;margin-bottom: -20px;">아티스트</div>
+	            <div class="title" style="font-size: 20px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;margin-bottom: -25px;">곡명</div>
+	            <div class="artist" style="font-size: 16px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;margin-bottom: -25px;">아티스트</div>
 	        </div>
 	        <audio id="audioPlayer" controls autoplay muted style="width: 100%; height: 40px;">
 	            <source type="audio/mp3">
