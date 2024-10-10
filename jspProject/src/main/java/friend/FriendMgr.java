@@ -219,6 +219,7 @@ public class FriendMgr {
 				bean.setRequest_at(rs.getString(4));
 				bean.setRequest_type(rs.getInt(5));
 				bean.setRequest_comment(rs.getString(7));
+				bean.setRequest_complete(rs.getBoolean(6));
 			}
 		} catch (Exception e) {
 			// TODO: handle exception

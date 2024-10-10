@@ -605,7 +605,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	                bloadAnswers(); // 답글 추가 후 전체 댓글 목록을 다시 로드
 	            }
 	        };
-
 	        var answerId = "<%= UserId %>"; // 현재 로그인한 사용자 ID 가져오기
 	        var params = "answer_num=" + encodeURIComponent(answerNum) +
 	                     "&reanswer_content=" + encodeURIComponent(replyText) +
@@ -697,11 +696,8 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	 	
 	    //게시글이 로드된 후 댓글을 불러오는 함수 호출
 	    function loadPost(board_num) {
-	        
-	    	
 	        var xhr = new XMLHttpRequest();
 	        xhr.open("GET", "../seyoung/bLatestPost.jsp?type=get&board_num="+board_num, true);
-
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
@@ -711,7 +707,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	                
 	            }
 	        };
-
 	        xhr.send();
 	    }
 	    

@@ -114,6 +114,29 @@ public class BoardReAnswerMgr {
 	    return result;
 	}
 	
+	public int getAnswerByAnswersNum(int reanswerNum) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		int answerNum = 0;
+		try {
+			con = pool.getConnection();
+			sql = "select answer_num from boardanswer where reanswer_num = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, reanswerNum);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				answerNum = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		
+		return answerNum;
+	}
 
 }
     

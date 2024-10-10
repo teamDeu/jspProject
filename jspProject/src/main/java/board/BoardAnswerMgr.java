@@ -102,8 +102,29 @@ public class BoardAnswerMgr {
 
 	
 	
-	
-
+	public int getBoardByAnswersNum(int answerNum) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		int boardNum = 0;
+		try {
+			con = pool.getConnection();
+			sql = "select board_num from boardanswer where answer_num = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, answerNum);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				boardNum = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		
+		return boardNum;
+	}
     // 댓글 목록 불러오기 (특정 게시물에 달린 댓글)
     public Vector<BoardAnswerBean> bgetAnswers(int boardNum) {
         Vector<BoardAnswerBean> answerList = new Vector<>();

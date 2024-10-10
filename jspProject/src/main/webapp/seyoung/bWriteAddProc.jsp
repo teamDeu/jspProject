@@ -1,3 +1,6 @@
+<%@page import="alarm.AlarmMgr"%>
+<%@page import="board.BoardAnswerMgr"%>
+<%@page import="alarm.AlarmBean"%>
 <%@page import="pjh.MemberMgr"%>
 <%@ page import="com.oreilly.servlet.multipart.DefaultFileRenamePolicy"%>
 <%@ page import="com.oreilly.servlet.MultipartRequest"%>
@@ -55,6 +58,18 @@
     // 저장 결과 처리
     if (isAdded) {
         out.println("<script>alert('게시글이 성공적으로 등록되었습니다.'); </script>");
+        
+      //알람기능
+        AlarmBean alarmBean = new AlarmBean();
+        BoardWriteMgr bMgr = new BoardWriteMgr();
+        int boardNum = bMgr.getLatestBoard().getBoard_num();
+        String id = bMgr.getBoard(boardNum).getBoard_id();
+        alarmBean.setAlarm_content_num(boardNum);
+        alarmBean.setAlarm_type("게시판");
+        alarmBean.setAlarm_user_id(id);
+        AlarmMgr alarmMgr = new AlarmMgr();
+        alarmMgr.insertAlarm(alarmBean);
+        
     } else {
         out.println("<script>alert('게시글 등록에 실패했습니다. 다시 시도해주세요.'); history.back();</script>");
     }
