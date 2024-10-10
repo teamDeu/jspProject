@@ -118,6 +118,10 @@ ItemMgr iMgr = new ItemMgr();
 
 </head>
 <body>
+	<form action = "../miniroom/main.jsp" name = "alarmForm" method = "POST">
+		<input type = "hidden" name = "alarmNum" value = "">
+		<input type = "hidden" name = "category" value = "guestbook">
+	</form>
 	<div class="alarmlist_top_div" style="display: none">
 		<div class="alarmlist_main_div">
 			<div class="alarmlist_main_div_header">
@@ -169,27 +173,43 @@ ItemMgr iMgr = new ItemMgr();
 				<%
 				} else if (alarmType.equals("방명록")) {
 				gBean = gMgr.getGuestbookEntry(alarmContentNum);
-				
 				GuestbookprofileBean gpBean = gpMgr.getProfileByUserId(gBean.getWriterId());
+				
 				%>
+				<%if(gpBean == null){ %>
+					<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><span
+							class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
+							<span onclick="clickAlarmGuestbook(event)"
+							class="alarmlist_main_div_item_title">삭제된 방명록 알람입니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
+						</li>
+				<%}else{ %>
 				<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><span
 					class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
 					<span onclick="clickAlarmGuestbook(event)"
 					class="alarmlist_main_div_item_title"><%=gpBean.getProfileName()%>님이
 						방명록을 작성하였습니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
 				</li>
+				<%}%>
 				<%
 				}else if(alarmType.equals("방명록댓글")){
 					GuestbookanswerBean gaBean = null;
 					gaBean = gaMgr.getAnswersByNum(alarmContentNum);
 					GuestbookprofileBean gpBean = gpMgr.getProfileByUserId(gaBean.getGanswerId());
 				%>
+				<%if(gpBean == null){ %>
+				<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><span
+						class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
+						<span onclick="clickAlarmGuestbook(event)"
+						class="alarmlist_main_div_item_title">삭제된 방명록 댓글 알람입니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
+				</li>
+				<%}else{ %>
 					<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><span
 						class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
 						<span onclick="clickAlarmGuestbook(event)"
 						class="alarmlist_main_div_item_title"><%=gpBean.getProfileName()%>님이
 							방명록댓글을 작성하였습니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
 					</li>
+				<%} %>
 				<%
 				}} // for (alarmList)
 				%>
@@ -336,7 +356,7 @@ function clickAlarmGuestbook(event){
 		clickOpenBox('guestbook');
 	}
 	else{
-		location.href = "http://"+location.host+"/jspProject/miniroom/main.jsp?url=" + "<%=id%>" +"&section=guestbook";
+		document.alarmForm.submit();
 	}
 }
 // 페이지가 로드될 때 초기화
