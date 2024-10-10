@@ -77,7 +77,8 @@
 		z-index:6;
 	}
 	.miniroom_design_main_character{
-		object-fit : cover;
+		object-fit : contain;
+		height:80px;
     	z-index:6;
     	width : 80px;
 	}

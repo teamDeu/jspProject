@@ -60,11 +60,11 @@ dateFormat.setTimeZone(seoulTimeZone);
 }
 /* 실선 스타일 */
 .guestbook-line {
-   border-bottom: 2px solid #BAB9AA; /* 실선 색상 및 두께 */
-   width: 95%; /* 실선의 너비 */
-   position: absolute;
-   top: 80px;
-   left: 25px;
+    border-bottom: 1px solid #BAB9AA;
+    width: calc(100% - 55px);
+    position: absolute;
+    top: 80px;
+    left: 25px;
 }
 /* 작성 폼 스타일 */
 .guestbook-form {
@@ -332,7 +332,7 @@ label[for="secretCheckbox"] {
     font-size: 16px; /* 버튼 글자 크기 */
     padding: 5px 10px; /* 버튼 안쪽 여백 */
 }
-#paginationButtons {
+#guestbookPaginationButtons {
     position: absolute; 
     bottom: 70px; /* 버튼과 리스트 사이의 간격 조정 */
     left: 50%; /* 부모 요소의 왼쪽 50% 위치 */
@@ -407,7 +407,7 @@ function addGuestbookEntry() {
 
      
      // 새 방명록 항목을 페이지에 추가하는 함수
-function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecret, profileName, profilePicture) {
+function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecret, profileName, profilePicture, sessionUserId, ownerId, answers) {
     var ul = document.getElementById("guestbookList");
     if (!ul) {
         console.error("guestbookList가 존재하지 않습니다.");
@@ -419,97 +419,164 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
     li.id = "entry-" + guestbookNum;
     li.classList.add('guestbook-entry');
 
-    // 작성자 컨테이너 생성
-    var authorContainer = document.createElement("div");
-    authorContainer.classList.add('author-container');
+    // 비밀글 처리 로직
+    if (isSecret === "1") {
+        if (writerId === sessionUserId || sessionUserId === ownerId) {
+            // 작성자나 방명록 주인이 비밀글을 볼 수 있는 경우
+            var contentElem = document.createElement("p");
+            contentElem.classList.add('content');
+            contentElem.textContent = content;
 
-    // 프로필 사진 생성 (profilePicture가 있을 경우에만)
-    if (profilePicture) {
-        var profileImg = document.createElement("img");
-        profileImg.src = profilePicture;
-        profileImg.alt = "프로필 사진";
-        profileImg.classList.add('profile-image');
-        authorContainer.appendChild(profileImg);
+            // 비밀글 아이콘 표시
+            var secretIcon = document.createElement("img");
+            secretIcon.src = 'img/secret.png';
+            secretIcon.classList.add('secret-icon');
+            li.appendChild(secretIcon);
+
+            // 작성자 정보와 날짜 표시
+            var authorContainer = document.createElement("div");
+            authorContainer.classList.add('author-container');
+
+            if (profilePicture) {
+                var profileImg = document.createElement("img");
+                profileImg.src = profilePicture;
+                profileImg.alt = "프로필 사진";
+                profileImg.classList.add('profile-image');
+                authorContainer.appendChild(profileImg);
+            }
+
+            var author = document.createElement("p");
+            author.classList.add('author');
+
+            var dateElem = document.createElement("span");
+            dateElem.classList.add('date');
+            dateElem.textContent = " " + writtenAt;
+
+            author.textContent = profileName ? profileName + " (" + writerId + ")" : writerId;
+            author.appendChild(dateElem);
+            authorContainer.appendChild(author);
+
+            var underline = document.createElement("div");
+            underline.classList.add('author-underline');
+
+            li.appendChild(authorContainer);
+            li.appendChild(underline);
+            li.appendChild(contentElem);
+        } else {
+            // 비밀글일 때 아이콘과 '비밀글입니다.' 텍스트만 표시
+            var secretContainer = document.createElement("div");
+            secretContainer.classList.add('secret-container');
+
+            var secretIcon = document.createElement("img");
+            secretIcon.src = 'img/secret.png';
+            secretIcon.classList.add('secret-image');
+
+            var secretText = document.createElement("p");
+            secretText.classList.add('secret-text');
+            secretText.textContent = "비밀글입니다.";
+
+            secretContainer.appendChild(secretIcon);
+            secretContainer.appendChild(secretText);
+
+            li.appendChild(secretContainer); // 비밀글 컨테이너 추가
+        }
+    } else {
+        // 비밀글이 아닌 경우 작성자 정보 및 내용 표시
+        var authorContainer = document.createElement("div");
+        authorContainer.classList.add('author-container');
+
+        if (profilePicture) {
+            var profileImg = document.createElement("img");
+            profileImg.src = profilePicture;
+            profileImg.alt = "프로필 사진";
+            profileImg.classList.add('profile-image');
+            authorContainer.appendChild(profileImg);
+        }
+
+        var author = document.createElement("p");
+        author.classList.add('author');
+
+        var dateElem = document.createElement("span");
+        dateElem.classList.add('date');
+        dateElem.textContent = " " + writtenAt;
+
+        author.textContent = profileName ? profileName + " (" + writerId + ")" : writerId;
+        author.appendChild(dateElem);
+
+        authorContainer.appendChild(author);
+
+        var underline = document.createElement("div");
+        underline.classList.add('author-underline');
+
+        var contentElem = document.createElement("p");
+        contentElem.classList.add('content');
+        contentElem.textContent = content;
+
+        li.appendChild(authorContainer);
+        li.appendChild(underline);
+        li.appendChild(contentElem);
     }
 
-    // 작성자 텍스트 생성
-    var author = document.createElement("p");
-    author.classList.add('author');
-    
-    // 날짜 텍스트 생성
-    var dateElem = document.createElement("span");
-    dateElem.classList.add('date'); 
-    dateElem.textContent = " " + writtenAt;
+    // 답글 목록 및 답글 작성 폼 추가 (작성자나 방명록 주인이 아닌 경우 비밀글일 때는 추가하지 않음)
+    if (isSecret !== "1" || writerId === sessionUserId || sessionUserId === ownerId) {
+        var answerList = document.createElement("ul");
+        answerList.id = "a-list-" + guestbookNum;
+        answerList.classList.add('a-list');
+        
+        if (answers && answers.length > 0) {
+            answers.forEach(function(answer) {
+                appendAnswer(
+                    answer.answerNum,
+                    guestbookNum,
+                    answer.ganswerId,
+                    answer.ganswerComment,
+                    answer.ganswerAt,
+                    answer.profileName
+                );
+            });
+        }
 
-    author.textContent = profileName ? profileName + " (" + writerId + ")" : writerId;
-    author.appendChild(dateElem);
-    
-    authorContainer.appendChild(author);
+        var answerForm = document.createElement("div");
+        answerForm.classList.add('a-form');
 
-    // 작성자 밑줄 생성
-    var underline = document.createElement("div");
-    underline.classList.add('author-underline');
+        var answerTextarea = document.createElement("textarea");
+        answerTextarea.id = "aContent-" + guestbookNum;
+        answerTextarea.classList.add('a-textarea');
+        answerTextarea.placeholder = "답글 내용을 입력하세요";
 
-    // 컨텐츠 텍스트 생성
-    var contentElem = document.createElement("p");
-    contentElem.classList.add('content');
-    contentElem.textContent = content;
+        var answerButton = document.createElement("button");
+        answerButton.type = "button";
+        answerButton.textContent = "등록";
+        answerButton.classList.add('a-submit-btn');
+        answerButton.onclick = function() {
+            adAnswer(guestbookNum);
+        };
 
-    // 비밀글 아이콘 추가 (조건에 맞는 경우)
-    if (isSecret === 1) {
-        var secretIcon = document.createElement("img");
-        secretIcon.src = 'img/secret.png';
-        secretIcon.classList.add('secret-icon');
-        li.appendChild(secretIcon);
+        answerForm.appendChild(answerTextarea);
+        answerForm.appendChild(answerButton);
+
+        li.appendChild(answerList); // 답글 목록 추가
+        li.appendChild(answerForm); // 답글 작성 폼 추가
     }
 
-    // 휴지통 아이콘 생성 및 삭제 함수 연결
-    var deleteIcon = document.createElement("img");
-    deleteIcon.src = 'img/bin.png';
-    deleteIcon.classList.add('delete-icon');
-    deleteIcon.onclick = function() {
-        deleteGuestbookEntry(guestbookNum);
-    };
-    li.appendChild(deleteIcon);
-    
-    // 답글 목록 및 답글 작성 폼 추가
-    var answerList = document.createElement("ul");
-    answerList.id = "a-List-" + guestbookNum;
-    answerList.classList.add('a-list'); // 클래스 추가
+    // 휴지통 아이콘 생성 및 삭제 함수 연결 (작성자 또는 방명록 주인일 때만 표시)
+    if (sessionUserId === writerId || sessionUserId === ownerId) {
+        var deleteIcon = document.createElement("img");
+        deleteIcon.src = 'img/bin.png';
+        deleteIcon.classList.add('delete-icon');
+        deleteIcon.onclick = function() {
+            deleteGuestbookEntry(guestbookNum);
+        };
+        li.appendChild(deleteIcon);
+    }
 
-    // 답글 작성 폼
-    var answerForm = document.createElement("div");
-    answerForm.classList.add('a-form');
-
-    var answerTextarea = document.createElement("textarea");
-    answerTextarea.id = "aContent-" + guestbookNum;
-    answerTextarea.classList.add('a-textarea'); // 클래스 추가
-    answerTextarea.placeholder = "답글 내용을 입력하세요";
-
-    var answerButton = document.createElement("button");
-    answerButton.type = "button";
-    answerButton.textContent = "등록";
-    answerButton.classList.add('a-submit-btn');
-    answerButton.onclick = function() {
-        adAnswer(guestbookNum);
-    };
-
-    answerForm.appendChild(answerTextarea);
-    answerForm.appendChild(answerButton);
-
-    // li 요소에 모든 생성한 요소 추가
-    li.appendChild(authorContainer);
-    li.appendChild(underline);
-    li.appendChild(contentElem);
-    li.appendChild(answerList); // 답글 목록 추가
-    li.appendChild(answerForm); // 답글 작성 폼 추가
-   
     ul.prepend(li); // 새 항목을 목록의 맨 위에 추가
-    
- // 새로 생성된 li 요소에 대해 리렌더링 강제
-    li.offsetHeight; // 리플로우 강제 트리거
 
+    // 새로 생성된 li 요소에 대해 리렌더링 강제
+    li.offsetHeight; // 리플로우 강제 트리거
 }
+
+
 
 
 
@@ -538,7 +605,6 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
       function appendAnswer(answerNum, guestbookNum, ganswerId, comment, ganswerAt, profileName) {
           var ul = document.getElementById("a-list-" + guestbookNum);
           if (!ul) {
-              console.error("답글 목록이 존재하지 않습니다.");
               return;
           }
       
@@ -624,68 +690,74 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
 
       
       // AJAX를 이용한 답글 삭제 함수
-      function deleteAnswer(answerNum, guestbookNum) {
-          if (confirm("정말 답글을 삭제하시겠습니까?")) {
-              var xhr = new XMLHttpRequest();
-              var cPath = "<%=cPath%>";
-              
-              xhr.open("POST", cPath + "/eunhyo/deleteAnswer.jsp", true);
-              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-              xhr.onreadystatechange = function() {
-                  if (xhr.readyState === 4) {
-                      if (xhr.status === 200) {
-                          // 삭제 성공 시 해당 답글 목록에서 제거
-                          var response = JSON.parse(xhr.responseText);
-                          if (response.success) {
-                              alert("답글이 삭제되었습니다.");
-                              document.getElementById("answer-" + answerNum).remove();
-                          } else {
-                              alert("답글 삭제에 실패하였습니다.");
-                          }
-                      } else {
-                          console.error("요청 실패:", xhr.status, xhr.statusText);
-                          alert("답글 삭제 요청이 실패하였습니다.");
-                      }
-                  }
-              };
-              xhr.send("answerNum=" + answerNum + "&guestbookNum=" + guestbookNum);
-          }
-      }
+		function deleteAnswer(answerNum, guestbookNum) {
+		    if (confirm("정말 답글을 삭제하시겠습니까?")) {
+		        var xhr = new XMLHttpRequest();
+		        var cPath = "<%=cPath%>";
+		
+		        xhr.open("POST", cPath + "/eunhyo/deleteAnswer.jsp", true);
+		        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		        xhr.onreadystatechange = function() {
+		            if (xhr.readyState === 4) {
+		                if (xhr.status === 200) {
+		                    try {
+		                        var response = JSON.parse(xhr.responseText);
+		                        if (response.success) {
+		                            alert("답글이 삭제되었습니다.");
+		                            // 삭제된 답글 요소를 DOM에서 제거
+		                            var li = document.getElementById("a-" + answerNum);
+		                            if (li) {
+		                                li.remove();
+		                            }
+		                        } else {
+		                            alert("답글 삭제에 실패하였습니다.");
+		                        }
+		                    } catch (e) {
+		                        console.error("응답 처리 중 오류 발생:", e);
+		                        alert("응답 처리 중 오류가 발생하였습니다.");
+		                    }
+		                } else {
+		                    console.error("요청 실패:", xhr.status, xhr.statusText);
+		                    alert("답글 삭제 요청이 실패하였습니다.");
+		                }
+		            }
+		        };
+		        xhr.send("answerNum=" + answerNum + "&guestbookNum=" + guestbookNum);
+		    }
+		}
+
 
       // 페이지 버튼 클릭 시 페이지 로드
       function loadGuestbookPage(pageNumber) {
-          console.log("Requesting page:", pageNumber);
-          var ownerId = "<%=ownerId%>";
-          var xhr = new XMLHttpRequest();
-          var cPath = "<%=cPath%>";
+	    var ownerId = "<%=ownerId%>"; 
+	    var xhr = new XMLHttpRequest();
+	    var cPath = "<%=cPath%>";
+	
+	    xhr.open("GET", cPath + "/eunhyo/guestbookData.jsp?ownerId=" + ownerId + "&page=" + pageNumber, true);
+	    xhr.onreadystatechange = function() {
+	        if (xhr.readyState === 4 && xhr.status === 200) {
+	            try {
+	                var response = JSON.parse(xhr.responseText);
+	                // JSON 응답에서 sessionUserId를 받아서 updateGuestbookEntries 함수에 전달
+	                updateGuestbookEntries(response.entries, response.sessionUserId);  // sessionUserId 전달
+	                updatePaginationButtons(response.totalPages, pageNumber);
+	            } catch (e) {
+	                console.error("응답 처리 중 오류 발생:", e);
+	            }
+	        } else {
 
-          xhr.open("GET", cPath + "/eunhyo/guestbookData.jsp?ownerId=" + ownerId + "&page=" + pageNumber, true);
-          xhr.onreadystatechange = function() {
-              if (xhr.readyState === 4) {
-                  console.log("Loading page:", pageNumber);
-                  if (xhr.status === 200) {
-                      try {
-                          var response = JSON.parse(xhr.responseText);
-                          console.log("Response data:", response);
-                          updateGuestbookEntries(response.entries);
-                          // entries 배열의 길이를 전달
-                          updatePaginationButtons(response.totalPages, pageNumber, response.entries.length);
-                      } catch (e) {
-                          console.error("응답 처리 중 오류 발생:", e);
-                      }
-                  } else {
-                      console.error("AJAX 요청 실패:", xhr.status, xhr.statusText);
-                  }
-              }
-          };
-          xhr.send();
-      }
+	        }
+	    };
+	    xhr.send();
+	}
+
+
 
 
       // 방명록 목록을 업데이트하는 함수
-      function updateGuestbookEntries(entries) {
-          var ul = document.getElementById("guestbookList");
-          ul.innerHTML = ""; // 기존 항목 초기화
+      function updateGuestbookEntries(entries, sessionUserId) {
+	    var ul = document.getElementById("guestbookList");
+	    ul.innerHTML = ""; // 기존 항목 초기화
 
           // 최신 방명록이 위로 오도록 하기 위해
           entries.reverse().forEach(function(entry) {
@@ -696,8 +768,24 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
                   entry.writtenAt, 
                   entry.isSecret, 
                   entry.profileName, 
-                  entry.profilePicture
+                  entry.profilePicture,
+                  sessionUserId,
+                  "<%=ownerId%>",
+                  entry.answers
               );
+              // 각 방명록 항목의 답글 목록 추가
+              if (entry.answers && entry.answers.length > 0) {
+                  entry.answers.forEach(function(answer) {
+                      appendAnswer(
+                          answer.answerNum,
+                          entry.guestbookNum,
+                          answer.ganswerId,
+                          answer.ganswerComment,
+                          answer.ganswerAt,
+                          answer.profileName
+                      );
+                  });
+              }
           });
       }
 
@@ -705,7 +793,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
 
       // AJAX를 이용한 페이지 버튼 업데이트
       function updatePaginationButtons(totalPages, currentPage, entriesLength) {
-          var paginationContainer = document.getElementById("paginationButtons");
+          var paginationContainer = document.getElementById("guestbookPaginationButtons");
           paginationContainer.innerHTML = ""; // 기존 버튼 초기화
 
           console.log("Total pages:", totalPages);
@@ -742,11 +830,20 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
               }
           }
       }
-
-
-
-
-
+      
+      function checkEnterAnswer(event, guestbookNum) {
+    	    if (event.key === 'Enter') {
+    	        event.preventDefault(); // 기본 엔터키 동작 방지 (줄 바꿈 방지)
+    	        adAnswer(guestbookNum); // 버튼 클릭 함수 호출
+    	    }
+    	}
+	
+      function checkEnterGuestbook(event) {
+    	    if (event.key === 'Enter') {
+    	        event.preventDefault(); // 기본 엔터키 동작 방지 (줄 바꿈 방지)
+    	        document.getElementById('guestbookForm').dispatchEvent(new Event('submit')); // 폼 제출
+    	    }
+    	}
       // 페이지가 로드될 때 버튼 초기화
       document.addEventListener("DOMContentLoaded", function() {
           console.log("DOM fully loaded and parsed.");
@@ -847,7 +944,8 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
                   
                   <!-- 답글 작성 폼 (방명록 항목 내부로 이동) -->
                   <div class="a-form">
-                      <textarea id="aContent-<%=entry.getGuestbookNum()%>" class="a-textarea" placeholder="답글 내용을 입력하세요"></textarea>
+                      <textarea id="aContent-<%=entry.getGuestbookNum()%>" class="a-textarea" placeholder="답글 내용을 입력하세요" 
+    onkeydown="checkEnterAnswer(event) <%=entry.getGuestbookNum()%>)"></textarea>
                       <button type="button" class="a-submit-btn" onclick="adAnswer(<%=entry.getGuestbookNum()%>)">등록</button>
                   </div>
 
@@ -855,14 +953,15 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
               </li>
           <% } %>
       </ul>
-   <div id="paginationButtons"></div> <!-- 페이지 버튼 -->
+   <div id="guestbookPaginationButtons"></div> <!-- 페이지 버튼 -->
 
 </div>
    <div class="guestbook-form">
       <form id="guestbookForm" onsubmit="addGuestbookEntry(); return false;">
          <label for="secretCheckbox">비밀글</label> <input type="checkbox"
             id="secretCheckbox" name="secretCheckbox">
-         <textarea id="guestbookContent" rows="5" placeholder="방명록 내용을 입력하세요"></textarea>
+         <textarea id="guestbookContent" rows="5" placeholder="방명록 내용을 입력하세요" 
+            onkeydown="checkEnterGuestbook(event)"></textarea>
          <br> <input type="hidden" name="ownerId" value="<%=ownerId%>">
          <input type="submit" id="submitButton" value="등록">
 

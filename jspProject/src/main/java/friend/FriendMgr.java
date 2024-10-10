@@ -253,6 +253,32 @@ public class FriendMgr {
 		return flag;
 	}
 	
+	public boolean isRealFriend(String user_id1,String user_id2) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "SELECT * FROM friendinfo WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?) and friend_type = 1";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, user_id1);
+			pstmt.setString(2, user_id2);
+			pstmt.setString(3, user_id2);
+			pstmt.setString(4, user_id1);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				flag = true;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return flag;
+	}
+	
 	public boolean deleteFriend(String user_id1,String user_id2) {
 		Connection con = null;
 		PreparedStatement pstmt = null;

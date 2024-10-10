@@ -9,10 +9,10 @@
     String msg = "상품 수정 실패!";
     if (mgr.updateProduct(request)) {
         msg = "상품 수정 성공!";
-        response.sendRedirect("adminMain.jsp?type=store");
+        response.sendRedirect("adminStore.jsp?type=store");
     }
 %>
 <script>
     alert('<%=msg%>');
-    opener.location.href = "adminMain.jsp?type=store";
+    opener.location.href = "adminStore.jsp?type=store";
 </script>

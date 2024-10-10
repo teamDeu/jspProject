@@ -111,21 +111,11 @@ try {
     position: absolute;
     top: -20px;
     left: 20px;
-    border-left: 2px solid #BAB9AA;
-    border-right: 2px solid #BAB9AA;
-    border-top: 2px solid #BAB9AA;
     padding: 10px;
     padding-bottom: 0px;
 }
 
-/* store-title과 연결되는 선 */
-.store-line {
-    border-top: 2px solid #BAB9AA;
-    width: calc(932px - 150px);
-    position: absolute;
-    top: 31px;
-    left: calc(-53px + 133px);
-}
+
 /* 클로버 금액 */
 .clover-amount {
     font-size: 18px;
@@ -195,7 +185,7 @@ try {
 
 .search button {
     padding: 10px 20px;
-    background-color: #90EE90;
+    background-color: #C0E5AF;
     border: none;
     color: white;
     cursor: pointer;
@@ -315,6 +305,10 @@ try {
     transition: filter 0.3s ease;
 }
 
+.buylistItems {
+    cursor: pointer;
+    pointer-events: auto; /* 이 속성을 명시적으로 추가 */
+}
 
 </style>
 
@@ -569,10 +563,11 @@ function showPurchaseCompletePopup(itemName, itemImage, itemPrice) {
         document.getElementById('purchasePopup').remove();
         // 배경에서 모자이크 효과 제거
         document.querySelector('.storecontainer').classList.remove('mosaic-background');
-    }, 2000); // 2초 후에 팝업 제거 및 모자이크 해제
+    }, 1000); // 2초 후에 팝업 제거 및 모자이크 해제
 }
 
 function refundStoreItem(itemNum, itemPrice) {
+    console.log("환불 함수 호출됨:", itemNum, itemPrice);  // 이 부분을 추가해서 호출 여부 확인
     if (confirm("정말로 환불하시겠습니까?")) {
         // 환불 처리 AJAX 요청
         const xhr = new XMLHttpRequest();
@@ -599,6 +594,8 @@ function refundStoreItem(itemNum, itemPrice) {
     }
 }
 
+
+
 </script>
 </head>
 <div class="store">
@@ -606,7 +603,7 @@ function refundStoreItem(itemNum, itemPrice) {
 	<div class="storecontainer">
 		<!-- 상점 제목 -->
 		<div class="store-title">상점</div>
-		<div class="store-line"></div>
+
 
 		<!-- 클로버 금액 -->
 		<div class="clover-amount">
@@ -728,12 +725,12 @@ function refundStoreItem(itemNum, itemPrice) {
     while (rs.next()) {
     %>
     <div class="buylistItems" onclick="refundStoreItem(<%= rs.getInt("item_num") %>, <%= rs.getInt("item_price") %>)">
-        <img src="<%= rs.getString("item_image") %>" alt="<%= rs.getString("item_name") %>" style="width:186px;height:165px;"/>
-        <div class="item-title"><%= rs.getString("item_name") %></div>
-        <div class="item-price">
-            <img src="./img/clover_icon.png" alt="클로버" style="width:20px; height:20px;"> <%= rs.getInt("item_price") %>개
-        </div>
+    <img src="<%= rs.getString("item_image") %>" alt="<%= rs.getString("item_name") %>" style="width:186px;height:145px;"/>
+    <div class="item-title"><%= rs.getString("item_name") %></div>
+    <div class="item-price">
+        <img src="./img/clover_icon.png" alt="클로버" style="width:20px; height:20px;"> <%= rs.getInt("item_price") %>개
     </div>
+</div>
     <%
     }
     rs.close();

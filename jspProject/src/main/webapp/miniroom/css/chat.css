@@ -7,7 +7,8 @@ body {
 }
 
 .userCharacter {
-	object-fit: cover;
+	height:80px;
+	object-fit: contain;
 	width: 80px;
 }
 
@@ -58,23 +59,7 @@ body {
 	z-index: 6;
 }
 
-.sayBox {
-	position: absolute;
-	border: 1px solid black;
-	background-color: white;
-	padding: 5px;
-	border-radius: 5px;
-	animation: fadeout 1.5s;
-	-moz-animation: fadeout 1.5s; /* Firefox */
-	-webkit-animation: fadeout 1.5s; /* Safari and Chrome */
-	-o-animation: fadeout 1.5s; /* Opera */
-	animation-fill-mode: forwards;
-	overflow-x: hidden;
-	word-break: break-all;
-	word-wrap: break-word;
-	font-size:20px;
-	z-index: 6;
-}
+
 
 #inputArea {
 	width: 736px;

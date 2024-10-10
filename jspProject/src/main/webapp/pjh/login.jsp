@@ -16,7 +16,7 @@
         body {
             background-color: #F8F6E3;
             font-family: 'NanumTobak';
-            zoom:1.1;
+            zoom:1.1;	
         }
         .container {
             text-align: center;

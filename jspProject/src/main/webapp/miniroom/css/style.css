@@ -122,10 +122,12 @@ body {
 
 .button-container {
    position: absolute;
-   right: -90px;
-   display: flex;
-   flex-direction: column;
-   z-index: 3;
+    right: -90px;
+    top: 100px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    z-index: 3;
 }
 
 /* 버튼 스타일 */

@@ -5,6 +5,16 @@ public class CategoryBean {
     private String categoryType;
     private String categoryName;
     private int categorySecret;
+    private int categoryIndex;  // 추가: category_index 필드
+
+    // Getter와 Setter 추가
+    public int getCategoryIndex() {
+        return categoryIndex;
+    }
+
+    public void setCategoryIndex(int categoryIndex) {
+        this.categoryIndex = categoryIndex;
+    }
 
     public String getUserId() {
         return userId;
@@ -38,4 +48,3 @@ public class CategoryBean {
         this.categorySecret = categorySecret;
     }
 }
-
