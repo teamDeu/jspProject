@@ -21,7 +21,6 @@
 	int startIndex = (currentPage - 1) * entriesPerPage;
 
     // 모든 게시글을 불러오기
-    //Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); 
     Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id, startIndex, entriesPerPage); 
 %>
 
@@ -53,7 +52,6 @@
     </tr>
 <% } %>
 
-
 <script>
     // 조회수 증가와 게시글 보기로 이동하는 함수
     function clickBoard_boardNum(boardNum) {
@@ -73,5 +71,17 @@
 
         // 조회수 증가 요청을 서버로 전송
         xhr.send("boardNum=" + encodeURIComponent(boardNum));
+    }
+    
+    
+    function loadBoardListByPage(boardId, page) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", `../seyoung/getBoardListAll.jsp?board_id=${boardId}&page=${page}`, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                document.getElementById("board-list-body").innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send();
     }
 </script>

@@ -30,6 +30,6 @@
 	}
 %>
 <%if(fMgr.isRealFriend(cBean.getUserId(), id)|| cBean.getCategorySecret() == 0 || id.equals(pageOwnerId)) { 
-         	if(!cBean.getCategoryType().equals("미니룸") || id.equals(pageOwnerId)){%>
+         	if((!cBean.getCategoryType().equals("미니룸") && !cBean.getCategoryType().equals("음악")) || id.equals(pageOwnerId)){%>
             <button <%if(i == 0){ %>style = "background-color :#F7F7F7" <%} %> onclick = "javascript:clickOpenBox('<%=categoryType.get(cBean.getCategoryType()) %>')" class="custom-button" id ="custom-button-<%=categoryType.get(cBean.getCategoryType())%>"><%=cBean.getCategoryName()%></button>
 <%}}} %>
