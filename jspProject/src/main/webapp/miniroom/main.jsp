@@ -250,8 +250,9 @@ function clickOpenBox(id){
       openButton = document.getElementById("custom-button-board");
       document.getElementById("boardInnerBox").style.display = "block";
       document.getElementById("normalInnerBox").style.display = "none";
+
       loadLatestPost(); // 페이지가 로드될 때 최신 게시글을 불러옴
-	  document.getElementById("musicInnerBox").style.display = "none";
+	   document.getElementById("musicInnerBox").style.display = "none";
    }
    else{
 	   openButton = document.getElementById("custom-button-"+id);

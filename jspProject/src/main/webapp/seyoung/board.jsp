@@ -435,7 +435,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 
 </head>
 <h1 class="board-title">게시판</h1>
-					<h2 class="board-recentpost"> | 최근게시물</h2>
+					<h2 class="board-recentpost" id="board-recentpost3"></h2>
 					<button type="button" onclick ="clickAllBoardList()" class="list-button">목록</button>
 					<div class="board-line"></div>
 					<div class="board">
@@ -471,6 +471,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	        xhr.onreadystatechange = function() {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
+	                document.getElementById("board-recentpost").innerText = "| 전체게시글";
 	                document.getElementById('board-list-body').innerHTML = xhr.responseText;
 	            }
 	        };
@@ -548,19 +549,25 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	    //댓글 로드 함수
 	    function bloadAnswers() {
 	    	
+	        var bwriteContent = document.querySelector(".bwrite-form").querySelector(".bwrite-content");
+	        var boardNum = bwriteContent.id;
 	        var xhr = new XMLHttpRequest();
-	        xhr.open("GET", "../seyoung/bLatestPostComments.jsp?board_num=" + encodeURIComponent(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id), true);
+	        xhr.open("GET", "../seyoung/bLatestPostComments.jsp?board_num=" + boardNum, true);
 
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                var banswerForm = document.querySelector('.banswer-form');
 	                banswerForm.innerHTML = xhr.responseText; // 서버로부터 받은 HTML을 그대로 삽입
 	                banswerForm.style.display = 'flex'; // 댓글 폼 보이도록 설정
+	                
 	            }
 	        };
 
 	        xhr.send();
 	    }
+	    
+        
+	    
 	    
 	    //댓글 삭제 함수
 	    function bdeleteAnswer(answerNum) {
@@ -637,10 +644,39 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	        var params = "reanswer_num=" + encodeURIComponent(reAnswerNum);
 	        xhr.send(params);
 	    }
-	    
+
+	    function goBoard(id){
+	    	   openBox = document.getElementById(id);
+	    	   anotherBox = document.querySelectorAll(".inner-box-2");
+	    	   anotherButton = document.querySelectorAll(".custom-button");
+	    	   for(i = 0 ; i < anotherBox.length ; i++){
+	    	      anotherBox[i].style.display ="none";
+	    	   }
+	    	   openBox.style.display = "flex";
+	    	   anotherButton.forEach((e) => e.style.backgroundColor = "#C0E5AF")
+	    	   if(id.includes("board")){
+	    	      openButton = document.getElementById("custom-button-board");
+	    	      document.getElementById("boardInnerBox").style.display = "block";
+	    	      document.getElementById("normalInnerBox").style.display = "none";
+	    	   }
+	    	   else{
+	    	      openButton = document.getElementById("custom-button-"+id);
+	    	      document.getElementById("boardInnerBox").style.display = "none";
+	    	      document.getElementById("normalInnerBox").style.display = "block";
+	    	   }
+	    	   openButton.style.backgroundColor = "#F7F7F7";
+	    	   
+	    	}
 	    function clickBoard_boardNum(board_num){
-			clickOpenBox('board');
+			goBoard('board');
 			loadPost(board_num);
+			/* var xhr = new XMLHttpRequest();
+	        xhr.open("GET", "../seyoung/boardIncreaseView.jsp?board_num="+board_num, true);
+	        xhr.onreadystatechange = function () {
+	            if (xhr.readyState === 4 && xhr.status === 200) {
+	            }
+	        };
+	        xhr.send(); */
 		}
 	    
 	 	// 최신 게시글이 로드된 후 댓글을 불러오는 함수 호출
@@ -650,8 +686,8 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
-	                
-	                console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
+	                document.getElementById("board-recentpost3").innerHTML = "| 최근게시물";
+	                //console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
 	                bloadAnswers(); // 댓글 로드
 	            }
 	        };
@@ -661,6 +697,8 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	 	
 	    //게시글이 로드된 후 댓글을 불러오는 함수 호출
 	    function loadPost(board_num) {
+	        
+	    	
 	        var xhr = new XMLHttpRequest();
 	        xhr.open("GET", "../seyoung/bLatestPost.jsp?type=get&board_num="+board_num, true);
 
@@ -668,6 +706,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
 	                console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
+	                document.getElementById("board-recentpost3").innerHTML = " ";
 	                bloadAnswers(); // 댓글 로드
 	                
 	            }

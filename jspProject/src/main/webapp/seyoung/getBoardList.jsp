@@ -6,17 +6,12 @@
 <%@ page import="board.BoardWriteBean"%>
 <%@ page import="java.util.Vector"%>
 <html>
-<head>
-	<script>
-	
-	</script>
-</head>
+
 
 
 <%
     
     String folderName = request.getParameter("folderName"); // 폴더 이름 받기
-    System.out.println("getBoardList 폴더 이름: " + folderName);
     
     int folderNum = 0;
     try {
@@ -45,7 +40,7 @@
                 
                     <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
                     <td>
-                        <button onclick="clickBoard_boardNum('<%= board.getBoard_num() %>')"><%= board.getBoard_title() %></button>
+                        <span onclick="clickBoard_boardNum('<%= board.getBoard_num() %>')"><%= board.getBoard_title() %></span>
                     </td>
                     <td><%= board.getBoard_id() %></td>
                     <td><%= formattedDate %></td>
@@ -69,3 +64,7 @@
     }
 %>
 </html>
+
+<script>
+    
+</script>
