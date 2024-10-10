@@ -54,7 +54,7 @@
 <body>
     <div class="container">
     <div class="header-logo">
-        <img src="logo2.png" alt="CloverStory 로고" style="width:200px; height:100px;">
+        <img src="./img/mainlogo.jpg" alt="CloverStory 로고" style="width:200px; height:100px;">
     </div>
         <div class="box">
             <h2>비밀번호 재설정</h2>
