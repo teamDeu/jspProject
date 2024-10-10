@@ -9,7 +9,7 @@
 <%
 	BoardFolderMgr mgr = new BoardFolderMgr();
 	int latestNum = mgr.getLatestBoardFolder().getFolder_num();
-	String id = (String)session.getAttribute("idKey");
+	String id = request.getParameter("music_id");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -103,6 +103,15 @@
             element.classList.add('active');
             currentActive = element; // 현재 활성화된 항목을 저장
         }
+        document.addEventListener('DOMContentLoaded', function() {
+            // 페이지 로드 시 전체음악 자동 클릭
+            const allMusicElement = document.querySelector('.pli-text-left');
+            if (allMusicElement) {
+                setAllMusicActive(allMusicElement); // 전체음악 클릭 함수 호출
+                showPlaylist('allMusic'); // 전체음악 리스트 보여주기
+            }
+        });
+
 
         //플레이리스트 이름을 서버로 보냄
         function setPlaylist(playlistName, element) {
@@ -161,40 +170,50 @@
 		}
 
 		
-        //폴더 추가
         function addFolder1() {
-		    var folderName = document.getElementById('folderNameInput1').value.trim();
+            var folderName = document.getElementById('folderNameInput1').value.trim();
+            
+            if (folderName === '') {
+                alert('폴더명을 입력하세요.');
+                return;
+            }
+            
+            // 현재 존재하는 폴더 목록을 가져옴
+            var existingFolders = document.querySelectorAll('#playlist-content .playlist-item span');
+            for (var i = 0; i < existingFolders.length; i++) {
+                if (existingFolders[i].textContent.trim() === folderName) {
+                    alert('이미 존재하는 폴더명입니다. 다른 이름을 입력하세요.');
+                    return;  // 폴더 생성 중단
+                }
+            }
+            
+            // 서버로 폴더명을 전송하는 AJAX 요청
+            fetch('../yang/addFolder.jsp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'folderName=' + encodeURIComponent(folderName) + '&userId=' + encodeURIComponent(userId)
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data === 'success') {
+                    // 새로운 폴더를 동적으로 추가
+                    addFolderToDOM1(folderName);
+                    document.getElementById('folderNameInput1').value = ''; // 입력창 초기화
+                } else {
+                	addFolderToDOM1(folderName);
+                    document.getElementById('folderNameInput1').value = ''; // 입력창 초기화
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('오류가 발생했습니다.');
+            });
+        }
+
 		
-		    if (folderName === '') {
-		        alert('폴더명을 입력하세요.');
-		        return;
-		    }
-		
-		    // 서버로 폴더명을 전송하는 AJAX 요청
-		    fetch('../yang/addFolder.jsp', {
-		        method: 'POST',
-		        headers: {
-		            'Content-Type': 'application/x-www-form-urlencoded'
-		        },
-		        body: 'folderName=' + encodeURIComponent(folderName) + '&userId=' + encodeURIComponent(userId)
-		    })
-		    .then(response => response.text())
-		    .then(data => {
-		        if (data === 'success') {
-		            // 새로운 폴더를 동적으로 추가
-		            addFolderToDOM1(folderName);
-		            document.getElementById('folderNameInput1').value = ''; // 입력창 초기화
-		        } else {
-		        	addFolderToDOM1(folderName);
-		            document.getElementById('folderNameInput1').value = ''; // 입력창 초기화
-		        }
-		    })
-		    .catch(error => {
-		        console.error('Error:', error);
-		        alert('오류가 발생했습니다.');
-		    });
-		}
-		
+     // 폴더 추가 후 DOM에 반영
         function addFolderToDOM1(folderName) {
             var playlistContent = document.getElementById('playlist-content');
 
@@ -243,11 +262,49 @@
             newFolderDiv.appendChild(folderSpan);
             newFolderDiv.appendChild(deleteButton);
 
-            // playlist-content에 새로운 div를 추가
+            // 메인 플레이리스트 목록에 새로운 폴더 추가
             playlistContent.appendChild(newFolderDiv);
+
+            // 팝업에도 동일한 폴더 추가
+            addFolderToPopup(folderName);
+        }
+
+        // 팝업에 폴더 추가
+        function addFolderToPopup(folderName) {
+            var popupPlaylistContent = document.querySelector('#popup5 #playlist-content');
+
+            var newPopupFolderDiv = document.createElement('div');
+            newPopupFolderDiv.className = 'playlist-item';
+
+            // 이미지 추가 (폴더 아이콘)
+            var folderImg = document.createElement('img');
+            folderImg.src = '../seyoung/img/folder.png';
+            folderImg.width = 50;
+            folderImg.height = 50;
+            folderImg.alt = 'folder icon';
+
+            // 폴더명 텍스트 추가
+            var folderSpan = document.createElement('span');
+            folderSpan.textContent = folderName;
+            folderSpan.style.fontSize = '25px';
+            folderSpan.style.fontWeight = 'bold';
+
+            // 클릭 시 플레이리스트에 음악 추가
+            newPopupFolderDiv.onclick = function() {
+                addMusicToPlaylist(folderName);
+            };
+
+            // 새 요소들을 팝업 div에 추가
+            newPopupFolderDiv.appendChild(folderImg);
+            newPopupFolderDiv.appendChild(folderSpan);
+
+            // 팝업의 playlist-content에 새로운 div를 추가
+            popupPlaylistContent.appendChild(newPopupFolderDiv);
         }
 
 
+
+     // 폴더 삭제 처리
         function deleteFolder1(folderName, folderElement) {
             // 서버로 삭제 요청을 보내는 AJAX 요청
             fetch('../yang/deleteFolder.jsp', {
@@ -259,11 +316,20 @@
             })
             .then(response => response.text())
             .then(data => {
-                if (data === 'success') {
-                    // 삭제가 성공하면 해당 폴더를 DOM에서 제거
-                    folderElement.remove();
+                if (data === 'success') {       
+
                 } else {
-                	folderElement.remove();
+                	// DOM에서 삭제
+                    folderElement.remove();  // 메인 DOM에서 삭제
+                    
+                    // 팝업에서 해당 플레이리스트 아이템 삭제
+                    const popupPlaylistItems = document.querySelectorAll('#popup5 .playlist-item');
+                    popupPlaylistItems.forEach(function (item) {
+                        const spanText = item.querySelector('span').textContent;
+                        if (spanText === folderName) {
+                            item.remove();  // 팝업 DOM에서 해당 플레이리스트 삭제
+                        }
+                    });
                 }
             })
             .catch(error => {
@@ -271,16 +337,6 @@
                 alert('오류가 발생했습니다.');
             });
         }
-
-
-
-
-
-
-
-
-
-
         
     </script>
     

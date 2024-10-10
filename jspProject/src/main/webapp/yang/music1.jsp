@@ -7,7 +7,7 @@
 <jsp:useBean id="mgr" class="music.MusicMgr" />
 <%
     // 세션에서 user_id를 가져옴
-    String user_id = (String) session.getAttribute("idKey");
+    String user_id = request.getParameter("music_id");
 	
 
     // user_id에 해당하는 음악 리스트를 가져옴
@@ -267,17 +267,40 @@
 	})
 	
 	function showPlaylist(playlistId) {
-	    // 모든 big-box를 숨김
+	    // 모든 big-box를 숨기고 체크박스를 해제
 	    document.querySelectorAll('.big-box').forEach(box => {
+	        // big-box를 숨김
 	        box.style.display = 'none';
+	
+	        // 숨긴 big-box 안의 모든 체크박스를 해제
+	        const checkboxes = box.querySelectorAll('.checkbox-wrapper input[type="checkbox"]');
+	        checkboxes.forEach((checkbox) => {
+	            checkbox.checked = false; // 체크 해제
+	        });
 	    });
 	
-	    // 선택한 big-box만 보이도록 설정
-	    document.getElementById(playlistId).style.display = 'block';
+	    // 선택한 playlistId에 해당하는 big-box가 존재하는지 확인
+	    let selectedPlaylist = document.getElementById(playlistId);
+	
+	    if (!selectedPlaylist) {
+	        // playlistId가 없으면 새로운 big-box를 생성하여 추가
+	        selectedPlaylist = document.createElement('div');
+	        selectedPlaylist.className = 'big-box'; // 기존 big-box 클래스 적용
+	        selectedPlaylist.id = playlistId; // id를 playlistId로 설정
+	        selectedPlaylist.innerHTML = `<!-- playlist에 곡이 없을 때 표시할 내용 -->`;
+	
+	        // small-box 위에 big-box를 추가
+	        const smallBox = document.querySelector('.small-box');
+	        smallBox.parentNode.insertBefore(selectedPlaylist, smallBox); // small-box 위에 추가
+	    }
+	
+	    // 선택한 big-box를 보이도록 설정
+	    selectedPlaylist.style.display = 'block';
 	
 	    // top-box 체크박스 초기화 (해제)
 	    document.getElementById('selectAll').checked = false;
 	}
+
 
 
     function playSongs() {
@@ -310,7 +333,16 @@
             playSongs();
         } else {
             currentIndex = 0; // 마지막 곡이 끝나면 처음으로 돌아감
+            playSongs(); // 첫 곡을 다시 재생
         }
+    }
+
+    function playPreviousSong() {
+        currentIndex--;
+        if (currentIndex < 0) {
+            currentIndex = selectedSongs.length - 1; // 첫 곡이면 마지막 곡으로 이동
+        }
+        playSongs();
     }
         
 
@@ -331,12 +363,35 @@
         });
 
         if (selectedSongs.length > 0) {
+            // 선택한 노래를 로컬 스토리지에 저장
+            localStorage.setItem('selectedSongs', JSON.stringify(selectedSongs));
             currentIndex = 0;
             playSongs(); // 첫 번째 노래부터 재생
         } else {
             alert('음악을 선택해 주세요.');
         }
     }
+
+    // 페이지가 로드될 때, 로컬 스토리지에서 선택한 노래 리스트를 불러옴
+    document.addEventListener('DOMContentLoaded', function () {
+        const savedSelectedSongs = localStorage.getItem('selectedSongs');
+        if (savedSelectedSongs) {
+            selectedSongs = JSON.parse(savedSelectedSongs);
+        }
+
+        const audioPlayer = document.getElementById('audioPlayer');
+
+        // 현재 재생 시간을 주기적으로 저장
+        audioPlayer.ontimeupdate = function () {
+            localStorage.setItem('savedTime', audioPlayer.currentTime);
+        };
+
+        // 음악이 끝나면 다음 곡 재생
+        audioPlayer.onended = function () {
+            playNextSong();
+        };
+    });
+
     
     function sortSongs(sortType) {
         // 'big-box' 클래스가 적용된 모든 박스를 찾습니다 (allMusic 및 각 playlist).
@@ -499,7 +554,7 @@
 	                    
 	                    // 성공적으로 추가된 후 로컬 스토리지에 상태 저장
 	                    if (xhr.responseText.includes("성공적으로 플레이리스트에 추가되었습니다.")) {
-	                        localStorage.setItem('openBox', 'music');  // 로컬 스토리지에 저장
+	                        localStorage.setItem('openBox', 'music');  // 로컬 스토리지에 'music' 저장
 	                        location.reload();  // 페이지 새로고침
 	                    }
 	                }
@@ -512,14 +567,19 @@
 	        closePopup5();  // 팝업 닫기
 	    }
 
-	    // 새로고침 후에 특정 함수 실행
+
+	 	// 새로고침 후에 특정 함수 실행
 	    document.addEventListener('DOMContentLoaded', function () {
 	        const openBox = localStorage.getItem('openBox');
+	        
 	        if (openBox === 'music') {
+	            localStorage.removeItem('openBox');  // 값을 바로 삭제하여 남아있지 않게 처리
 	            clickOpenBox('music');  // 새로고침 후에 실행할 함수 호출
-	            localStorage.removeItem('openBox');  // 상태를 제거하여 중복 실행 방지
 	        }
 	    });
+
+
+
 		
 	    
 	    //삭제함수
@@ -562,7 +622,7 @@
 	        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	        xhr.onreadystatechange = function() {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
-	            	alert("삭제되었습니다.");
+	            	localStorage.setItem('openBox', 'music');  // 로컬 스토리지에 'music' 저장
 	                location.reload();  // 페이지 새로고침
 	            }
 	        };
@@ -576,7 +636,7 @@
 	        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	        xhr.onreadystatechange = function() {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
-	            	alert("삭제되었습니다.");
+	            	localStorage.setItem('openBox', 'music');  // 로컬 스토리지에 'music' 저장
 	                location.reload();  // 페이지 새로고침
 	            }
 	        };
