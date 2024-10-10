@@ -51,7 +51,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 }
 
 .main_profile_img {
-	object-fit: cover;
+	object-fit: contain;
 	width:100%;
 }
 
@@ -77,6 +77,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	display: flex;
 	position: relative;
 	height: 100px;
+	font-size : 16px;
 }
 
 .main_profile_alram {
@@ -159,7 +160,8 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 
 .main_profile_friends {
 	width: 100%;
-	object-fit: cover;
+	height: 50px;
+	object-fit: contain;
 }
 
 .main_profile_friends_list_friendtype_btns {
@@ -177,6 +179,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	border-bottom: none;
 	font-size: 18px;
 	display: flex;
+		cursor : pointer;
 }
 .main_profile_frinds_button_div{
 	display:flex;
@@ -185,6 +188,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	border-radius:1px;
 	background : none;
 	border : 1px solid #DCDCDC;
+
 }
 .main_profile_friendtype_btn:hover{
 	background-color: #C0E5AF;
@@ -194,7 +198,13 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	width: 100%;
 	object-fit: cover;
 }
+.main_profile_friends_search_button{
+	cursor : pointer;
+}
 
+.main_profile_friends_search_button:hover{
+	background-color : rgba(0,0,0,0.2);
+}
 .main_profile_setting_button {
 	display: flex;
 	align-items: center;
@@ -202,8 +212,12 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	border: none;
 	gap: 5px;
 	font-size: 18px;
+	cursor:pointer;
 }
-
+#main_profile_user_search_btn{
+	position :absolute;
+	right:10px;
+}
 .main_profile_setting_button_img {
 	width: 10px;
 }
@@ -249,13 +263,13 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 				<img class="main_profile_img" src="./<%=profileBean.getProfilePicture()%>">
 			</div>
 			<div class="main_profile_comment">
-				<span style="font-size: 22px"><%=profileBean.getProfileContent()%></span>
+				<%=profileBean.getProfileContent()%>
 			</div>
 			<div class="main_profile_main_bottom">
 				<%
 				if (isUserHome) {
 				%>
-				<button class="main_profile_setting_button">
+				<button onclick ="clickOpenBox('profile')" class="main_profile_setting_button">
 					<img class="main_profile_setting_button_img"
 						src="./img/profileSetting.png">프로필 설정
 				</button>
@@ -280,11 +294,12 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 		<div class="main_profile_friends_main_div" style="margin-top:10px">
 			<div class="main_profile_friends_search_div">
 				<input class ="main_profile_friends_search_text" type="text" placeholder="닉네임을 입력해주세요.">
-				<button onclick = "friendSearchClick()">검색</button>
+				<button class ="main_profile_friends_search_button" onclick = "friendSearchClick()">검색</button>
 			</div>
 			<div class="main_profile_friends_list_friendtype_btns">
 				<button style = "background-color : #C0E5AF" id = "main_profile_friendtype_btn1" class ="main_profile_friendtype_btn" onclick = "changeFriendType(1)">일촌</button>
 				<button class ="main_profile_friendtype_btn" id ="main_profile_friendtype_btn2" onclick = "changeFriendType(2)">이촌</button>
+				<button id ="main_profile_user_search_btn" class ="main_profile_friendtype_btn" onclick ="userSearchClick()">친구 찾기</button>
 			</div>
 			<div class="main_profile_friends_list_div">
 
@@ -391,12 +406,26 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 		});
 		document.querySelector(".main_profile_friend_count").innerText = friend_items.length + "명";
 	}
+	
+	function userSearchClick(){
+		document.getElementById("user_search_modal").style.display = "flex";
+	}
 	document.addEventListener('DOMContentLoaded', function () {
 		friend_items_first = Array.from(document.querySelectorAll('.friends_type_first'));
 		friend_items_second = Array.from(document.querySelectorAll('.friends_type_second'));
 		friend_items = friend_items_first;
 		friend_displayItems();
 	})
+	
+	const main_profile_friends_search_text = document.querySelector(".main_profile_friends_search_text");
+	main_profile_friends_search_text.addEventListener('keypress', function(key){
+
+		// key.key 의 값이 Enter 일 경우 코드 실행
+	        // key.keyCode == 13 도 동일한 기능을 한다.
+	        if(key.key == 'Enter'){
+	        	friendSearchClick();
+	            }
+	        })
 	</script>
 	<form name ="friend_delete_form" action = "./friendRequestProc.jsp" target ="blankifr">
 		<input type = "hidden" name = "request_senduserid" value = "">

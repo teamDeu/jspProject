@@ -5,10 +5,13 @@
 	BoardFolderMgr mgr = new BoardFolderMgr();
 	int latestNum = mgr.getLatestBoardFolder().getFolder_num();
 	String id = (String)session.getAttribute("idKey");
+	String board_id = request.getParameter("board_id");
 	
+
 %>
 <!-- bInnerbox1.jsp -->
 <div class="folder-container">
+	<input type="hidden" id="selectedFolderName" name="selectedFolderName">
     <div class="folder-input-container" id="folderInputContainer">
         <img src="../seyoung/img/folder.png" alt="Folder Icon">
         <input type="text" id="folderNameInput" placeholder="폴더명을 입력하세요.">
@@ -22,7 +25,9 @@
 <script>
     var userId = '<%=id%>'; // 실제로는 세션에서 사용자 ID를 가져와야 합니다.
     var selectedFolderItem = null; // 현재 선택된 폴더를 저장할 변수
+    var board_id = '<%=board_id%>';
 	var latestNum = <%=latestNum%>;
+	
     function toggleFolderInput() {
         var inputContainer = document.getElementById('folderInputContainer');
         var deleteButtons = document.querySelectorAll('.delete-button'); // 모든 삭제 버튼을 가져옴
@@ -120,6 +125,8 @@
     function selectFolder(folderItem) {
         var folderIcon = folderItem.querySelector('img');
         var folderNum = folderItem.getAttribute('data-folder-num');
+        var folderName = folderItem.querySelector('span').textContent.trim();
+        
         // 폴더 번호가 유효하지 않을 경우 처리
         if (!folderNum || isNaN(folderNum)) {
             console.error("폴더 번호가 유효하지 않습니다.");
@@ -138,15 +145,29 @@
             folderIcon.src = '../seyoung/img/folder2.png'; // 아이콘 변경
             folderItem.querySelector('span').style.fontWeight = 'bold'; // 글자 굵기 변경
             selectedFolderItem = folderItem; // 현재 선택된 폴더 갱신
+            
 			clickOpenBox('boardList');
+		
+			
 			loadBoardList(folderNum);
-			document.getElementById("board-folder").value = selectedFolderItem;
+			//loadBoardList2(folderName);
+			
+			document.getElementById("selectedFolderNum").value = folderNum;
+			document.getElementById("board-recentpost").innerText = "| "+folderName;
             // AJAX 요청을 통해 서버에서 폴더 정보 가져오기
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '../seyoung/bgetFolderProc.jsp?folderNum=' + encodeURIComponent(folderNum), true);
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     console.log('선택된 폴더 정보:', xhr.responseText);
+                    var folderInfo = JSON.parse(xhr.responseText);
+                    
+                    if (folderInfo.error) {
+                        console.error("폴더 정보를 가져오는 데 실패했습니다.");
+                    } else {
+                        folderName = folderInfo.folder_name; // 폴더 이름 가져오기
+
+                    }
                 }
             };
             xhr.send(); // 요청 전송
@@ -159,11 +180,36 @@
             clickOpenBox('board');
         }
     }
+    
+    function loadBoardList2(folderName) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '../seyoung/boardList.jsp?folderName=' + encodeURIComponent(folderName), true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                
+                document.getElementById('board-recentpost').innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send(); // 목록 로드 요청
+    }
+    
+    function loadBoardList(folderNum,folderName) {	
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '../seyoung/getBoardList.jsp?folderNum=' + encodeURIComponent(folderNum), true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
+                document.getElementById('board-list-body').innerHTML = xhr.responseText;
+                
+            }
+        };
+        xhr.send(); // 목록 로드 요청
+    }
 
     // 폴더 목록 로드
 	function loadFolders() {
 	    var xhr = new XMLHttpRequest();
-	    xhr.open('GET', '../seyoung/bFolderListProc.jsp?user_id=' + encodeURIComponent(userId), true);
+	    xhr.open('GET', '../seyoung/bFolderListProc.jsp?board_id=' + encodeURIComponent(board_id), true);
 	    xhr.onreadystatechange = function() {
 	        if (xhr.readyState === 4 && xhr.status === 200) {
 	            var folderContainer = document.querySelector('.folder-container');

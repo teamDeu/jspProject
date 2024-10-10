@@ -1,3 +1,9 @@
+<%@page import="guestbook.GuestbookBean"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="guestbook.GuestbookanswerBean"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="guestbook.GuestbookprofileBean"%>
+<%@page import="report.SuspensionBean"%>
 <%@page import="report.ChatLogBean"%>
 <%@page import="report.ReportBean"%>
 <%@page import="report.ReportMgr"%>
@@ -9,6 +15,9 @@
 <%@ page import="pjh.ItemBean, pjh.AItemMgr"%>
 <%@ page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<jsp:useBean id="profileMgr" class="guestbook.GuestbookprofileMgr" />
+<jsp:useBean id="answerMgr" class="guestbook.GuestbookanswerMgr" />
+<jsp:useBean id="gMgr" class="guestbook.GuestbookMgr" />
 <%
 String type = request.getParameter("type");
 %>
@@ -19,7 +28,65 @@ String type = request.getParameter("type");
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>관리자 페이지</title>
 <link rel="stylesheet" href="./css/admin.css" />
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <style>
+html, body {
+	height: 100%;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+/* 메인 콘텐츠가 화면 전체 높이를 차지하고 페이징이 하단에 고정되도록 설정 */
+.main-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start; /* 신고 목록을 상단에 고정 */
+	min-height: 100vh; /* 전체 화면 높이 */
+	padding-bottom: 60px; /* 페이징 영역을 위해 여유 공간 확보 */
+}
+
+.product-list {
+	flex-grow: 1;
+	margin-top: 20px;
+}
+
+.product-list-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.product-list-table th, .product-list-table td {
+	padding: 10px;
+	border: 1px solid #ddd;
+	text-align: center;
+}
+
+.pagination-container {
+	position: absolute;
+	bottom: 30px;
+	width: 100%;
+	padding: 10px;
+	display: flex;
+	justify-content: center;
+}
+
+.pagination-container a {
+	margin: 0 5px;
+	text-decoration: none;
+	color: #000;
+	padding: 10px;
+	background-color: #C0E5AF;
+	border-radius: 10px;
+}
+
+.pagination-container a.current-page {
+	font-weight: bold;
+	color: #007bff;
+	background-color: #27ae60;
+}
+
 .admin_userList_user_img {
 	width: 120px;
 }
@@ -42,7 +109,7 @@ String type = request.getParameter("type");
 	flex-direction: column;
 	background-color: white;
 	width: 550px;
-	height : 500px;
+	height: 500px;
 	padding: 20px;
 	gap: 5px;
 	border: 1px solid black;
@@ -101,30 +168,80 @@ String type = request.getParameter("type");
 	box-sizing: border-box;
 	border: 1px solid black;
 }
-.suspension_period{
-	padding : 4px;
-	width : 200px;
+
+.suspension_period {
+	padding: 5px;
+	width: 200px;
 }
+
 .product-list-table td, .product-list-table th {
 	border: none;
 }
-.report_manage_div{
-	display:flex;
-	flex-direction:column;
-	justify-self:flex-end;
-	align-items:center;
-	gap : 5px;
+
+.report_manage_div {
+	display: flex;
+	flex-direction: column;
+	justify-self: flex-end;
+	align-items: center;
+	gap: 5px;
 }
-.suspension_type{
-	padding : 5px;
-	border : 1px solid black;
+
+.suspension_type {
+	cursor: pointer;
+	padding: 5px;
+	border: 1px solid black;
+	border-radius: 5px;
 }
-.suspension_setting_section{
+
+.suspension_type.active {
+	border: 1px solid blue; /* 활성화된 라벨의 경계선 색상 */
+	background-color: #e0f0ff; /* 활성화된 라벨의 배경색 */
+}
+
+.suspension_setting_section {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.author-container{
+	display: flex;
+    flex-direction: column;
+}
+
+.guestbook_mainDiv{
+	display: flex;
+    flex-direction: column;
+}
+.author-underline{
+	    border-bottom: 1px solid black;
+    width: 100%;
+}
+.content{
+	align-self: flex-start;
+	padding : 15px 5px;
+}
+.a-list{
+	list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.author-box{
 	display:flex;
 	align-items:center;
-	gap : 5px;
+}
+
+.profile-image{
+	width:50px;
+}
+
+.a-item{
+	padding : 5px 10px;
 }
 </style>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
 </head>
 <body>
 
@@ -134,11 +251,15 @@ String type = request.getParameter("type");
 		<ul>
 			<li onclick="showCategory(event)" data="adminMain.jsp"
 				id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
-			<li onclick="showCategory(event)" data="adminUser.jsp">유저관리</li>
+			<li onclick="showCategory(event)" data="adminUser.jsp" id="userTab"><i
+				class="fa fa-users"></i> 유저관리</li>
+			<!-- 유저관리 아이콘 추가 -->
 			<li onclick="showCategory(event)" data="adminStore.jsp" id="storeTab"><i
-				class="fa fa-store"></i>상점관리</li>
+				class="fa fa-store"></i> 상점관리</li>
 			<li onclick="showCategory(event)" data="adminReport.jsp"
-				class="active">신고관리</li>
+				class="active" id="reportTab"><i
+				class="fa fa-exclamation-triangle"></i> 신고관리</li>
+			<!-- 신고관리 아이콘 추가 -->
 			<li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
 		</ul>
 	</div>
@@ -173,7 +294,7 @@ String type = request.getParameter("type");
 					// 현재 페이지와 검색 조건을 받아옴
 					String pageStr = request.getParameter("page");
 					int userCurrentPage = (pageStr != null) ? Integer.parseInt(pageStr) : 1;
-					int userItemsPerPage = 15;
+					int userItemsPerPage = 12;
 					int start = (userCurrentPage - 1) * userItemsPerPage;
 
 					// 검색어와 검색 필드를 받아옴
@@ -199,11 +320,17 @@ String type = request.getParameter("type");
 							String reportReceiveUserId = report.getReport_receiveuserid();
 							String reportAt = report.getReport_at();
 							String reportType = report.getReport_type();
+							int reportContent = report.getReport_contentnum();
+							boolean reportComplete = report.isReport_complete();
 							Vector<ChatLogBean> chatLogList = reportMgr.getChatLogByReport(report);
+							Vector<SuspensionBean> suspensionList = reportMgr.getSuspesionList(reportReceiveUserId);
 					%>
 					<tr>
 
 						<td>
+							<%
+							if (reportType.equals("채팅")) {
+							%>
 							<div class="report_chatLogModal" id="chatLogBox-<%=reportNum%>"
 								style="display: none">
 								<div class="report_chatLogBox">
@@ -213,7 +340,9 @@ String type = request.getParameter("type");
 										if (chatLogList.size() == 0) {
 										%>
 										<div class="report_chatLogBox_content">채팅내역이 없습니다.</div>
-										<%} else {%>
+										<%
+										} else {
+										%>
 										<%
 										for (int i = 0; i < chatLogList.size(); i++) {
 											ChatLogBean chatLogBean = chatLogList.get(i);
@@ -223,37 +352,213 @@ String type = request.getParameter("type");
 											:
 											<%=chatLogBean.getChatlog_content()%>
 										</div>
-										<%}}%>
+										<%
+										}
+										}
+										%>
 									</div>
-									<div class ="report_manage_div">
-									<section class ="suspension_setting_section">
-									<select class = "suspension_period">
-										<option value =3>3일</option>
-										<option value =5>5일</option>
-										<option value =7>7일</option>
-										<option value =30>30일</option>
-									</select>
-									<div class ="suspension_type_box">
-									<input name = "suspension_type" id ="suspension_type0" onchange = "onchangeType('suspension_type0')" type ="radio" value = 0 ><label class ="suspension_type" for ="suspension_type0">채팅정지</label>
-									<input name = "suspension_type" id ="suspension_type1" onchange = "onchangeType('suspension_type0')" type ="radio" value = 1 ><label class ="suspension_type" for ="suspension_type1">계정정지</label>
+									<div class="report_chatLogBox_Header">정지 내역</div>
+									<div class="report_chatLogBox_content_box">
+										<%
+										if (suspensionList.size() == 0) {
+										%>
+										<div class="report_chatLogBox_content">정지내역이 없습니다.</div>
+										<%
+										} else {
+										%>
+										<%
+										for (int i = 0; i < suspensionList.size(); i++) {
+											SuspensionBean suspensionBean = suspensionList.get(i);
+										%>
+										<div class="report_chatLogBox_content">
+											<%=suspensionBean.getSuspension_date()%>
+											까지
+											<%=suspensionBean.getSuspension_type() == 1 ? "계정" : "채팅"%>
+											정지
+										</div>
+										<%
+										}
+										}
+										%>
 									</div>
-									</section>
-									<div class ="report_manage_div_btn_box">
-										<button onclick = "" class ="report_manage_div_btn_submit">제출하기</button>
-										<button onclick = "clickReportChatLogBoxExitBtn('chatLogBox-<%=reportNum%>')" class ="report_manage_div_btn_cancel">취소하기</button>
+									<div class="report_manage_div">
+										<section class="suspension_setting_section"
+											id="settingSection-<%=reportNum%>">
+											<select class="suspension_period">
+												<option value=3>3일</option>
+												<option value=5>5일</option>
+												<option value=7>7일</option>
+												<option value=30>30일</option>
+											</select>
+											<div class="suspension_type_box">
+												<input name="suspension_type" id="suspension_type0<%=j%>"
+													onchange="onchangeType(event)" type="radio" value=0
+													hidden="true"><label class="suspension_type"
+													for="suspension_type0<%=j%>">채팅정지</label> <input
+													name="suspension_type" id="suspension_type1<%=j%>"
+													onchange="onchangeType(event)" type="radio" value=1
+													hidden="true"><label class="suspension_type"
+													for="suspension_type1<%=j%>">계정정지</label>
+											</div>
+										</section>
+										<div class="report_manage_div_btn_box">
+											<button onclick="clickReportSubmit('<%=reportNum%>')"
+												class="report_manage_div_btn_submit">제출하기</button>
+											<button onclick="clickReportReject('<%=reportNum%>')">신고반려</button>
+											<button
+												onclick="clickReportChatLogBoxExitBtn('chatLogBox-<%=reportNum%>')"
+												class="report_manage_div_btn_cancel">취소하기</button>
+
+										</div>
 									</div>
 								</div>
-								</div>
-								
+
 							</div> <span class="report_num_span"
 							onclick="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')"><%=reports.size() - j%></span>
+							<%
+							} else if (reportType.equals("방명록")) {
+							GuestbookBean entry = gMgr.getGuestbookEntry(reportContent);
+							GuestbookprofileBean profile = profileMgr.getProfileByUserId(entry.getWriterId());
+							ArrayList<GuestbookanswerBean> answers = answerMgr.getAnswersForGuestbook(entry.getGuestbookNum());
+							%>
+							<div class="report_chatLogModal" id="chatLogBox-<%=reportNum%>"
+								style="display: none">
+								<div class="report_chatLogBox">
+								<div class ="guestbook_mainDiv" id="entry-<%=entry.getGuestbookNum()%>">
+									<!-- 작성자의 프로필 사진과 이름, 날짜를 표시 -->
+									<div class="author-container">
+										<%
+										if (profile != null) {
+										%>
+										<!-- 프로필 사진 -->
+										<div class ="author-box">
+											<img src="<%=profile.getProfilePicture()%>" alt="프로필 사진"
+											class="profile-image">
+										<!-- 프로필 이름과 작성자 아이디, 날짜 함께 표시 -->
+										<p class="author">
+											<%=profile.getProfileName()%>
+											(<%=entry.getWriterId()%>) <span class="date"><%=entry.getWrittenAt() != null ? new SimpleDateFormat("yyyy-MM-dd").format(entry.getWrittenAt()) : ""%></span>
+
+										</p>
+										</div>
+										
+										<%
+										} else {
+										%>
+										<!-- 프로필이 null인 경우 작성자 아이디와 날짜만 표시 -->
+										<p class="author">
+											<%=entry.getWriterId()%>
+											<span class="date"><%=entry.getWrittenAt() != null ? new SimpleDateFormat("yyyy-MM-dd").format(entry.getWrittenAt()) : ""%></span>
+
+										</p>
+										<%
+										}
+										%>
+										<div class="author-underline"></div>
+									</div> <!-- 비밀글이 아니거나, 작성자 또는 방명록 주인인 경우 내용 표시 -->
+									<p class="content"><%=entry.getGuestbookContent()%></p> <!-- 비밀글이면 방명록 주인 또는 작성자에게만 secret.png 아이콘 표시 -->
+									<!-- 답글 목록 (방명록 항목 내부로 이동) -->
+									<ul id="a-list-<%=entry.getGuestbookNum()%>" class="a-list">
+										<%
+										for (GuestbookanswerBean answer : answers) {
+											// 답글 작성자의 프로필 정보 가져오기
+											GuestbookprofileBean answerProfile = profileMgr.getProfileByUserId(answer.getGanswerId());
+											String answerProfileName = (answerProfile != null) ? answerProfile.getProfileName() : "";
+											String ganswerId = answer.getGanswerId();
+										%>
+										<li id="a-<%=answer.getGanswerNum()%>" class="a-item">
+											<!-- 프로필 이름이 있을 때와 없을 때 각각의 형식으로 출력 -->
+											<p>
+												↳
+												<%=!answerProfileName.isEmpty() ? answerProfileName + " (" + ganswerId + ") :" : ganswerId + " :"%>
+												<%=answer.getGanswerComment()%>
+												(<%=answer.getGanswerAt()%>)
+											</p>
+										</li>
+										<%
+										}
+										%>
+										</ul>
+										</div>
+										<div class="report_chatLogBox_Header">정지 내역</div>
+									<div class="report_chatLogBox_content_box">
+										<%
+										if (suspensionList.size() == 0) {
+										%>
+										<div class="report_chatLogBox_content">정지내역이 없습니다.</div>
+										<%
+										} else {
+										%>
+										<%
+										for (int i = 0; i < suspensionList.size(); i++) {
+											SuspensionBean suspensionBean = suspensionList.get(i);
+										%>
+										<div class="report_chatLogBox_content">
+											<%=suspensionBean.getSuspension_date()%>
+											까지
+											<%=suspensionBean.getSuspension_type() == 1 ? "계정" : "채팅"%>
+											정지
+										</div>
+										<%
+										}
+										}
+										%>
+									</div>
+										<div class="report_manage_div">
+										<section class="suspension_setting_section"
+											id="settingSection-<%=reportNum%>">
+											<select class="suspension_period">
+												<option value=3>3일</option>
+												<option value=5>5일</option>
+												<option value=7>7일</option>
+												<option value=30>30일</option>
+											</select>
+											<div class="suspension_type_box">
+												<input name="suspension_type" id="suspension_type0<%=j%>"
+													onchange="onchangeType(event)" type="radio" value=0
+													hidden="true"><label class="suspension_type"
+													for="suspension_type0<%=j%>">채팅정지</label> <input
+													name="suspension_type" id="suspension_type1<%=j%>"
+													onchange="onchangeType(event)" type="radio" value=1
+													hidden="true"><label class="suspension_type"
+													for="suspension_type1<%=j%>">계정정지</label>
+											</div>
+										</section>
+										<div class="report_manage_div_btn_box">
+											<button onclick="clickReportSubmit('<%=reportNum%>')"
+												class="report_manage_div_btn_submit">제출하기</button>
+											<button onclick="clickReportReject('<%=reportNum%>')">신고반려</button>
+											<button
+												onclick="clickReportChatLogBoxExitBtn('chatLogBox-<%=reportNum%>')"
+												class="report_manage_div_btn_cancel">취소하기</button>
+
+										</div>
+									</div>
+									</div>
+							</div>
+							 <span class="report_num_span"
+							onclick="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')"><%=reports.size() - j%></span>
+							<%
+							}
+							%>
+
 						</td>
 						<td><%=reportSendUserId%></td>
 						<td><%=reportReceiveUserId%></td>
 						<td><%=reportAt%></td>
 						<td><%=reportType%></td>
-						<td><button
-								onclick="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')">관리하기</button></td>
+						<td>
+							<%
+							if (reportComplete) {
+							%> <span>처리된 신고</span> <%
+ } else {
+ %>
+							<button
+								onclick="clickReportChatLogBoxOpenBtn('chatLogBox-<%=reportNum%>')">관리하기</button>
+						</td>
+						<%
+						}
+						%>
 					</tr>
 					<%
 					}
@@ -270,7 +575,7 @@ String type = request.getParameter("type");
 
 			<!-- 상품 추가 버튼 -->
 			<!-- 페이징 처리 -->
-			<div class="pagination">
+			<div class="pagination-container">
 				<%
 				for (int i = 1; i <= totalPages; i++) {
 				%>
@@ -311,6 +616,54 @@ String type = request.getParameter("type");
         function clickReportChatLogBoxOpenBtn(id){
         	document.querySelectorAll(".report_chatLogModal").forEach((e) => e.style.display = "none");
         	document.getElementById(id).style.display = "flex";
+        }
+        
+        function onchangeType(event) {
+            // 모든 라벨에서 active 클래스를 제거
+            const labels = document.querySelectorAll('.suspension_type');
+            labels.forEach(label => {
+                label.classList.remove('active');
+            });
+
+            // 선택된 라디오 버튼에 해당하는 라벨에 active 클래스 추가
+            const selectedLabel = document.querySelector("label[for='"+event.target.id+"']");
+            if (selectedLabel) {
+                selectedLabel.classList.add('active');
+            }
+        }
+        
+        function clickReportSubmit(reportNum){
+        	var xhr = new XMLHttpRequest();
+       		const settingSection = document.getElementById("settingSection-"+reportNum);
+       		const suspension_period = settingSection.querySelector('.suspension_period').value;
+       		if(settingSection.querySelector("input[name=suspension_type]:checked") == null){
+       			alert("제재 방식을 결정해주세요.")
+       			return;
+       		}
+       		const suspension_type = settingSection.querySelector("input[name=suspension_type]:checked").value
+       		console.log(suspension_period , suspension_type);
+       		
+  	    	xhr.open("GET", "../pjh/adminReportProc.jsp?type=submit&report_num="+reportNum+"&suspension_period="+suspension_period+"&suspension_type="+suspension_type, true); // Alarm 갱신Proc
+  	    	xhr.onreadystatechange = function () {
+	  	        if (xhr.readyState === 4 && xhr.status === 200) {
+	  	        	alert("제재가 완료되었습니다");
+	  	        	location.href = location.href;
+	  	        }
+  	    	};
+  	    	xhr.send();
+  	    	
+        }
+        
+        function clickReportReject(reportNum){
+        	var xhr = new XMLHttpRequest();
+        	xhr.open("GET","../pjh/adminReportProc.jsp?type=reject&report_num="+reportNum);
+        	xhr.onreadystatechange = function(){
+        		if(xhr.readyState === 4 && xhr.status === 200){
+        			alert("신고가 반려되었습니다.")
+        			location.href = location.href;
+        		}
+        	};
+        	xhr.send();
         }
     </script>
 </body>

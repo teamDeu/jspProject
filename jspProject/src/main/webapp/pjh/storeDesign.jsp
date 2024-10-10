@@ -73,6 +73,7 @@ try {
 <head>
 <meta charset="UTF-8">
 <title>스토어</title>
+
 <style>
 @font-face {
 	font-family: 'NanumTobak';
@@ -80,104 +81,115 @@ try {
 }
 
 .store {
-	font-family: 'NanumTobak';
-	background-color: #F7F7F7;
-	text-align: center;
-	min-height: 80vh; /* 전체 화면을 차지하도록 설정 */
-	margin: 0;
-	padding: 0;
-	overflow: scroll;
-	border-radius:30px;
+    font-family: 'NanumTobak';
+    background-color: #F7F7F7;
+    text-align: center;
+    margin: 0;
+    padding: 0;	
+    border-radius: 30px;
 }
 
 .storecontainer {
-    width: 95%;
+    width: 98%;
     margin: 0 auto;
-    padding: 20px;
-    background-color: #F7F7F7;
+    padding: 10px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     position: relative;
-    height: 80vh; /* 고정된 높이 설정 */
-    max-height: 80vh; /* 최대 높이 설정 */
-    overflow-y: auto; /* 콘텐츠가 넘칠 경우 스크롤 표시 */
-    border-radius:30px;
+    padding-bottom: 30px; /* 페이지네이션을 위한 공간 확보 */
+    height: 660px; /* vh에서 px로 변경 */
+    max-height: 700px; /* 최대 높이 역시 px로 변경 */
+    border-radius: 30px;
 }
+
 /* 상점 제목 */
 .store-title {
-	font-size: 30px;
-	color: black;
-	font-weight: bold;
-	text-align: left;
-	margin-bottom: 10px;
-	position: absolute;
-	top: 20px;
-	left: 20px;
-	border-bottom: 2px solid #ccc; /* 제목 아래 줄 추가 */
+    font-size: 36px;
+    color: #80A46F;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 10px;
+    position: absolute;
+    top: -20px;
+    left: 20px;
+    padding: 10px;
+    padding-bottom: 0px;
 }
+
+
 /* 클로버 금액 */
 .clover-amount {
-	font-size: 18px;
-	color: green;
-	position: absolute;
-	top: 20px;
-	right: 60px;
+    font-size: 18px;
+    color: green;
+    position: absolute;
+    top: -10px;
+    right: 60px;
 }
+
 /* 카테고리 탭 */
 .nav-tabs {
-	display: flex;
-	justify-content: left;
-	list-style: none;
-	padding: 0;
-	margin-bottom: 20px;
-	margin-top: 80px;
-	border-bottom: 2px solid #ccc; /* 카테고리 아래 줄 추가 */
+    display: flex;
+    justify-content: left;
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+    margin-top: 30px;
+    border-bottom: 2px solid #BAB9AA;
 }
 
 .nav-tabs li {
-	padding: 10px 30px;
-	cursor: pointer;
-	font-size: 18px;
-	color: #888;
-	transition: color 0.3s ease;
+    padding: 10px 30px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #888;
+    transition: color 0.3s ease;
+    border-right: 1px solid #BAB9AA;
+}
+
+.nav-tabs li:last-child {
+    border-right: none;
 }
 
 .nav-tabs li.active {
-	color: green;
-	border-bottom: 2px solid green;
+    color: green;
+    border-bottom: 2px solid green;
 }
 /* 인기순, 가격순, 클로버 충전 */
 .sort-options {
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	gap: 20px;
-	margin-bottom: 20px;
-	margin-right: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    margin-right: 20px;
 }
 
 .sort-buttons {
-	display: flex;
-	gap: 20px;
+    display: flex;
 }
 
 .sort-buttons span {
-	font-size: 18px;
-	cursor: pointer;
-	color: #888;
+    font-size: 18px;
+    cursor: pointer;
+    color: #888;
+    padding: 0 10px;
+    border-left: 1px solid #ccc;
+}
+
+.sort-buttons span:first-child {
+    border-left: none;
 }
 
 .sort-buttons span.active {
-	color: green;
+    color: green;
 }
 
 .search button {
-	padding: 10px 20px;
-	background-color: #90EE90;
-	border: none;
-	color: white;
-	cursor: pointer;
-	border-radius: 20px;
+    padding: 10px 20px;
+    background-color: #C0E5AF;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 20px;
 }
 /* 상품 목록 */
 .items-container {
@@ -186,68 +198,70 @@ try {
     gap: 20px;
     padding: 20px;
     border: 1px solid #ccc;
-    min-height: 300px; /* 최소 높이 설정 */
+    min-height: 300px;
 }
 
-
 .item {
-	background-color: #FFF;
-	border-radius: 10px;
-	padding: 10px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	text-align: center;
-	border: 1px solid #ccc; /* 상품에 네모난 테두리 추가 */
+    background-color: #FFF;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 1px solid #ccc;
 }
 
 .product-img {
-   	width: 165px;
-    height: 150px;
-    border-radius: 10px; /* 상품 이미지 모서리 둥글게 */
+    width: 165px;
+    height: 130px;
+    border-radius: 10px;
 }
 
 .clover-icon {
-    width: 20px; /* 클로버 아이콘 크기 */
+    width: 20px;
     height: 20px;
-    margin-right: 5px; /* 텍스트와 약간의 간격 */
+    margin-right: 5px;
 }
 
-
 .item-title {
-	font-size: 16px;
-	margin-top: 10px;
+    font-size: 16px;
+    margin-top: 10px;
 }
 
 .item-price {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
 }
 
 .item-price img {
-	width: 20px;
-	margin-right: 5px;
+    width: 20px;
+    margin-right: 5px;
 }
 /* 페이지네이션 */
-.pagination {
-	display: flex;
-	justify-content: center;
-	padding: 20px;
+.store-pagination {
+    position: absolute;
+    bottom: 0; /* 하단에 고정 */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #C0E5AF;
+    border-radius: 30px;
+    padding: 1px 10px;
+    gap: 5px;
 }
-
-.pagination span {
-	padding: 5px 10px;
-	margin: 0 5px;
+.store-pagination span {
+	padding: 10px;
 	cursor: pointer;
-	border: 1px solid #ccc;
-	border-radius: 5px;
 }
 
-.pagination span.active {
-	background-color: green;
-	color: #FFF;
-	border-color: green;
+.store-pagination span.active {
+	color: red;
 }
+
+/* 팝업 */
 .popup {
     position: fixed;
     top: 50%;
@@ -284,30 +298,35 @@ try {
     font-size: 16px;
     margin: 5px 0;
 }
+
 /* 배경 모자이크 효과를 위한 클래스 */
 .mosaic-background {
-    filter: blur(8px); /* 모자이크처럼 보이도록 blur 효과 적용 */
-    transition: filter 0.3s ease; /* 부드럽게 효과 적용 */
+    filter: blur(8px);
+    transition: filter 0.3s ease;
 }
 
+.buylistItems {
+    cursor: pointer;
+    pointer-events: auto; /* 이 속성을 명시적으로 추가 */
+}
 
 </style>
 
 <script type="text/javascript">
 
-const itemsPerPage = 8; // 페이지당 8개 아이템
-let currentPage = 1; // 현재 페이지
-let items = []; // 현재 선택된 카테고리의 아이템들
-let itemsAll = []; // 전체 아이템 배열
-let itemsMusic = []; // 음악 아이템 배열
-let itemsCharacter = []; // 캐릭터 아이템 배열
-let itemsBackground = []; // 배경 아이템 배열
-let itemsBuylist = []; // 구매목록 아이템 배열
-let sortMode = 'default'; // 정렬 모드 ('default', 'popularity', 'price')
-let sortOrder = 'desc'; // 정렬 순서 ('desc', 'asc')
+const storeItemsPerPage = 8; // 페이지당 8개 아이템
+let currentStorePage = 1; // 현재 페이지
+let currentStoreItems = []; // 현재 선택된 카테고리의 아이템들
+let allStoreItems = []; // 전체 아이템 배열
+let musicStoreItems = []; // 음악 아이템 배열
+let characterStoreItems = []; // 캐릭터 아이템 배열
+let backgroundStoreItems = []; // 배경 아이템 배열
+let buylistStoreItems = []; // 구매목록 아이템 배열
+let storeSortMode = 'default'; // 정렬 모드 ('default', 'popularity', 'price')
+let storeSortOrder = 'desc'; // 정렬 순서 ('desc', 'asc')
 
 // 카테고리 타입 변경 시 호출되는 함수
-function changeItemType(event, itemType) {
+function changeStoreItemType(event, itemType) {
     // 모든 탭의 active 클래스 제거
     document.querySelectorAll('.nav-tabs li').forEach(tab => tab.classList.remove('active'));
     // 클릭된 탭에 active 클래스 추가
@@ -318,16 +337,16 @@ function changeItemType(event, itemType) {
 
     // 선택된 카테고리에 따라 items 배열을 설정하고 아이템 컨테이너 보이기
     if (itemType === 'all') {
-        items = itemsAll;
+        currentStoreItems = allStoreItems;
         document.getElementById("allItems").style.display = "grid";
     } else if (itemType === 'music') {
-        items = itemsMusic;
+        currentStoreItems = musicStoreItems;
         document.getElementById("musicItems").style.display = "grid";
     } else if (itemType === 'character') {
-        items = itemsCharacter;
+        currentStoreItems = characterStoreItems;
         document.getElementById("characterItems").style.display = "grid";
     } else if (itemType === 'background') {
-        items = itemsBackground;
+        currentStoreItems = backgroundStoreItems;
         document.getElementById("backgroundItems").style.display = "grid";
     } else if (itemType === 'buylist') {
         // 여기서 구매 목록을 클릭했을 때 서버에서 구매 목록을 가져오도록 처리
@@ -336,84 +355,66 @@ function changeItemType(event, itemType) {
     }
 
     // 페이지 초기화 및 아이템 표시
-    currentPage = 1;
-    displayItems(); // 아이템을 다시 렌더링
+    currentStorePage = 1;
+    displayStoreItems(); // 아이템을 다시 렌더링
 }
 
 //정렬 모드를 변경하는 함수
-function changeSortMode(mode) {
-    if (sortMode === mode) {
+function changeStoreSortMode(mode) {
+    if (storeSortMode === mode) {
         // 같은 모드에서 다시 클릭하면 정렬 순서를 반대로 변경
-        sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+        storeSortOrder = storeSortOrder === 'desc' ? 'asc' : 'desc';
     } else {
         // 새로운 모드로 변경하면 기본 순서로 설정
-        sortMode = mode;
-        sortOrder = 'desc';
+        storeSortMode = mode;
+        storeSortOrder = 'desc';
     }
-    applySort();
+    applyStoreSort();
 }
 
 // 정렬을 적용하는 함수
-function applySort() {
-    if (sortMode === 'popularity') {
+function applyStoreSort() {
+    if (storeSortMode === 'popularity') {
         // 인기순 정렬
-        items.sort((a, b) => {
+        currentStoreItems.sort((a, b) => {
             const countA = parseInt(a.dataset.purchaseCount);
             const countB = parseInt(b.dataset.purchaseCount);
-            return sortOrder === 'desc' ? countB - countA : countA - countB;
+            return storeSortOrder === 'desc' ? countB - countA : countA - countB;
         });
-    } else if (sortMode === 'price') {
+    } else if (storeSortMode === 'price') {
         // 가격순 정렬
-        items.sort((a, b) => {
+        currentStoreItems.sort((a, b) => {
             const priceA = parseInt(a.dataset.price);
             const priceB = parseInt(b.dataset.price);
-            return sortOrder === 'desc' ? priceB - priceA : priceA - priceB;
+            return storeSortOrder === 'desc' ? priceB - priceA : priceA - priceB;
         });
     }
-    displayItems();
+    displayStoreItems();
 }
-
-
-
 
 // 페이지를 변경하는 함수
-function changePage(page) {
-    currentPage = page;
-    displayItems();
+function changeStorePage(page) {
+    currentStorePage = page;
+    displayStoreItems();
 }
-
-// 다음 페이지로 이동하는 함수
-function clickNext() {
-    if (items.length > currentPage * itemsPerPage) {
-        changePage(currentPage + 1);
-    }
-}
-
-// 이전 페이지로 이동하는 함수
-function clickPrev() {
-    if (currentPage > 1) {
-        changePage(currentPage - 1);
-    }
-}
-
 
 //아이템을 화면에 보여주는 함수
-function displayItems() {
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const visibleItems = items.slice(start, end);
+function displayStoreItems() {
+    const start = (currentStorePage - 1) * storeItemsPerPage;
+    const end = start + storeItemsPerPage;
+    const visibleItems = currentStoreItems.slice(start, end);
 
     // 현재 선택된 카테고리의 컨테이너를 명시적으로 설정
     let itemsContainer;
-    if (items === itemsAll) {
+    if (currentStoreItems === allStoreItems) {
         itemsContainer = document.getElementById('allItems');
-    } else if (items === itemsMusic) {
+    } else if (currentStoreItems === musicStoreItems) {
         itemsContainer = document.getElementById('musicItems');
-    } else if (items === itemsCharacter) {
+    } else if (currentStoreItems === characterStoreItems) {
         itemsContainer = document.getElementById('characterItems');
-    } else if (items === itemsBackground) {
+    } else if (currentStoreItems === backgroundStoreItems) {
         itemsContainer = document.getElementById('backgroundItems');
-    } else if (items === itemsBuylist) {  // 구매 목록 처리
+    } else if (currentStoreItems === buylistStoreItems) {  // 구매 목록 처리
         itemsContainer = document.getElementById('buylistItems');
     }
 
@@ -425,196 +426,177 @@ function displayItems() {
     });
 
     // 페이지네이션 업데이트
-    updatePagination();
+    updateStorePagination();
 }
 
-
- 
-
-
-
 //페이지네이션 업데이트 함수
-function updatePagination() {
-    const totalPages = Math.ceil(items.length / itemsPerPage);
-    const paginationContainer = document.querySelector('.pagination');
+function updateStorePagination() {
+    const totalPages = Math.ceil(currentStoreItems.length / storeItemsPerPage);
+    const paginationContainer = document.querySelector('#store_pagination');
     paginationContainer.innerHTML = ''; // 기존 페이지네이션 제거
 
     for (let i = 1; i <= totalPages; i++) {
         const pageSpan = document.createElement('span');
         pageSpan.textContent = i;
-        pageSpan.classList.toggle('active', i === currentPage); // 현재 페이지 강조
-        pageSpan.onclick = () => changePage(i);
+        pageSpan.classList.toggle('active', i === currentStorePage); // 현재 페이지 강조
+        pageSpan.onclick = () => changeStorePage(i);
         paginationContainer.appendChild(pageSpan);
     }
 }
 
-
-// 페이지를 변경하는 함수
-function changePage(page) {
-    currentPage = page;
-    displayItems();
-}
-
-//DOM이 로드되면 초기화
+// DOM이 로드되면 초기화
 document.addEventListener('DOMContentLoaded', function () {
     // 각 카테고리의 아이템을 올바르게 배열에 저장
-    itemsAll = Array.from(document.querySelectorAll('.allItems'));
-    itemsMusic = Array.from(document.querySelectorAll('.musicItems'));
-    itemsCharacter = Array.from(document.querySelectorAll('.characterItems'));
-    itemsBackground = Array.from(document.querySelectorAll('.backgroundItems'));
-    itemsBuylist = Array.from(document.querySelectorAll('.buylistItems')); // 구매목록 클래스 기준으로 배열 저장
+    allStoreItems = Array.from(document.querySelectorAll('.allItems'));
+    musicStoreItems = Array.from(document.querySelectorAll('.musicItems'));
+    characterStoreItems = Array.from(document.querySelectorAll('.characterItems'));
+    backgroundStoreItems = Array.from(document.querySelectorAll('.backgroundItems'));
+    buylistStoreItems = Array.from(document.querySelectorAll('.buylistItems')); // 구매목록 클래스 기준으로 배열 저장
 
     // 기본적으로 전체 아이템을 선택하고 표시
-    items = itemsAll;
-    displayItems();  // 첫 로딩 시 전체 아이템을 표시
+    currentStoreItems = allStoreItems;
+    displayStoreItems();  // 첫 로딩 시 전체 아이템을 표시
 });
 
+// 탭 클릭 시 active 클래스 적용
+function clickOpenType(id, clickedTab) {
+    const openBox = document.getElementById(id);
+    const anotherBox = document.querySelectorAll(".items-container");
+    const tabs = document.querySelectorAll('.nav-tabs li');
 
+    // 모든 컨테이너 숨기기
+    anotherBox.forEach(box => {
+        box.style.display = "none";
+    });
 
-        // 탭 클릭 시 active 클래스 적용
-        function clickOpenType(id, clickedTab) {
-            const openBox = document.getElementById(id);
-            const anotherBox = document.querySelectorAll(".items-container");
-            const tabs = document.querySelectorAll('.nav-tabs li');
+    // 선택된 탭에 active 클래스 적용하고 나머지 탭에서 제거
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+    });
+    clickedTab.classList.add('active');
 
-            // 모든 컨테이너 숨기기
-            anotherBox.forEach(box => {
-                box.style.display = "none";
-            });
+    // 선택된 아이템 컨테이너만 보이기
+    openBox.style.display = "grid";
+}
 
-            // 선택된 탭에 active 클래스 적용하고 나머지 탭에서 제거
-            tabs.forEach(tab => {
-                tab.classList.remove('active');
-            });
-            clickedTab.classList.add('active');
+function buyStoreItem(itemNum, itemPrice, itemName, itemImage) {
+    // 구매 확인 메시지 추가
+    if (!confirm("정말로 구매하시겠습니까?")) {
+        return; // 취소하면 함수 종료
+    }
 
-            // 선택된 아이템 컨테이너만 보이기
-            openBox.style.display = "grid";
-        }
-        
-        function buyItem(itemNum, itemPrice, itemName, itemImage) {
-            // 구매 확인 메시지 추가
-            if (!confirm("정말로 구매하시겠습니까?")) {
-                return; // 취소하면 함수 종료
-            }
+    console.log("Item Name: ", itemName);
+    console.log("Item Image: ", itemImage);
+    console.log("Item Price: ", itemPrice);
 
-            console.log("Item Name: ", itemName);
-            console.log("Item Image: ", itemImage);
-            console.log("Item Price: ", itemPrice);
+    if (<%= user_clover %> < itemPrice) {
+        alert("클로버가 부족합니다.");
+        return;
+    }
 
-            if (<%= user_clover %> < itemPrice) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "../pjh/buyItem.jsp", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            if (xhr.responseText.trim() === 'SUCCESS') {
+                // 구매 완료 팝업 표시
+                showPurchaseCompletePopup(itemName, itemImage, itemPrice);
+
+                // 클로버 잔액 UI 업데이트
+                let currentClover = parseInt(document.querySelector('.clover-amount-span').innerText);
+                currentClover -= itemPrice;
+                document.querySelector('.clover-amount-span').innerText = currentClover;
+
+                // 구매한 아이템을 구매 목록에 즉시 추가
+                addToBuylist(itemNum, itemPrice, itemName, itemImage);
+            } else if (xhr.responseText.trim() === 'NOT_ENOUGH_CLOVER') {
                 alert("클로버가 부족합니다.");
-                return;
-            }
-
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "../pjh/buyItem.jsp", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    if (xhr.responseText.trim() === 'SUCCESS') {
-                        // 구매 완료 팝업 표시
-                        showPurchaseCompletePopup(itemName, itemImage, itemPrice);
-
-                        // 클로버 잔액 UI 업데이트
-                        let currentClover = parseInt(document.querySelector('.clover-amount-span').innerText);
-                        currentClover -= itemPrice;
-                        document.querySelector('.clover-amount-span').innerText = currentClover;
-
-                        // 구매한 아이템을 구매 목록에 즉시 추가
-                        addToBuylist(itemNum, itemPrice, itemName, itemImage);
-                    } else if (xhr.responseText.trim() === 'NOT_ENOUGH_CLOVER') {
-                        alert("클로버가 부족합니다.");
-                    } else {
-                        alert("구매에 실패했습니다. 다시 시도해 주세요.");
-                    }
-                }
-            };
-            xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
-        }
-
-		
-        function loadBuylist() {
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", "../pjh/loadBuylist.jsp", true);  // loadBuylist.jsp는 구매 목록을 불러오는 서버 스크립트
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    const buylistContainer = document.getElementById("buylistItems");
-                    buylistContainer.innerHTML = xhr.responseText;  // 구매 목록을 업데이트
-                    
-                    // 구매 목록 아이템을 배열로 저장 (페이징 처리를 위해)
-                    itemsBuylist = Array.from(document.querySelectorAll('.buylistItems'));
-
-                    // 구매 목록을 페이지로 나눠서 보여줌
-                    items = itemsBuylist; // 현재 카테고리를 구매 목록으로 설정
-                    displayItems();  // 구매 목록 렌더링
-                }
-            };
-            xhr.send();
-        }
-
-
-        function showPurchaseCompletePopup(itemName, itemImage, itemPrice) {
-            console.log("Popup Item Name: ", itemName); // 이름 확인
-            console.log("Popup Item Image: ", itemImage); // 이미지 경로 확인
-            console.log("Popup Item Price: ", itemPrice); // 가격 확인
-
-            // 페이지 전체에 모자이크 효과 적용
-            document.querySelector('.storecontainer').classList.add('mosaic-background');
-
-            const popupHTML = 
-                '<div id="purchasePopup" class="popup">' +
-                    '<img src="' + itemImage + '" alt="' + itemName + '" class="popup-image" />' +
-                    '<div class="popup-info">' +
-                        '<h2>' + itemName + '</h2>' +
-                        '<p>클로버: ' + itemPrice + '개</p>' +
-                        '<p>구매가 완료되었습니다!</p>' +
-                    '</div>' +
-                '</div>';
-            document.body.insertAdjacentHTML('beforeend', popupHTML);
-
-            // 팝업이 2초 후에 자동으로 사라지고 배경의 모자이크 효과를 제거
-            setTimeout(() => {
-                document.getElementById('purchasePopup').remove();
-                // 배경에서 모자이크 효과 제거
-                document.querySelector('.storecontainer').classList.remove('mosaic-background');
-            }, 2000); // 2초 후에 팝업 제거 및 모자이크 해제
-        }
-
-
-
-
-        
-        function refundItem(itemNum, itemPrice) {
-            if (confirm("정말로 환불하시겠습니까?")) {
-                // 환불 처리 AJAX 요청
-                const xhr = new XMLHttpRequest();
-                xhr.open("POST", "../pjh/refundItem.jsp", true);
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        if (xhr.responseText.trim() === 'SUCCESS') {
-                            alert("환불이 완료되었습니다!");
-
-                            // 클로버 잔액 업데이트
-                            let currentClover = parseInt(document.querySelector('.clover-amount-span').innerText);
-                            currentClover += itemPrice; // 환불된 클로버 금액 더하기
-                            document.querySelector('.clover-amount-span').innerText = currentClover;
-
-                            // 구매 목록을 즉시 업데이트
-                            loadBuylist();  // 환불 후 즉시 구매 목록을 새로고침
-                        } else {
-                            alert("환불에 실패했습니다. 다시 시도해 주세요.");
-                        }
-                    }
-                };
-                xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
+            } else {
+                alert("구매에 실패했습니다. 다시 시도해 주세요.");
             }
         }
+    };
+    xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
+}
+
+function loadBuylist() {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "../pjh/loadBuylist.jsp", true);  // loadBuylist.jsp는 구매 목록을 불러오는 서버 스크립트
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            const buylistContainer = document.getElementById("buylistItems");
+            buylistContainer.innerHTML = xhr.responseText;  // 구매 목록을 업데이트
+            
+            // 구매 목록 아이템을 배열로 저장 (페이징 처리를 위해)
+            buylistStoreItems = Array.from(document.querySelectorAll('.buylistItems'));
+
+            // 구매 목록을 페이지로 나눠서 보여줌
+            currentStoreItems = buylistStoreItems; // 현재 카테고리를 구매 목록으로 설정
+            displayStoreItems();  // 구매 목록 렌더링
+        }
+    };
+    xhr.send();
+}
+
+function showPurchaseCompletePopup(itemName, itemImage, itemPrice) {
+    console.log("Popup Item Name: ", itemName); // 이름 확인
+    console.log("Popup Item Image: ", itemImage); // 이미지 경로 확인
+    console.log("Popup Item Price: ", itemPrice); // 가격 확인
+
+    // 페이지 전체에 모자이크 효과 적용
+    document.querySelector('.storecontainer').classList.add('mosaic-background');
+
+    const popupHTML = 
+        '<div id="purchasePopup" class="popup">' +
+            '<img src="' + itemImage + '" alt="' + itemName + '" class="popup-image" />' +
+            '<div class="popup-info">' +
+                '<h2>' + itemName + '</h2>' +
+                '<p>클로버: ' + itemPrice + '개</p>' +
+                '<p>구매가 완료되었습니다!</p>' +
+            '</div>' +
+        '</div>';
+    document.body.insertAdjacentHTML('beforeend', popupHTML);
+
+    // 팝업이 2초 후에 자동으로 사라지고 배경의 모자이크 효과를 제거
+    setTimeout(() => {
+        document.getElementById('purchasePopup').remove();
+        // 배경에서 모자이크 효과 제거
+        document.querySelector('.storecontainer').classList.remove('mosaic-background');
+    }, 1000); // 2초 후에 팝업 제거 및 모자이크 해제
+}
+
+function refundStoreItem(itemNum, itemPrice) {
+    console.log("환불 함수 호출됨:", itemNum, itemPrice);  // 이 부분을 추가해서 호출 여부 확인
+    if (confirm("정말로 환불하시겠습니까?")) {
+        // 환불 처리 AJAX 요청
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "../pjh/refundItem.jsp", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                if (xhr.responseText.trim() === 'SUCCESS') {
+                    alert("환불이 완료되었습니다!");
+
+                    // 클로버 잔액 업데이트
+                    let currentClover = parseInt(document.querySelector('.clover-amount-span').innerText);
+                    currentClover += itemPrice; // 환불된 클로버 금액 더하기
+                    document.querySelector('.clover-amount-span').innerText = currentClover;
+
+                    // 구매 목록을 즉시 업데이트
+                    loadBuylist();  // 환불 후 즉시 구매 목록을 새로고침
+                } else {
+                    alert("환불에 실패했습니다. 다시 시도해 주세요.");
+                }
+            }
+        };
+        xhr.send("item_num=" + itemNum + "&item_price=" + itemPrice);
+    }
+}
 
 
 
-    </script>
+</script>
 </head>
 <div class="store">
 
@@ -622,10 +604,11 @@ document.addEventListener('DOMContentLoaded', function () {
 		<!-- 상점 제목 -->
 		<div class="store-title">상점</div>
 
+
 		<!-- 클로버 금액 -->
 		<div class="clover-amount">
 			<img src="./img/clover_icon.png" alt="클로버">
-			<span class = "clover-amount-span">
+			<span class="clover-amount-span">
 			<%=user_clover%>
 			</span>
 			
@@ -634,19 +617,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		<!-- 카테고리 탭 -->
 		<ul class="nav-tabs">
-			<li onclick="changeItemType(event, 'all')" class="active">전체</li>
-			<li onclick="changeItemType(event, 'music')">음악</li>
-			<li onclick="changeItemType(event, 'character')">캐릭터</li>
-			<li onclick="changeItemType(event, 'background')">배경</li>
-			<li onclick="changeItemType(event, 'buylist')">구매목록</li>
+			<li onclick="changeStoreItemType(event, 'all')" class="active">전체</li>
+			<li onclick="changeStoreItemType(event, 'music')">음악</li>
+			<li onclick="changeStoreItemType(event, 'character')">캐릭터</li>
+			<li onclick="changeStoreItemType(event, 'background')">배경</li>
+			<li onclick="changeStoreItemType(event, 'buylist')">구매목록</li>
 			
 		</ul>
 
 		<!-- 인기순, 가격순 및 클로버 충전 -->
         <div class="sort-options">
             <div class="sort-buttons">
-                <span onclick="changeSortMode('popularity')">인기순</span>
-                <span onclick="changeSortMode('price')">가격순</span>
+                <span onclick="changeStoreSortMode('popularity')">인기순</span>
+                <span onclick="changeStoreSortMode('price')">가격순</span>
             </div>
             <div class="search">
                 <button onclick="window.open('../pjh/pay.jsp', '_blank', )">클로버 충전</button>
@@ -660,7 +643,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ItemBean bean = Allvlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="allItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')">
+            <div class="allItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyStoreItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')">
  <!-- 전체 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
@@ -680,7 +663,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ItemBean bean = Musicvlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="musicItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 음악 아이템 클래스 -->
+            <div class="musicItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyStoreItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 음악 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -699,7 +682,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ItemBean bean = Charactervlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="characterItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 캐릭터 아이템 클래스 -->
+            <div class="characterItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyStoreItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 캐릭터 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -718,7 +701,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ItemBean bean = Backgroundvlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="backgroundItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 배경 아이템 클래스 -->
+            <div class="backgroundItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyStoreItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 배경 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
@@ -741,13 +724,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // 구매한 아이템을 루프 돌며 표시
     while (rs.next()) {
     %>
-    <div class="buylistItems" onclick="refundItem(<%= rs.getInt("item_num") %>, <%= rs.getInt("item_price") %>)">
-        <img src="<%= rs.getString("item_image") %>" alt="<%= rs.getString("item_name") %>" style="width:186px;height:165px;"/>
-        <div class="item-title"><%= rs.getString("item_name") %></div>
-        <div class="item-price">
-            <img src="./img/clover_icon.png" alt="클로버" style="width:20px; height:20px;"> <%= rs.getInt("item_price") %>개
-        </div>
+    <div class="buylistItems" onclick="refundStoreItem(<%= rs.getInt("item_num") %>, <%= rs.getInt("item_price") %>)">
+    <img src="<%= rs.getString("item_image") %>" alt="<%= rs.getString("item_name") %>" style="width:186px;height:145px;"/>
+    <div class="item-title"><%= rs.getString("item_name") %></div>
+    <div class="item-price">
+        <img src="./img/clover_icon.png" alt="클로버" style="width:20px; height:20px;"> <%= rs.getInt("item_price") %>개
     </div>
+</div>
     <%
     }
     rs.close();
@@ -755,7 +738,9 @@ document.addEventListener('DOMContentLoaded', function () {
     %>
 </div>
 		<!-- 페이지네이션 -->
-		<div class="pagination"></div>
+		<div style ="display:flex ; align-items:center">
+		<div id ="store_pagination" class="store-pagination"></div>
+		</div>
 	</div>
 
 </div>

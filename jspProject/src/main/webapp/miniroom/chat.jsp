@@ -2,6 +2,8 @@
     pageEncoding="UTF-8"%>
 <%
 	String backgroundImg = request.getParameter("backgroundImg");
+	String id = (String)session.getAttribute("idKey");
+	String url = request.getParameter("url");
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -150,18 +152,40 @@
        	window.addEventListener("beforeunload",disconnect);
     </script> --%>
 	<link href="./css/chat.css" rel="stylesheet" />
+	<style>
+	.miniroom_header_title{
+		display:flex;
+		justify-content : space-between;
+		align-items:center;
+	}
+	.miniroom_board_title{
+	    color: #80A46F;
+    text-align: center;
+    font-size: 36px;
+    font-weight: 600;
+	}
+	.miniroom_board_line{
+	    border-bottom: 1px solid #BAB9AA;
+	    margin : 10px 0px 20px 0px;
+    	width: 100%;
+	}
+	</style>
 </head>
 <body onload="connect();">
 	<div class ="miniroom_header">
-		<font size = "24" color ="#80A46F">미니룸</font>
-		<span id="status">서버에 연결되지 않음</span>
-    	<hr color = "#BAB9AA" width = "100%">
+	<div class ="miniroom_header_title">
+	<font class ="miniroom_board_title">미니룸</font>
+	<span id="status">서버에 연결되지 않음</span>
+	</div>	
+    	<div class="miniroom_board_line"></div>
 	</div>
     <div id = "miniroom">
     	<img id ="miniroom_background" src="<%=backgroundImg%>">
     </div>
     <div class ="setting">
-    	<button onclick = "clickOpenBox('Box_miniroom_design')">미니룸 설정</button>
+    	<%if(url.equals(id)){ %>
+    	<button onclick = "clickOpenBox('inner-box-2-miniroom')">미니룸 설정</button>
+    	<%} %>
     	<div id ="nowvisit">NOW 0</div>
     </div>
     <div id ="chatArea2"></div>

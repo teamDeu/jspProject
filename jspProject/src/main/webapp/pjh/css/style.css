@@ -128,7 +128,7 @@ body {
     flex-direction: column;  
     z-index: 3;  
 }
-
+	
 /* 버튼 스타일 */
 .custom-button {
     width: 150px;

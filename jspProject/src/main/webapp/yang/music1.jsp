@@ -247,20 +247,20 @@
         const savedTime = localStorage.getItem('savedTime');
         const savedArtist = localStorage.getItem('currentArtist');
 
-        const audioPlayer = document.getElementById('audioPlayer');
-        const titleElement = document.querySelector('.title');
-        const artistElement = document.querySelector('.artist');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const titleElement = document.querySelector('.title');
+    const artistElement = document.querySelector('.artist');
 
-        if (savedSong && savedTime) {
-            // 이전에 저장된 노래 정보 및 시간 불러오기
-            audioPlayer.src = savedSong;
-            titleElement.innerText = localStorage.getItem('currentSongTitle');
-            artistElement.innerText = savedArtist || '아티스트';
-            audioPlayer.currentTime = parseFloat(savedTime);
+    if (savedSong && savedTime) {
+        // 이전에 저장된 노래 정보 및 시간 불러오기
+        audioPlayer.src = savedSong;
+        titleElement.innerText = localStorage.getItem('currentSongTitle');
+        artistElement.innerText = savedArtist || '아티스트';
+        audioPlayer.currentTime = parseFloat(savedTime);
 
-            // 자동 재생 시작
-            audioPlayer.play();
-        }
+        // 자동 재생 시작
+        audioPlayer.play();
+    }
 
         // Unmute the audio after starting
         audioPlayer.muted = false;

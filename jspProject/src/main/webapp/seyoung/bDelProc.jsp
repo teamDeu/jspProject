@@ -1,25 +1,30 @@
 <%@ page import="board.BoardWriteMgr" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-    // BoardWriteMgr 인스턴스 생성
     BoardWriteMgr boardMgr = new BoardWriteMgr();
-    // 삭제할 boardNum 파라미터 가져오기
-    String[] boardNums = request.getParameterValues("boardNum");
+    String boardNumsParam = request.getParameter("boardNums");
 
     boolean isDeleted = false;
 
-    if (boardNums != null && boardNums.length > 0) {
-        int[] numsToDelete = new int[boardNums.length];
-        for (int i = 0; i < boardNums.length; i++) {
-            numsToDelete[i] = Integer.parseInt(boardNums[i]);
+    if (boardNumsParam != null && !boardNumsParam.isEmpty()) {
+        String[] boardNumsArray = boardNumsParam.split(","); // 콤마로 구분된 문자열을 배열로 변환
+        int[] numsToDelete = new int[boardNumsArray.length];
+        
+        try {
+            for (int i = 0; i < boardNumsArray.length; i++) {
+                numsToDelete[i] = Integer.parseInt(boardNumsArray[i].trim()); // 각 값을 정수로 변환
+            }
+            isDeleted = boardMgr.deleteMultipleBoards(numsToDelete); // 여러 게시물 삭제 메서드 호출
+        } catch (NumberFormatException e) {
+            // 숫자로 변환 중 예외 처리
+            e.printStackTrace();
         }
-        isDeleted = boardMgr.deleteMultipleBoards(numsToDelete); // 여러 게시물 삭제 메서드 호출
     }
 
+    // 삭제 성공 여부에 따라 응답 반환
     if (isDeleted) {
-        out.println("<script>alert('게시물이 성공적으로 삭제되었습니다.'); location.href='../seyoung/boardList.jsp';</script>");
+        out.print("success");
     } else {
-        out.println("<script>alert('게시물 삭제에 실패하였습니다. 다시 시도해주세요.'); history.back();</script>");
+        out.print("fail");
     }
 %>
-

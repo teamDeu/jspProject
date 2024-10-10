@@ -10,15 +10,125 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8">	
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 페이지</title>
 	<link rel="stylesheet" href="./css/admin.css" />
+	
 	<style>
-		.admin_userList_user_img{
-			width : 120px;
-		}
+	<style>
+         .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* 유저 목록을 상단에 고정 */
+            min-height: 100vh; /* 전체 화면 높이 */
+            padding-bottom: 60px; /* 페이징 영역을 위해 여유 공간 확보 */
+        }
+
+        .admin_userList {
+            flex-grow: 1;
+            margin-top: 20px;
+        }
+
+        .admin_userList table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin_userList table th, .admin_userList table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .admin_userList_user_img {
+            width : 20px;
+        }
+
+        /* 페이징 영역을 화면 하단에 고정 */
+        .pagination-container {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination-container a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #000;
+            padding: 10px;
+            background-color: #C0E5AF;
+            border-radius: 10px;
+        }
+
+        .pagination-container a.current-page {
+            font-weight: bold;
+            color: #007bff;
+            background-color: #27ae60;
+        }
+
+        .admin_userList {
+            flex-grow: 1;
+            margin-top: 20px;
+        }
+
+        .admin_userList table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin_userList table th, .admin_userList table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .admin_userList_user_img {
+            width : 20px;
+        }
+        .admin_input {
+	padding: 6px;
+	border-radius: 5px;
+	border: 1px solid black;
+	box-sizing: border-box;
+}
+
+.admin_select {
+	padding: 5px;
+	border-radius: 5px;
+	border: 1px solid black;
+	box-sizing: border-box;
+}
+
+.admin_submitBtn {
+	padding: 4px;
+	background: none;
+	border-radius: 5px;
+	box-sizing: border-box;
+	border: 1px solid black;
+}
+.alarm_button{
+	    position: absolute;
+    right: 20px;
+    top: 160px;
+    padding:5px;
+    background : none;
+    border : 1px solid black;
+    border-radius : 10px;
+    cursor : pointer;
+}
+.alarm_button:hover{
+	background-color : rgba(0,0,0,0.2);
+}
 	</style>
+	<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
+  />
 </head>
 <body>
 
@@ -26,10 +136,10 @@
     <div class="sidebar">
         <h2>관리자 패널</h2>
         <ul>
-            <li onclick="showCategory(event)" data = "adminMain.jsp" id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
-            <li onclick="showCategory(event)" data = "adminUser.jsp" class="active" >유저관리</li>
-            <li onclick="showCategory(event)" data = "adminStore.jsp" id="storeTab"><i class="fa fa-store"></i>상점관리</li>
-            <li onclick="showCategory(event)" data = "adminReport.jsp">신고관리</li>
+            <li onclick="showCategory(event)" data="adminMain.jsp"  id="dashboardTab"><i class="fa fa-home"></i> 대시보드</li>
+            <li onclick="showCategory(event)" data="adminUser.jsp" class="active" id="userTab"><i class="fa fa-users"></i> 유저관리</li> <!-- 유저관리 아이콘 추가 -->
+            <li onclick="showCategory(event)" data="adminStore.jsp" id="storeTab"><i class="fa fa-store"></i> 상점관리</li>
+            <li onclick="showCategory(event)" data="adminReport.jsp" id="reportTab"><i class="fa fa-exclamation-triangle"></i> 신고관리</li> <!-- 신고관리 아이콘 추가 -->
             <li onclick="logout()"><i class="fa fa-sign-out-alt"></i> 로그아웃</li>
         </ul>
     </div>
@@ -37,17 +147,18 @@
 		<h1>유저 관리</h1>
 		<!-- 검색 폼 -->
 		<form method="get" action="adminUser.jsp">
-			<select name="user_keyField">
+			<select class = "admin_select" name="user_keyField">
 				<option value="user_id">유저 ID</option>
 				<option value="user_name">유저 이름</option>
 				<option value="user_phone">유저 번호</option>
-			</select> <input type="text" name="user_keyWord" placeholder="검색어 입력" /> <input
-				type="submit" value="검색" />
+			</select> <input class = admin_input type="text" name="user_keyWord" placeholder="검색어 입력" /> <input
+				type="submit" class = "admin_submitBtn" value="검색" />
 		</form>
 
 		<!-- 상품 목록 출력 및 페이징 -->
 		<div class="product-list">
 			<h2>유저 목록</h2>
+			<button class="alarm_button">공지사항 알림</button>
 			<table>
 				<thead>
 					<tr>
@@ -103,7 +214,7 @@
 						<td><%=userPhone%></td>
 						<td><%=userEmail%></td>
 						<td><%=userClover%></td>
-						<td><img class ="admin_userList_user_img"src='<%=userChracter%>'></td>
+						<td class ="admin_userList_user_img_box"><img class ="admin_userList_user_img"src='<%=userChracter%>'></td>
 					</tr>
 					<%
 					}
@@ -120,7 +231,7 @@
 
 			<!-- 상품 추가 버튼 -->
 			<!-- 페이징 처리 -->
-			<div class="pagination">
+			<div class="pagination-container">
 				<%
 				for (int i = 1; i <= totalPages; i++) {
 				%>

@@ -11,10 +11,10 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import miniroom.UtilMgr;
 
 public class AItemMgr {
-
-	public static final String  SAVEFOLDER = "C:/Jsp/jspProject/jspProject/src/main/webapp/miniroom/img";
-	public static final String ENCTYPE = "UTF-8";
-	public static int MAXSIZE = 50*1024*1024;//50mb
+	
+   
+   public static final String ENCTYPE = "UTF-8";
+   public static int MAXSIZE = 50*1024*1024;//50mb
     // DBConnectionMgr을 사용하여 데이터베이스 연결
     private DBConnectionMgr pool = DBConnectionMgr.getInstance();
 
@@ -104,48 +104,61 @@ public class AItemMgr {
         PreparedStatement pstmt = null;
         String sql = null;
         boolean flag = false;
+        
         try {
-           MultipartRequest multi = new MultipartRequest(req,SAVEFOLDER,MAXSIZE,ENCTYPE,new DefaultFileRenamePolicy());
-           con = pool.getConnection();
-           sql = "INSERT INTO item (item_name, item_image, item_price, item_type, item_path) VALUES (?, ?, ?, ?, ?)";
-           pstmt = con.prepareStatement(sql);
-           pstmt.setString(1, multi.getParameter("item_name"));
-           pstmt.setString(2, "./img/" + multi.getFilesystemName("item_image"));
-           pstmt.setInt(3, UtilMgr.parseInt(multi, "item_price"));
-           pstmt.setString(4, multi.getParameter("item_type"));
-           if(multi.getParameter("item_type") == "음악") {
-        	   pstmt.setString(5, "./img/" + multi.getFilesystemName("item_path"));
-           }
-           else {
-        	   pstmt.setString(5, "./img/" + multi.getFilesystemName("item_image"));
-           }
-           if(pstmt.executeUpdate() == 1) flag = true;
+            // 서블릿 컨텍스트에서 웹 애플리케이션의 실제 경로를 가져옴
+            String saveFolder = req.getServletContext().getRealPath("/miniroom/img");
+            System.out.println(saveFolder);
+
+            MultipartRequest multi = new MultipartRequest(req, saveFolder, MAXSIZE, ENCTYPE, new DefaultFileRenamePolicy());
+            con = pool.getConnection();
+            sql = "INSERT INTO item (item_name, item_image, item_price, item_type, item_path) VALUES (?, ?, ?, ?, ?)";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, multi.getParameter("item_name"));
+            pstmt.setString(2, "../miniroom/img/" + multi.getFilesystemName("item_image"));
+            pstmt.setInt(3, UtilMgr.parseInt(multi, "item_price"));
+            pstmt.setString(4, multi.getParameter("item_type"));
+
+            if ("음악".equals(multi.getParameter("item_type"))) {
+                pstmt.setString(5, "../miniroom/img/" + multi.getFilesystemName("item_path"));
+            } else {
+                pstmt.setString(5, "../miniroom/img/" + multi.getFilesystemName("item_image"));
+            }
+
+            if (pstmt.executeUpdate() == 1) flag = true;
         } catch (Exception e) {
-        	e.printStackTrace();
+            e.printStackTrace();
         } finally {
-           pool.freeConnection(con, pstmt);
+            pool.freeConnection(con, pstmt);
         }
         return flag;
-     }
+        
+    }
+    
+    
     public boolean updateProduct(HttpServletRequest req) {
         Connection con = null;
         PreparedStatement pstmt = null;
         String sql = null;
         boolean flag = false;
+
         try {
-            MultipartRequest multi = new MultipartRequest(req, SAVEFOLDER, MAXSIZE, ENCTYPE, new DefaultFileRenamePolicy());
+            // 서블릿 컨텍스트에서 웹 애플리케이션의 실제 경로를 가져옴
+            String saveFolder = req.getServletContext().getRealPath("/miniroom/img");
+
+            MultipartRequest multi = new MultipartRequest(req, saveFolder, MAXSIZE, ENCTYPE, new DefaultFileRenamePolicy());
             con = pool.getConnection();
             sql = "UPDATE item SET item_name=?, item_image=?, item_price=?, item_type=?, item_path=? WHERE item_num=?";
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, multi.getParameter("item_name"));
-            pstmt.setString(2, "./img/" + multi.getFilesystemName("item_image"));
+            pstmt.setString(2, "../miniroom/img/" + multi.getFilesystemName("item_image"));
             pstmt.setInt(3, UtilMgr.parseInt(multi, "item_price"));
             pstmt.setString(4, multi.getParameter("item_type"));
             
             if ("음악".equals(multi.getParameter("item_type"))) {
-                pstmt.setString(5, "./img/" + multi.getFilesystemName("item_path"));
+                pstmt.setString(5, "../miniroom/img/" + multi.getFilesystemName("item_path"));
             } else {
-                pstmt.setString(5, "./img/" + multi.getFilesystemName("item_image"));
+                pstmt.setString(5, "../miniroom/img/" + multi.getFilesystemName("item_image"));
             }
 
             pstmt.setInt(6, UtilMgr.parseInt(multi, "item_num"));
@@ -158,5 +171,6 @@ public class AItemMgr {
         }
         return flag;
     }
-
 }
+
+

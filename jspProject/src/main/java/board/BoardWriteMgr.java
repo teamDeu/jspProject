@@ -5,10 +5,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Vector;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+
 import miniroom.DBConnectionMgr;
 import miniroom.ItemBean;
 
 public class BoardWriteMgr {
+	
+	public static final String ENCTYPE = "UTF-8";
+	public static int MAXSIZE = 100*1024*1024;
+	
 	private DBConnectionMgr pool;
 	
 	public BoardWriteMgr() {
@@ -16,42 +25,47 @@ public class BoardWriteMgr {
 		pool = DBConnectionMgr.getInstance();
 	}
 	
-	public boolean addBoard(BoardWriteBean boardBean) {
-	    Connection con = null;
-	    PreparedStatement pstmt = null;
-	    String sql = "";
-	    boolean flag = false;
-	    try {
-	        con = pool.getConnection();
-	        // INSERT 쿼리 (이미지 처리 부분 포함)
-	        sql = "INSERT INTO board (board_visibility, board_answertype, board_folder, board_id, board_title, board_content, board_at, board_image) " +
-	              "VALUES (?, ?, ?, ?, ?, ?, now(), ?)";
-	        pstmt = con.prepareStatement(sql);
-	        pstmt.setInt(1, boardBean.getBoard_visibility());
-	        pstmt.setInt(2, boardBean.getBoard_answertype());
-	        pstmt.setInt(3, boardBean.getBoard_folder());
-	        pstmt.setString(4, boardBean.getBoard_id());
-	        pstmt.setString(5, boardBean.getBoard_title());
-	        pstmt.setString(6, boardBean.getBoard_content());
+	public boolean addBoard(MultipartRequest multi) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        String sql = "";
+        boolean flag = false;
+        try {
+            con = pool.getConnection();
+            // INSERT 쿼리 (이미지 처리 부분 포함)
+            sql = "INSERT INTO board (board_visibility, board_answertype, board_folder, board_id, board_title, board_content, board_at, board_image) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, now(), ?)";
+            pstmt = con.prepareStatement(sql);
 
-	        // 이미지 경로 설정 (null 또는 파일 경로)
-	        if (boardBean.getBoard_image() != null && !boardBean.getBoard_image().isEmpty()) {
-	            pstmt.setString(7, boardBean.getBoard_image());
-	        } else {
-	            pstmt.setNull(7, java.sql.Types.VARCHAR);
-	        }
+            // 폼 데이터 가져오기
+            pstmt.setInt(1, Integer.parseInt(multi.getParameter("board_visibility")));
+            pstmt.setInt(2, Integer.parseInt(multi.getParameter("board_answertype")));
+            pstmt.setInt(3, Integer.parseInt(multi.getParameter("board_folder")));
+            pstmt.setString(4, multi.getParameter("board_id"));
+            pstmt.setString(5, multi.getParameter("board_title"));
+            pstmt.setString(6, multi.getParameter("board_content"));
 
-	        int rs = pstmt.executeUpdate();
-	        if (rs > 0) {
-	            flag = true;
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    } finally {
-	        pool.freeConnection(con, pstmt);
-	    }
-	    return flag;
-	}
+            // 이미지 경로 설정 (null 또는 파일 경로)
+            String boardImage = multi.getFilesystemName("board_image");
+            if (boardImage != null && !boardImage.isEmpty()) {
+                pstmt.setString(7, "./img/" + boardImage);
+            } else {
+                pstmt.setNull(7, java.sql.Types.VARCHAR);
+            }
+
+            int rs = pstmt.executeUpdate();
+            if (rs > 0) {
+                flag = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt);
+        }
+        return flag;
+    }
+
+
 	
 	
 	// user_id에 해당하는 유효한 folder_num을 가져오는 메서드
@@ -136,46 +150,81 @@ public class BoardWriteMgr {
         }
         return boardList;
     }
-	
     
-    
-    
-    
-    // 특정 board_num에 해당하는 게시글을 삭제하는 메서드
-    public boolean deleteBoard(int boardNum) {
+    // 특정 폴더에 해당하는 게시글 목록을 가져오는 메서드 (친구 관계에 따른 필터링 포함)
+    public Vector<BoardWriteBean> getBoardList2(int boardFolder, String userId) {
         Connection con = null;
         PreparedStatement pstmt = null;
-        String sql = "";
-        boolean isDeleted = false;
+        ResultSet rs = null;
+        Vector<BoardWriteBean> boardList = new Vector<>();
+        
         try {
             con = pool.getConnection();
-            sql = "DELETE FROM board WHERE board_num = ?";
+            // 친구 관계에 따라 게시글을 필터링하는 SQL
+            String sql = "SELECT b.* FROM board b " +
+                    "LEFT JOIN friendinfo f ON (b.board_id = f.user_id1 AND f.user_id2 = ?) " +
+                    "WHERE b.board_folder = ? " +
+                    "AND (b.board_visibility = 1 OR (b.board_visibility = 0 AND f.friend_type = 1))";
             pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, boardNum);
-            int result = pstmt.executeUpdate();
-
-            if (result > 0) { // 삭제된 행이 있으면 true 반환
-                isDeleted = true;
+            pstmt.setString(1, userId); // 현재 로그인한 사용자
+            pstmt.setInt(2, boardFolder);
+            
+            rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                BoardWriteBean board = new BoardWriteBean();
+                board.setBoard_num(rs.getInt("board_num"));
+                board.setBoard_visibility(rs.getInt("board_visibility"));
+                board.setBoard_answertype(rs.getInt("board_answertype"));
+                board.setBoard_folder(rs.getInt("board_folder"));
+                board.setBoard_id(rs.getString("board_id"));
+                board.setBoard_title(rs.getString("board_title"));
+                board.setBoard_content(rs.getString("board_content"));
+                board.setBoard_at(rs.getTimestamp("board_at").toString());
+                board.setBoard_image(rs.getString("board_image"));
+                board.setBoard_views(rs.getInt("board_views"));
+                boardList.add(board);
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            pool.freeConnection(con, pstmt);
+            pool.freeConnection(con, pstmt, rs);
         }
-        return isDeleted;
+        return boardList;
     }
 
-    // 여러 개의 게시글을 한 번에 삭제하는 메서드
+	
+    
+    
+    
+    //boardList.jsp에서 체크박스로 게시물 삭제 -> 배열로
     public boolean deleteMultipleBoards(int[] boardNums) {
         Connection con = null;
         PreparedStatement pstmt = null;
-        String sql = "";
         boolean isAllDeleted = true; // 모두 성공적으로 삭제되었는지 확인
         try {
             con = pool.getConnection();
-            sql = "DELETE FROM board WHERE board_num = ?";
-            pstmt = con.prepareStatement(sql);
 
+            // 1. 각 게시글의 댓글과 대댓글을 먼저 삭제
+            for (int boardNum : boardNums) {
+                // 1.1 대댓글 삭제
+                String deleteReAnswersSql = "DELETE FROM boardreanswer WHERE answer_num IN (SELECT answer_num FROM boardanswer WHERE board_num = ?)";
+                pstmt = con.prepareStatement(deleteReAnswersSql);
+                pstmt.setInt(1, boardNum);
+                pstmt.executeUpdate();
+                pstmt.close();
+
+                // 1.2 댓글 삭제
+                String deleteAnswersSql = "DELETE FROM boardanswer WHERE board_num = ?";
+                pstmt = con.prepareStatement(deleteAnswersSql);
+                pstmt.setInt(1, boardNum);
+                pstmt.executeUpdate();
+                pstmt.close();
+            }
+
+            // 2. 그 다음에 게시글 삭제
+            String deleteBoardsSql = "DELETE FROM board WHERE board_num = ?";
+            pstmt = con.prepareStatement(deleteBoardsSql);
             for (int boardNum : boardNums) {
                 pstmt.setInt(1, boardNum);
                 int result = pstmt.executeUpdate();
@@ -191,6 +240,7 @@ public class BoardWriteMgr {
         }
         return isAllDeleted;
     }
+
 	
     // 특정 board_num에 해당하는 게시물의 조회수를 1 증가시키는 메서드
     public boolean increaseViews(int boardNum) {
@@ -217,15 +267,16 @@ public class BoardWriteMgr {
     }
     
     //최근 게시물 불러오는 메서드
-    public BoardWriteBean getLatestBoard() {
+    public BoardWriteBean getLatestBoard(String userId) {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         BoardWriteBean board = null;
         try {
             con = pool.getConnection();
-            String sql = "SELECT * FROM board ORDER BY board_at DESC LIMIT 1"; // 최근 게시된 글 1개 가져오기
+            String sql = "SELECT * FROM board WHERE board_id = ? ORDER BY board_at DESC LIMIT 1";
             pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, userId); // 현재 로그인한 사용자와 게시글 작성자 ID 비교
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 board = new BoardWriteBean();
@@ -247,5 +298,172 @@ public class BoardWriteMgr {
         }
         return board;
     }
+    
+    public BoardWriteBean getBoard(int board_num) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        BoardWriteBean board = null;
+        try {
+            con = pool.getConnection();
+            String sql = "SELECT * FROM board WHERE board_num = ?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, board_num); // 현재 로그인한 사용자와 게시글 작성자 ID 비교
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                board = new BoardWriteBean();
+                board.setBoard_num(rs.getInt("board_num"));
+                board.setBoard_visibility(rs.getInt("board_visibility"));
+                board.setBoard_answertype(rs.getInt("board_answertype"));
+                board.setBoard_folder(rs.getInt("board_folder"));
+                board.setBoard_id(rs.getString("board_id"));
+                board.setBoard_title(rs.getString("board_title"));
+                board.setBoard_content(rs.getString("board_content"));
+                board.setBoard_at(rs.getTimestamp("board_at").toString());
+                board.setBoard_image(rs.getString("board_image"));
+                board.setBoard_views(rs.getInt("board_views"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return board;
+    }
+    
+    // 최신글 여부에 따른 메소드 구분
+    public BoardWriteBean getBoardBasedOnType(String userId, int board_num, boolean isLatest) {
+        // 최신글일 경우
+        if (isLatest) {
+            return getLatestBoard(userId);
+        }
+        // 특정 게시글 번호에 해당하는 게시물을 불러올 경우
+        return getBoard(board_num);
+    }
+
+    
+    // userId에 해당하는 사용자의 게시글 목록을 가져오는 메서드 추가
+    public Vector<BoardWriteBean> getBoardListByUser(String userId) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Vector<BoardWriteBean> boardList = new Vector<>();
+        try {
+            con = pool.getConnection();
+            String sql = "SELECT * FROM board WHERE board_id = ? ORDER BY board_at DESC";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, userId);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                BoardWriteBean board = new BoardWriteBean();
+                board.setBoard_num(rs.getInt("board_num"));
+                board.setBoard_visibility(rs.getInt("board_visibility"));
+                board.setBoard_answertype(rs.getInt("board_answertype"));
+                board.setBoard_folder(rs.getInt("board_folder"));
+                board.setBoard_id(rs.getString("board_id"));
+                board.setBoard_title(rs.getString("board_title"));
+                board.setBoard_content(rs.getString("board_content"));
+                board.setBoard_at(rs.getTimestamp("board_at").toString());
+                board.setBoard_image(rs.getString("board_image"));
+                board.setBoard_views(rs.getInt("board_views"));
+                boardList.add(board);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return boardList;
+    }
+    
+    
+    // 게시글 삭제 메서드 (댓글과 대댓글도 함께 삭제) (board.jsp)
+    public boolean deletePostAndComments(int boardNum) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        boolean isDeleted = false;
+        String deleteReAnswersSql = "DELETE FROM boardreanswer WHERE answer_num IN (SELECT answer_num FROM boardanswer WHERE board_num = ?)";
+        String deleteAnswersSql = "DELETE FROM boardanswer WHERE board_num = ?";
+        String deleteBoardSql = "DELETE FROM board WHERE board_num = ?";
+
+        try {
+            con = pool.getConnection();
+            con.setAutoCommit(false); // 트랜잭션 시작
+
+            // 1. 댓글에 달린 대댓글 삭제
+            pstmt = con.prepareStatement(deleteReAnswersSql);
+            pstmt.setInt(1, boardNum);
+            pstmt.executeUpdate();
+            pstmt.close();
+
+            // 2. 댓글 삭제
+            pstmt = con.prepareStatement(deleteAnswersSql);
+            pstmt.setInt(1, boardNum);
+            pstmt.executeUpdate();
+            pstmt.close();
+
+            // 3. 게시글 삭제
+            pstmt = con.prepareStatement(deleteBoardSql);
+            pstmt.setInt(1, boardNum);
+            int rowsAffected = pstmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                isDeleted = true;
+                con.commit(); // 트랜잭션 커밋
+            } else {
+                con.rollback(); // 삭제 실패 시 롤백
+            }
+
+        } catch (Exception e) {
+            try {
+                if (con != null) con.rollback(); // 오류 발생 시 롤백
+            } catch (Exception rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt);
+        }
+
+        return isDeleted;
+    }
+    
+    
+    // 삭제된 게시글 다음 최신 게시글을 불러오는 메서드  (board.jsp)
+    public BoardWriteBean getNextLatestBoard(int deletedBoardNum) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        BoardWriteBean board = null;
+        try {
+            con = pool.getConnection();
+            // 삭제된 게시글 다음으로 최신 게시글을 불러옴
+            String sql = "SELECT * FROM board WHERE board_num < ? ORDER BY board_num DESC LIMIT 1";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, deletedBoardNum);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                board = new BoardWriteBean();
+                board.setBoard_num(rs.getInt("board_num"));
+                board.setBoard_visibility(rs.getInt("board_visibility"));
+                board.setBoard_answertype(rs.getInt("board_answertype"));
+                board.setBoard_folder(rs.getInt("board_folder"));
+                board.setBoard_id(rs.getString("board_id"));
+                board.setBoard_title(rs.getString("board_title"));
+                board.setBoard_content(rs.getString("board_content"));
+                board.setBoard_at(rs.getTimestamp("board_at").toString());
+                board.setBoard_image(rs.getString("board_image"));
+                board.setBoard_views(rs.getInt("board_views"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+        return board;
+    }
+
+    
     
 }

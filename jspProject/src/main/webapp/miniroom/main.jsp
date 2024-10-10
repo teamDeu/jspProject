@@ -1,3 +1,6 @@
+<%@page import="java.util.HashMap"%>
+<%@page import="Category.CategoryBean"%>
+<%@page import="java.util.List"%>
 <%@page import="report.SuspensionBean"%>
 <%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="pjh.MemberMgr"%>
@@ -9,39 +12,37 @@
 <jsp:useBean id="fMgr" class ="friend.FriendMgr"/>
 <jsp:useBean id="profileMgr" class ="guestbook.GuestbookprofileMgr"/>
 <jsp:useBean id="reportMgr" class ="report.ReportMgr"/>
+<jsp:useBean id="categoryMgr" class ="Category.CategoryMgr"/>
 <%
    // 세션에서 idKey 가져오기
    String id = (String)session.getAttribute("idKey");
+   String category = request.getParameter("category");
    if(id == null){
       response.sendRedirect("../pjh/login.jsp");
       return;
    }
-   
+   System.out.println("request.getContextPath : " + request.getContextPath());
    boolean isSuspension = false;
    SuspensionBean suspensionBean = reportMgr.isSuspension(id);
-   System.out.println("이사람은 정지인가 ? : " + suspensionBean.getSuspension_num());
    if(suspensionBean.getSuspension_num() != 0){
-	   isSuspension = true;
-	   if(suspensionBean.getSuspension_type() == 1){
-		   response.sendRedirect("../miniroom/suspension.jsp?suspension_num="+suspensionBean.getSuspension_num());
-		   return;
-	   }
-	   else if(suspensionBean.getSuspension_type() == 0){
-		   
-	   }
+      isSuspension = true;
+      if(suspensionBean.getSuspension_type() == 1){
+         response.sendRedirect("../miniroom/suspension.jsp?suspension_num="+suspensionBean.getSuspension_num());
+         return;
+      }
+      else if(suspensionBean.getSuspension_type() == 0){
+         
+      }
    }
-	   
-   
    GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(id);
-// 페이지 소유자의 ID 가져오기
+   // 페이지 소유자의 ID 가져오기
    String pageOwnerId = request.getParameter("url");
+   
 
    // 만약 url 파라미터가 없으면 페이지 소유자는 방문자(id)
    if(pageOwnerId == null || pageOwnerId.trim().isEmpty()) {
       pageOwnerId = id;
    }
-
-
    // 캐릭터 및 배경 이미지 설정
    String character = iMgr.getUsingCharacter(id).getItem_path();
    String url = request.getParameter("url");
@@ -55,10 +56,10 @@
 
    // 사용자 정보 가져오기
    MemberBean userBean = mMgr.getMember(id);
-// MemberMgr 객체 초기화
+   // MemberMgr 객체 초기화
    MemberMgr memberMgr = new MemberMgr();
 
-// 쿠키에서 마지막 방문 시간 확인
+   // 쿠키에서 마지막 방문 시간 확인
    String lastVisit = null;
    javax.servlet.http.Cookie[] cookies = request.getCookies();
    if (cookies != null) {
@@ -74,7 +75,7 @@
 
    if (lastVisit == null || (currentTime - Long.parseLong(lastVisit)) > 10000) { // 10초 이상 경과 시
        // 페이지 소유자별 방문자 수 업데이트
-       memberMgr.updateVisitorCount(pageOwnerId, id); // 방문자 ID는 세션의 id
+       memberMgr.updateVisitorCount(pageOwnerId, id, response); // 방문자 ID는 세션의 id
 
        // 마지막 방문 시간을 현재 시간으로 쿠키에 저장
        javax.servlet.http.Cookie visitCookie = new javax.servlet.http.Cookie("lastVisit_" + pageOwnerId, Long.toString(currentTime));
@@ -105,33 +106,54 @@
 * {
     font-family: 'NanumTobak', sans-serif;
 }
-.profile_function_div {
-	display: flex;
-	z-index:3;
-	flex-direction: column;
+.sayBox {
 	position: absolute;
-	width: 120px;
-	padding: 10px;
-	gap: 10px;
-	border-radius: 10px;
-	box-sizing: border-box;
-	background-color: #FFFEF3;
-	left:0px;
-	top: -120px;
-	border: 2px solid #BAB9AA;
+	border: 1px solid black;
+	background-color: white;
+	padding: 5px;
+	border-radius: 5px;
+	animation: fadeout 1.5s;
+	-moz-animation: fadeout 1.5s; /* Firefox */
+	-webkit-animation: fadeout 1.5s; /* Safari and Chrome */
+	-o-animation: fadeout 1.5s; /* Opera */
+	animation-fill-mode: forwards;
+	overflow-x: hidden;
+	word-break: break-all;
+	word-wrap: break-word;
+	font-size:20px;
+	z-index: 6;
 }
 
+.profile_function_div {
+   display: flex;
+   z-index:3;
+   flex-direction: column;
+   position: absolute;
+   width: 120px;
+   padding: 10px;
+   gap: 10px;
+   border-radius: 10px;
+   box-sizing: border-box;
+   background-color: #FFFEF3;
+   left:0px;
+   top: -120px;
+   border: 2px solid #BAB9AA;
+}
+.profile_function_div_guestbook{
+   top:25px;
+   left:0px;
+}
 .profile_function_div button {
-	padding: 2px 10px;
-	border: 1px solid #DCDCDC;
-	background-color: #FFFFFF;
-	font-size: 16px;
-	border-radius: 10px;
+   padding: 2px 10px;
+   border: 1px solid #DCDCDC;
+   background-color: #FFFFFF;
+   font-size: 16px;
+   border-radius: 10px;
 }
 
 .profile_function_div span {
-	align-self: center;
-	font-size: 20px;
+   align-self: center;
+   font-size: 20px;
 }
 .miniroom_information {
    display: none;
@@ -167,15 +189,15 @@
    z-index : 11;
 }
 .main_profile_alarm_isalarm{
-	
-	background-color : red;
-	position:absolute;
-	display:none;
-	width : 5px;
-	height : 5px;
-	right:0px;
-	top:0px;
-	border-radius : 10px;
+   
+   background-color : red;
+   position:absolute;
+   display:none;
+   width : 5px;
+   height : 5px;
+   right:0px;
+   top:0px;
+   border-radius : 10px;
 }
 .visitor-stats {
         position: absolute;
@@ -196,7 +218,11 @@
         color: #000000; /* 총 방문자수는 파란색 */
     }
     .chat_reportBtn{
-    	color: red;
+       color: red;
+    }
+    .userNameTag{
+    	font-weight : bold;
+    	font-size : 24px;
     }
 </style>
 <script>
@@ -214,14 +240,17 @@ function loadContent(url) {
 function clickOpenBox(id){
    openBox = document.getElementById(id);
    anotherBox = document.querySelectorAll(".inner-box-2");
+   anotherButton = document.querySelectorAll(".custom-button");
    for(i = 0 ; i < anotherBox.length ; i++){
       anotherBox[i].style.display ="none";
    }
    openBox.style.display = "flex";
-   
+   anotherButton.forEach((e) => e.style.backgroundColor = "#C0E5AF")
    if(id.includes("board")){
-	   document.getElementById("boardInnerBox").style.display = "block";
-	   document.getElementById("normalInnerBox").style.display = "none";
+      openButton = document.getElementById("custom-button-board");
+      document.getElementById("boardInnerBox").style.display = "block";
+      document.getElementById("normalInnerBox").style.display = "none";
+      loadLatestPost(); // 페이지가 로드될 때 최신 게시글을 불러옴
 	   document.getElementById("musicInnerBox").style.display = "none";
    }
    else{
@@ -234,6 +263,8 @@ function clickOpenBox(id){
 	   document.getElementById("musicInnerBox").style.display = "block";
 	   document.getElementById("normalInnerBox").style.display = "none";
    }
+   openButton.style.backgroundColor = "#F7F7F7";
+   
 }
 function clickUser(event){
    console.log(event);
@@ -246,6 +277,16 @@ function clickAlarm(){
    else{
       alarmDiv.style.display = "none"
    }
+}
+function mainCategoryLoad(){
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState === 4 && xhr.status === 200){
+			document.querySelector(".button-container").innerHTML = xhr.responseText;
+		}
+	};
+	xhr.open("GET","../miniroom/mainCategoryLoad.jsp?url="+url,true);
+	xhr.send();
 }
 </script>
 <!-- 웹소켓통신 자바스크립트 -->
@@ -263,6 +304,7 @@ function clickAlarm(){
         var dataSeparator = "㉠"
         var messageSeparator = "㉡";
         var timeNameText = "";
+        var section = "<%=category%>";
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
             ws.onopen = function() {
@@ -307,59 +349,61 @@ function clickAlarm(){
                     user = document.getElementById(data);
                     user.remove();
                     userNum --;
+                    nowvisit = document.getElementById("nowvisit");
+                    nowvisit.innerText = "Now " + userNum; 
                  }
                  else if(command == ("sendFriendRequest")){
-                	 sendUserName = rawdata[1];
-                	 sendUserCharacter = rawdata[2];
-                	 receiveId = rawdata[3];
-                	 requestType = rawdata[4];
-                	 comment = rawdata[5];
-                	 sendUserId = rawdata[6];
-                	 if(localId == receiveId){
-                		 openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"",sendUserId);
-                	 }
+                    sendUserName = rawdata[1];
+                    sendUserCharacter = rawdata[2];
+                    receiveId = rawdata[3];
+                    requestType = rawdata[4];
+                    comment = rawdata[5];
+                    sendUserId = rawdata[6];
+                    if(localId == receiveId){
+                       openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"",sendUserId);
+                    }
                  }
                  else if(command == ("submitFriendRequest")){
-                	 flag = false;
-                	 userId = rawdata[1];
-                	 userName = rawdata[2];
-                	 userCharacter = rawdata[3];
-                	 requestType = rawdata[4];
-                	 flag = isFriend(localId,userId);
-                	 
-                	 const createProfileDiv = (userName, userId, userCharacter, localId, flag) => {
-                		 const profileDiv = 
-                			    '<div onclick="onclickMainProfileFriendsDiv(this)" class="main_profile_friends_div friends_type_first">' +
-                			        '<div class="profile_function_div_main" style="display: none;">' +
-                			            '<div class="profile_function_div">' +
-                			                '<span>' + userName + '</span>' +
-                			                (flag ? 
-                			                    '<button onclick="onclickDeleteFriend(\'' + localId + '\', \'' + userId + '\', \'' + userName + '\')">친구삭제</button>' :
-                			                    '<button onclick="onclickAddFriend(\'' + localId + '\', \'' + userId + '\', \'' + userCharacter + '\', \'' + userName + '\')">친구추가</button>'
-                			                ) +
-                			                '<button onclick="onclickGoHomePage(\'' + userId + '\')">미니룸 구경가기</button>' +
-                			            '</div>' +
-                			        '</div>' +
-                			        '<img class="main_profile_friends" src="' + userCharacter + '">' +
-                			        '<span class="main_profile_friends_name">' + userName + '</span>' +
-                			    '</div>';
-                		    // 임시 div 생성
-                		    const tempDiv = document.createElement('div');
-                		    tempDiv.innerHTML = profileDiv;
+                    flag = false;
+                    userId = rawdata[1];
+                    userName = rawdata[2];
+                    userCharacter = rawdata[3];
+                    requestType = rawdata[4];
+                    flag = isFriend(localId,userId);
+                    
+                    const createProfileDiv = (userName, userId, userCharacter, localId, flag) => {
+                       const profileDiv = 
+                             '<div onclick="onclickMainProfileFriendsDiv(this)" class="main_profile_friends_div friends_type_first">' +
+                                 '<div class="profile_function_div_main" style="display: none;">' +
+                                     '<div class="profile_function_div">' +
+                                         '<span>' + userName + '</span>' +
+                                         (flag ? 
+                                             '<button onclick="onclickDeleteFriend(\'' + localId + '\', \'' + userId + '\', \'' + userName + '\')">친구삭제</button>' :
+                                             '<button onclick="onclickAddFriend(\'' + localId + '\', \'' + userId + '\', \'' + userCharacter + '\', \'' + userName + '\')">친구추가</button>'
+                                         ) +
+                                         '<button onclick="onclickGoHomePage(\'' + userId + '\')">미니룸 구경가기</button>' +
+                                     '</div>' +
+                                 '</div>' +
+                                 '<img class="main_profile_friends" src="' + userCharacter + '">' +
+                                 '<span class="main_profile_friends_name">' + userName + '</span>' +
+                             '</div>';
+                          // 임시 div 생성
+                          const tempDiv = document.createElement('div');
+                          tempDiv.innerHTML = profileDiv;
 
-                		    // 첫 번째 자식 요소를 반환
-                		    return tempDiv.firstChild;
-                		};
-                	const profileDiv = createProfileDiv(userName,userId,userCharacter,localId,flag);
-                	
-                	 if(requestType == "일촌"){
-              			friend_items_first.push(profileDiv)
-              			changeFriendType(1);
-              		}
-              		else if(requestType == "이촌"){
-              			friend_items_second.push(profileDiv)
-              			changeFriendType(2);
-              		}
+                          // 첫 번째 자식 요소를 반환
+                          return tempDiv.firstChild;
+                      };
+                   const profileDiv = createProfileDiv(userName,userId,userCharacter,localId,flag);
+                   
+                    if(requestType == "일촌"){
+                       friend_items_first.push(profileDiv)
+                       changeFriendType(1);
+                    }
+                    else if(requestType == "이촌"){
+                       friend_items_second.push(profileDiv)
+                       changeFriendType(2);
+                    }
                  }
             };
             ws.onclose = function() {
@@ -367,20 +411,20 @@ function clickAlarm(){
             };
         }
         function gamemainshow() {
-	        document.getElementById("main").style.display = "block";
-	        document.getElementById("game1-container").style.display = "none";
-	        document.getElementById("game2-container").style.display = "none";        
-	    }
+           document.getElementById("main").style.display = "block";
+           document.getElementById("game1-container").style.display = "none";
+           document.getElementById("game2-container").style.display = "none";        
+       }
         function sendFriendRequest(receiveId , request_type,comment){
-        	var message = "sendFriendRequest" + dataSeparator + localName +
-        	dataSeparator + localCharacter + dataSeparator + receiveId + 
-        	dataSeparator + request_type + dataSeparator + comment +
-        	dataSeparator + localId;
-        	ws.send(message);
+           var message = "sendFriendRequest" + dataSeparator + localName +
+           dataSeparator + localCharacter + dataSeparator + receiveId + 
+           dataSeparator + request_type + dataSeparator + comment +
+           dataSeparator + localId;
+           ws.send(message);
         }
         function submitFriendRequest(username,userid,usercharacter,requestType){
-        	var message = "submitFriendRequest" + dataSeparator + username + dataSeparator + userid + dataSeparator + usercharacter + dataSeparator + requestType;
-        	ws.send(message);
+           var message = "submitFriendRequest" + dataSeparator + username + dataSeparator + userid + dataSeparator + usercharacter + dataSeparator + requestType;
+           ws.send(message);
         }
         function sendMessage() {
             var message = "sendMessage" + dataSeparator +  localId + messageSeparator + document.getElementById("messageInput").value + messageSeparator + localName;
@@ -393,6 +437,7 @@ function clickAlarm(){
         function printUser(id,character,name){
            newDiv = document.createElement("div");
            newImg = document.createElement("img");
+           newNameTag = document.createElement("span");
            newImg.classList.add("userCharacter");
            newImg.src =character;
            nowvisit = document.getElementById("nowvisit");
@@ -401,8 +446,12 @@ function clickAlarm(){
             // add the text node to the newly created div
           newDiv.id = id;
           newContent = document.createTextNode(name);
-          newDiv.appendChild(newContent);
+          newNameTag.appendChild(newContent);
+          
+          newDiv.appendChild(newNameTag);
           newDiv.appendChild(newImg);
+          
+          newNameTag.classList.add("userNameTag");
           newDiv.classList.add("user");
           
           informationDiv = document.createElement("div");
@@ -451,14 +500,15 @@ function clickAlarm(){
           
           reportBtn.onclick = (function(senduserid,receiveuserid) {
               return function() {
-            	  var xhr = new XMLHttpRequest();
-          	    	xhr.open("GET", "../miniroom/reportProc.jsp?report_senduserid="+senduserid+"&report_receiveuserid="+receiveuserid+"&report_type=chat", true); // Alarm 갱신Proc
-          	    	xhr.onreadystatechange = function () {
-          	        if (xhr.readyState === 4 && xhr.status === 200) {
-          	        	alert("신고가 완료되었습니다.");
-          	        }
-          	    };
-          	    xhr.send();
+                 var xhr = new XMLHttpRequest();
+                    xhr.open("GET", "../miniroom/reportProc.jsp?report_senduserid="+senduserid+"&report_receiveuserid="+receiveuserid+"&report_type=채팅", true); // Alarm 갱신Proc
+                    xhr.onreadystatechange = function () {
+                     if (xhr.readyState === 4 && xhr.status === 200) {
+                        alert("신고가 완료되었습니다.");
+                        
+                     }
+                 };
+                 xhr.send();
                };
            })(localId,id);
           newDiv.appendChild(informationDiv);
@@ -478,7 +528,7 @@ function clickAlarm(){
             console.log(sayBoxId);
             if(document.getElementById(sayBoxId))
             {
-            	document.getElementById(sayBoxId).remove();
+               document.getElementById(sayBoxId).remove();
             }
             newDiv = document.createElement("div");
             newContent = document.createTextNode(comment);
@@ -524,7 +574,7 @@ function clickAlarm(){
           timeTextClass = name+year+month+day+hours+minutes;
           
           if(document.querySelectorAll("."+timeTextClass)){
-        	  Array.from(document.querySelectorAll("."+timeTextClass)).forEach((e) => e.remove());
+             Array.from(document.querySelectorAll("."+timeTextClass)).forEach((e) => e.remove());
           }
           timeNameText = newTimeNameText;
           userNameContent = document.createTextNode(timeNameText);
@@ -537,9 +587,7 @@ function clickAlarm(){
            chatArea2.appendChild(chatBoxDiv);
            chatArea2.scrollTop = chatArea2.scrollHeight;
         }
-        
-        
-        
+      
         function disconnect(){
            var message = "disconnect"+ dataSeparator + localId + dataSeparator + localName;
            ws.send(message);
@@ -552,22 +600,46 @@ function clickAlarm(){
                 window.location.href = 'logout.jsp';
             }
         }
+        function showSettingPage() {
+            // 모든 inner-box-1 및 inner-box-2를 숨김
+            const innerBoxes1 = document.querySelectorAll('.inner-box-1');
+            const innerBoxes2 = document.querySelectorAll('.inner-box-2');
+
+            innerBoxes1.forEach(box => box.style.display = 'none');
+            innerBoxes2.forEach(box => box.style.display = 'none');
+         // image-box 숨기기
+            document.querySelector('.image-box').style.display = 'none';
+         
+            // 설정 박스 표시
+            document.getElementById('settingBox').style.display = 'block';
+            
+            
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+        	mainCategoryLoad();
+        	if(section != "null"){
+        		clickOpenBox(section);
+        	}
+        });
+        
     </script>
 
 </head>
 <body>
-
    <div class="container">
       <div class="header">
          <img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
          <div class="settings">
-            <span></span> <a href="#">설정</a> <a href="../pjh/logout.jsp">로그아웃</a>
+            <span></span> <a href="javascript:void(0);" onclick="showSettingPage()">설정</a> <a href="../pjh/logout.jsp">로그아웃</a>
          </div>
       </div>
       <!-- 큰 점선 테두리 상자 -->
       <div class="dashed-box">
          <!-- 테두리 없는 상자 -->
          <div class="solid-box">
+         <div id="settingBox" class="inner-box-2" style="display: none; margin-left:20px; width:100%">
+             <jsp:include page="../eunhyo/setting.jsp"></jsp:include>
+         </div> 
          <!-- 방문자 수 표시 -->
             <div class="visitor-stats">
         <div class="today">
@@ -592,7 +664,9 @@ function clickAlarm(){
                </jsp:include>
             </div>
             <div id = "boardInnerBox" class="inner-box-1" style = "display :none">
-               <jsp:include page="../seyoung/bInnerbox1.jsp"></jsp:include>
+               <jsp:include page="../seyoung/bInnerbox1.jsp">
+               	<jsp:param value="<%=url %>" name="board_id"/>
+               </jsp:include>
             </div>
             <div id = "musicInnerBox" class="inner-box-1" style = "display :none">
                <jsp:include page="../yang/music_side.jsp"></jsp:include>
@@ -606,49 +680,47 @@ function clickAlarm(){
             <div id="chatBox" class="inner-box-2">
                <jsp:include page="chat.jsp">
                   <jsp:param value="<%=background%>" name="backgroundImg"/>
+                  <jsp:param value="<%=url %>" name="url"/>
                </jsp:include>
             </div>
             <div id="profile" class="inner-box-2" style="display: none">
+               <jsp:include page="../pjh/profile.jsp"></jsp:include>
             </div>
-            <div id="Box_miniroom_design" class ="inner-box-2" style="display: none" >
+            <div id="inner-box-2-miniroom" class ="inner-box-2" style="display: none" >
                <jsp:include page="miniDesign.jsp"></jsp:include>
             </div>
             <div id="game" class ="inner-box-2" style="display: none" >
                <jsp:include page="../yang/game.jsp"></jsp:include>
             </div>
-	         <div id="store" class="inner-box-2" style="display: none">
-	            <jsp:include page="../pjh/storeDesign.jsp"></jsp:include>
-	         </div>
-	         <div id="guestbook" class="inner-box-2" style="display: none">
+            <div id="store" class="inner-box-2" style="display: none">
+               <jsp:include page="../pjh/storeDesign.jsp"></jsp:include>
+            </div>
+            <div id="guestbook" class="inner-box-2" style="display: none">
                <jsp:include page="../eunhyo/guestbook.jsp">
                 <jsp:param name="ownerId" value="<%= url %>"/>
                 </jsp:include>
-	         </div> 
-	         <div id="board" class="inner-box-2" style="display: none">
-	         	<jsp:include page ="../seyoung/board.jsp"></jsp:include>
-	         </div>
-	         <div id="boardList" class ="inner-box-2" style="display:none">
-	         	<jsp:include page ="../seyoung/boardList.jsp"></jsp:include>
-	         </div>
-	         <div id="boardWrite" class ="inner-box-2" style="display:none">
-	         	<jsp:include page ="../seyoung/boardWrite.jsp"></jsp:include>
-	         </div>
-	         <div id="music" class="inner-box-2" style="display: none">
-	         	<jsp:include page="../yang/music1.jsp"></jsp:include>
-	         </div>
+            </div> 
+            <div id="board" class="inner-box-2" style="display: none">
+               <jsp:include page ="../seyoung/board.jsp">
+               	<jsp:param value="<%= url %>" name="board_id"/>
+               </jsp:include>
+            </div>
+            <div id="boardList" class ="inner-box-2" style="display:none">
+               <jsp:include page ="../seyoung/boardList.jsp">
+               <jsp:param value="<%= url %>" name="board_id"/>
+               </jsp:include>
+            </div>
+            <div id="boardWrite" class ="inner-box-2" style="display:none">
+               <jsp:include page ="../seyoung/boardWrite.jsp">
+               <jsp:param value="<%= url %>" name="board_id"/>
+               </jsp:include>
+            </div>
+            <div id="music" class="inner-box-2" style="display: none">
+               <jsp:include page="../yang/music1.jsp"></jsp:include>
+            </div>
          </div>
          <!-- 버튼 -->
          <div class="button-container">
-            <button onclick="javascript:clickOpenBox('chatBox')" class="custom-button">홈</button>
-            <button onclick="javascript:clickOpenBox('profile')" class="custom-button">프로필</button>
-            <%if(url.equals(id)){ %>
-            <button onclick="javascript:clickOpenBox('Box_miniroom_design')" class="custom-button">미니룸</button>
-            <%} %>
-            <button onclick = "javascript:clickOpenBox('board')" class="custom-button">게시판</button>
-            <button onclick = "javascript:clickOpenBox('guestbook')" class="custom-button">방명록</button>
-            <button onclick = "javascript:clickOpenBox('store')" class="custom-button">상점</button>
-            <button onclick = "javascript:clickOpenBox('game'); gamemainshow()" class="custom-button">게임</button>
-            <button onclick = "javascript:clickOpenBox('music');"  class="custom-button">음악</button>
          </div>
   
 
@@ -662,5 +734,8 @@ function clickAlarm(){
          <jsp:include page="friendRequestReceive.jsp"></jsp:include>
    </div>
    
+   <div id = "user_search_modal" class ="friend_request_modal" style = "display:none">
+   		<jsp:include page="userSearchModal.jsp"></jsp:include>
+   </div>
 </body>
-</html>
+</html> 

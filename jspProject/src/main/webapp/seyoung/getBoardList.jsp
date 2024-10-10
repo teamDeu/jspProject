@@ -1,16 +1,27 @@
+
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.sql.Timestamp"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="board.BoardWriteMgr"%>
 <%@ page import="board.BoardWriteBean"%>
 <%@ page import="java.util.Vector"%>
-<%@ page import="java.text.SimpleDateFormat"%>
-<%@ page import="java.sql.Timestamp"%>
+<html>
+<head>
+	<script>
+	
+	</script>
+</head>
+
 
 <%
+    
+    String folderName = request.getParameter("folderName"); // 폴더 이름 받기
+    System.out.println("getBoardList 폴더 이름: " + folderName);
+    
     int folderNum = 0;
     try {
         folderNum = Integer.parseInt(request.getParameter("folderNum"));
     } catch (NumberFormatException e) {
-        // 폴더 번호가 유효하지 않을 때 예외 처리
         folderNum = 0;
     }
 
@@ -26,13 +37,16 @@
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     formattedDate = sdf.format(timestamp);
                 } catch (Exception e) {
-                    formattedDate = board.getBoard_at(); // 이미 String이라면 그대로 사용
+                    formattedDate = board.getBoard_at();
                 }
-                
 %>
+
                 <tr>
+                
                     <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
-                    <td><a href="../seyoung/boardDetail.jsp?boardNum=<%= board.getBoard_num() %>"><%= board.getBoard_title() %></a></td>
+                    <td>
+                        <button onclick="clickBoard_boardNum('<%= board.getBoard_num() %>')"><%= board.getBoard_title() %></button>
+                    </td>
                     <td><%= board.getBoard_id() %></td>
                     <td><%= formattedDate %></td>
                     <td><%= board.getBoard_views() %></td>
@@ -54,3 +68,4 @@
 <%
     }
 %>
+</html>

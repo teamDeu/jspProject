@@ -1,13 +1,29 @@
+<%@page import="miniroom.UtilMgr"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="board.BoardWriteBean" %>
 <%@ page import="board.BoardWriteMgr" %>
 <jsp:useBean id="mgr" class="board.BoardWriteMgr" />
+<jsp:useBean id="Bean" class="board.BoardWriteBean" />
 <%
-    // 최신 게시글 불러오기
-    BoardWriteBean latestBoard = mgr.getLatestBoard();
-%>
 
+	//현재 로그인한 사용자 ID 가져오기
+	String userId = (String) session.getAttribute("idKey");
+    String board_id = request.getParameter("board_id");
+	String type = request.getParameter("type");
+	
+	System.out.println("type : " + type);
+	BoardWriteBean latestBoard = null;
+	if(type.equals("latest")){
+		latestBoard = mgr.getLatestBoard(board_id);
+	}
+	else if(type.equals("get")){
+		int board_num = UtilMgr.parseInt(request, "board_num");
+		latestBoard = mgr.getBoard(board_num);
+	}
+    
+
+%>
 <% if (latestBoard != null) { %>
     <!-- 제목과 작성일을 상단에 배치하고 삭제 버튼 추가 -->
     <div class="bwrite-header" style="display: flex; align-items: center; width: 100%;">
@@ -15,21 +31,22 @@
         <div style="flex-grow: 1; border-bottom: 1px dotted #BAB9AA; margin: 0 10px;"></div>
         <div>
             <span><%= latestBoard.getBoard_at().substring(0, 10) %></span>
-            <button class="delete-btn" onclick="deletePost(<%= latestBoard.getBoard_num() %>)">삭제</button>
+            <% if (board_id != null && board_id.equals(latestBoard.getBoard_id())) { %>
+                <button class="latestDel-btn" onclick="bdellatestPost(<%= latestBoard.getBoard_num() %>)">삭제</button>
+            <% } %>
         </div>
     </div>
 
     <!-- 이미지가 있을 경우 표시 -->
     <% if (latestBoard.getBoard_image() != null && !latestBoard.getBoard_image().isEmpty()) { %>
         <div style="text-align: center; margin-top: 10px;">
-            <img src="<%= latestBoard.getBoard_image() %>" alt="게시물 이미지" style="max-width: 100%; border: 1px solid #CCC; padding: 5px;">
+            <img alt="" src="<%=latestBoard.getBoard_image()%>"   style="width: 300px; height: 200px; border: 1px solid #CCC; padding: 5px;">
         </div>
     <% } %>
-
     <!-- 내용 부분 -->
-    <div class="bwrite-content">
+    <div id=<%=latestBoard.getBoard_num()%> class="bwrite-content">
         <%= latestBoard.getBoard_content() %>
     </div>
 <% } else { %>
-    <p>게시글이 없습니다.</p>
+    <p>작성한 게시글이 없습니다.</p>
 <% } %>

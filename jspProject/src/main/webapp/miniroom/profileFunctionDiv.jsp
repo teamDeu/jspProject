@@ -12,6 +12,7 @@
 		response.sendRedirect("../pjh/login.jsp");
 		return;
 	}
+	String type = request.getParameter("type");
 	MemberMgr mgr = new MemberMgr();
 	ItemMgr imgr = new ItemMgr();
 	FriendMgr fmgr = new FriendMgr();
@@ -28,6 +29,7 @@
 <head>
 <script>
 	function onclickAddFriend(requestSendUser, requestReciveUser,character,name) {
+			document.getElementById("user_search_modal").style.display = "none";
             fr_modal = document.getElementById("friend_request_modal_send");
             fr_form = document.friend_request_form_send;
             fr_form.request_senduserid.value = requestSendUser;
@@ -54,12 +56,11 @@
 <style>
 .profile_function_div_main{
 	display:none;
-	
-}
+}	
 </style>
 </head>
 <div class="profile_function_div_main" style ="display : none">
-	<div class="profile_function_div">
+	<div class="profile_function_div <%if(type != null) {%>profile_function_div_<%=type%><%}%>">
 		<span><%=name%></span>
 		<%if(fmgr.isFriend(connectId,userId)){ %>
 			<button onclick = "onclickDeleteFriend('<%=connectId %>','<%=userId%>','<%=name%>')">친구삭제</button>

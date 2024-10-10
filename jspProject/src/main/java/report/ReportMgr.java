@@ -40,11 +40,12 @@ public class ReportMgr {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "insert report values(null,?,?,now(),?)";
+			sql = "insert report values(null,?,?,now(),?,0,?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1,bean.getReport_senduserid());
 			pstmt.setString(2, bean.getReport_receiveuserid());
 			pstmt.setString(3, bean.getReport_type());
+			pstmt.setInt(4, bean.getReport_contentnum());
 			if(pstmt.executeUpdate() == 1) flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -85,7 +86,8 @@ public class ReportMgr {
 	            	bean.setReport_receiveuserid(rs.getString(3));
 	            	bean.setReport_at(rs.getString(4));
 	            	bean.setReport_type(rs.getString(5));
-	            	
+	            	bean.setReport_complete(rs.getBoolean(6));
+	            	bean.setReport_contentnum(rs.getInt(7));
 	            	reportList.add(bean);
 	            }
 	        } catch (Exception e) {
@@ -156,7 +158,7 @@ public class ReportMgr {
 	            	bean.setReport_receiveuserid(rs.getString(3));
 	            	bean.setReport_at(rs.getString(4));
 	            	bean.setReport_type(rs.getString(5));
-	            	
+	            	bean.setReport_complete(rs.getBoolean(6));
 
 	            }
 	        } catch (Exception e) {
@@ -254,5 +256,74 @@ public class ReportMgr {
 			}
 			
 			return bean;
+	    }
+	    public Vector<SuspensionBean> getSuspesionList(String id){
+	    	Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql = "";
+			Vector<SuspensionBean> vlist = new Vector<SuspensionBean>();
+			try {
+				con = pool.getConnection();
+				sql = "select * from suspension where suspension_id = ? order by suspension_num desc";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				while (rs.next()) {
+					SuspensionBean bean = new SuspensionBean();
+					bean.setSuspension_num(rs.getInt(1));
+					bean.setSuspension_id(rs.getString(2));
+					bean.setSuspension_date(rs.getString(3));
+					bean.setSuspension_type(rs.getInt(4));
+					bean.setSuspension_reason(rs.getInt(5));
+					vlist.add(bean);
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			} finally {
+				pool.freeConnection(con, pstmt, rs);
+			}
+			
+			return vlist;
+	    }
+	    public boolean insertSuspension(SuspensionBean bean) {
+	    	Connection con = null;
+			PreparedStatement pstmt = null;
+			String sql = "";
+			boolean flag = false;
+			try {
+				con = pool.getConnection();
+				sql = "insert suspension values(null,?,?,?,?)";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, bean.getSuspension_id());
+				pstmt.setString(2, bean.getSuspension_date());
+				pstmt.setInt(3, bean.getSuspension_type());
+				pstmt.setInt(4, bean.getSuspension_reason());
+				if(pstmt.executeUpdate() == 1) flag = false;
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				pool.freeConnection(con, pstmt);
+			}
+			return flag;
+	    }
+	    
+	    public boolean updateReportComplete(int num) {
+	    	Connection con = null;
+			PreparedStatement pstmt = null;
+			String sql = "";
+			boolean flag = false;
+			try {
+				con = pool.getConnection();
+				sql = "update report set report_complete = 1 where report_num = ?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setInt(1, num);
+				if(pstmt.executeUpdate() == 1) flag = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				pool.freeConnection(con, pstmt);
+			}
+			return flag;
 	    }
 }	
