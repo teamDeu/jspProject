@@ -1,10 +1,12 @@
 <%@page import="java.util.HashMap"%>
+<%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="item.ItemBean"%>
 <%@page import="java.util.Vector"%>
 <%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
 <jsp:useBean id="mgr" class="pjh.MemberMgr" />
+<jsp:useBean id="profileMgr" class="guestbook.GuestbookprofileMgr"/>
 <%
 String user_id = (String) session.getAttribute("idKey");
 int user_clover = 0;
@@ -17,6 +19,7 @@ if (user_id != null) {
         e.printStackTrace();
     }
 }
+GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -440,7 +443,7 @@ if (user_id != null) {
             let lastPassedLine = null; 
 
             const topImage = document.createElement('img');
-            topImage.src = './img/character1.png'; 
+            topImage.src = "./<%=profileBean.getProfilePicture()%>"
             topImage.style.position = 'absolute';
             topImage.style.width = '60px'; 
             topImage.style.height = '60px';

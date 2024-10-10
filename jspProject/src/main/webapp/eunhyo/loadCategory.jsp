@@ -174,7 +174,7 @@
 		            <!-- 카테고리 선택 드롭다운 -->
 		            <select name="categoryType" class="content-input">
 					    <option value="" disabled selected>카테고리를 선택해주세요.</option> <!-- 안내 문구 추가 -->
-					    <option value="홈">홈</option>
+					    <option value="홈" disabled>홈</option>
 					    <option value="프로필">프로필</option>
 					    <option value="미니룸">미니룸</option>
 					    <option value="게시판">게시판</option>
