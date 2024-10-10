@@ -40,20 +40,22 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
             position: relative;
         }
         .game-title {
-            width: 800px;
-            height: 2px;
+            width: 830px; /* 줄 길이 */
+            height: 1px;  /* 줄의 높이 */
             background-color: #BAB9AA;
-            margin: 0 auto;
+            
             position: relative;
-            margin-top: 0;
-            margin-bottom: 20px;
+            margin-top: 30px; /* 위쪽 여백 */
+            margin-bottom: 15px; /* 줄과 사각형 사이에 공간 추가 */
         }
         .game-title span {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            font-size: 35px;
-            color: #80A46F;
+           color: #80A46F;
+		   text-align: center;
+		   font-weight: 600;
+		   position: absolute;
+		   top: -50px;
+		   left: 0px;
+		   font-size: 40px;
         }
         .long-box-container {
             display: flex;
@@ -254,14 +256,15 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
         .popup-multiplier1 {
             font-size: 40px;
             font-weight: bold;
+            
         }
         /* 클로버 금액 */
         .clover-amount1 {
             font-size: 30px;
             color: green;
             position: absolute;
-            top: 20px;
-            right: 60px;
+            top: 30px;
+            right: 56px;
         }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

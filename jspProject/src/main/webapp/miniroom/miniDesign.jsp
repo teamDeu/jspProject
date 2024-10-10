@@ -46,15 +46,21 @@
 		display:flex;
 		justify-content:space-between;
 		align-items:center;
-		border-bottom : 2px solid #BAB9AA;
+		border-bottom : 1px solid #BAB9AA;
 		margin-bottom : 15px;
 		padding-bottom : 15px;
 	}
 	.miniroom_design_title{
 	    color: #80A46F;
-    text-align: center;
-    font-size: 36px;
-    font-weight: 600;
+	    text-align: center;
+	    font-size: 36px;
+	    font-weight: 600;
+	    top: 20px; 
+    	left: 48px; 
+    	display: inline-block;
+    	margin-top: -15px;
+    	margin-left: -10px;
+
 	}
 	.miniroom_design_main{
 		position:relative;
@@ -150,6 +156,7 @@
 		right:5px;
 	}
 	.index_button_left{
+	
 		left:5px;
 	}
 	.index_button_img{
@@ -158,19 +165,23 @@
 	.miniroom_saveBtn{
 		position: relative;
 	    border: none;
-	    font-size: 20px;
-	    border-radius: 10px;
-	    padding: 5px 10px;
+	    font-size: 28px;
+	    color: black;
+	    background: none;
+	    margin-top: -8px;
 	    cursor: pointer;
-}
 	}
-	.miniroom_saveBtn:hover{
-		background-color : #9B9B9B;
-	}
+	
+	
 	.miniroom_design_semi_title{
 		font-size:24px;
 		font-color :#80A46F;
 	}
+	
+	.miniroom_design_character_section hr{
+		border: 1px solid #BAB9AA;
+	}
+	
 </style>
 <script>
 	let characterIndex = 0;
@@ -226,7 +237,7 @@
 		</div>
 		<section class ="miniroom_design_character_section">
 			<font class = "miniroom_design_semi_title">내 캐릭터</font>
-			<hr color = "#BAB9AA" width = "100%"/>
+			<hr color = "#BAB9AA"  width = "100%"/>
 			<div class ="miniroom_design_character_div">
 				<button onclick ="clickPrevIndex('character')"class ="index_button index_button_left"><img class ="index_button_img" src ="./img/Left.png"></button>
 				<button onclick ="clickNextIndex('character')" class ="index_button index_button_right"><img class ="index_button_img" src ="./img/Right.png"></button>
