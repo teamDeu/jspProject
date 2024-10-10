@@ -111,6 +111,7 @@ try {
     position: absolute; 
     top: -5px; 
     left: 30px; 
+    
     display: inline-block;
 
   

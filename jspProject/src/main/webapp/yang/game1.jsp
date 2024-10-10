@@ -256,6 +256,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
         .popup-multiplier1 {
             font-size: 40px;
             font-weight: bold;
+            
         }
         /* 클로버 금액 */
         .clover-amount1 {

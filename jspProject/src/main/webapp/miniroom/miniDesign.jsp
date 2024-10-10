@@ -156,6 +156,7 @@
 		right:5px;
 	}
 	.index_button_left{
+	
 		left:5px;
 	}
 	.index_button_img{

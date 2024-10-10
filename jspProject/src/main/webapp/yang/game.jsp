@@ -170,6 +170,7 @@ try {
         }
 
 		.box-button {
+		
 		    padding: 5px 20px;
 		    font-size: 30px;
 		    background-color: white;

@@ -289,6 +289,7 @@ if (user_id != null) {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
+
     <div style="text-align: center; margin-top: 50px;">
         <div class="game-title">
             <span>돌림판게임</span>
