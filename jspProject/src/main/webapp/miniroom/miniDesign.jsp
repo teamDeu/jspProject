@@ -92,7 +92,7 @@
 		display:flex;
 		position:relative;
 		gap : 25px;
-		border : 1px dashed #8A8A8A;
+		border : 1px dashed #BAB9AA;
 		padding : 20px 40px;
 		border-radius:10px;
 		align-items:center;
@@ -119,7 +119,7 @@
 		display:flex;
 		align-items:center;
 		gap : 30px;
-		border : 1px dashed #8A8A8A;
+		border : 1px dashed #BAB9AA;
 		justify-content : space-around;
 		padding : 20px 40px;
 		border-radius:10px;

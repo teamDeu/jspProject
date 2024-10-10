@@ -28,9 +28,9 @@ if (user_id != null) {
         .wheel-container-wrapper {
             width: 700px;
             padding: 50px;
-            margin: 0 auto;
-            margin-bottom: 20px;
-            border: 3px solid #BAB9AA;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #BAB9AA;
             background-color: #f7f7f7;
             border-radius: 15px;
         }
@@ -281,7 +281,7 @@ if (user_id != null) {
 			font-size: 30px;
 			color: green;
 			position: absolute;
-			top: 20px;
+			top: 10px;
 			right: 60px;
 		}
 

@@ -61,6 +61,8 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	font-size: 18px;
 	border-radius: 10px;
 	margin-bottom: 5px;
+	border: 1px solid #BAB9AA;
+	background-color: #f7f7f7
 }
 
 .main_profile_main {

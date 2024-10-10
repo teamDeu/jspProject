@@ -13,15 +13,17 @@ body {
 }
 
 #miniroom {
-	display: flex;
-	align-items: flex-end;
-	justify-content: space-around;
-	width: 736px;
-	height: 359px;
-	border: 1px solid black;
-	border-radius: 10px;
-	z-index: 6;
-}
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-around;
+		width: 736px;
+		height: 359px;
+		border: none;
+		border-radius: 5px;
+		z-index: 5;
+		
+		
+	}
 
 #miniroom_background {
 	position: absolute;
@@ -30,6 +32,7 @@ body {
 	height: 359px;
 	z-index: 1;
 	border-radius: 10px;
+	border: 1px solid #BAB9AA;
 }
 
 #chatArea {
@@ -40,6 +43,7 @@ body {
 	display: flex;
 	align-items: center;
 	box-sizing: border-box;
+	border: 1px solid #BAB9AA;
 }
 
 .setting {
@@ -64,10 +68,20 @@ body {
 #inputArea {
 	width: 736px;
 	padding: 10px;
-	border: 1px solid black;
+	border: 1px solid #BAB9AA;
 	border-radius: 5px;
 	box-sizing: border-box;
 }
+
+.inputArea button {
+		font-family: 'NanumTobak', sans-serif;
+	    font-size: 18px;
+	    cursor: pointer;
+	    color: black;
+	    border: 1px solid #BAB9AA;
+	    background-color: #F7F7F7;
+
+	}
 
 @keyframes fadeout {
 
@@ -103,22 +117,23 @@ to {
 }
 
 #messageInput {
-	width: 500px;
+	width: 600px;
 	height: 20px;
 	font-size: 20px;
 	margin: 0px 10px;
+	border: 1px solid #BAB9AA;
 }
 
 #chatArea2 {
 	width: 736px;
-	height: 200px;
-	border: 1px solid black;
-	border-radius: 5px;
-	display: flex;
-	flex-direction: column;
-	background-color: #F2F2F2;
-	overflow-y: scroll;
-	margin: 10px 0px;
+    height: 200px;
+    border: 1px solid #BAB9AA;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    background-color: #F2F2F2;
+    overflow-y: scroll;
+    margin: 8px 0px;
 }
 
 .chat {
