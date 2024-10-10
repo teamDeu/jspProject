@@ -549,11 +549,10 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	    //댓글 로드 함수
 	    function bloadAnswers() {
 	    	
-	    	//var bwriteContent = document.querySelector(".bwrite-form").querySelector(".bwrite-content");
-	        
-	    	
+	        var bwriteContent = document.querySelector(".bwrite-form").querySelector(".bwrite-content");
+	        var boardNum = bwriteContent.id;
 	        var xhr = new XMLHttpRequest();
-	        xhr.open("GET", "../seyoung/bLatestPostComments.jsp?board_num=" + encodeURIComponent(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id), true);
+	        xhr.open("GET", "../seyoung/bLatestPostComments.jsp?board_num=" + boardNum, true);
 
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
@@ -688,7 +687,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
 	                document.getElementById("board-recentpost3").innerHTML = "| 최근게시물";
-	                console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
+	                //console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
 	                bloadAnswers(); // 댓글 로드
 	            }
 	        };

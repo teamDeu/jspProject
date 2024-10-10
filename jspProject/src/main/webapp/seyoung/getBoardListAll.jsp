@@ -10,9 +10,19 @@
 
 	String board_id = request.getParameter("board_id");
 	String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
+	
+	int currentPage = 1; // 기본값은 1페이지
+	int entriesPerPage = 12; // 한 페이지당 12개의 게시글
+	int totalPages = mgr.getTotalPages(board_id); // 총 페이지 수 계산
+	if (request.getParameter("page") != null) {
+	    currentPage = Integer.parseInt(request.getParameter("page"));
+	}
+
+	int startIndex = (currentPage - 1) * entriesPerPage;
 
     // 모든 게시글을 불러오기
-    Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); 
+    //Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); 
+    Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id, startIndex, entriesPerPage); 
 %>
 
 <% 

@@ -314,17 +314,19 @@ public class BoardWriteMgr {
     
 
     
-    // userId에 해당하는 사용자의 게시글 목록을 가져오는 메서드 추가
-    public Vector<BoardWriteBean> getBoardListByUser(String userId) {
+    // 특정 사용자에 해당하는 게시글 목록을 페이지 단위로 가져오는 메서드
+    public Vector<BoardWriteBean> getBoardListByUser(String userId, int startIndex, int entriesPerPage) {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         Vector<BoardWriteBean> boardList = new Vector<>();
         try {
             con = pool.getConnection();
-            String sql = "SELECT * FROM board WHERE board_id = ? ORDER BY board_at DESC";
+            String sql = "SELECT * FROM board WHERE board_id = ? ORDER BY board_at DESC LIMIT ?, ?";
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, userId);
+            pstmt.setInt(2, startIndex);
+            pstmt.setInt(3, entriesPerPage);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -348,6 +350,7 @@ public class BoardWriteMgr {
         }
         return boardList;
     }
+
     
     
     // 게시글 삭제 메서드 (댓글과 대댓글도 함께 삭제) (board.jsp)
@@ -435,6 +438,35 @@ public class BoardWriteMgr {
         }
         return board;
     }
+    
+    // 총 페이지 수를 계산하는 메서드
+    public int getTotalPages(String board_id) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int totalPages = 0;
+        int entriesPerPage = 12; // 한 페이지당 게시물 수 설정
+
+        try {
+            con = pool.getConnection();
+            String sql = "SELECT COUNT(*) FROM board WHERE board_id = ?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, board_id);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                int totalEntries = rs.getInt(1);
+                totalPages = (int) Math.ceil((double) totalEntries / entriesPerPage); // 페이지 수 계산
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+
+        return totalPages;
+    }
+
 
     
     

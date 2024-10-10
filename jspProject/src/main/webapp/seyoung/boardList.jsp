@@ -11,9 +11,21 @@ String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 String folderName = request.getParameter("folderName");
 
+int currentPage = 1; // 기본값은 1페이지
+int entriesPerPage = 12; // 한 페이지당 12개의 게시글
+int totalPages = mgr.getTotalPages(board_id); // 총 페이지 수 계산
+if (request.getParameter("page") != null) {
+    currentPage = Integer.parseInt(request.getParameter("page"));
+}
+
+int startIndex = (currentPage - 1) * entriesPerPage;
+
 BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 
-Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); // 사용자 ID에 맞는 게시글 목록 가져오기
+//지정된 페이지의 게시글 목록을 가져오기
+Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id, startIndex, entriesPerPage); 
+
+//Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); // 사용자 ID에 맞는 게시글 목록 가져오기
 %>
 
 <!DOCTYPE html>
@@ -70,8 +82,8 @@ Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); // 사�
     background-color: #F7F7F7;
     border: 1px solid #BAB9AA;
     width: 820px;
-    height: 570px; 
-    margin-top:20px;
+    height: 601px; 
+    margin-top:90px;
 }
 
 .board-table {
@@ -262,6 +274,32 @@ td a {
     width: 25px; 
     height: 25px; 
 }
+
+
+
+ /* 페이징 버튼 스타일 */
+    #paginationButtons {
+        position: relative;
+        bottom: 20px;
+        text-align: center;
+    }
+
+    .pagination-button {
+        background-color: #ffffff;
+        color: #000000;
+        border: 1px solid #DCDCDC;
+        border-radius: 5px;
+        padding: 5px 10px;
+        margin: 0 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .guestbook-active {
+        background-color: #DCDCDC;
+        color: #000000;
+        margin-top: 40px;
+    }
 </style>
 
 
@@ -298,6 +336,16 @@ td a {
                             </tbody>
                         </table>
                     </div>
+                    
+                    <!-- 페이징 버튼 -->
+				    <div id="paginationButtons">
+				        <% for (int i = 1; i <= totalPages; i++) { %>
+				            <button type="button" class="pagination-button <%= (i == currentPage) ? "guestbook-active" : "" %>"
+				                    onclick="location.href='<%=request.getContextPath()%>/seyoung/boardList.jsp?page=<%=i%>'">
+				                <%= i %>
+				            </button>
+				        <% } %>
+    				</div>
                     </form>     
     
     <script>     

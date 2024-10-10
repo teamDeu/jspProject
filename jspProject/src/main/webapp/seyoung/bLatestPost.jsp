@@ -43,10 +43,11 @@
                 // 친구 관계 확인 후 friend_type이 1인지 추가 확인
                 Vector<FriendInfoBean> friendList = fmgr.getFriendList(userId);
                 for (FriendInfoBean friend : friendList) {
-                    if (friend.getUser_id2().equals(latestBoard.getBoard_id()) && friend.getFriend_type() == 1) {
-                        canView = true;
-                        break;
-                    }
+                	if ((friend.getUser_id1().equals(userId) && friend.getUser_id2().equals(latestBoard.getBoard_id()) && friend.getFriend_type() == 1) || 
+                       (friend.getUser_id2().equals(userId) && friend.getUser_id1().equals(latestBoard.getBoard_id()) && friend.getFriend_type() == 1)) {
+                       canView = true;
+                       break;
+                   }
                 }
             }
         }

@@ -224,7 +224,7 @@ if (latestBoard != null) {
         <div class="Prohibited">댓글 비허용 글입니다.</div>
     <% } else { 
         // 댓글이 있을 경우 처리
-        if (answers != null && answers.size() > 0 && latestBoard != null && userId != null && userId.equals(latestBoard.getBoard_id())) { %>
+        if (answers != null && answers.size() > 0 && latestBoard != null && userId != null) { %>
             <% for (BoardAnswerBean answer : answers) { 
                 Vector<BoardReAnswerBean> reanswerList = rMgr.getReAnswerList(answer.getAnswerNum());
                 GuestbookprofileBean pBean = pMgr.getProfileByUserId(answer.getAnswerId());  // 작성자 프로필 정보 가져오기
