@@ -1,3 +1,4 @@
+<%@page import="miniroom.UtilMgr"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="Category.CategoryBean"%>
 <%@page import="java.util.List"%>
@@ -17,6 +18,10 @@
    // 세션에서 idKey 가져오기
    String id = (String)session.getAttribute("idKey");
    String category = request.getParameter("category");
+   int alarmNum = 0;
+   if(request.getParameter("alarmNum") != null && request.getParameter("alarmNum") != ""){
+	   alarmNum = UtilMgr.parseInt(request, "alarmNum");
+   }
    if(id == null){
       response.sendRedirect("../pjh/login.jsp");
       return;
@@ -619,6 +624,9 @@ function mainCategoryLoad(){
         	mainCategoryLoad();
         	if(section != "null"){
         		clickOpenBox(section);
+        		if(section == "board"){
+        			clickBoard_boardNum(<%=alarmNum%>);
+        		}
         	}
         });
         
