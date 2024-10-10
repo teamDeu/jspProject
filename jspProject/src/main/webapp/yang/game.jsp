@@ -117,13 +117,13 @@ try {
         }
 
         .game-title {
-            width: 800px; /* 줄 길이 */
-            height: 2px;  /* 줄의 높이 */
+            width: 830px; /* 줄 길이 */
+            height: 1px;  /* 줄의 높이 */
             background-color: #BAB9AA;
-            margin: 0 auto;
+            
             position: relative;
-            margin-top: 0; /* 위쪽 여백 */
-            margin-bottom: 20px; /* 줄과 사각형 사이에 공간 추가 */
+            margin-top: 30px; /* 위쪽 여백 */
+            margin-bottom: 15px; /* 줄과 사각형 사이에 공간 추가 */
         }
         
         .game-title span {
@@ -132,8 +132,9 @@ try {
 		   font-size: 36px;
 		   font-weight: 600;
 		   position: absolute;
-		   top: 20px;
-		   left: 30px;
+		   top: -50px;
+		   left: 0px;
+		   font-size: 36px;
         }
 
         .box-image {
@@ -192,7 +193,7 @@ try {
 			font-size: 30px;
 			color: green;
 			position: absolute;
-			top: 20px;
+			top: 30px;
 			right: 60px;
 		}
     </style>

@@ -40,13 +40,14 @@
         }
 
         .profile-header-custom {
-           color: #80A46F;
-		   text-align: center;
-		   font-size: 36px;
-		   font-weight: 600;
-		   position: absolute;
-		   top: 20px;
-		   left: 30px;
+            color: #80A46F;
+		    text-align: center;
+		    font-size: 36px;
+		    font-weight: 600;
+		    position: absolute;
+		    top: 25px;
+		    left: 30px;
+		    display: inline-block;
 		}
 
         .profile-details-custom {
@@ -58,7 +59,7 @@
         .profile-image-custom {
             width: 400px;
             height: 340px;
-            border: 2px solid #BAB9AA;
+            border: 1px solid #BAB9AA;
             overflow: hidden;
             margin-right: 20px;
             text-align: center;
@@ -78,26 +79,26 @@
 
         .profile-image-custom label {
             position: absolute;
-            right: 10px;
-            bottom: 10px;
-            background-color: #DCDCDC;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-family: 'NanumTobak';
-            cursor: pointer;
-            font-size: 24px;
+		    right: 10px;
+		    bottom: 10px;
+		    background-color: #DCDCDC;
+		    color: #000000;
+		    padding: 5px 10px;
+		    border-radius: 10px;
+		    font-family: 'NanumTobak';
+		    cursor: pointer;
+		    font-size: 22px;
         }
 
         .profile-info-custom {
-            border: 2px dashed #BAB9AA;
-            padding: 10px;
-            border-radius: 20px;
-            position: relative;
-            font-family: 'NanumTobak';
-            width: 451px;
-            height: 320px;    
-            font-size: 36px;
+            border: 1px dashed #BAB9AA;
+		    padding: 10px;
+		    border-radius: 10px;
+		    position: relative;
+		    font-family: 'NanumTobak';
+		    width: 380px;
+		    height: 320px;
+		    font-size: 30px;
         }
 
         .profile-info-custom .info-row {
@@ -118,7 +119,7 @@
             outline: none;
             background-color: transparent;
             font-family: 'NanumTobak';
-            font-size: 36px;
+            font-size: 33px;
             width: 100%;
         }
 
@@ -132,41 +133,46 @@
             font-family: 'NanumTobak';
         }
 
+		.profile-status-message-custom label{
+            font-size: 22px;
+            color: #80A46F;
+        }
+
+	
         .profile-status-message-custom textarea {
             width: 95%;
-            height: 150px;
-            border: 2px solid #BAB9AA;
-            padding: 10px;
-            border-radius: 20px;
-            resize: none;
-            font-family: 'NanumTobak';
-            font-size: 34px;
+		    height: 150px;
+		    margin-top: 10px;
+		    border: 1px solid #BAB9AA;
+		    padding: 10px;
+		    border-radius: 10px;
+		    resize: none;
+		    font-family: 'NanumTobak';
+		    font-size: 30px;
         }
 
         .profile-btn-custom {
             display: inline-block;
-            padding: 2px 10px;
-            background-color: #DCDCDC;
-            color: white;
-            text-align: center;
-            border-radius: 20px;
-            text-decoration: none;
-            margin-top: 10px;
-            font-family: 'NanumTobak';
-            font-size: 24px;
-            position: relative;
-            right: -91%;
+		    padding: 3px 15px;
+		    background-color: #DCDCDC;
+		    text-align: center;
+		    border-radius: 10px;
+		    text-decoration: none;
+		    margin-top: 10px;
+		    font-family: 'NanumTobak';
+		    font-size: 24px;
+		    position: relative;
+		    right: -91%;
+		    border: none;
         }
 
-        .profile-btn-custom:hover {
-            background-color: #45a049;
-        }
+        
         .profile-line {
-		   border-bottom: 2px solid #BAB9AA; /* 실선 색상 및 두께 */
-		   width: 96%; /* 실선의 너비 */
-		   position: absolute;
-		   top: 70px;
-		   left: 18px;
+		    border-bottom: 1px solid #BAB9AA;
+		    width: 93%;
+		    position: absolute;
+		    top: 80px;
+		    left: 18px;
 		}
     </style>
 </head>

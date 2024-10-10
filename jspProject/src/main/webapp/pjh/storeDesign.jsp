@@ -103,24 +103,27 @@ try {
 
 /* 상점 제목 */
 .store-title {
+
     color: #80A46F; 
     text-align: center; 
     font-size: 36px; 
     font-weight: 600; 
     position: absolute; 
-    top: 0px; 
+    top: -5px; 
     left: 30px; 
     display: inline-block;
+
+  
 }
 
 
 /* 클로버 금액 */
 .clover-amount {
-    font-size: 20px;
+    font-size: 30px;
     color: green;
     position: absolute;
-    top: -10px;
-    right: 60px;
+    top: 0px;
+    right: 49px;
 }
 
 /* 카테고리 탭 */
@@ -140,11 +143,14 @@ try {
     font-size: 20px;
     color: black;
     transition: color 0.3s ease;
-    border-right: 1px solid #BAB9AA;
+    border: 1px solid #BAB9AA;
+    border-bottom: none;
+    border-right: none;
+    
 }
 
-.nav-tabs li:last-child {
-    border-right: none;
+.nav-tabs li:last-child{
+    border-right:1px solid #BAB9AA;
 }
 
 .nav-tabs li.active {
@@ -240,7 +246,7 @@ try {
 /* 페이지네이션 */
 .store-pagination {
     position: absolute;
-    bottom: 0; /* 하단에 고정 */
+    bottom: -12px; /* 하단에 고정 */
     left: 50%;
     transform: translateX(-50%);
     display: flex;
