@@ -103,22 +103,20 @@ try {
 
 /* 상점 제목 */
 .store-title {
-    font-size: 36px;
-    color: #80A46F;
-    font-weight: bold;
-    text-align: left;
-    margin-bottom: 10px;
-    position: absolute;
-    top: -20px;
-    left: 20px;
-    padding: 10px;
-    padding-bottom: 0px;
+    color: #80A46F; 
+    text-align: center; 
+    font-size: 36px; 
+    font-weight: 600; 
+    position: absolute; 
+    top: 0px; 
+    left: 30px; 
+    display: inline-block;
 }
 
 
 /* 클로버 금액 */
 .clover-amount {
-    font-size: 18px;
+    font-size: 20px;
     color: green;
     position: absolute;
     top: -10px;
@@ -132,15 +130,15 @@ try {
     list-style: none;
     padding: 0;
     margin-bottom: 20px;
-    margin-top: 30px;
-    border-bottom: 2px solid #BAB9AA;
+    margin-top: 40px;
+    border-bottom: 1px solid #BAB9AA;
 }
 
 .nav-tabs li {
-    padding: 10px 30px;
+    padding: 5px 30px;
     cursor: pointer;
-    font-size: 18px;
-    color: #888;
+    font-size: 20px;
+    color: black;
     transition: color 0.3s ease;
     border-right: 1px solid #BAB9AA;
 }
@@ -150,8 +148,8 @@ try {
 }
 
 .nav-tabs li.active {
-    color: green;
-    border-bottom: 2px solid green;
+    
+    background-color: #e3e3e3;
 }
 /* 인기순, 가격순, 클로버 충전 */
 .sort-options {
@@ -170,9 +168,9 @@ try {
 .sort-buttons span {
     font-size: 18px;
     cursor: pointer;
-    color: #888;
+    color: black;
     padding: 0 10px;
-    border-left: 1px solid #ccc;
+    border-left: 1px solid #BAB9AA;
 }
 
 .sort-buttons span:first-child {
@@ -184,12 +182,13 @@ try {
 }
 
 .search button {
-    padding: 10px 20px;
+    padding: 5px 20px;
     background-color: #C0E5AF;
     border: none;
     color: white;
     cursor: pointer;
-    border-radius: 20px;
+    border-radius: 10px;
+    font-size: 18px;
 }
 /* 상품 목록 */
 .items-container {
@@ -197,7 +196,7 @@ try {
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     padding: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid #BAB9AA;
     min-height: 300px;
 }
 
@@ -207,7 +206,7 @@ try {
     padding: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    border: 1px solid #ccc;
+    border: 1px solid #BAB9AA;
 }
 
 .product-img {
