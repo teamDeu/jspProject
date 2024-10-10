@@ -119,23 +119,27 @@
         }
         
         /*정현이형 여기가!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-        .center-buttons {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .center-buttons button {
-            padding: 10px;
-            margin: 0 5px;
-            border: none;
-            background-color: #80A46F;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 12px;
-        }
+		.center-buttons {
+		    position: absolute;
+		    bottom: 0; /* 하단에 고정 */
+		    left: 50%;
+		    transform: translateX(-50%);
+		    display: flex;
+		    justify-content: center;
+		    align-items: center;
+		    background-color: #C0E5AF;
+		    border-radius: 30px;
+		    padding: 1px 10px;
+		    gap: 5px;
+		}
+		.center-buttons span {
+			padding: 10px;
+			cursor: pointer;
+		}
+		
+		.center-buttons span.active {
+			color: red;
+		}
         /*페이징 css코드에요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
         .top-right-buttons {
@@ -234,7 +238,7 @@
     </style>
 
     <script>
-    let currentIndex = 0;
+    let currentIndex = 1;
     let selectedSongs = [];
     let selectedItemName = "";
     const pageSize = 10;
@@ -250,7 +254,7 @@
     const audioPlayer = document.getElementById('audioPlayer');
     const titleElement = document.querySelector('.title');
     const artistElement = document.querySelector('.artist');
-
+	
     if (savedSong && savedTime) {
         // 이전에 저장된 노래 정보 및 시간 불러오기
         audioPlayer.src = savedSong;
@@ -264,7 +268,26 @@
 
         // Unmute the audio after starting
         audioPlayer.muted = false;
+        updateMusicPagination();
 	})
+	
+	function updateMusicPagination() {
+    const allLines = document.querySelectorAll('.line');
+    const totalPages = Math.ceil(allLines.length / pageSize);
+    const paginationContainer = document.querySelector('#center-buttons');
+    paginationContainer.innerHTML = ''; // 기존 페이지네이션 제거
+
+    for (let i = 1; i <= totalPages; i++) {
+        const pageSpan = document.createElement('span');
+        pageSpan.textContent = i;
+        pageSpan.classList.add('page-span'); // 페이지 번호에 공통 클래스 추가
+        pageSpan.onclick = () => showPage(i); // 페이지 클릭 이벤트 핸들러 추가
+        paginationContainer.appendChild(pageSpan);
+    }
+
+    // 현재 페이지에 active 클래스 추가
+    updateActivePage(currentIndex);
+}
 	
 	function showPlaylist(playlistId) {
 	    // 모든 big-box를 숨김
@@ -388,16 +411,29 @@
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////정현이형
         function showPage(page) {
-            const allLines = document.querySelectorAll('.line');
-            allLines.forEach(line => line.style.display = 'none');
+		    const allLines = document.querySelectorAll('.line');
+		    allLines.forEach(line => line.style.display = 'none');
+		
+		    const start = (page - 1) * pageSize;
+		    const end = start + pageSize;
+		
+		    for (let i = start; i < end && i < totalItems; i++) {
+		        allLines[i].style.display = 'flex';
+		    }
+		
+		    // 현재 페이지를 업데이트하고 active 클래스 적용
+		    currentIndex = page;
+		    updateActivePage(page);
+		}
 
-            const start = (page - 1) * pageSize;
-            const end = start + pageSize;
-
-            for (let i = start; i < end && i < totalItems; i++) {
-                allLines[i].style.display = 'flex';
-            }
-        }
+		
+		function updateActivePage(page) {
+		    const allPageSpans = document.querySelectorAll('.page-span');
+		    allPageSpans.forEach(span => {
+		        span.classList.remove('active');
+		    });
+		    allPageSpans[page - 1].classList.add('active');
+		}
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////여기가 페이징 하는 함수에요
 			
 
@@ -582,6 +618,8 @@
 	        };
 	        xhr.send("user_id=" + encodeURIComponent(user_id) + "&item_name=" + encodeURIComponent(item_name) + "&playlist=" + encodeURIComponent(playlist));
 	    }
+	    
+
     </script>
     
     
@@ -724,12 +762,11 @@
             
         </div>
         <!-- 정현이형!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-        <div class="center-buttons">
-            <button onclick="showPage(1)">1</button>
-            <button onclick="showPage(2)">2</button>
-            <button onclick="showPage(3)">3</button>
-            <button onclick="showPage(4)">4</button>
-        </div>
+		<!-- 페이지네이션 -->
+		<div style ="display:flex ; align-items:center">
+			<div id ="center-buttons" class="center-buttons">
+			</div>
+		</div>
         <!-- 페이지버튼이에요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
         
         
