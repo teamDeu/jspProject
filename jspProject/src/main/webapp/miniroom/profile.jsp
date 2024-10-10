@@ -282,15 +282,26 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 		<hr width="100%" color="#BAB9AA" style="margin: 10px 0px">
 		
 		<div class="music-player" style="width: 100%; height: 75px; background-color: #f1f3f4; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 5px; box-sizing: border-box; margin: auto; margin-top: 2px;">
-	        <div class="song-info" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 30px;">
-	            <div class="title" style="font-size: 20px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;margin-bottom: -25px;">곡명</div>
-	            <div class="artist" style="font-size: 16px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;margin-bottom: -25px;">아티스트</div>
-	        </div>
-	        <audio id="audioPlayer" controls autoplay muted style="width: 100%; height: 40px;">
-	            <source type="audio/mp3">
-	        </audio>
-	    </div>
+		    <div class="song-info" style="display: flex; justify-content: flex-start; align-items: center; width: 100%;">
+		        <!-- 곡명과 아티스트를 따로 왼쪽으로 보내기 위해 개별 margin-left 설정, margin-top 조정 -->
+		        <div class="left-info" style="display: flex; flex-direction: column; align-items: flex-start; margin-top: -5px;"> <!-- 위로 올리기 -->
+		            <div class="title" style="font-size: 20px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-left: -10px; margin-top: -5px;">곡명</div>
+		            <div class="artist" style="font-size: 16px; font-weight: bold; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-left: 10px; margin-top: -3px;">아티스트</div> <!-- 위로 올림 -->
+		        </div>
 		
+		        <!-- 오른쪽에 이미지 버튼 추가 -->
+		        <div class="control-buttons" style="display: flex; align-items: center; margin-left: auto; ">
+		            <img src="../yang/img/presong.png" alt="이전 곡" onclick="playPreviousSong()" style="width: 15px; height: 15px; cursor: pointer; margin-right: 5px; margin-top: 12px;">
+		            <img src="../yang/img/nextsong.png" alt="다음 곡" onclick="playNextSong()" style="width: 15px; height: 15px; cursor: pointer; margin-top: 12px;">
+		        </div>
+		    </div>
+		
+		    <!-- 음악 재생 컨트롤 -->
+		    <audio id="audioPlayer" controls autoplay muted style="width: 100%; height: 40px; margin-top: 5px;">
+		        <source type="audio/mp3">
+		    </audio>
+		</div>
+				
 		<div class="main_profile_friends_main_div" style="margin-top:10px">
 			<div class="main_profile_friends_search_div">
 				<input class ="main_profile_friends_search_text" type="text" placeholder="닉네임을 입력해주세요.">

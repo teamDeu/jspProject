@@ -669,7 +669,9 @@ function mainCategoryLoad(){
                </jsp:include>
             </div>
             <div id = "musicInnerBox" class="inner-box-1" style = "display :none">
-               <jsp:include page="../yang/music_side.jsp"></jsp:include>
+               <jsp:include page="../yang/music_side.jsp">
+               	<jsp:param value="<%=url %>" name="music_id"/>
+               </jsp:include>
             </div>
             <!-- 이미지가 박스 -->
             <div class="image-box">
@@ -716,8 +718,11 @@ function mainCategoryLoad(){
                </jsp:include>
             </div>
             <div id="music" class="inner-box-2" style="display: none">
-               <jsp:include page="../yang/music1.jsp"></jsp:include>
+               <jsp:include page="../yang/music1.jsp">
+               <jsp:param value="<%= url %>" name="music_id"/>
+               </jsp:include>
             </div>
+
          </div>
          <!-- 버튼 -->
          <div class="button-container">
