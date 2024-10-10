@@ -10,11 +10,21 @@
 String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 String folderName = request.getParameter("folderName");
-System.out.println("boardList 폴더명 : " + folderName);
+
+int currentPage = 1; // 기본값은 1페이지
+int entriesPerPage = 12; // 한 페이지당 12개의 게시글
+int totalPages = mgr.getTotalPages(board_id); // 총 페이지 수 계산
+if (request.getParameter("page") != null) {
+    currentPage = Integer.parseInt(request.getParameter("page"));
+}
+
+int startIndex = (currentPage - 1) * entriesPerPage;
 
 BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 
-Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); // 사용자 ID에 맞는 게시글 목록 가져오기
+//지정된 페이지의 게시글 목록을 가져오기
+Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id, startIndex, entriesPerPage); 
+
 %>
 
 <!DOCTYPE html>
@@ -71,8 +81,8 @@ Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); // 사�
     background-color: #F7F7F7;
     border: 1px solid #BAB9AA;
     width: 820px;
-    height: 570px; 
-    margin-top:20px;
+    height: 601px; 
+    margin-top:90px;
 }
 
 .board-table {
@@ -263,17 +273,47 @@ td a {
     width: 25px; 
     height: 25px; 
 }
+
+
+
+ /* 페이징 버튼 스타일 */
+    #paginationButtons {
+        position: relative;
+        bottom: 20px;
+        text-align: center;
+    }
+
+    .pagination-button {
+        background-color: #ffffff;
+        color: #000000;
+        border: 1px solid #DCDCDC;
+        border-radius: 5px;
+        padding: 5px 10px;
+        margin: 0 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .board-active {
+        background-color: #DCDCDC;
+        color: #000000;
+        margin-top: 40px;
+    }
 </style>
+
+
+
+
 </head>
 
-<div class = "bListForm">
+<form  class = "bListForm" action="../seyoung/bDelProc.jsp" method="post" onsubmit="return bdelList();">
                     <h1 class="board-title">게시판 </h1>
                     <h2 class="board-recentpost" id="board-recentpost"></h2>
 
                     <div class="button-group">
                         <button onclick = "delbList()" type="button" class="delete-button2">삭제</button>
                          <button onclick ="clickOpenBox('boardWrite')" type="button" class="write-button">작성</button>
-                        </a>
+                        
                     </div>
                     <div class="boardlist-line"></div>
                     <div class="board-box">
@@ -295,7 +335,13 @@ td a {
                             </tbody>
                         </table>
                     </div>
-                    </div>     
+                    
+                    <!-- 페이징 버튼 -->
+				    <div id="paginationButtons">
+				    
+    				</div>
+                    </form>     
+    
     <script>     
     
     var folderName = '<%= folderName %>';
@@ -310,7 +356,59 @@ td a {
         }
     }
 	
-	
+    function updateBoardPaginationButtons(totalPages, currentPage) {
+        var paginationContainer = document.getElementById("paginationButtons");
+        paginationContainer.innerHTML = ""; // 기존 버튼 초기화
+		
+        console.log("Board Total pages:", totalPages);
+        console.log("Board current pages:", totalPages);
+        
+        for (var i = 1; i <= totalPages; i++) {
+            var button = document.createElement("button");
+            button.textContent = i;
+            button.classList.add('pagination-button');
+
+            button.disabled = false; // 모든 페이지 버튼 활성화
+            button.onclick = (function(pageNumber) {
+                return function() {
+                	loadBoardListByPage(pageNumber); // 클릭 시 해당 페이지 로드
+                };
+            })(i);
+
+            if (i === currentPage) {
+                button.classList.add('board-active'); // 현재 페이지 스타일 추가
+            }
+
+            paginationContainer.appendChild(button);
+        }
+
+        // 현재 페이지가 마지막 페이지일 때
+        if (currentPage === totalPages) {
+            // 마지막 페이지 항목 수가 2개 이상일 경우
+            if (entriesLength < 3) {
+                // 이전 페이지 버튼은 활성화
+                paginationContainer.childNodes.forEach(function(btn) {
+                    if (btn.textContent === (currentPage - 1).toString()) {
+                        btn.disabled = false;
+                    }
+                });
+            }
+        }
+    }
+    
+    // 새롭게 정의된 loadBoardListByPage 함수
+    function loadBoardListByPage(page) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "../seyoung/getBoardList.jsp?page="+page +"&folderNum" + currentFolderNum, true); // 서버에서 데이터를 가져올 경로 설정
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // 응답으로 받은 게시글 목록을 페이지에 반영
+                document.getElementById("board-list-body").innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send();
+    }
+
 	
     // 게시글 삭제 함수 (AJAX 사용)
     function delbList() {
@@ -341,9 +439,9 @@ td a {
                     alert("게시글이 삭제되었습니다.");
                     
                  
-                 
-                    loadBoardList(selectedFolderItem.getAttribute("data-folder-num"));
-                    //console.log(selectedFolderItem.getAttribute("data-folder-num"));
+                    var folderNum = selectedFolderItem.getAttribute("data-folder-num");
+                    loadBoardList(folderNum);
+                    
                     
                     loadLatestPost();
                     
@@ -357,7 +455,7 @@ td a {
         xhr.send("boardNums=" + encodeURIComponent(selectedIds.join(',')));
  
         return false; // 폼 제출 방지 (페이지 새로고침 방지)
-    
+    }
         
     
 
@@ -376,7 +474,6 @@ td a {
 
     
 </script>
-
 
 </html>
 

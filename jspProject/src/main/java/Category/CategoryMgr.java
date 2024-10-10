@@ -105,15 +105,18 @@ public class CategoryMgr {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         boolean success = false;
-
+        int currentIndex = getIndex(category.getUserId(),category.getCategoryType());
+        System.out.println(currentIndex);
+        
         String updateSql = "UPDATE category SET category_name = ?, category_secret = ?, category_index = ? WHERE user_id = ? AND category_type = ?";
-
+        if(category.getCategoryIndex() == 1) {
+        	return false;
+        }
         try {
             conn = pool.getConnection();
+            updateIndex(category.getUserId(),category.getCategoryIndex(),currentIndex);
             
-            // 먼저 중복된 index가 있는지 체크하고, 중복이 있으면 해당 index 이후의 모든 카테고리의 인덱스를 1씩 증가시킴
-            adjustCategoryIndexes(category.getUserId(), category.getCategoryIndex());
-            
+
             // 카테고리 업데이트 쿼리 실행
             pstmt = conn.prepareStatement(updateSql);
             pstmt.setString(1, category.getCategoryName());
@@ -125,7 +128,7 @@ public class CategoryMgr {
 
             System.out.println("Number of rows updated: " + count); // 로그 출력
             success = (count > 0);
-
+            
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -136,73 +139,6 @@ public class CategoryMgr {
         return success;
     }
 
-
- // 중복된 category_index가 있는 경우 모든 카테고리의 인덱스를 재정렬하는 메서드
-    private void adjustCategoryIndexes(String userId, int startIndex) throws Exception {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = pool.getConnection();
-
-            // 주어진 index보다 큰 모든 카테고리들의 index를 재정렬 (중복 방지)
-            String sql = "UPDATE category SET category_index = category_index + 1 WHERE user_id = ? AND category_index >= ?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, userId);
-            pstmt.setInt(2, startIndex);
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new Exception("DB Update Failed"); // 예외 발생 시 처리
-        } finally {
-            pool.freeConnection(conn, pstmt, rs); // Connection 반환
-        }
-    }
- // 카테고리 삭제 후 남은 카테고리들의 index를 재정렬하는 메서드
-    private void reorderCategoryIndexes(String userId) throws Exception {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = pool.getConnection();
-
-            // 유저의 모든 카테고리를 index 순으로 가져옴
-            String selectSql = "SELECT category_type, category_name FROM category WHERE user_id = ? ORDER BY category_index ASC";
-            pstmt = conn.prepareStatement(selectSql);
-            pstmt.setString(1, userId);
-            rs = pstmt.executeQuery();
-
-            // 카테고리 인덱스를 1부터 재설정
-            int newIndex = 1;
-            while (rs.next()) {
-                String categoryType = rs.getString("category_type");
-                String categoryName = rs.getString("category_name");
-
-                // 인덱스를 1씩 증가시키며 업데이트
-                String updateSql = "UPDATE category SET category_index = ? WHERE user_id = ? AND category_type = ? AND category_name = ?";
-                PreparedStatement updatePstmt = conn.prepareStatement(updateSql);
-                updatePstmt.setInt(1, newIndex++);
-                updatePstmt.setString(2, userId);
-                updatePstmt.setString(3, categoryType);
-                updatePstmt.setString(4, categoryName);
-                updatePstmt.executeUpdate();
-                updatePstmt.close();
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new Exception("DB Update Failed"); // 예외 발생 시 처리
-        } finally {
-            pool.freeConnection(conn, pstmt, rs); // Connection 반환
-        }
-    }
-
-
-
-        
     // Delete Category
     public boolean deleteCategory(String userId, String categoryType, String categoryName) {
         Connection conn = null;
@@ -217,9 +153,6 @@ public class CategoryMgr {
             pstmt.setString(3, categoryName);
             int count = pstmt.executeUpdate();
 
-            // 카테고리 삭제 후 남은 카테고리 인덱스를 재정렬
-            reorderCategoryIndexes(userId);
-
             System.out.println("Number of rows deleted: " + count); // 추가 로그
             return count > 0;
         } catch (SQLException e) {
@@ -231,7 +164,6 @@ public class CategoryMgr {
         }
         return false;
     }
-
 
 
     // 카테고리 리스트
@@ -311,22 +243,55 @@ public class CategoryMgr {
 		return maxIndex;
     }
     
-    public void updateIndex(String user_id,int index) {
+    public void updateIndex(String user_id,int changeIndex , int currentIndex) {
     	Connection con = null;
 		PreparedStatement pstmt = null;
 		String sql = "";
 		try {
 			con = pool.getConnection();
-			sql = "update category set category_index = category_index + 1 where category_index >= ? and user_id = ?";
+			if(currentIndex > changeIndex) {
+				sql = "update category set category_index = category_index + 1 where category_index >= ? and user_id = ? and category_index < ?";
+			}
+			else if(currentIndex < changeIndex){
+				sql = "update category set category_index = category_index -1 where category_index <= ? and user_id = ? and category_index > ?";
+			}
+			else {
+				return;
+			}
 			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, index);
+			pstmt.setInt(1, changeIndex);
 			pstmt.setString(2, user_id);
+			pstmt.setInt(3, currentIndex);
 			pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			pool.freeConnection(con, pstmt);
 		}
+    }
+    
+    public int getIndex(String user_id,String category_type) {
+    	Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		int index = 0;
+		try {
+			con = pool.getConnection();
+			sql = "select category_index from category where user_id = ? and category_type = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, user_id);
+			pstmt.setString(2, category_type);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				index = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return index;
     }
     public static void main(String[] args) {
 		MemberMgr mgr = new MemberMgr();

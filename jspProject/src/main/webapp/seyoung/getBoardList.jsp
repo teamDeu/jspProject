@@ -6,17 +6,12 @@
 <%@ page import="board.BoardWriteBean"%>
 <%@ page import="java.util.Vector"%>
 <html>
-<head>
-	<script>
-	
-	</script>
-</head>
+
 
 
 <%
     
     String folderName = request.getParameter("folderName"); // 폴더 이름 받기
-    System.out.println("getBoardList 폴더 이름: " + folderName);
     
     int folderNum = 0;
     try {
@@ -24,10 +19,26 @@
     } catch (NumberFormatException e) {
         folderNum = 0;
     }
+    
+    int currentPage = 1; // 기본값은 1페이지
+    int entriesPerPage = 12; // 한 페이지당 12개의 게시글
+    String pageParam = request.getParameter("page");
+    if (pageParam != null && !pageParam.isEmpty()) {
+        try {
+            currentPage = Integer.parseInt(pageParam);
+        } catch (NumberFormatException e) {
+            currentPage = 1; // 페이지 번호가 잘못된 경우 기본값으로 설정
+        }
+    }
+
+    int startIndex = (currentPage - 1) * entriesPerPage;
+    
+    BoardWriteMgr boardMgr = new BoardWriteMgr();
+    int totalPages = boardMgr.getTotalPagesByFolder(folderNum, entriesPerPage); // 총 페이지 수 계산
 
     if (folderNum > 0) {
-        BoardWriteMgr boardMgr = new BoardWriteMgr();
-        Vector<BoardWriteBean> boardList = boardMgr.getBoardList(folderNum);
+        
+        Vector<BoardWriteBean> boardList = boardMgr.getBoardList(folderNum, startIndex, entriesPerPage);
 
         if (boardList != null && boardList.size() > 0) {
             for (BoardWriteBean board : boardList) {
@@ -41,11 +52,10 @@
                 }
 %>
 
-                <tr>
-                
+                <tr class ="boardlist_item">
                     <td><input type="checkbox" name="boardNum" value="<%= board.getBoard_num() %>"></td>
                     <td>
-                        <button onclick="clickBoard_boardNum('<%= board.getBoard_num() %>')"><%= board.getBoard_title() %></button>
+                        <span onclick="clickBoard_boardNum('<%= board.getBoard_num() %>')"><%= board.getBoard_title() %></span>
                     </td>
                     <td><%= board.getBoard_id() %></td>
                     <td><%= formattedDate %></td>
@@ -69,3 +79,16 @@
     }
 %>
 </html>
+
+<script>
+	function loadBoardListByPage(folderNum, page) {
+	    var xhr = new XMLHttpRequest();
+	    xhr.open("GET", `../seyoung/getBoardList.jsp?folderNum=${folderNum}&page=${page}`, true);
+	    xhr.onreadystatechange = function () {
+	        if (xhr.readyState === 4 && xhr.status === 200) {
+	            document.getElementById("board-list-body").innerHTML = xhr.responseText;
+	        }
+	    };
+	    xhr.send();
+	}
+</script>

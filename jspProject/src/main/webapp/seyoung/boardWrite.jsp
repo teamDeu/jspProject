@@ -1,3 +1,4 @@
+<%@page import="java.util.Vector"%>
 <%@page import="board.BoardWriteBean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -16,6 +17,8 @@ String folderName = request.getParameter("folderName"); // 폴더 이름 받기
 
 BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
 
+Vector<BoardWriteBean> boardList = mgr.getBoardListByUserWithVisibility(UserId);
+
 %>
 <style>
 /* inner-box-2의 게시판 텍스트 스타일 */
@@ -30,17 +33,18 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
     display: inline-block;
 }
 
-.board-recentpost {
+
+
+.board-recentpost2 {
    color: black; 
     text-align: center; 
-    font-size: 20px; 
+    font-size: 24px; 
     font-weight: 300; 
     position: absolute; 
     top: 15px; 
     left: 100px;
 	display: inline-block; 
 }
-
 
 /* inner-box-2의 내용이 가운데 정렬*/
 
@@ -483,7 +487,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
             	
-            	
+            	alert('게시글이 성공적으로 등록되었습니다.');
   	
                 // 성공적으로 게시글 등록 후 목록 갱신
                 loadBoardList(formData.get('board_folder')); // 폴더 번호에 맞는 게시물 목록 로드
@@ -514,7 +518,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(UserId);
 				<!-- 게시글 작성 폼 -->
                 <form class = "bWriteAddForm"  method="post" enctype="multipart/form-data" target="blankifr" >
                     <h1 class="board-title">게시판</h1>
-                    <h2 class="board-recentpost"> <% if (folderName != null && !folderName.isEmpty()) { %>| <%= folderName %><% } %></h2>
+                    <h2 class="board-recentpost2" id="board-recentpost2"> </h2>
                     <button type="button" class="list-button" onclick="clickOpenBox('boardList')">목록</button>
 					
 					<input type="hidden" name="board_id" value="<%= UserId %>">
