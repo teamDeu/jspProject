@@ -299,7 +299,7 @@ public class CategoryMgr {
 			
 		}
 		CategoryMgr cMgr = new CategoryMgr();
-		cMgr.initCategory("als981209");
+		cMgr.initCategory("1234");
 	}
 
 }
