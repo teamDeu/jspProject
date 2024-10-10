@@ -110,7 +110,7 @@ try {
     margin-bottom: 10px;
     position: absolute;
     top: -20px;
-    left: 20px;
+    left: 10px;
     padding: 10px;
     padding-bottom: 0px;
 }
@@ -241,7 +241,7 @@ try {
 /* 페이지네이션 */
 .store-pagination {
     position: absolute;
-    bottom: 0; /* 하단에 고정 */
+    bottom: -12px; /* 하단에 고정 */
     left: 50%;
     transform: translateX(-50%);
     display: flex;

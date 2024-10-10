@@ -222,10 +222,10 @@ function addCategory() {
                 
                 // 카테고리 항목 클릭 시 수정란에 반영하는 이벤트 리스너 추가
                 categoryItem.addEventListener('click', function() {
-                    // 이전 선택 해제
-                    document.querySelectorAll('.category-item').forEach(function(item) {
-                        item.classList.remove('selected');
-                    });
+    if (category.type === '홈') {
+        alert("홈 카테고리는 수정할 수 없습니다.");
+        return; // '홈'은 수정 불가
+    }
 
                     // 현재 선택된 카테고리에 'selected' 클래스 추가
                     categoryItem.classList.add('selected');
@@ -350,39 +350,30 @@ function loadCategoryList() {
 
 
 function deleteCategory(categoryType, categoryName, categoryItem) {
-    // 확인창을 띄워서 사용자가 삭제를 확인하도록 함
-    if (confirm("삭제하시겠습니까?")) { 
+    if (categoryType === '홈') {
+        alert("홈 카테고리는 삭제할 수 없습니다.");
+        return; // '홈'은 삭제 불가
+    }
+    if (confirm("삭제하시겠습니까?")) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200 && xhr.responseText.trim() === "success") {
-                    // 삭제 성공 시 알림창을 띄우고 항목을 제거
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                if (xhr.responseText.trim() === "success") {
                     alert("카테고리가 삭제되었습니다.");
                     categoryItem.remove();
-
-                    // 번호 재할당 
                     updateCategoryNumbers();
                     mainCategoryLoad();
-                 	// **필드 초기화**
-                    document.getElementById('edit-category-name').value = ''; // 카테고리명 필드 초기화
-                    document.querySelectorAll('.category-edit input[type="checkbox"]').forEach(function(checkbox) {
-                        checkbox.checked = false; // 체크박스 초기화
-                    });
                 } else {
-                    // 삭제 실패 시 알림창을 띄움
                     alert("카테고리 삭제에 실패했습니다. 다시 시도해주세요.");
-                    console.error("Failed to delete category. Response:", xhr.responseText);
                 }
             }
         };
-
-        // 삭제 요청을 서버로 전송
         xhr.open("POST", "../eunhyo/deleteCategory.jsp", true);
-        // Content-Type 설정
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         xhr.send("categoryType=" + encodeURIComponent(categoryType) + "&categoryName=" + encodeURIComponent(categoryName));
     }
 }
+
 
 //카테고리 번호 재할당 함수
 function updateCategoryNumbers() {
