@@ -121,7 +121,7 @@
         /*정현이형 여기가!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 		.center-buttons {
 		    position: absolute;
-		    bottom: 0; /* 하단에 고정 */
+		    bottom: 10px; /* 하단에 고정 */
 		    left: 50%;
 		    transform: translateX(-50%);
 		    display: flex;
