@@ -614,8 +614,6 @@ function mainCategoryLoad(){
          
             // 설정 박스 표시
             document.getElementById('settingBox').style.display = 'block';
-            
-            
         }
         document.addEventListener("DOMContentLoaded", function() {
         	mainCategoryLoad();
@@ -630,7 +628,7 @@ function mainCategoryLoad(){
 <body>
    <div class="container">
       <div class="header">
-         <a href = "../miniroom/main.jsp?url=<%=url%>"><img src="img/logo2.png" alt="CloverStory Logo2" class="logo2"></a>
+         <a href = "../miniroom/main.jsp?url=<%=id%>"><img src="img/logo2.png" alt="CloverStory Logo2" class="logo2"></a>
          <div class="settings">
             <span></span> <a href="javascript:void(0);" onclick="showSettingPage()">설정</a> <a href="../pjh/logout.jsp">로그아웃</a>
          </div>

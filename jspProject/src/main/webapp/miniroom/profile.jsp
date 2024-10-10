@@ -354,7 +354,30 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 	let friend_items_first = []; // 모든 아이템을 담을 배열
 	let friend_items_second = [];
 	let friend_items = [];
-	
+	function onclickAddFriend(requestSendUser, requestReciveUser,character,name) {
+		document.getElementById("user_search_modal").style.display = "none";
+        fr_modal = document.getElementById("friend_request_modal_send");
+        fr_form = document.friend_request_form_send;
+        fr_form.request_senduserid.value = requestSendUser;
+        fr_form.request_receiveuserid.value = requestReciveUser;
+        fr_modal.style.display = "flex";
+        fr_modal.querySelector(".request_comment").value = "";
+        fr_modal.querySelector(".request_user_name_font").innerText = name;
+        fr_modal.querySelector(".request_profile_img").src = character;
+    };
+function onclickGoHomePage(id){
+      location.href = "http://"+location.host+"/jspProject/miniroom/main.jsp?url=" + id;   
+ };
+function onclickDeleteFriend(senduserid,receiveuserid,name){
+  	fr_form = document.friend_delete_form;
+  	console.log(fr_form);
+  	fr_form.request_senduserid.value = senduserid;
+  	fr_form.request_receiveuserid.value = receiveuserid;
+  	fr_form.submit();
+  	FriendInfo = FriendInfo.filter((e) => !((e.userId1 == senduserid && e.userId2 == receiveuserid) || (e.userId1 == receiveuserid && e.userId2 == senduserid)))
+  	friend_items = friend_items.filter((e) => e.querySelector(".main_profile_friends_name").innerText != name);
+  	friend_displayItems();
+}
 	function friendSearchClick(){
 		console.log("friendSearchClick");
 		searchValue = document.querySelector(".main_profile_friends_search_text").value;

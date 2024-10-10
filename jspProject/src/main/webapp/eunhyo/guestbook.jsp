@@ -945,7 +945,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
                   <!-- 답글 작성 폼 (방명록 항목 내부로 이동) -->
                   <div class="a-form">
                       <textarea id="aContent-<%=entry.getGuestbookNum()%>" class="a-textarea" placeholder="답글 내용을 입력하세요" 
-    onkeydown="checkEnterAnswer(event) <%=entry.getGuestbookNum()%>)"></textarea>
+    onkeydown="checkEnterAnswer(event, <%=entry.getGuestbookNum()%>)"></textarea>
                       <button type="button" class="a-submit-btn" onclick="adAnswer(<%=entry.getGuestbookNum()%>)">등록</button>
                   </div>
 
