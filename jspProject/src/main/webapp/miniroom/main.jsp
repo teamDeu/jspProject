@@ -250,10 +250,12 @@ function clickOpenBox(id){
       openButton = document.getElementById("custom-button-board");
       document.getElementById("boardInnerBox").style.display = "block";
       document.getElementById("normalInnerBox").style.display = "none";
+
       loadLatestPost(); // 페이지가 로드될 때 최신 게시글을 불러옴
 	   document.getElementById("musicInnerBox").style.display = "none";
    }
    else{
+	   openButton = document.getElementById("custom-button-"+id);
 	   document.getElementById("boardInnerBox").style.display = "none";
 	   document.getElementById("normalInnerBox").style.display = "block";
 	   document.getElementById("musicInnerBox").style.display = "none";
@@ -628,7 +630,7 @@ function mainCategoryLoad(){
 <body>
    <div class="container">
       <div class="header">
-         <img src="img/logo2.png" alt="CloverStory Logo2" class="logo2">
+         <a href = "../miniroom/main.jsp?url=<%=url%>"><img src="img/logo2.png" alt="CloverStory Logo2" class="logo2"></a>
          <div class="settings">
             <span></span> <a href="javascript:void(0);" onclick="showSettingPage()">설정</a> <a href="../pjh/logout.jsp">로그아웃</a>
          </div>
