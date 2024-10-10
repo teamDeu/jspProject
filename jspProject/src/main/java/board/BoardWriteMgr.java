@@ -135,18 +135,20 @@ public class BoardWriteMgr {
 
    
 	
-    // 특정 폴더에 해당하는 게시글 목록을 가져오는 메서드
-    public Vector<BoardWriteBean> getBoardList(int boardFolder) {
+    // 특정 폴더에 해당하는 게시글 목록을 페이지 단위로 가져오는 메서드
+    public Vector<BoardWriteBean> getBoardList(int boardFolder, int startIndex, int entriesPerPage) {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        Vector<BoardWriteBean> boardList = new Vector<>(); // Vector 사용
+        Vector<BoardWriteBean> boardList = new Vector<>();
         try {
             con = pool.getConnection();
             String sql = "SELECT board_num, board_visibility, board_answertype, board_folder, board_id, board_title, board_content, board_at, board_image, "
-            		+ "board_views FROM board WHERE board_folder = ?";
+                       + "board_views FROM board WHERE board_folder = ? ORDER BY board_at DESC LIMIT ?, ?";
             pstmt = con.prepareStatement(sql);
             pstmt.setInt(1, boardFolder);
+            pstmt.setInt(2, startIndex);
+            pstmt.setInt(3, entriesPerPage);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -170,6 +172,7 @@ public class BoardWriteMgr {
         }
         return boardList;
     }
+
     
     
 
@@ -452,6 +455,34 @@ public class BoardWriteMgr {
             String sql = "SELECT COUNT(*) FROM board WHERE board_id = ?";
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, board_id);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                int totalEntries = rs.getInt(1);
+                totalPages = (int) Math.ceil((double) totalEntries / entriesPerPage); // 페이지 수 계산
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt, rs);
+        }
+
+        return totalPages;
+    }
+
+    
+    // 특정 폴더에 대한 총 페이지 수를 계산하는 메서드
+    public int getTotalPagesByFolder(int boardFolder, int entriesPerPage) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int totalPages = 0;
+
+        try {
+            con = pool.getConnection();
+            String sql = "SELECT COUNT(*) FROM board WHERE board_folder = ?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, boardFolder);
             rs = pstmt.executeQuery();
 
             if (rs.next()) {

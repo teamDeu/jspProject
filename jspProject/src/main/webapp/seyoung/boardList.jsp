@@ -25,7 +25,6 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 //지정된 페이지의 게시글 목록을 가져오기
 Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id, startIndex, entriesPerPage); 
 
-//Vector<BoardWriteBean> boardListAll = mgr.getBoardListByUser(board_id); // 사용자 ID에 맞는 게시글 목록 가져오기
 %>
 
 <!DOCTYPE html>
@@ -295,7 +294,7 @@ td a {
         font-size: 16px;
     }
 
-    .guestbook-active {
+    .board-active {
         background-color: #DCDCDC;
         color: #000000;
         margin-top: 40px;
@@ -339,12 +338,7 @@ td a {
                     
                     <!-- 페이징 버튼 -->
 				    <div id="paginationButtons">
-				        <% for (int i = 1; i <= totalPages; i++) { %>
-				            <button type="button" class="pagination-button <%= (i == currentPage) ? "guestbook-active" : "" %>"
-				                    onclick="location.href='<%=request.getContextPath()%>/seyoung/boardList.jsp?page=<%=i%>'">
-				                <%= i %>
-				            </button>
-				        <% } %>
+				    
     				</div>
                     </form>     
     
@@ -362,7 +356,59 @@ td a {
         }
     }
 	
-	
+    function updateBoardPaginationButtons(totalPages, currentPage) {
+        var paginationContainer = document.getElementById("paginationButtons");
+        paginationContainer.innerHTML = ""; // 기존 버튼 초기화
+		
+        console.log("Board Total pages:", totalPages);
+        console.log("Board current pages:", totalPages);
+        
+        for (var i = 1; i <= totalPages; i++) {
+            var button = document.createElement("button");
+            button.textContent = i;
+            button.classList.add('pagination-button');
+
+            button.disabled = false; // 모든 페이지 버튼 활성화
+            button.onclick = (function(pageNumber) {
+                return function() {
+                	loadBoardListByPage(pageNumber); // 클릭 시 해당 페이지 로드
+                };
+            })(i);
+
+            if (i === currentPage) {
+                button.classList.add('board-active'); // 현재 페이지 스타일 추가
+            }
+
+            paginationContainer.appendChild(button);
+        }
+
+        // 현재 페이지가 마지막 페이지일 때
+        if (currentPage === totalPages) {
+            // 마지막 페이지 항목 수가 2개 이상일 경우
+            if (entriesLength < 3) {
+                // 이전 페이지 버튼은 활성화
+                paginationContainer.childNodes.forEach(function(btn) {
+                    if (btn.textContent === (currentPage - 1).toString()) {
+                        btn.disabled = false;
+                    }
+                });
+            }
+        }
+    }
+    
+    // 새롭게 정의된 loadBoardListByPage 함수
+    function loadBoardListByPage(page) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "../seyoung/getBoardList.jsp?page="+page +"&folderNum" + currentFolderNum, true); // 서버에서 데이터를 가져올 경로 설정
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // 응답으로 받은 게시글 목록을 페이지에 반영
+                document.getElementById("board-list-body").innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send();
+    }
+
 	
     // 게시글 삭제 함수 (AJAX 사용)
     function delbList() {
