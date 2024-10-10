@@ -332,7 +332,7 @@ label[for="secretCheckbox"] {
     font-size: 16px; /* 버튼 글자 크기 */
     padding: 5px 10px; /* 버튼 안쪽 여백 */
 }
-#paginationButtons {
+#guestbookPaginationButtons {
     position: absolute; 
     bottom: 70px; /* 버튼과 리스트 사이의 간격 조정 */
     left: 50%; /* 부모 요소의 왼쪽 50% 위치 */
@@ -793,7 +793,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
 
       // AJAX를 이용한 페이지 버튼 업데이트
       function updatePaginationButtons(totalPages, currentPage, entriesLength) {
-          var paginationContainer = document.getElementById("paginationButtons");
+          var paginationContainer = document.getElementById("guestbookPaginationButtons");
           paginationContainer.innerHTML = ""; // 기존 버튼 초기화
 
           console.log("Total pages:", totalPages);
@@ -945,7 +945,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
                   <!-- 답글 작성 폼 (방명록 항목 내부로 이동) -->
                   <div class="a-form">
                       <textarea id="aContent-<%=entry.getGuestbookNum()%>" class="a-textarea" placeholder="답글 내용을 입력하세요" 
-    onkeydown="checkEnterAnswer(event, <%=entry.getGuestbookNum()%>)"></textarea>
+    onkeydown="checkEnterAnswer(event) <%=entry.getGuestbookNum()%>)"></textarea>
                       <button type="button" class="a-submit-btn" onclick="adAnswer(<%=entry.getGuestbookNum()%>)">등록</button>
                   </div>
 
@@ -953,7 +953,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
               </li>
           <% } %>
       </ul>
-   <div id="paginationButtons"></div> <!-- 페이지 버튼 -->
+   <div id="guestbookPaginationButtons"></div> <!-- 페이지 버튼 -->
 
 </div>
    <div class="guestbook-form">
