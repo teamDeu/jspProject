@@ -76,6 +76,14 @@ public class ChatServer {
             }
         	flag = false;
         }
+        else if(command.equals("submitFriendRequest")) {
+        	synchronized (clients) {
+                for (Session client : clients) {
+                		client.getBasicRemote().sendText(message);	
+                }
+            }
+        	flag = false;
+        }
         else if(command.equals("sendMessage")) {
         	String id = data.split("㉡")[0];
         	String comment = data.split("㉡")[1];
