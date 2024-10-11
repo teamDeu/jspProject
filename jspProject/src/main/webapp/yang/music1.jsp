@@ -455,17 +455,24 @@
         const allCheckboxes = document.querySelectorAll('.big-box .checkbox-wrapper input[type="checkbox"]');
         selectedSongs = []; // 선택된 노래를 담을 배열 초기화
 
+        // 먼저 사용자의 모든 item_using 값을 0으로 설정
+        const user_id = '<%= user_id %>';  // 세션에서 가져온 user_id
+        resetAllItemUsage(user_id);
+
         allCheckboxes.forEach((checkbox) => {
-            if (checkbox.checked) {
+            if (checkbox.checked) {  // 체크박스가 체크되었는지 확인
                 const line = checkbox.closest('.line') || checkbox.closest('.line1'); // line 또는 line1 모두 확인
                 const originalDisplay = line.style.display;
                 line.style.display = "flex"; // 노래가 표시되도록 설정
-                
+
                 // 곡명, 아티스트, 경로 정보 가져오기
-                const song = line.querySelector('.title').innerText;
-                const artist = line.querySelector('.artist').innerText;
-                const path = line.querySelector('.hidden').innerText;
-                
+                const song = line.querySelector('.title').innerText.trim();
+                const artist = line.querySelector('.artist').innerText.trim();
+                const path = line.querySelector('.hidden').innerText.trim();
+
+                // 콘솔에 로그를 찍어서 값이 제대로 들어오는지 확인
+                console.log(`Selected Song: ${song}, Artist: ${artist}, Path: ${path}`);
+
                 // 기존 display 상태 복원
                 line.style.display = originalDisplay;
 
@@ -475,9 +482,13 @@
                     artist: artist,
                     path: path
                 });
+
+                // 체크된 각 노래에 대해 item_using 값을 1로 설정
+                updateSingleItemUsage(user_id, path);
             }
         });
 
+        // 선택된 노래가 있는지 확인
         if (selectedSongs.length > 0) {
             // 선택된 노래가 있으면 로컬 스토리지에 저장
             localStorage.setItem('selectedSongs', JSON.stringify(selectedSongs));
@@ -490,6 +501,30 @@
             alert('음악을 선택해 주세요.');
         }
     }
+
+
+    function resetAllItemUsage(user_id) {
+        // AJAX 요청을 사용하여 resetAllItemUsage를 서버에 전송
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "../yang/resetAllItemUsageProc.jsp", true); // resetAllItemUsage를 처리하는 JSP 호출
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send("user_id=" + encodeURIComponent(user_id));
+    }
+
+    function updateSingleItemUsage(user_id, item_path) {
+        // AJAX 요청을 사용하여 updateSingleItemUsage를 서버에 전송
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "../yang/updateSingleItemUsageProc.jsp", true); // updateSingleItemUsage를 처리하는 JSP 호출
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log("업데이트 완료: " + xhr.responseText);  // 서버 응답 출력 (디버깅 용도)
+            }
+        };
+        xhr.send("user_id=" + encodeURIComponent(user_id) + "&item_path=" + encodeURIComponent(item_path));
+    }
+
+
 
 
     // 페이지가 로드될 때, 로컬 스토리지에서 선택한 노래 리스트를 불러옴

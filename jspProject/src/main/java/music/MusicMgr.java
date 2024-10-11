@@ -347,72 +347,8 @@ public class MusicMgr {
 	    return result;  // 삭제 성공 여부 반환
 	}
 
-	public void updateItemUsage(String user_id, List<String> selectedItemPaths) {
-	    Connection con = null;
-	    PreparedStatement pstmt = null;
-	    ResultSet rs = null;
-	    String sql = null;
+	
 
-	    try {
-	        con = pool.getConnection();
-	        
-	        // 1. 선택한 모든 item_path에 해당하는 item_num을 조회하여 리스트에 저장
-	        List<Integer> selectedItemNums = new ArrayList<>();
-	        sql = "SELECT item_num FROM item WHERE item_path = ?";
-	        pstmt = con.prepareStatement(sql);
-	        
-	        for (String item_path : selectedItemPaths) {
-	            pstmt.setString(1, item_path);
-	            rs = pstmt.executeQuery();
-	            if (rs.next()) {
-	                selectedItemNums.add(rs.getInt("item_num"));
-	            }
-	        }
-	        
-	        pstmt.close();
-	        rs.close();
-	        
-	        // 2. 선택한 item_num들의 item_using을 1로 업데이트
-	        if (!selectedItemNums.isEmpty()) {
-	            String updateSql = "UPDATE itemhold SET item_using = 1 WHERE user_id = ? AND item_num = ?";
-	            pstmt = con.prepareStatement(updateSql);
-	            for (int item_num : selectedItemNums) {
-	                pstmt.setString(1, user_id);
-	                pstmt.setInt(2, item_num);
-	                pstmt.executeUpdate();
-	            }
-	            pstmt.close();
-	        }
-	        
-	        // 3. 선택되지 않은 모든 item_num들의 item_using을 0으로 업데이트
-	        StringBuilder itemNumsString = new StringBuilder();
-	        for (int i = 0; i < selectedItemNums.size(); i++) {
-	            itemNumsString.append(selectedItemNums.get(i));
-	            if (i < selectedItemNums.size() - 1) {
-	                itemNumsString.append(", ");
-	            }
-	        }
-	        
-	        if (!selectedItemNums.isEmpty()) {
-	            sql = "UPDATE itemhold SET item_using = 0 WHERE user_id = ? AND item_num NOT IN (" + itemNumsString.toString() + ")";
-	            pstmt = con.prepareStatement(sql);
-	            pstmt.setString(1, user_id);
-	            pstmt.executeUpdate();
-	            pstmt.close();
-	        }
-
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    } finally {
-	        try {
-	            if (rs != null) rs.close();
-	            if (pstmt != null) pstmt.close();
-	            if (con != null) pool.freeConnection(con);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
-	}
 
 
 
@@ -446,6 +382,89 @@ public class MusicMgr {
 	    return vlist;
 	}
 
+	
+	
+	
+	
+	
+	public void updateSingleItemUsage(String user_id, String item_path) {
+	    Connection con = null;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    String sql = null;
+
+	    try {
+	        con = pool.getConnection();
+	        
+	        // 1. item_path에 해당하는 item_num 조회
+	        sql = "SELECT item_num FROM item WHERE item_path = ?";
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setString(1, item_path);
+	        rs = pstmt.executeQuery();
+
+	        int item_num = -1; // 조회된 item_num을 저장할 변수
+	        
+	        if (rs.next()) {
+	            item_num = rs.getInt("item_num");
+	        }
+
+	        rs.close();
+	        pstmt.close();
+
+	        if (item_num != -1) {
+	            // 2. 조회된 item_num의 item_using 값을 1로 업데이트
+	            sql = "UPDATE itemhold SET item_using = 1 WHERE user_id = ? AND item_num = ?";
+	            pstmt = con.prepareStatement(sql);
+	            pstmt.setString(1, user_id);
+	            pstmt.setInt(2, item_num);
+	            pstmt.executeUpdate();
+	            pstmt.close();
+	        } else {
+	            System.out.println("해당 경로에 일치하는 아이템이 없습니다.");
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (rs != null) rs.close();
+	            if (pstmt != null) pstmt.close();
+	            if (con != null) pool.freeConnection(con);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+
+	
+	public void resetAllItemUsage(String user_id) {
+	    Connection con = null;
+	    PreparedStatement pstmt = null;
+	    String sql = null;
+
+	    try {
+	        con = pool.getConnection();
+
+	        // 1. 해당 사용자의 모든 item_using을 0으로 업데이트
+	        sql = "UPDATE itemhold SET item_using = 0 WHERE user_id = ?";
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setString(1, user_id);
+	        pstmt.executeUpdate();
+
+	        pstmt.close();
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (pstmt != null) pstmt.close();
+	            if (con != null) pool.freeConnection(con);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
 
 
 	
