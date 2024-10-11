@@ -1,3 +1,4 @@
+
 <%@page import="board.BoardFolderMgr"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -19,7 +20,9 @@
             <img src="../seyoung/img/plus.png">
         </button>
     </div>     
+    <%if(id.equals(board_id)){ %>
     <button class="folder-manage-button" id="folderManageButton" onclick="toggleFolderInput()">폴더 관리 하기</button>
+    <%} %>
 </div>
 
 <script>
