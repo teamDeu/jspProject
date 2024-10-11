@@ -407,6 +407,9 @@ function mainCategoryLoad(){
                        openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"",sendUserId);
                     }
                  }
+                 else if(command == ("sendAlarm")){
+                	 getAlarmList();
+                 }
                  else if(command == ("submitFriendRequest")){
                     flag = false;
                     userId = rawdata[1];
@@ -477,7 +480,10 @@ function mainCategoryLoad(){
                 document.getElementById("messageInput").value = '';
             }
         }
-        
+        function sendAlarm(userid){
+        	var message = "sendAlarm" + dataSeparator + userid;
+        	ws.send(message);
+        }
         function printUser(id,character,name){
            newDiv = document.createElement("div");
            newImg = document.createElement("img");

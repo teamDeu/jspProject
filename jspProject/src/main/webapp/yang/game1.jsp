@@ -411,7 +411,8 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
                     },
                     success: function(response) {
                         const newCloverAmount = parseInt(response);
-                        $('#cloverAmountDisplay').text(newCloverAmount);  // 새로운 클로버 잔액 업데이트
+                        document.querySelectorAll('.clover-amount-span').forEach((e) => e.innerText = newCloverAmount);
+   
                         // 사다리 게임 진행
                         playGame(buttonIndex);  // 클로버 업데이트 후 게임 진행
                     },
@@ -532,7 +533,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 
                     // 서버에서 받은 클로버 값이 현재 화면에 표시된 값과 다를 경우 업데이트
                     if (serverCloverAmount !== currentCloverAmount) {
-                        $('#cloverAmountDisplay').text(serverCloverAmount);
+                        document.querySelectorAll('.clover-amount-span').forEach((e) => e.innerText = currentCloverAmount);
                     }
                 },
                 error: function() {
@@ -579,7 +580,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
                 const newCloverAmount = currentCloverAmount + validTotalAmount;
 
                 // 클라이언트 화면에 클로버 잔액 업데이트
-                $('#cloverAmountDisplay').text(newCloverAmount);
+                    document.querySelectorAll('.clover-amount-span').forEach((e) => e.innerText = newCloverAmount);
 
                 // 서버에 클로버 잔액 업데이트 요청
                 if (validTotalAmount > 0) {
@@ -592,7 +593,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
                         },
                         success: function(response) {
                             const updatedCloverAmount = parseInt(response);
-                            $('#cloverAmountDisplay').text(updatedCloverAmount);  // 서버에서 받은 최종 잔액 표시
+                            document.querySelectorAll('.clover-amount-span').forEach((e) => e.innerText = updatedCloverAmount);
                         },
                         error: function() {
                             alert('클로버 잔액 업데이트 중 오류가 발생했습니다.');

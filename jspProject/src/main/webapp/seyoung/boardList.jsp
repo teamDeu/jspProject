@@ -439,7 +439,18 @@ td a {
         return false; // 폼 제출 방지 (페이지 새로고침 방지)
     }
         
-    
+    function increaseloadPost(boardNum) {
+        // 조회수 증가 요청
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "../seyoung/boardIncreaseView.jsp?boardNum=" + boardNum, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // 조회수 증가 후 게시물 불러오기
+                loadBoardContent(boardNum);
+            }
+        };
+        xhr.send();
+    }
 
     function loadBoardList(folderNum) {
         var xhr = new XMLHttpRequest();
@@ -463,4 +474,3 @@ td a {
 </script>
 
 </html>
-
