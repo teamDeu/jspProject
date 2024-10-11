@@ -180,6 +180,7 @@
             folderIcon.src = '../seyoung/img/folder.png'; // 아이콘 원래대로
             folderItem.querySelector('span').style.fontWeight = 'normal'; // 글자 굵기 원래대로
             selectedFolderItem = null; // 선택 해제
+            currentFolderNum = 0;
             clickOpenBox('board');
             loadLatestPost();
         }
