@@ -52,7 +52,7 @@
             <td colspan="5" style="text-align: center;">등록된 게시물이 없습니다.</td>
     </tr>
 <% } %>
-<input type ="hidden" name ="boardList_totalPages" value =<%=totalPages %>>
+<input type ="hidden" id ="boardList_totalPages" name ="boardList_totalPages" value =<%=totalPages %>>
 <script>
     // 조회수 증가와 게시글 보기로 이동하는 함수
     function clickBoard_boardNum(boardNum) {
