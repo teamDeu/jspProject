@@ -16,7 +16,7 @@
         }
         body {
             font-family: 'NanumTobak';
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
             text-align: center;
         }
         .container {
@@ -27,7 +27,7 @@
             padding: 40px;
             border: 1px solid #ccc;
             border-radius: 10px;
-            background-color: #FFFAF0;
+            background-color: #F8F6E3;
         }
         .box input {
             display: block;
@@ -41,7 +41,7 @@
         }
         .btn {
             padding: 10px 20px;
-            background-color: #90EE90;
+            background-color: #C0E5AF;
             color: white;
             border: none;
             border-radius: 5px;
