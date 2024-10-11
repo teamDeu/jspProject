@@ -341,7 +341,7 @@ label[for="secretCheckbox"] {
 }
 
 /* 페이지 버튼 스타일 */
-.pagination-button {
+.guestbook-pagination-button {
     background-color: #ffffff; /* 배경색 */
     color: #000000; /* 글자색 */
     border: 1px solid #DCDCDC;
@@ -802,7 +802,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
           for (var i = 1; i <= totalPages; i++) {
               var button = document.createElement("button");
               button.textContent = i;
-              button.classList.add('pagination-button');
+              button.classList.add('guestbook-pagination-button');
 
               button.disabled = false; // 모든 페이지 버튼 활성화
               button.onclick = (function(pageNumber) {
