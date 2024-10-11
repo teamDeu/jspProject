@@ -70,19 +70,19 @@
         }
 
         .header-logo {
-        	
+        	display: flex;
             margin-bottom: 30px;
-            margin-left: 40px;
-            
+            margin-left: 715px;
         }
 
         
 
         .footer-links {
+        	display:flex;
             margin-top: 10px;
             font-size: 25px;
             font-family: 'NanumTobak';
-            margin-left: 105px;
+            margin-left:800px;
         }
 
         .footer-links a {
