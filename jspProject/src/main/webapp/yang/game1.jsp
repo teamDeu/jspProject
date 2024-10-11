@@ -33,7 +33,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
             height: 500px;
             padding: 50px;
             margin: 0 auto;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
             border: 3px solid #BAB9AA;
             background-color: #f7f7f7;
             border-radius: 15px;
