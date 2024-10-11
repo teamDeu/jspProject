@@ -155,7 +155,7 @@
 			document.getElementById("selectedFolderNum").value = folderNum;
 			document.getElementById("board-recentpost").innerText = "| "+ folderName;
 			document.getElementById("board-recentpost2").innerText = "| "+ folderName;
-			
+
             // AJAX 요청을 통해 서버에서 폴더 정보 가져오기
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '../seyoung/bgetFolderProc.jsp?folderNum=' + encodeURIComponent(folderNum), true);

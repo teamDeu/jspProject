@@ -720,7 +720,8 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
 	                console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
-	                document.getElementById("board-recentpost3").innerHTML = " ";
+	                postFolderName = document.getElementById("latestBoard_folderName").value;
+	                document.getElementById("board-recentpost3").innerHTML = "| " + postFolderName;
 	                bloadAnswers(); // 댓글 로드
 	                
 	            }

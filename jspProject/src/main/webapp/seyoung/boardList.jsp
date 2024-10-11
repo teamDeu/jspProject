@@ -382,6 +382,7 @@ td a {
         console.log(currentFolderNum);
         if(currentFolderNum == 0 || currentFolderNum == 1){
         	xhr.open("GET", "../seyoung/getBoardListAll.jsp?page="+page+"&board_id=<%=board_id%>",true);
+        	document.getElementById("board-recentpost").innerText = "| 전체게시물";
         }
         else{
         	xhr.open("GET", "../seyoung/getBoardList.jsp?page="+page +"&folderNum=" + currentFolderNum, true); // 서버에서 데이터를 가져올 경로 설정
