@@ -31,10 +31,9 @@
         .big-box {
             width: 800px;
             height: 546px;
-            border: 1px solid #BAB9AA;
+            border: 2px solid #BAB9AA;
             position: relative;
             overflow-y: auto;
-            
         }
 
         .line {
@@ -89,8 +88,8 @@
 
         .small-box {
             width: 800px;
-            height: 60px;
-            border: 1px solid #BAB9AA;
+            height: 72px;
+            border: 2px solid #BAB9AA;
             margin-top: 0px;
             position: relative;
             border-top: none;  /* 하단 테두리를 없앰 */
@@ -98,8 +97,9 @@
         
         .top-box {
             width: 800px;
-            height: 50px;
-            border: 1px solid #BAB9AA;
+            height: 56px;
+            border: 2px solid #BAB9AA;
+            margin-top: 0px;
             position: relative;
             border-bottom: none;  /* 하단 테두리를 없앰 */
         }
@@ -160,23 +160,21 @@
         }
 
         .music-title {
-            width: 830px;
-            height: 1px;
+            width: 810px;
+            height: 2px;
             background-color: #BAB9AA;
             margin: 0 auto;
             position: relative;
-            margin-top: 70px;
-			margin-bottom: 20px;
+            margin-top: 40px;
+            margin-bottom: 20px;
         }
 
         .music-title span {
             position: absolute;
-            top: -45px;
+            top: -40px;
             left: 0;
-            font-size: 36px;
-		    font-weight: 600;
+            font-size: 35px;
             color: #80A46F;
-            
         }
         
         .music-title-select-wrapper {
@@ -188,16 +186,8 @@
 		.music-title-select {
 		    padding: 5px;
 		    font-size: 20px;
-		    background-color: #F7F7F7; /* 배경색 설정 */
-		    border-radius: 10px; /* 꼭짓점 둥글게 */
-		    border: 1px solid #ccc; /* 선택박스 테두리 */
-		    appearance: none; /* 기본 셀렉트박스 스타일 제거 (브라우저마다 다를 수 있음) */
-		    width: 100px;
-		    text-align: center; /* 텍스트 중앙 정렬 */
-		    text-align-last: center; /* IE 및 Firefox에서의 텍스트 정렬 */
+		    font-weight: bold;"
 		}
-
-
 
         .line {
             display: none;
@@ -257,9 +247,9 @@
 
     // 새로고침 시 저장된 정보로 음악 재생 재개
     document.addEventListener('DOMContentLoaded', function () {
-    	const savedSong = localStorage.getItem('currentSong');
-        const savedTime = localStorage.getItem('savedTime');
-        const savedArtist = localStorage.getItem('currentArtist');
+   	const savedSong = localStorage.getItem('currentSong');
+    const savedTime = localStorage.getItem('savedTime');
+    const savedArtist = localStorage.getItem('currentArtist');
 
     const audioPlayer = document.getElementById('audioPlayer');
     const titleElement = document.querySelector('.title');
@@ -299,7 +289,7 @@
     updateActivePage(currentIndex);
 }
 	
-    function showPlaylist(playlistId) {
+	function showPlaylist(playlistId) {
 	    // 모든 big-box를 숨기고 체크박스를 해제
 	    document.querySelectorAll('.big-box').forEach(box => {
 	        // big-box를 숨김
@@ -383,31 +373,20 @@
         const allCheckboxes = document.querySelectorAll('.big-box .checkbox-wrapper input[type="checkbox"]');
         selectedSongs = [];
 
-        const userId = '<%= user_id %>';  // 세션에서 가져온 user_id 값을 추가
-
         allCheckboxes.forEach((checkbox) => {
             if (checkbox.checked) {
                 const line = checkbox.closest('.line') || checkbox.closest('.line1'); // line 또는 line1 모두 확인
-                const originalDisplay = line.style.display;
-                line.style.display = "flex";
                 const song = line.querySelector('.title').innerText;
                 const artist = line.querySelector('.artist').innerText;
                 const path = line.querySelector('.hidden').innerText;
 
-                line.style.display = originalDisplay;
-
-                // 선택된 노래와 유저의 URL 정보를 배열에 추가
-                selectedSongs.push({
-                    song: song,
-                    artist: artist,
-                    path: path,
-                    userId: userId  // 유저 정보 추가
-                });
+                // 선택된 노래를 배열에 추가
+                selectedSongs.push({ song, artist, path });
             }
         });
 
         if (selectedSongs.length > 0) {
-            // 선택한 노래와 URL 정보를 로컬 스토리지에 저장
+            // 선택한 노래를 로컬 스토리지에 저장
             localStorage.setItem('selectedSongs', JSON.stringify(selectedSongs));
             currentIndex = 0;
             playSongs(); // 첫 번째 노래부터 재생
@@ -416,40 +395,25 @@
         }
     }
 
-
     // 페이지가 로드될 때, 로컬 스토리지에서 선택한 노래 리스트를 불러옴
     document.addEventListener('DOMContentLoaded', function () {
-	    const savedUrl = localStorage.getItem('savedUrl'); // 로컬스토리지에 저장된 URL
-	    const currentUrl = window.location.href; // 현재 접속한 URL
-	    
-	    // 로컬스토리지에 저장된 URL과 현재 접속한 URL이 다를 경우
-	    if (savedUrl !== currentUrl) {
-	        localStorage.setItem('savedUrl', currentUrl); // 현재 URL로 로컬스토리지 업데이트
-	        localStorage.removeItem('selectedSongs'); // 기존에 저장된 음악 정보를 삭제
-	    }
-	
-	    // 저장된 음악 정보를 가져와서 처리
-	    const savedSelectedSongs = localStorage.getItem('selectedSongs');
-	    if (savedSelectedSongs) {
-	        selectedSongs = JSON.parse(savedSelectedSongs);
-	        playSongs(); // 저장된 음악이 있으면 첫 번째 곡부터 재생
-	    } else {
-	        console.log('저장된 음악 정보가 없습니다.');
-	    }
-	
-	    const audioPlayer = document.getElementById('audioPlayer');
-	
-	    // 현재 재생 시간을 주기적으로 저장
-	    audioPlayer.ontimeupdate = function () {
-	        localStorage.setItem('savedTime', audioPlayer.currentTime);
-	    };
-	
-	    // 음악이 끝나면 다음 곡 재생
-	    audioPlayer.onended = function () {
-	        playNextSong();
-	    };
-	});
+        const savedSelectedSongs = localStorage.getItem('selectedSongs');
+        if (savedSelectedSongs) {
+            selectedSongs = JSON.parse(savedSelectedSongs);
+        }
 
+        const audioPlayer = document.getElementById('audioPlayer');
+
+        // 현재 재생 시간을 주기적으로 저장
+        audioPlayer.ontimeupdate = function () {
+            localStorage.setItem('savedTime', audioPlayer.currentTime);
+        };
+
+        // 음악이 끝나면 다음 곡 재생
+        audioPlayer.onended = function () {
+            playNextSong();
+        };
+    });
 
     
     function sortSongs(sortType) {
@@ -722,7 +686,7 @@
 </head>
 <body>    
     <div class="music-title">
-	    <span style="margin-bottom: 100px;">내 음악</span>
+	    <span>내 음악</span>
 	    <!-- 새로운 셀렉트 박스 추가 -->
 	    <div class="music-title-select-wrapper">
 	        <select class="music-title-select" onchange="sortSongs(this.value)">
@@ -776,7 +740,7 @@
             </div>
             <div class="artist">
                 <%= artist %>
-                <img src="../yang/img/folderplus.png" alt="icon" class="small-icon5">
+                <img src="../miniroom/img/musicicon.png" alt="icon" class="small-icon5">
             </div>
             <div class="user-count" style="display:none;">
 	            <%= userCount %>  <!-- 일치하는 user_count 값을 출력 -->
@@ -883,7 +847,7 @@
 			                String playlist = playlists1.get(i);
 			%>
 			                <div class="playlist-item" onclick="addMusicToPlaylist('<%= playlist %>')">
-			                    <img src="../yang/img/folderplus.png" width="50" height="50" alt="folder icon" />
+			                    <img src="../seyoung/img/folder.png" width="50" height="50" alt="folder icon" />
 			                    <span><%= playlist %></span>
 			                </div>
 			<%
