@@ -100,7 +100,7 @@
                 document.loginFrm.action = "adminProc.jsp";
             } else {
                 // 일반 사용자인 경우 loginProc.jsp로 전송
-                document.loginFrm.action = "loginProc.jsp";
+                document.loginFrm.action = "../miniroom/main.jsp?url="+document.loginFrm.user_id.value;
             }
             
             document.loginFrm.submit();

@@ -224,21 +224,20 @@
             // 이미지 추가 (폴더 아이콘)
             var folderImg = document.createElement('img');
             folderImg.src = '../seyoung/img/folder.png';
-            folderImg.width = 50;
-            folderImg.height = 50;
+            folderImg.width = 27;
+            folderImg.height = 27;
             folderImg.alt = 'folder icon';
 
             // 폴더명 텍스트 추가
             var folderSpan = document.createElement('span');
             folderSpan.textContent = folderName;
-            folderSpan.style.fontSize = '25px';
-            folderSpan.style.fontWeight = 'bold';
+            folderSpan.style.fontSize = '18px';
 
             // 삭제 버튼 추가
             var deleteButton = document.createElement('img');
             deleteButton.src = '../seyoung/img/trashcan.png'; // 삭제 버튼 이미지 경로
-            deleteButton.width = 30;
-            deleteButton.height = 30;
+            deleteButton.width = 14;
+            deleteButton.height = 14;
             deleteButton.alt = 'delete icon';
             deleteButton.className = 'delete-button'; // 삭제 버튼에 클래스 추가
             deleteButton.style.position = 'absolute';
@@ -272,7 +271,7 @@
 
             // 이미지 추가 (폴더 아이콘)
             var folderImg = document.createElement('img');
-            folderImg.src = '../seyoung/img/folder.png';
+            folderImg.src = '../yang/img/folderplus.png';
             folderImg.width = 50;
             folderImg.height = 50;
             folderImg.alt = 'folder icon';
@@ -281,7 +280,6 @@
             var folderSpan = document.createElement('span');
             folderSpan.textContent = folderName;
             folderSpan.style.fontSize = '25px';
-            folderSpan.style.fontWeight = 'bold';
 
             // 클릭 시 플레이리스트에 음악 추가
             newPopupFolderDiv.onclick = function() {

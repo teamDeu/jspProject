@@ -1,6 +1,7 @@
 <%@page import="java.util.HashMap"%>
 <%@page import="music.MusicBean"%>
 <%@page import="java.util.Vector"%>
+<%@ page import="com.google.gson.Gson" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" 
                   pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
@@ -17,6 +18,9 @@
     
     Vector<MusicBean> popularMusicList = mgr.getPopularMusicList();
     
+    Vector<MusicBean> usedMusicList = mgr.getUsedItemsByUser(user_id);
+    Gson gson = new Gson();
+    String usedMusicJson = gson.toJson(usedMusicList);
 %>
 
 <!DOCTYPE html>
@@ -31,9 +35,10 @@
         .big-box {
             width: 800px;
             height: 546px;
-            border: 2px solid #BAB9AA;
+            border: 1px solid #BAB9AA;
             position: relative;
             overflow-y: auto;
+            
         }
 
         .line {
@@ -88,8 +93,8 @@
 
         .small-box {
             width: 800px;
-            height: 72px;
-            border: 2px solid #BAB9AA;
+            height: 60px;
+            border: 1px solid #BAB9AA;
             margin-top: 0px;
             position: relative;
             border-top: none;  /* 하단 테두리를 없앰 */
@@ -97,9 +102,8 @@
         
         .top-box {
             width: 800px;
-            height: 56px;
-            border: 2px solid #BAB9AA;
-            margin-top: 0px;
+            height: 50px;
+            border: 1px solid #BAB9AA;
             position: relative;
             border-bottom: none;  /* 하단 테두리를 없앰 */
         }
@@ -160,21 +164,23 @@
         }
 
         .music-title {
-            width: 810px;
-            height: 2px;
+            width: 830px;
+            height: 1px;
             background-color: #BAB9AA;
             margin: 0 auto;
             position: relative;
-            margin-top: 40px;
-            margin-bottom: 20px;
+            margin-top: 70px;
+			margin-bottom: 20px;
         }
 
         .music-title span {
             position: absolute;
-            top: -40px;
+            top: -45px;
             left: 0;
-            font-size: 35px;
+            font-size: 36px;
+		    font-weight: 600;
             color: #80A46F;
+            
         }
         
         .music-title-select-wrapper {
@@ -186,8 +192,16 @@
 		.music-title-select {
 		    padding: 5px;
 		    font-size: 20px;
-		    font-weight: bold;"
+		    background-color: #F7F7F7; /* 배경색 설정 */
+		    border-radius: 10px; /* 꼭짓점 둥글게 */
+		    border: 1px solid #ccc; /* 선택박스 테두리 */
+		    appearance: none; /* 기본 셀렉트박스 스타일 제거 (브라우저마다 다를 수 있음) */
+		    width: 100px;
+		    text-align: center; /* 텍스트 중앙 정렬 */
+		    text-align-last: center; /* IE 및 Firefox에서의 텍스트 정렬 */
 		}
+
+
 
         .line {
             display: none;
@@ -240,36 +254,71 @@
     <script>
     let currentIndex = 1;
     let selectedSongs = [];
-    let selectedItemName = "";
-    const pageSize = 10;
-    const totalItems = <%= musicvlist.size() %>;
-    const totalPages = Math.ceil(totalItems / pageSize);
-
-    // 새로고침 시 저장된 정보로 음악 재생 재개
-    document.addEventListener('DOMContentLoaded', function () {
-   	const savedSong = localStorage.getItem('currentSong');
-    const savedTime = localStorage.getItem('savedTime');
-    const savedArtist = localStorage.getItem('currentArtist');
-
     const audioPlayer = document.getElementById('audioPlayer');
     const titleElement = document.querySelector('.title');
     const artistElement = document.querySelector('.artist');
-	
-    if (savedSong && savedTime) {
-        // 이전에 저장된 노래 정보 및 시간 불러오기
-        audioPlayer.src = savedSong;
-        titleElement.innerText = localStorage.getItem('currentSongTitle');
-        artistElement.innerText = savedArtist || '아티스트';
-        audioPlayer.currentTime = parseFloat(savedTime);
 
-        // 자동 재생 시작
-        audioPlayer.play();
-    }
+    // JSP에서 받은 usedMusicList를 JavaScript로 전달
+    const usedMusicList = <%= usedMusicJson %>;
 
-        // Unmute the audio after starting
-        audioPlayer.muted = false;
+    // 새로고침 시 저장된 정보로 음악 재생 재개
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentUrl = window.location.href;
+        const initialUrl = localStorage.getItem('initialUrl');
+
+        // 처음 접속한 URL을 로컬 스토리지에 저장
+        if (!initialUrl) {
+            localStorage.setItem('initialUrl', currentUrl);
+        }
+
+        // URL이 처음 접속한 URL과 다른 경우에만 DB에서 가져온 노래를 재생
+        if (initialUrl && currentUrl !== initialUrl) {
+            console.log("다른 URL에서 접속했습니다. DB에서 노래 목록을 가져옵니다.");
+
+            if (usedMusicList && usedMusicList.length > 0) {
+                usedMusicList.forEach(function (music) {
+                    selectedSongs.push({
+                        song: music.item_name,  // JSP에서 넘어온 곡명
+                        path: music.item_path,  // 곡의 경로
+                        artist: ''  // 아티스트 정보가 없으면 빈 문자열로 설정
+                    });
+                });
+                playSongs();  // 첫 번째 곡 재생
+            } else {
+                console.log("DB에서 가져온 노래가 없습니다.");
+            }
+
+            // 새 URL에서 접속했으므로 로컬 스토리지에 노래 목록 저장
+            localStorage.setItem('selectedSongs', JSON.stringify(selectedSongs));
+            localStorage.setItem('initialUrl',currentUrl);
+
+        } else {
+            // 처음 접속한 URL일 경우 로컬 스토리지에서 노래 목록 불러오기
+            const savedSelectedSongs = localStorage.getItem('selectedSongs');
+            const savedSong = localStorage.getItem('currentSong');
+            const savedTime = localStorage.getItem('savedTime');
+            const savedArtist = localStorage.getItem('currentArtist');
+
+            const audioPlayer = document.getElementById('audioPlayer');
+            const titleElement = document.querySelector('.title');
+            const artistElement = document.querySelector('.artist');
+        	
+            if (savedSong && savedTime) {
+                // 이전에 저장된 노래 정보 및 시간 불러오기
+                audioPlayer.src = savedSong;
+                titleElement.innerText = localStorage.getItem('currentSongTitle');
+                artistElement.innerText = savedArtist || '아티스트';
+                audioPlayer.currentTime = parseFloat(savedTime);
+                // 자동 재생 시작
+                audioPlayer.play();
+            }
+        }
+
+        audioPlayer.onended = function () {
+            playNextSong();  // 노래가 끝나면 다음 곡 재생
+        };
         updateMusicPagination();
-	})
+    });
 	
 	function updateMusicPagination() {
     const allLines = document.querySelectorAll('.line');
@@ -287,9 +336,9 @@
 
     // 현재 페이지에 active 클래스 추가
     updateActivePage(currentIndex);
-}
+	}
 	
-	function showPlaylist(playlistId) {
+    function showPlaylist(playlistId) {
 	    // 모든 big-box를 숨기고 체크박스를 해제
 	    document.querySelectorAll('.big-box').forEach(box => {
 	        // big-box를 숨김
@@ -328,42 +377,34 @@
 
     function playSongs() {
         if (currentIndex >= selectedSongs.length) {
-            currentIndex = 0; // 마지막 곡이 끝나면 처음으로 돌아감
-            return;
+            currentIndex = 0;  // 마지막 곡이면 처음으로 돌아감
         }
-
         const currentSong = selectedSongs[currentIndex];
-        const audioPlayer = document.getElementById('audioPlayer');
-        const titleElement = document.querySelector('.title');
-        const artistElement = document.querySelector('.artist');
-
-        // 노래 정보 설정 및 재생
         audioPlayer.src = currentSong.path;
-        titleElement.innerText = currentSong.song;
-        artistElement.innerText = currentSong.artist;
+        titleElement.innerText = currentSong.song;  // 곡명을 설정
+        artistElement.innerText = currentSong.artist;  // 아티스트명을 설정
+        audioPlayer.play();
 
-        // localStorage에 현재 노래 정보 저장
+        // 현재 재생 정보를 로컬 스토리지에 저장
         localStorage.setItem('currentSong', currentSong.path);
         localStorage.setItem('currentSongTitle', currentSong.song);
         localStorage.setItem('currentArtist', currentSong.artist);
-
-        audioPlayer.play();
     }
-    
+
     function playNextSong() {
         currentIndex++;
         if (currentIndex < selectedSongs.length) {
             playSongs();
         } else {
-            currentIndex = 0; // 마지막 곡이 끝나면 처음으로 돌아감
-            playSongs(); // 첫 곡을 다시 재생
+            currentIndex = 0;  // 마지막 곡이 끝나면 처음으로 돌아감
+            playSongs();
         }
     }
 
     function playPreviousSong() {
         currentIndex--;
         if (currentIndex < 0) {
-            currentIndex = selectedSongs.length - 1; // 첫 곡이면 마지막 곡으로 이동
+            currentIndex = selectedSongs.length - 1;  // 첫 곡이면 마지막 곡으로 이동
         }
         playSongs();
     }
@@ -376,12 +417,16 @@
         allCheckboxes.forEach((checkbox) => {
             if (checkbox.checked) {
                 const line = checkbox.closest('.line') || checkbox.closest('.line1'); // line 또는 line1 모두 확인
+                  originalDisplay = line.style.display;
+                line.style.display = "flex";
                 const song = line.querySelector('.title').innerText;
                 const artist = line.querySelector('.artist').innerText;
                 const path = line.querySelector('.hidden').innerText;
-
+            
+                line.style.display = originalDisplay;
+                console.log(song,artist,path);
                 // 선택된 노래를 배열에 추가
-                selectedSongs.push({ song, artist, path });
+                selectedSongs.push({song,artist,path});
             }
         });
 
@@ -389,6 +434,7 @@
             // 선택한 노래를 로컬 스토리지에 저장
             localStorage.setItem('selectedSongs', JSON.stringify(selectedSongs));
             currentIndex = 0;
+            
             playSongs(); // 첫 번째 노래부터 재생
         } else {
             alert('음악을 선택해 주세요.');
@@ -479,6 +525,7 @@
 		    // 현재 페이지를 업데이트하고 active 클래스 적용
 		    currentIndex = page;
 		    updateActivePage(page);
+		    
 		}
 
 		
@@ -686,7 +733,7 @@
 </head>
 <body>    
     <div class="music-title">
-	    <span>내 음악</span>
+	    <span style="margin-bottom: 100px;">내 음악</span>
 	    <!-- 새로운 셀렉트 박스 추가 -->
 	    <div class="music-title-select-wrapper">
 	        <select class="music-title-select" onchange="sortSongs(this.value)">
@@ -740,7 +787,7 @@
             </div>
             <div class="artist">
                 <%= artist %>
-                <img src="../miniroom/img/musicicon.png" alt="icon" class="small-icon5">
+                <img src="../yang/img/folderplus.png" alt="icon" class="small-icon5">
             </div>
             <div class="user-count" style="display:none;">
 	            <%= userCount %>  <!-- 일치하는 user_count 값을 출력 -->
@@ -847,7 +894,7 @@
 			                String playlist = playlists1.get(i);
 			%>
 			                <div class="playlist-item" onclick="addMusicToPlaylist('<%= playlist %>')">
-			                    <img src="../seyoung/img/folder.png" width="50" height="50" alt="folder icon" />
+			                    <img src="../yang/img/folderplus.png" width="50" height="50" alt="folder icon" />
 			                    <span><%= playlist %></span>
 			                </div>
 			<%
