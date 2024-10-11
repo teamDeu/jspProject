@@ -511,9 +511,9 @@ function buyStoreItem(itemNum, itemPrice, itemName, itemImage) {
                 showPurchaseCompletePopup(itemName, itemImage, itemPrice);
 
                 // 클로버 잔액 UI 업데이트
-                let currentClover = parseInt(document.querySelector('.clover-amount-span').innerText);
-                currentClover -= itemPrice;
-                document.querySelector('.clover-amount-span').innerText = currentClover;
+                let currentClover = parseInt(document.querySelectorAll('.clover-amount-span')[0].innerText);
+                    currentClover -= itemPrice; // 환불된 클로버 금액 더하기
+                    document.querySelectorAll('.clover-amount-span').forEach((e) => e.innerText = currentClover);
 
                 // 구매한 아이템을 구매 목록에 즉시 추가
                 addToBuylist(itemNum, itemPrice, itemName, itemImage);
@@ -586,9 +586,9 @@ function refundStoreItem(itemNum, itemPrice) {
                     alert("환불이 완료되었습니다!");
 
                     // 클로버 잔액 업데이트
-                    let currentClover = parseInt(document.querySelector('.clover-amount-span').innerText);
+                    let currentClover = parseInt(document.querySelectorAll('.clover-amount-span')[0].innerText);
                     currentClover += itemPrice; // 환불된 클로버 금액 더하기
-                    document.querySelector('.clover-amount-span').innerText = currentClover;
+                    document.querySelectorAll('.clover-amount-span').forEach((e) => e.innerText = currentClover);
 
                     // 구매 목록을 즉시 업데이트
                     loadBuylist();  // 환불 후 즉시 구매 목록을 새로고침
