@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import board.BoardFolderBean;
@@ -345,7 +347,107 @@ public class MusicMgr {
 	    return result;  // 삭제 성공 여부 반환
 	}
 
-	
+	public void updateItemUsage(String user_id, List<String> selectedItemPaths) {
+	    Connection con = null;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    String sql = null;
+
+	    try {
+	        con = pool.getConnection();
+	        
+	        // 1. 선택한 모든 item_path에 해당하는 item_num을 조회하여 리스트에 저장
+	        List<Integer> selectedItemNums = new ArrayList<>();
+	        sql = "SELECT item_num FROM item WHERE item_path = ?";
+	        pstmt = con.prepareStatement(sql);
+	        
+	        for (String item_path : selectedItemPaths) {
+	            pstmt.setString(1, item_path);
+	            rs = pstmt.executeQuery();
+	            if (rs.next()) {
+	                selectedItemNums.add(rs.getInt("item_num"));
+	            }
+	        }
+	        
+	        pstmt.close();
+	        rs.close();
+	        
+	        // 2. 선택한 item_num들의 item_using을 1로 업데이트
+	        if (!selectedItemNums.isEmpty()) {
+	            String updateSql = "UPDATE itemhold SET item_using = 1 WHERE user_id = ? AND item_num = ?";
+	            pstmt = con.prepareStatement(updateSql);
+	            for (int item_num : selectedItemNums) {
+	                pstmt.setString(1, user_id);
+	                pstmt.setInt(2, item_num);
+	                pstmt.executeUpdate();
+	            }
+	            pstmt.close();
+	        }
+	        
+	        // 3. 선택되지 않은 모든 item_num들의 item_using을 0으로 업데이트
+	        StringBuilder itemNumsString = new StringBuilder();
+	        for (int i = 0; i < selectedItemNums.size(); i++) {
+	            itemNumsString.append(selectedItemNums.get(i));
+	            if (i < selectedItemNums.size() - 1) {
+	                itemNumsString.append(", ");
+	            }
+	        }
+	        
+	        if (!selectedItemNums.isEmpty()) {
+	            sql = "UPDATE itemhold SET item_using = 0 WHERE user_id = ? AND item_num NOT IN (" + itemNumsString.toString() + ")";
+	            pstmt = con.prepareStatement(sql);
+	            pstmt.setString(1, user_id);
+	            pstmt.executeUpdate();
+	            pstmt.close();
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (rs != null) rs.close();
+	            if (pstmt != null) pstmt.close();
+	            if (con != null) pool.freeConnection(con);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+
+
+	public Vector<MusicBean> getUsedItemsByUser(String user_id) {
+	    Connection con = null;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    Vector<MusicBean> vlist = new Vector<MusicBean>();
+	    try {
+	        con = pool.getConnection();
+	        // itemhold 테이블과 item 테이블을 JOIN하여 item_using이 1인 항목 가져오기
+	        String sql = "SELECT i.item_name, i.item_path " +
+	                     "FROM itemhold ih " +
+	                     "JOIN item i ON ih.item_num = i.item_num " +
+	                     "WHERE ih.user_id = ? AND ih.item_using = 1";
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setString(1, user_id); // user_id를 매개변수로 설정
+	        rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            MusicBean bean = new MusicBean();
+	            bean.setItem_name(rs.getString("item_name"));
+	            bean.setItem_path(rs.getString("item_path"));
+	            vlist.add(bean);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        pool.freeConnection(con, pstmt, rs);
+	    }
+	    return vlist;
+	}
+
+
+
 	
 
 }

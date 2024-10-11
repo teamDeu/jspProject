@@ -1,6 +1,7 @@
 <%@page import="java.util.HashMap"%>
 <%@page import="music.MusicBean"%>
 <%@page import="java.util.Vector"%>
+<%@ page import="com.google.gson.Gson" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" 
                   pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ page import="java.sql.*, pjh.MemberBean, pjh.DBConnectionMgr"%>
@@ -17,6 +18,9 @@
     
     Vector<MusicBean> popularMusicList = mgr.getPopularMusicList();
     
+    Vector<MusicBean> usedMusicList = mgr.getUsedItemsByUser(user_id);
+    Gson gson = new Gson();
+    String usedMusicJson = gson.toJson(usedMusicList);
 %>
 
 <!DOCTYPE html>
@@ -250,51 +254,56 @@
     <script>
     let currentIndex = 1;
     let selectedSongs = [];
-    let selectedItemName = "";
-    const pageSize = 10;
-    const totalItems = <%= musicvlist.size() %>;
-    const totalPages = Math.ceil(totalItems / pageSize);
-    const currentUrl = window.location.href;  // 현재 접속한 URL
+    const audioPlayer = document.getElementById('audioPlayer');
+    const titleElement = document.querySelector('.title');
+    const artistElement = document.querySelector('.artist');
+
+    // JSP에서 받은 usedMusicList를 JavaScript로 전달
+    const usedMusicList = <%= usedMusicJson %>;
 
     // 새로고침 시 저장된 정보로 음악 재생 재개
     document.addEventListener('DOMContentLoaded', function () {
-    const musicData = JSON.parse(localStorage.getItem('musicData') || "{}");
-    const currentUrl = window.location.href;  // 현재 접속한 URL
+        const currentUrl = window.location.href;
+        const initialUrl = localStorage.getItem('initialUrl');
 
-    if (musicData[currentUrl] && musicData[currentUrl].songs.length > 0) {
-        // URL이 일치하고 저장된 노래 정보가 있으면 해당 노래들 재생
-        selectedSongs = musicData[currentUrl].songs;
-        const savedSong = musicData[currentUrl].currentSong;
-        const savedTime = musicData[currentUrl].savedTime || 0;
-        const savedArtist = musicData[currentUrl].currentArtist;
-
-        const audioPlayer = document.getElementById('audioPlayer');
-        const titleElement = document.querySelector('.title');
-        const artistElement = document.querySelector('.artist');
-
-        if (savedSong) {
-            // 저장된 노래 정보 불러오기
-            audioPlayer.src = savedSong;
-            titleElement.innerText = musicData[currentUrl].currentSongTitle;
-            artistElement.innerText = savedArtist || '아티스트';
-
-            // 'loadedmetadata' 이벤트를 기다린 후에 재생 시작
-            audioPlayer.addEventListener('loadedmetadata', function () {
-                audioPlayer.currentTime = parseFloat(savedTime);  // 이전 재생 시간으로 이동
-                audioPlayer.play(); // 재생
-            });
+        // 처음 접속한 URL을 로컬 스토리지에 저장
+        if (!initialUrl) {
+            localStorage.setItem('initialUrl', currentUrl);
         }
-    } else {
-        // URL이 다르거나 저장된 배경음악이 없으면 새로운 배경음악 설정 필요
-        console.log("새로운 URL에서 배경음악 설정 필요");
-    }
 
-    // Unmute the audio after starting
-    const audioPlayer = document.getElementById('audioPlayer');
-    audioPlayer.muted = false;
-});
+        // URL이 처음 접속한 URL과 다른 경우에만 DB에서 가져온 노래를 재생
+        if (initialUrl && currentUrl !== initialUrl) {
+            console.log("다른 URL에서 접속했습니다. DB에서 노래 목록을 가져옵니다.");
 
+            if (usedMusicList && usedMusicList.length > 0) {
+                usedMusicList.forEach(function (music) {
+                    selectedSongs.push({
+                        song: music.item_name,  // JSP에서 넘어온 곡명
+                        path: music.item_path,  // 곡의 경로
+                        artist: ''  // 아티스트 정보가 없으면 빈 문자열로 설정
+                    });
+                });
+                playSongs();  // 첫 번째 곡 재생
+            } else {
+                console.log("DB에서 가져온 노래가 없습니다.");
+            }
 
+            // 새 URL에서 접속했으므로 로컬 스토리지에 노래 목록 저장
+            localStorage.setItem('selectedSongs', JSON.stringify(selectedSongs));
+
+        } else {
+            // 처음 접속한 URL일 경우 로컬 스토리지에서 노래 목록 불러오기
+            const savedSelectedSongs = localStorage.getItem('selectedSongs');
+            if (savedSelectedSongs) {
+                selectedSongs = JSON.parse(savedSelectedSongs);
+                playSongs();  // 첫 번째 곡 재생
+            }
+        }
+
+        audioPlayer.onended = function () {
+            playNextSong();  // 노래가 끝나면 다음 곡 재생
+        };
+    });
 	
 	function updateMusicPagination() {
     const allLines = document.querySelectorAll('.line');
@@ -353,42 +362,34 @@
 
     function playSongs() {
         if (currentIndex >= selectedSongs.length) {
-            currentIndex = 0; // 마지막 곡이 끝나면 처음으로 돌아감
-            return;
+            currentIndex = 0;  // 마지막 곡이면 처음으로 돌아감
         }
-
         const currentSong = selectedSongs[currentIndex];
-        const audioPlayer = document.getElementById('audioPlayer');
-        const titleElement = document.querySelector('.title');
-        const artistElement = document.querySelector('.artist');
-
-        // 노래 정보 설정 및 재생
         audioPlayer.src = currentSong.path;
-        titleElement.innerText = currentSong.song;
-        artistElement.innerText = currentSong.artist;
+        titleElement.innerText = currentSong.song;  // 곡명을 설정
+        artistElement.innerText = currentSong.artist;  // 아티스트명을 설정
+        audioPlayer.play();
 
-        // localStorage에 현재 노래 정보 저장
+        // 현재 재생 정보를 로컬 스토리지에 저장
         localStorage.setItem('currentSong', currentSong.path);
         localStorage.setItem('currentSongTitle', currentSong.song);
         localStorage.setItem('currentArtist', currentSong.artist);
-
-        audioPlayer.play();
     }
-    
+
     function playNextSong() {
         currentIndex++;
         if (currentIndex < selectedSongs.length) {
             playSongs();
         } else {
-            currentIndex = 0; // 마지막 곡이 끝나면 처음으로 돌아감
-            playSongs(); // 첫 곡을 다시 재생
+            currentIndex = 0;  // 마지막 곡이 끝나면 처음으로 돌아감
+            playSongs();
         }
     }
 
     function playPreviousSong() {
         currentIndex--;
         if (currentIndex < 0) {
-            currentIndex = selectedSongs.length - 1; // 첫 곡이면 마지막 곡으로 이동
+            currentIndex = selectedSongs.length - 1;  // 첫 곡이면 마지막 곡으로 이동
         }
         playSongs();
     }
@@ -400,35 +401,23 @@
 
         allCheckboxes.forEach((checkbox) => {
             if (checkbox.checked) {
-                const line = checkbox.closest('.line') || checkbox.closest('.line1');
-                originalDisplay = line.style.display;
+                const line = checkbox.closest('.line') || checkbox.closest('.line1'); // line 또는 line1 모두 확인
+                  originalDisplay = line.style.display;
                 line.style.display = "flex";
                 const song = line.querySelector('.title').innerText;
                 const artist = line.querySelector('.artist').innerText;
                 const path = line.querySelector('.hidden').innerText;
-
+            
                 line.style.display = originalDisplay;
+                console.log(song,artist,path);
                 // 선택된 노래를 배열에 추가
-                selectedSongs.push({song, artist, path});
+                selectedSongs.push({song,artist,path});
             }
         });
 
         if (selectedSongs.length > 0) {
-            // 로컬 스토리지에 기존 데이터 가져오기
-            const musicData = JSON.parse(localStorage.getItem('musicData') || "{}");
-            const currentUrl = window.location.href;
-
-            // 현재 URL에 대한 배경음악 데이터 저장
-            musicData[currentUrl] = {
-                songs: selectedSongs,
-                currentSong: selectedSongs[0].path, // 첫 곡으로 설정
-                currentSongTitle: selectedSongs[0].song,
-                currentArtist: selectedSongs[0].artist,
-                savedTime: 0  // 처음엔 0초에서 시작
-            };
-
-            localStorage.setItem('musicData', JSON.stringify(musicData));
-
+            // 선택한 노래를 로컬 스토리지에 저장
+            localStorage.setItem('selectedSongs', JSON.stringify(selectedSongs));
             currentIndex = 0;
             playSongs(); // 첫 번째 노래부터 재생
         } else {
@@ -436,30 +425,25 @@
         }
     }
 
-
-
     // 페이지가 로드될 때, 로컬 스토리지에서 선택한 노래 리스트를 불러옴
     document.addEventListener('DOMContentLoaded', function () {
-    const audioPlayer = document.getElementById('audioPlayer');
-
-    // 현재 재생 시간을 주기적으로 저장
-    audioPlayer.ontimeupdate = function () {
-        const musicData = JSON.parse(localStorage.getItem('musicData') || "{}");
-        const currentUrl = window.location.href;
-
-        if (musicData[currentUrl]) {
-            musicData[currentUrl].savedTime = audioPlayer.currentTime;
-            localStorage.setItem('musicData', JSON.stringify(musicData));
+        const savedSelectedSongs = localStorage.getItem('selectedSongs');
+        if (savedSelectedSongs) {
+            selectedSongs = JSON.parse(savedSelectedSongs);
         }
-    };
 
-    // 음악이 끝나면 다음 곡 재생
-    audioPlayer.onended = function () {
-        playNextSong();
-    };
-});
+        const audioPlayer = document.getElementById('audioPlayer');
 
+        // 현재 재생 시간을 주기적으로 저장
+        audioPlayer.ontimeupdate = function () {
+            localStorage.setItem('savedTime', audioPlayer.currentTime);
+        };
 
+        // 음악이 끝나면 다음 곡 재생
+        audioPlayer.onended = function () {
+            playNextSong();
+        };
+    });
 
     
     function sortSongs(sortType) {

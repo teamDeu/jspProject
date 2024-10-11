@@ -8,7 +8,14 @@ public class MusicBean {
 	private String playlist;
 	private int item_num;
 	private int userCount;
+	private int item_using;
 	
+	public int getItem_using() {
+		return item_using;
+	}
+	public void setItem_using(int item_using) {
+		this.item_using = item_using;
+	}
 	public String getItem_name() {
 		return item_name;
 	}
