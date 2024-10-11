@@ -341,7 +341,7 @@ label[for="secretCheckbox"] {
 }
 
 /* 페이지 버튼 스타일 */
-.pagination-button {
+.guestbook-pagination-button {
     background-color: #ffffff; /* 배경색 */
     color: #000000; /* 글자색 */
     border: 1px solid #DCDCDC;
@@ -380,10 +380,10 @@ function addGuestbookEntry() {
                     var response = JSON.parse(xhr.responseText);
                     if (response.guestbookNum !== 0) {
                         alert("방명록이 작성되었습니다.");
-
+						sendAlarm(ownerId);
                         // 방명록이 작성되면 전체 페이지를 다시 로드
                         loadGuestbookPage(1);
-
+						
                         // 입력 필드 초기화
                         document.getElementById("guestbookContent").value = '';
                         document.getElementById("secretCheckbox").checked = false;
@@ -551,10 +551,11 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
         answerButton.onclick = function() {
             adAnswer(guestbookNum);
         };
-
         answerForm.appendChild(answerTextarea);
         answerForm.appendChild(answerButton);
-
+        answerTextarea.addEventListener('keydown', function(event) {
+            checkEnterAnswer(event, guestbookNum);
+        });
         li.appendChild(answerList); // 답글 목록 추가
         li.appendChild(answerForm); // 답글 작성 폼 추가
     }
@@ -672,6 +673,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
                               );
                               // 입력 필드 초기화
                               document.getElementById("aContent-" + guestbookNum).value = '';
+                              sendAlarm('<%=ownerId%>');
                           } else {
                               alert("답글 작성에 실패하였습니다.");
                           }
@@ -801,7 +803,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
           for (var i = 1; i <= totalPages; i++) {
               var button = document.createElement("button");
               button.textContent = i;
-              button.classList.add('pagination-button');
+              button.classList.add('guestbook-pagination-button');
 
               button.disabled = false; // 모든 페이지 버튼 활성화
               button.onclick = (function(pageNumber) {
@@ -945,7 +947,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
                   <!-- 답글 작성 폼 (방명록 항목 내부로 이동) -->
                   <div class="a-form">
                       <textarea id="aContent-<%=entry.getGuestbookNum()%>" class="a-textarea" placeholder="답글 내용을 입력하세요" 
-    onkeydown="checkEnterAnswer(event) <%=entry.getGuestbookNum()%>)"></textarea>
+    onkeydown="checkEnterAnswer(event, <%=entry.getGuestbookNum()%>)"></textarea>
                       <button type="button" class="a-submit-btn" onclick="adAnswer(<%=entry.getGuestbookNum()%>)">등록</button>
                   </div>
 

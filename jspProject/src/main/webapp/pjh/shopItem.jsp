@@ -5,6 +5,7 @@
     String item_img = request.getParameter("item_img");
     String item_name = request.getParameter("item_name");
     int item_price = UtilMgr.parseInt(request, "item_price");
+    String item_type = request.getParameter("item_type");
 %>
 
 <div class="item">
@@ -13,5 +14,6 @@
     <div class="item-price">
         <img src="./img/clover_icon.png" alt="클로버" class="clover-icon"> <!-- 클로버 아이콘 -->
         <%=item_price %>개 <!-- 상품 가격 -->
+        <input type = "hidden" name = "item-type" value ="<%=item_type %>">
     </div>
 </div>

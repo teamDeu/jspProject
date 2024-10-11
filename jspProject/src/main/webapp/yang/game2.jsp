@@ -493,7 +493,7 @@ if (user_id != null) {
         function updateCloverAmount(amount) {
 		    const currentCloverAmount = parseInt($('#cloverAmountDisplay1').text()) || 0;
 		    const newCloverAmount = currentCloverAmount + amount;
-		    $('#cloverAmountDisplay1').text(newCloverAmount);
+		    document.querySelectorAll('.clover-amount-span').forEach((e) => e.innerText = newCloverAmount);
 		
 		    $.ajax({
 		        url: '../yang/updateClover.jsp',
@@ -526,7 +526,7 @@ if (user_id != null) {
                     }
 
                     // 클로버 잔액 차감: 화면에 즉시 반영
-                    $('#cloverAmountDisplay1').text(newCloverAmount);
+                    document.querySelectorAll('.clover-amount-span').forEach((e) => e.innerText = newCloverAmount);
 
                     // 클로버 잔액을 디비에 업데이트
                     $.ajax({
@@ -582,7 +582,7 @@ if (user_id != null) {
 
                     // 서버에서 받은 클로버 값이 현재 화면에 표시된 값과 다를 경우 업데이트
                     if (serverCloverAmount !== currentCloverAmount) {
-                        $('#cloverAmountDisplay1').text(serverCloverAmount);
+                    	document.querySelectorAll('.clover-amount-span').forEach((e) => e.innerText = currentCloverAmount);
                     }
                 },
                 error: function() {

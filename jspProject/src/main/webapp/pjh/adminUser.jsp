@@ -158,7 +158,6 @@
 		<!-- 상품 목록 출력 및 페이징 -->
 		<div class="product-list">
 			<h2>유저 목록</h2>
-			<button class="alarm_button">공지사항 알림</button>
 			<table>
 				<thead>
 					<tr>

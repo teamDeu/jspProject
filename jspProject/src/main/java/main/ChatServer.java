@@ -76,6 +76,14 @@ public class ChatServer {
             }
         	flag = false;
         }
+        else if(command.equals("submitFriendRequest")) {
+        	synchronized (clients) {
+                for (Session client : clients) {
+                		client.getBasicRemote().sendText(message);	
+                }
+            }
+        	flag = false;
+        }
         else if(command.equals("sendMessage")) {
         	String id = data.split("㉡")[0];
         	String comment = data.split("㉡")[1];
@@ -84,6 +92,17 @@ public class ChatServer {
         	bean.setChatlog_id(id);
         	bean.setChatlog_content(comment);
         	mgr.insertChatLog(bean);
+        }
+        else if(command.equals("sendAlarm")) {
+        	String id = data;
+        	synchronized (clients) {
+                for (Session client : clients) {
+                		if(userId.get(client.getId()).equals(id)) {
+                			client.getBasicRemote().sendText(message);	
+                		}
+                }
+            }
+        	flag = false;
         }
         if(flag) {
         	synchronized (clients) {

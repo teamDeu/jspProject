@@ -1,3 +1,4 @@
+<%@page import="miniroom.UtilMgr"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="Category.CategoryBean"%>
 <%@page import="java.util.List"%>
@@ -17,6 +18,10 @@
    // 세션에서 idKey 가져오기
    String id = (String)session.getAttribute("idKey");
    String category = request.getParameter("category");
+   int alarmNum = 0;
+   if(request.getParameter("alarmNum") != null && request.getParameter("alarmNum") != ""){
+	   alarmNum = UtilMgr.parseInt(request, "alarmNum");
+   }
    if(id == null){
       response.sendRedirect("../pjh/login.jsp");
       return;
@@ -367,6 +372,9 @@ function mainCategoryLoad(){
                        openRequestModalReceive(sendUserCharacter,sendUserName,requestType,comment,"",sendUserId);
                     }
                  }
+                 else if(command == ("sendAlarm")){
+                	 getAlarmList();
+                 }
                  else if(command == ("submitFriendRequest")){
                     flag = false;
                     userId = rawdata[1];
@@ -437,7 +445,10 @@ function mainCategoryLoad(){
                 document.getElementById("messageInput").value = '';
             }
         }
-        
+        function sendAlarm(userid){
+        	var message = "sendAlarm" + dataSeparator + userid;
+        	ws.send(message);
+        }
         function printUser(id,character,name){
            newDiv = document.createElement("div");
            newImg = document.createElement("img");
@@ -616,13 +627,14 @@ function mainCategoryLoad(){
          
             // 설정 박스 표시
             document.getElementById('settingBox').style.display = 'block';
-            
-            
         }
         document.addEventListener("DOMContentLoaded", function() {
         	mainCategoryLoad();
         	if(section != "null"){
         		clickOpenBox(section);
+        		if(section == "board"){
+        			clickBoard_boardNum(<%=alarmNum%>);
+        		}
         	}
         });
         
@@ -632,7 +644,7 @@ function mainCategoryLoad(){
 <body>
    <div class="container">
       <div class="header">
-         <a href = "../miniroom/main.jsp?url=<%=url%>"><img src="img/logo2.png" alt="CloverStory Logo2" class="logo2"></a>
+         <a href = "../miniroom/main.jsp?url=<%=id%>"><img src="img/logo2.png" alt="CloverStory Logo2" class="logo2"></a>
          <div class="settings">
             <span></span> <a href="javascript:void(0);" onclick="showSettingPage()">설정</a> <a href="../pjh/logout.jsp">로그아웃</a>
          </div>

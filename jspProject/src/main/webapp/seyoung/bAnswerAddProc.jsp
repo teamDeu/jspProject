@@ -1,3 +1,6 @@
+<%@page import="alarm.AlarmMgr"%>
+<%@page import="board.BoardWriteMgr"%>
+<%@page import="alarm.AlarmBean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@page import="board.BoardAnswerBean"%>
@@ -8,7 +11,7 @@
     String boardNum = request.getParameter("board_num");
     String answerContent = request.getParameter("answer_content");
     String answerId = request.getParameter("answer_id");
-
+    
     // BoardAnswerBean 인스턴스 생성 후 값을 설정
     BoardAnswerBean answerBean = new BoardAnswerBean();
     answerBean.setBoardNum(Integer.parseInt(boardNum));
@@ -18,6 +21,20 @@
     // BoardAnswerMgr를 통해 데이터베이스에 댓글 삽입
     BoardAnswerMgr mgr = new BoardAnswerMgr();
     mgr.binsertAnswer(answerBean);
-
+	
+    //알람기능
+    
+    AlarmBean alarmBean = new AlarmBean();
+    BoardWriteMgr bMgr = new BoardWriteMgr();
+    String id = bMgr.getBoard(Integer.parseInt(boardNum)).getBoard_id();
+    if(!(id.equals(answerId))){
+    	alarmBean.setAlarm_content_num(Integer.parseInt(boardNum));
+        alarmBean.setAlarm_type("게시판 댓글");
+        alarmBean.setAlarm_user_id(id);
+        AlarmMgr alarmMgr = new AlarmMgr();
+        alarmMgr.insertAlarm(alarmBean);
+    }
+    
+    
     out.print("성공");
 %>

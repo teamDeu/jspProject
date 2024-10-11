@@ -1,4 +1,6 @@
 
+<%@page import="board.BoardWriteBean"%>
+<%@page import="board.BoardWriteMgr"%>
 <%@page import="guestbook.GuestbookanswerBean"%>
 <%@page import="guestbook.GuestbookprofileBean"%>
 <%@page import="guestbook.GuestbookprofileMgr"%>
@@ -10,16 +12,11 @@
 <%@page import="java.util.Vector"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<jsp:useBean id="fMgr" class="friend.FriendMgr" />
-<jsp:useBean id="uMgr" class="pjh.MemberMgr" />
-<jsp:useBean id="aMgr" class="alarm.AlarmMgr" />
-<jsp:useBean id="gMgr" class="guestbook.GuestbookMgr" />
-<jsp:useBean id="gaMgr" class="guestbook.GuestbookanswerMgr"/>
+
 <%
 String id = (String) session.getAttribute("idKey");
 String url = request.getParameter("url");
-Vector<AlarmBean> vlist = aMgr.getAllAlarm(id);
-ItemMgr iMgr = new ItemMgr();
+
 %>
 <head>
 <style>
@@ -63,7 +60,7 @@ ItemMgr iMgr = new ItemMgr();
 	display: flex;
 	justify-content: space-between;
 	font-size: 20px;
-	cursor : pointer;
+	cursor: pointer;
 }
 
 .alarmlist_main_div_item_title {
@@ -118,9 +115,9 @@ ItemMgr iMgr = new ItemMgr();
 
 </head>
 <body>
-	<form action = "../miniroom/main.jsp" name = "alarmForm" method = "POST">
-		<input type = "hidden" name = "alarmNum" value = "">
-		<input type = "hidden" name = "category" value = "guestbook">
+	<form action="../miniroom/main.jsp" name="alarmForm" method="POST">
+		<input type="hidden" name="alarmNum" value=""> <input
+			type="hidden" name="category" value="guestbook">
 	</form>
 	<div class="alarmlist_top_div" style="display: none">
 		<div class="alarmlist_main_div">
@@ -132,92 +129,8 @@ ItemMgr iMgr = new ItemMgr();
 				<div onclick="clickAlarmlist_main_div_deleteAllBtn()"
 					class="alarmlist_main_div_deleteAllBtn">읽은 알림 모두 삭제</div>
 			</div>
-			<%if (vlist.size() > 0){ %>
-			<ul class="alarmlist_main_div_list">
-				<%
-				for (int i = 0; i < vlist.size(); i++) {
-					AlarmBean alarmBean = vlist.get(i);
-					String alarmType = alarmBean.getAlarm_type();
-					int alarmContentNum = alarmBean.getAlarm_content_num();
-					String alarmAt = alarmBean.getAlarm_at();
-					String alarmUser_id = alarmBean.getAlarm_user_id();
-					int alarmNum = alarmBean.getAlarm_num();
-					boolean alarmRead = alarmBean.isAlarm_read();
-					GuestbookBean gBean = null;
-					FriendRequestBean fBean = null;
-					MemberBean fUser = null;
-					GuestbookprofileMgr gpMgr = new GuestbookprofileMgr();
-
-					if (alarmType.equals("친구요청")) {
-						fBean = fMgr.getFriendRequestItem(alarmContentNum);
-						fUser = uMgr.getMember(fBean.getRequest_senduserid());
-						GuestbookprofileBean gpBean = gpMgr.getProfileByUserId(fUser.getUser_id());
-				%>
-				<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><input
-					type="hidden" name="character"
-					value="<%=iMgr.getUsingCharacter(fBean.getRequest_senduserid()).getItem_path()%>">
-					<input type="hidden" name="name"
-					value="<%=fUser.getUser_name()%>"> <input type="hidden"
-					name="type" value="<%=fBean.getRequest_type()%>"> <input
-					type="hidden" name="comment"
-					value="<%=fBean.getRequest_comment()%>"> <input
-					type="hidden" name="num" value="<%=fBean.getRequest_num()%>">
-					<input type="hidden" name="request_senduserid"
-					value="<%=fBean.getRequest_senduserid()%>"> <span
-					class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
-					<span onclick="clickAlarmItem(event)"
-					class="alarmlist_main_div_item_title"><%=gpBean.getProfileName()%>님이
-						<%=fBean.getRequest_type() == 1 ? "일촌" : "이촌"%> 요청을 보냈습니다.</span> <span
-					class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
-				</li>
-				<%
-				} else if (alarmType.equals("방명록")) {
-				gBean = gMgr.getGuestbookEntry(alarmContentNum);
-				GuestbookprofileBean gpBean = gpMgr.getProfileByUserId(gBean.getWriterId());
-				
-				%>
-				<%if(gpBean == null){ %>
-					<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><span
-							class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
-							<span onclick="clickAlarmGuestbook(event)"
-							class="alarmlist_main_div_item_title">삭제된 방명록 알람입니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
-						</li>
-				<%}else{ %>
-				<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><span
-					class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
-					<span onclick="clickAlarmGuestbook(event)"
-					class="alarmlist_main_div_item_title"><%=gpBean.getProfileName()%>님이
-						방명록을 작성하였습니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
-				</li>
-				<%}%>
-				<%
-				}else if(alarmType.equals("방명록댓글")){
-					GuestbookanswerBean gaBean = null;
-					gaBean = gaMgr.getAnswersByNum(alarmContentNum);
-					GuestbookprofileBean gpBean = gpMgr.getProfileByUserId(gaBean.getGanswerId());
-				%>
-				<%if(gpBean == null){ %>
-				<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><span
-						class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
-						<span onclick="clickAlarmGuestbook(event)"
-						class="alarmlist_main_div_item_title">삭제된 방명록 댓글 알람입니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
-				</li>
-				<%}else{ %>
-					<li id="<%=alarmNum%>" class="alarmlist_main_div_item"><span
-						class="alarmlist_main_div_item_readbool <%if (alarmRead) {%>alarmlist_main_div_item_read<%}%>">읽음</span>
-						<span onclick="clickAlarmGuestbook(event)"
-						class="alarmlist_main_div_item_title"><%=gpBean.getProfileName()%>님이
-							방명록댓글을 작성하였습니다.</span> <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
-					</li>
-				<%} %>
-				<%
-				}} // for (alarmList)
-				%>
-
+			<ul class ="alarmlist_main_div_list">
 			</ul>
-			<%} else{ // if vlist.size() > 0%>
-			<h2 style = "text-align :center">새로운 알림이 없습니다.</h2>
-			<%} %>
 			<div class="alarm_pagination"></div>
 		</div>
 	</div>
@@ -249,6 +162,7 @@ function alarm_changePage(page) {
 
 // 아이템을 보여주는 함수
 function displayalarm_items() {
+	console.log("displaalarm_items");
     const start = (alarm_currentPage - 1) * alarm_itemsPerPage;
     const end = start + alarm_itemsPerPage;
     const visiblealarm_items = alarm_items.slice(start, end);
@@ -359,12 +273,48 @@ function clickAlarmGuestbook(event){
 		document.alarmForm.submit();
 	}
 }
+
+function clickAlarmBoard(event){
+	
+	let fr_form = event.target.parentElement;
+	var xhr = new XMLHttpRequest();
+    xhr.open("GET", "../miniroom/alarmProc.jsp?type=read&num="+fr_form.id, true); // Alarm 갱신Proc
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+        }
+    };
+    xhr.send();
+    fr_form.querySelector(".alarmlist_main_div_item_readbool").classList.add("alarmlist_main_div_item_read");
+    displayalarm_items();
+    if("<%=url%>" == "<%=id%>"){
+    	clickBoard_boardNum(event.target.id);
+    }
+	else{
+		document.alarmForm.category.value = "board";
+		document.alarmForm.alarmNum.value = event.target.id;
+		document.alarmForm.submit();
+	}
+}
+
+function getAlarmList(){
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET","../miniroom/getAlarmList.jsp",true)
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState === 4 && xhr.status === 200){
+			document.querySelector(".alarmlist_main_div_list").innerHTML = xhr.responseText;
+			const alarm_itemsContainer = document.querySelector(".alarmlist_main_div_list")
+			alarm_items = Array.from(alarm_itemsContainer.children); // 모든 아이템을 배열로 저장
+			displayalarm_items();
+			alarm_updatePagination();
+		}
+	}
+	xhr.send();
+	
+}
 // 페이지가 로드될 때 초기화
 document.addEventListener('DOMContentLoaded', function () {
-	const alarm_itemsContainer = document.querySelector(".alarmlist_main_div_list")
-	alarm_items = Array.from(alarm_itemsContainer.children); // 모든 아이템을 배열로 저장
-	displayalarm_items();
-	alarm_updatePagination();
+	getAlarmList();
+
 });
 </script>
 </body>

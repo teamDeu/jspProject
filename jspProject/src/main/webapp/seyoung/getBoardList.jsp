@@ -1,4 +1,5 @@
 
+<%@page import="miniroom.UtilMgr"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.sql.Timestamp"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -11,16 +12,18 @@
 
 <%
     
-    String folderName = request.getParameter("folderName"); // 폴더 이름 받기
-    
+    int currentPage = 1; // 기본값은 1페이지
+    if(request.getParameter("page") == null){
+    	
+    }
+    else{
+    	currentPage = UtilMgr.parseInt(request, "page");
+    }
     int folderNum = 0;
-    try {
-        folderNum = Integer.parseInt(request.getParameter("folderNum"));
-    } catch (NumberFormatException e) {
-        folderNum = 0;
+    if(request.getParameter("folderNum") != null){
+    	folderNum = UtilMgr.parseInt(request, "folderNum");
     }
     
-    int currentPage = 1; // 기본값은 1페이지
     int entriesPerPage = 12; // 한 페이지당 12개의 게시글
     String pageParam = request.getParameter("page");
     if (pageParam != null && !pageParam.isEmpty()) {
@@ -30,7 +33,7 @@
             currentPage = 1; // 페이지 번호가 잘못된 경우 기본값으로 설정
         }
     }
-
+	System.out.println("folderNum = " + folderNum);
     int startIndex = (currentPage - 1) * entriesPerPage;
     
     BoardWriteMgr boardMgr = new BoardWriteMgr();
@@ -78,17 +81,9 @@
 <%
     }
 %>
+<input type ="hidden" id = "boardList_totalPages" name ="boardList_totalPages" value =<%=totalPages %>>
 </html>
 
 <script>
-	function loadBoardListByPage(folderNum, page) {
-	    var xhr = new XMLHttpRequest();
-	    xhr.open("GET", `../seyoung/getBoardList.jsp?folderNum=${folderNum}&page=${page}`, true);
-	    xhr.onreadystatechange = function () {
-	        if (xhr.readyState === 4 && xhr.status === 200) {
-	            document.getElementById("board-list-body").innerHTML = xhr.responseText;
-	        }
-	    };
-	    xhr.send();
-	}
+
 </script>
