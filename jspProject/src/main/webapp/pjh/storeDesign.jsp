@@ -486,7 +486,7 @@ function clickOpenType(id, clickedTab) {
     openBox.style.display = "grid";
 }
 
-function buyStoreItem(itemNum, itemPrice, itemName, itemImage) {
+function buyStoreItem(itemNum, itemPrice, itemName, itemImage,itemType) {
     // 구매 확인 메시지 추가
     if (!confirm("정말로 구매하시겠습니까?")) {
         return; // 취소하면 함수 종료
@@ -514,7 +514,20 @@ function buyStoreItem(itemNum, itemPrice, itemName, itemImage) {
                 let currentClover = parseInt(document.querySelectorAll('.clover-amount-span')[0].innerText);
                     currentClover -= itemPrice; // 환불된 클로버 금액 더하기
                     document.querySelectorAll('.clover-amount-span').forEach((e) => e.innerText = currentClover);
-
+                    if(itemType == '캐릭터'){
+						characterArray.push({
+							image : itemImage,
+							num : itemNum,			
+							name : itemName
+						})
+					}
+					else if(itemType == '배경화면'){
+						backgroundArray.push({
+							image : itemImage,
+							num : itemNum,			
+							name : itemName
+						})
+					}
                 // 구매한 아이템을 구매 목록에 즉시 추가
                 addToBuylist(itemNum, itemPrice, itemName, itemImage);
             } else if (xhr.responseText.trim() === 'NOT_ENOUGH_CLOVER') {
@@ -650,12 +663,12 @@ function refundStoreItem(itemNum, itemPrice) {
                 ItemBean bean = Allvlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="allItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyStoreItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')">
- <!-- 전체 아이템 클래스 -->
+            <div class="allItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyStoreItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>','<%=bean.getItem_type()%>')"> <!-- 음악 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
                     <jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
+                    <jsp:param value="<%=bean.getItem_type() %>" name ="item_type"/>
                 </jsp:include>
             </div>
             <%
@@ -670,11 +683,12 @@ function refundStoreItem(itemNum, itemPrice) {
                 ItemBean bean = Musicvlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="musicItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyStoreItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 음악 아이템 클래스 -->
+            <div class="musicItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyStoreItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>','<%=bean.getItem_type()%>')"> <!-- 음악 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
                     <jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
+                    <jsp:param value="<%=bean.getItem_type() %>" name ="item_type"/>
                 </jsp:include>
             </div>
             <%
@@ -689,11 +703,12 @@ function refundStoreItem(itemNum, itemPrice) {
                 ItemBean bean = Charactervlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="characterItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyStoreItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 캐릭터 아이템 클래스 -->
+            <div class="characterItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyStoreItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>','<%=bean.getItem_type()%>')"> <!-- 음악 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
                     <jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
+                    <jsp:param value="<%=bean.getItem_type() %>" name ="item_type"/>
                 </jsp:include>
             </div>
             <%
@@ -708,11 +723,12 @@ function refundStoreItem(itemNum, itemPrice) {
                 ItemBean bean = Backgroundvlist.get(i);
                 int purchaseCount = purchaseCountMap.containsKey(bean.getItem_num()) ? purchaseCountMap.get(bean.getItem_num()) : 0;
             %>
-            <div class="backgroundItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyStoreItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>')"> <!-- 배경 아이템 클래스 -->
+            <div class="backgroundItems" data-purchase-count="<%= purchaseCount %>" data-price="<%=bean.getItem_price()%>" onclick="buyStoreItem(<%=bean.getItem_num()%>, <%=bean.getItem_price()%>, '<%=bean.getItem_name()%>', '<%=bean.getItem_image()%>','<%=bean.getItem_type()%>')"> <!-- 음악 아이템 클래스 -->
                 <jsp:include page="../pjh/shopItem.jsp">
                     <jsp:param value="<%=bean.getItem_image()%>" name="item_img" />
                     <jsp:param value="<%=bean.getItem_name()%>" name="item_name" />
                     <jsp:param value="<%=bean.getItem_price()%>" name="item_price" />
+                    <jsp:param value="<%=bean.getItem_type() %>" name ="item_type"/>
                 </jsp:include>
             </div>
             <%

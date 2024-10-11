@@ -380,10 +380,10 @@ function addGuestbookEntry() {
                     var response = JSON.parse(xhr.responseText);
                     if (response.guestbookNum !== 0) {
                         alert("방명록이 작성되었습니다.");
-
+						sendAlarm(ownerId);
                         // 방명록이 작성되면 전체 페이지를 다시 로드
                         loadGuestbookPage(1);
-
+						
                         // 입력 필드 초기화
                         document.getElementById("guestbookContent").value = '';
                         document.getElementById("secretCheckbox").checked = false;
@@ -673,6 +673,7 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
                               );
                               // 입력 필드 초기화
                               document.getElementById("aContent-" + guestbookNum).value = '';
+                              sendAlarm('<%=ownerId%>');
                           } else {
                               alert("답글 작성에 실패하였습니다.");
                           }

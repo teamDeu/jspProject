@@ -452,14 +452,33 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 						</div>
 						
 						<div class="wanswer-form">
-							<input type="text" id="ansewerinput" placeholder="  게시판에 댓글을 남겨주세요.">
+							<input type="text" onkeypress = "baddAnswerEnter(event)" id="ansewerinput" placeholder="  게시판에 댓글을 남겨주세요.">
 							<button type="button" onclick="baddAnswer()">등록</button>
 						</div>
 					</div>
 	
 	<script>
 		var latestBoard = <%= latestBoard != null ? latestBoard.getBoard_num() : "null" %>;	
-	
+		
+		function baddReAnswerEnter(event,num){
+			if(event.keyCode == 13){
+				baddReAnswer(num,event.target.value);
+				return false;
+			}
+			else{
+				return true;
+			}
+		}
+		function baddAnswerEnter(e) {   
+			 if(e.keyCode == 13) { // enter는 13이다!        
+				baddAnswer();       
+				return false; 
+			// 추가적인 이벤트 실행을 방지하기 위해 false 리턴    
+			} else {        
+				return true;    
+				}
+		}
+			
 		function clickAllBoardList(){
 			loadBoardListAll('<%=board_id%>');
 			clickOpenBox('boardList');
@@ -532,10 +551,11 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	                    
 
 		                    bloadAnswers(); // 댓글을 추가한 후 댓글 목록을 다시 로드
-
+		                    alert("댓글이 작성되었습니다.");
+		                    sendAlarm('<%=board_id%>');
 	                }
 	            };
-
+				
 	            // Ajax 요청 본문에 데이터 전달
 	            var boardNum = document.querySelector(".bwrite-form").querySelector(".bwrite-content").id; // 최신 게시글 번호를 가져옴
 	            var answerId = "<%= UserId %>"; 
@@ -603,13 +623,14 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                bloadAnswers(); // 답글 추가 후 전체 댓글 목록을 다시 로드
+	                sendAlarm('<%=board_id%>');
+	                alert("답글이 작성되었습니다.");
 	            }
 	        };
 	        var answerId = "<%= UserId %>"; // 현재 로그인한 사용자 ID 가져오기
 	        var params = "answer_num=" + encodeURIComponent(answerNum) +
 	                     "&reanswer_content=" + encodeURIComponent(replyText) +
 	                     "&reanswer_id=" + encodeURIComponent(answerId);
-	        
 	        console.log(params);
 	        xhr.send(params);
 	    }

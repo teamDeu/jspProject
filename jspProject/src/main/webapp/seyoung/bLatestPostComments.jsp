@@ -184,7 +184,9 @@
 }
 
 </style>
+<script>
 
+</script>
 </head>
 
 <%
@@ -277,7 +279,7 @@ if (latestBoard != null) {
                     <% } %>
                     <!-- 답글 입력 폼 -->
                     <div class="reanswer-form">
-                        <input type="text" class="reanswer-input" placeholder="답글을 입력하세요" />
+                        <input type="text" onkeypress ="baddReAnswerEnter(event,<%=answer.getAnswerNum() %>)" class="reanswer-input" placeholder="답글을 입력하세요" />
                         <button class="reanswer-button" onclick="baddReAnswer(<%=answer.getAnswerNum()%>, this.previousElementSibling.value)">등록</button>
                     </div>
                 </div>
