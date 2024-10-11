@@ -247,9 +247,9 @@
 
     // 새로고침 시 저장된 정보로 음악 재생 재개
     document.addEventListener('DOMContentLoaded', function () {
-    	const savedSong = localStorage.getItem('currentSong');
-        const savedTime = localStorage.getItem('savedTime');
-        const savedArtist = localStorage.getItem('currentArtist');
+   	const savedSong = localStorage.getItem('currentSong');
+    const savedTime = localStorage.getItem('savedTime');
+    const savedArtist = localStorage.getItem('currentArtist');
 
     const audioPlayer = document.getElementById('audioPlayer');
     const titleElement = document.querySelector('.title');
