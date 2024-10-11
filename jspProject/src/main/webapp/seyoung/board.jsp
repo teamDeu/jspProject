@@ -669,13 +669,8 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	    function clickBoard_boardNum(board_num){
 			goBoard('board');
 			loadPost(board_num);
-			/* var xhr = new XMLHttpRequest();
-	        xhr.open("GET", "../seyoung/boardIncreaseView.jsp?board_num="+board_num, true);
-	        xhr.onreadystatechange = function () {
-	            if (xhr.readyState === 4 && xhr.status === 200) {
-	            }
-	        };
-	        xhr.send(); */
+			increaseloadPost(board_num);
+
 		}
 	    
 	 	// 최신 게시글이 로드된 후 댓글을 불러오는 함수 호출
