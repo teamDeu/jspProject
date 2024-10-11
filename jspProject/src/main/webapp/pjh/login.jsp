@@ -17,59 +17,68 @@
             background-color: #F8F6E3;
             font-family: 'NanumTobak';
             zoom:1.1;	
+            text-align: center;
         }
         .container {
             text-align: center;
             margin-top: 140px;
         }
         .logo {
-            font-size: 36px;
-            font-weight: bold;
-            font-family: 'NanumTobak';
+
+            margin-bottom: 30px;
+            margin-left: 40px;
         }
         .login-box {
             background-color: #F8F6E3;
-            border-radius: 10px;
+            border-radius: 30px;
             padding: 30px;
-            width: 300px;
-            margin: 0 auto; 
+            width: 360px;
+            margin-top: 15px; 
+            border: 1px solid #ccc; /* 회색 테두리 추가 */
+            margin-left: 535px;
+            
         }
+        
+        
         input[type="text"], input[type="password"] {
             width: 90%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 37.75px;
+            background-color: #F7FFF4;
             font-size: 24px;
             font-family: 'NanumTobak';
         }
         input[type="button"] {
             background-color: #C0E5AF;
             border: none;
-            color: white;
-            padding: 10px 120px;
+            color: black;
+            padding: 12px 130px;
             text-align: center;
             display: inline-block;
             font-size: 24px;
-            margin: 10px 2px;
+            margin: 0px 0px;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 37.75px;
             font-family: 'NanumTobak';
         }
         .links {
             margin-top: 10px;
             font-size: 25px;
             font-family: 'NanumTobak';
+            margin-left: 70px;
         }
         .links a {
             text-decoration: none;
-            color: #333;
+            color: black;
             margin: 0 10px;
         }
         /* 관리자 로그인 체크박스 왼쪽 배치 */
         .admin-checkbox {
             text-align: left;
-            padding-left: 5%;
+            padding-left: 2%;
+            
         }
     </style>
     <script type="text/javascript">
@@ -101,13 +110,13 @@
 <body>
 <div class="container">
     <div class="logo">
-        <img src="./img/mainlogo.jpg" style="width:320px; height:100px;">
+        <img src="./img/mainlogo.jpg" style="width:340px; height:120px;">
     </div>
     <br/><br/>
     <div class="login-box">
         <form name="loginFrm" method="post">
-            <input type="text" name="user_id" placeholder="아이디">
-            <input type="password" name="user_pwd" placeholder="비밀번호">
+            <input type="text" name="user_id" placeholder=" 아이디를 입력하세요">
+            <input type="password" name="user_pwd" placeholder=" 비밀번호를 입력하세요">
             <br/>
             <div class="admin-checkbox">
                 <label>
@@ -115,7 +124,7 @@
                 </label>
             </div>
             <br/><br/>
-            <input type="button" value="로그인" onclick="loginCheck()" style="width: 290px;">
+            <input type="button" value="로그인" onclick="loginCheck()" style="margin-top: -20px; width: 340px;">
         </form>
     </div>
     <div class="links">
