@@ -42,11 +42,10 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
         .game-title {
             width: 830px; /* 줄 길이 */
             height: 1px;  /* 줄의 높이 */
-            background-color: #BAB9AA;
-            
+            background-color: #BAB9AA;           
             position: relative;
             margin-top: 30px; /* 위쪽 여백 */
-            margin-bottom: 15px; /* 줄과 사각형 사이에 공간 추가 */
+            margin-bottom: 10px; /* 줄과 사각형 사이에 공간 추가 */
         }
         .game-title span {
            color: #80A46F;

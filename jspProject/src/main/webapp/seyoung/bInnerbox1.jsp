@@ -155,7 +155,7 @@
 			document.getElementById("selectedFolderNum").value = folderNum;
 			document.getElementById("board-recentpost").innerText = "| "+ folderName;
 			document.getElementById("board-recentpost2").innerText = "| "+ folderName;
-			
+
             // AJAX 요청을 통해 서버에서 폴더 정보 가져오기
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '../seyoung/bgetFolderProc.jsp?folderNum=' + encodeURIComponent(folderNum), true);
@@ -180,6 +180,7 @@
             folderIcon.src = '../seyoung/img/folder.png'; // 아이콘 원래대로
             folderItem.querySelector('span').style.fontWeight = 'normal'; // 글자 굵기 원래대로
             selectedFolderItem = null; // 선택 해제
+            currentFolderNum = 0;
             clickOpenBox('board');
             loadLatestPost();
         }

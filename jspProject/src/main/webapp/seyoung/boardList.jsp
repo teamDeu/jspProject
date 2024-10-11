@@ -379,7 +379,15 @@ td a {
     // 새롭게 정의된 loadBoardListByPage 함수
     function loadBoardListByPage(page) {
         const xhr = new XMLHttpRequest();
-        xhr.open("GET", "../seyoung/getBoardList.jsp?page="+page +"&folderNum=" + currentFolderNum, true); // 서버에서 데이터를 가져올 경로 설정
+        console.log(currentFolderNum);
+        if(currentFolderNum == 0 || currentFolderNum == 1){
+        	xhr.open("GET", "../seyoung/getBoardListAll.jsp?page="+page+"&board_id=<%=board_id%>",true);
+        	document.getElementById("board-recentpost").innerText = "| 전체게시물";
+        }
+        else{
+        	xhr.open("GET", "../seyoung/getBoardList.jsp?page="+page +"&folderNum=" + currentFolderNum, true); // 서버에서 데이터를 가져올 경로 설정
+        }
+        
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 // 응답으로 받은 게시글 목록을 페이지에 반영

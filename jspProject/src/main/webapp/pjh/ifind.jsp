@@ -17,130 +17,132 @@
             font-family: 'NanumTobak';
             background-color: #F8F6E3;
             text-align: center;
-            zoom:1.15;
+            zoom:1.1;
         }
 
         .container {
-            margin-top: 100px;
+        	text-align: center;
+            margin-top: 140px;
         }
 
         .box {
-            display: inline-block;
-            padding: 40px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
             background-color: #F8F6E3;
+            border-radius: 30px;
+            padding: 30px;
+            width: 380px;
+            margin-top:-22px; 
+            border: 1px solid #ccc; /* 회색 테두리 추가 */
+            margin-left: 680px;
+        }
+        
+        .box h2 {
+        	margin-top: -20px;
+        	font-weight: normal;
+        	font-size: 25px;
+        	margin-left: -10px;
         }
 
         .box input {
-            display: block;
-            width: 250px;
-            margin-bottom: 20px;
+            width: 80%;
             padding: 10px;
+            margin-top: 10px;
+            margin-left: -65px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 20px;
+            border-radius: 37.75px;
+            background-color: #F7FFF4;
+            font-size: 24px;
             font-family: 'NanumTobak';
         }
+        
+        
+       
 
         .btn {
-            display: inline-block;
-            padding: 10px 0;
-            width: 250px;
             background-color: #C0E5AF;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 20px;
-            text-align: center;
             border: none;
+            color: black;
+            padding: 10px 60px;
+            text-align: center;
+            font-size: 24px;
+            
+            cursor: pointer;
+            border-radius: 37.75px;
             font-family: 'NanumTobak';
             
         }
 
-        .btn:active {
-            background-color: #7bb77a;
-        }
-
         .header-logo {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        	display: flex;
             margin-bottom: 30px;
-        }
+            margin-left: 715px;
+        }	
 
-        .header-logo img {
-            width: 300px;
-            margin-right: 10px;
-        }
+        
 
-        .header-logo h1 {
-            font-size: 24px;
-            color: #005720;
-            font-family: 'NanumTobak';
-        }
 
         .footer-links {
-            margin-top: 20px;
+        	display:flex;
+            margin-top: 10px;
             font-size: 25px;
             font-family: 'NanumTobak';
+            margin-left:800px;
         }
 
         .footer-links a {
             text-decoration: none;
-            color: #999;
-            margin-right: 10px;
-            font-family: 'NanumTobak';
+		    color: black;
+		    margin: 0 10px;
         }
 
         .verification-container {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+		    align-items: center;
+		    justify-content: flex-start;
+		    
+		    margin-top: 4px;
+		    margin-left: 68px;
         }
 
-        .verification-container input {
-            width: 140px; /* 인증번호 칸의 너비를 줄임 */
-        }
+     	.verification-container input {
+     		width: 300px;
+     	}
 
         .btn-resend {
-            width: 100px;
-            margin-left: 10px; /* 인증번호 칸과 재전송 버튼 사이에 간격 */
-            background-color: #98D193;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
+            margin-left: 10px;
+            background-color: #FFFFFF;
+            color: #808080;
+            border: 1px solid #ccc;
+            border-radius: 8.34px;
+            padding: 5px 10px;
             cursor: pointer;
             font-family: 'NanumTobak';
             font-size: 16px;
+            
         }
 
-        .btn-resend:active {
-            background-color: #7bb77a;
-        }
+
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header-logo">
-        <img src="./img/mainlogo.jpg" alt="CloverStory 로고" style="width:320px; height:100px;">
+        <img src="./img/mainlogo.jpg" alt="CloverStory 로고" style="width:340px; height:120px;       ">
     </div>
 
     <div class="box">
         <h2>아이디 찾기</h2>
         <form action="processFindID.jsp" method="post">
-            <input type="text" name="name" placeholder="이름" required>
+            <input type="text" name="name" placeholder=" 이름을 입력하세요" required>
 
-            <input type="text" name="phone" placeholder="전화번호" required>
+            <input type="text" name="phone" placeholder=" 전화번호를 입력하세요" style="margin-left: -5px; " required>
+            <button type="button" class="btn-resend" id="resendBtn" >전송</button>
             <div class="verification-container">
-                <input style ="margin:0px;"type="text" name="verificationCode" placeholder="인증번호" required>
-                <button type="button" class="btn-resend" id="resendBtn" style = "background-color: #C0E5AF;">전송</button>
+                <input style =" "type="text" name="verificationCode" placeholder=" 인증번호를 입력하세요" required>
+                
             </div>
             <br>
-            <input type="submit"  class="btn" value="아이디 찾기" style = "width :270px;">
+            <button type="submit"  class="btn">아이디 찾기</button>
         </form>
     </div>
 

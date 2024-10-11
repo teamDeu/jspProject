@@ -8,12 +8,12 @@
 <style>
 .user_search_div {
 	width: 550px;
-	border: 1px solid black;
+	border: 1px solid #BAB9AA;
 	padding: 20px;
 	box-sizing: border-box;
-	background-color : white;
+	background-color : rgb(252 251 241);
 	position:relative;
-	border-radius : 10px;
+
 }
 
 .user_search_div *{
@@ -30,12 +30,16 @@
 	padding: 5px;
 	width: 80%;
 	box-sizing: border-box;
+	border: 1px solid #BAB9AA;
+	
 }
 
 .user_search_input_section_button {
 	font-size : 18px;
 	padding: 5px 10px;
 	box-sizing: border-box;
+	border: 1px solid #BAB9AA;
+	background: white;
 }
 
 .user_search_output_section {

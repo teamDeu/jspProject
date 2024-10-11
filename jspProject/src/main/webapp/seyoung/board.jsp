@@ -480,18 +480,20 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 		}
 			
 		function clickAllBoardList(){
-			loadBoardListAll('<%=board_id%>');
+			loadBoardListByPage(1);
 			clickOpenBox('boardList');
 		}
 		
 		function loadBoardListAll(userId){
 	    	var xhr = new XMLHttpRequest();
-	        xhr.open('GET', '../seyoung/getBoardListAll.jsp?board_id=' + encodeURIComponent(board_id), true);
+	        xhr.open('GET', '../seyoung/getBoardListAll.jsp?board_id=' + encodeURIComponent(userId), true);
 	        xhr.onreadystatechange = function() {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                // 받은 응답을 board-list-body에 넣어 게시물 목록 갱신
 	                document.getElementById("board-recentpost").innerText = "| 전체게시글";
 	                document.getElementById('board-list-body').innerHTML = xhr.responseText;
+	                totalPagesValue = document.getElementById('boardList_totalPages').value;
+	                updateBoardPaginationButtons(totalPagesValue,1)
 	            }
 	        };
 	        xhr.send(); // 목록 로드 요청
@@ -718,7 +720,8 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
 	                console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
-	                document.getElementById("board-recentpost3").innerHTML = " ";
+	                postFolderName = document.getElementById("latestBoard_folderName").value;
+	                document.getElementById("board-recentpost3").innerHTML = "| " + postFolderName;
 	                bloadAnswers(); // 댓글 로드
 	                
 	            }

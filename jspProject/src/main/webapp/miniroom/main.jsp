@@ -113,8 +113,8 @@
 }
 .sayBox {
 	position: absolute;
-	border: 1px solid black;
-	background-color: white;
+	border: 1px solid #BAB9AA;
+	background-color: #f2f2f2;
 	padding: 5px;
 	border-radius: 5px;
 	animation: fadeout 1.5s;
@@ -229,6 +229,43 @@
     	font-weight : bold;
     	font-size : 24px;
     }
+    
+    
+    #miniroom_background {
+		position: absolute;
+		object-fit: cover;
+		width: 736px;
+		height: 359px;
+		z-index: 1;
+		border-radius: 10px;
+		border: 1px solid #BAB9AA;
+	
+	}
+	
+	#miniroom {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-around;
+		width: 736px;
+		height: 359px;
+		border: none;
+		border-radius: 5px;
+		z-index: 5;
+		
+		
+	}
+	
+	.inputArea button {
+		font-family: 'NanumTobak', sans-serif;
+	    font-size: 18px;
+	    cursor: pointer;
+	    color: black;
+	    border: 1px solid #BAB9AA;
+	    background-color: #F7F7F7;
+
+	}
+	
+	
 </style>
 <script>
 
@@ -457,6 +494,7 @@ function mainCategoryLoad(){
            newImg.src =character;
            nowvisit = document.getElementById("nowvisit");
            nowvisit.innerText = "Now " + userNum; 
+           nowvisit.style.fontSize = "18px"; 
             // and give it some content
             // add the text node to the newly created div
           newDiv.id = id;
