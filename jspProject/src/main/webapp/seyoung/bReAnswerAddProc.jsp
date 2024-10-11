@@ -38,11 +38,14 @@
         int boardNum = baMgr.getBoardByAnswersNum(Integer.parseInt(answerNum));
         BoardWriteMgr bMgr = new BoardWriteMgr();
         String id = bMgr.getBoard(boardNum).getBoard_id();
-        alarmBean.setAlarm_content_num(boardNum);
-        alarmBean.setAlarm_type("게시판 답글");
-        alarmBean.setAlarm_user_id(id);
-        AlarmMgr alarmMgr = new AlarmMgr();
-        alarmMgr.insertAlarm(alarmBean);
+        if(!(id.equals(reAnswerId))){
+        	alarmBean.setAlarm_content_num(boardNum);
+            alarmBean.setAlarm_type("게시판 답글");
+            alarmBean.setAlarm_user_id(id);
+            AlarmMgr alarmMgr = new AlarmMgr();
+            alarmMgr.insertAlarm(alarmBean);
+        }
+        
         
     } else {
         out.print("답글 등록에 실패하였습니다.");

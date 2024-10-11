@@ -40,12 +40,14 @@
  // DB에서 해당 guestbookNum으로 작성된 시간을 가져옴
     if (guestbookNum > 0) {
     	//알람 설정
-    	AlarmBean alarmBean = new AlarmBean();
-        alarmBean.setAlarm_content_num(guestbookNum);
-        alarmBean.setAlarm_type("방명록");
-        alarmBean.setAlarm_user_id(ownerId);
-        AlarmMgr alarmMgr = new AlarmMgr();
-        alarmMgr.insertAlarm(alarmBean);
+    	if(!(ownerId.equals(writerId))){
+    		AlarmBean alarmBean = new AlarmBean();
+            alarmBean.setAlarm_content_num(guestbookNum);
+            alarmBean.setAlarm_type("방명록");
+            alarmBean.setAlarm_user_id(ownerId);
+            AlarmMgr alarmMgr = new AlarmMgr();
+            alarmMgr.insertAlarm(alarmBean);
+    	}
         // DB에서 해당 guestbookNum으로 작성된 시간을 가져와서 entry에 설정
         entry.setWrittenAt(mgr.getWrittenAt(guestbookNum));
 

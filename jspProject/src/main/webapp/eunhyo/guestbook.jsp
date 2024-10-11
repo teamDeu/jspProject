@@ -551,10 +551,11 @@ function appendGuestbookEntry(guestbookNum, writerId, content, writtenAt, isSecr
         answerButton.onclick = function() {
             adAnswer(guestbookNum);
         };
-
         answerForm.appendChild(answerTextarea);
         answerForm.appendChild(answerButton);
-
+        answerTextarea.addEventListener('keydown', function(event) {
+            checkEnterAnswer(event, guestbookNum);
+        });
         li.appendChild(answerList); // 답글 목록 추가
         li.appendChild(answerForm); // 답글 작성 폼 추가
     }
