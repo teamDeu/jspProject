@@ -34,10 +34,7 @@
             cursor: pointer;
         }
 
-        .pli-text-left:hover,
-        .pli-text-right:hover {
-            color: #FF6347;
-        }
+
 
         .pli-vertical-line {
             width: 1px;
@@ -60,31 +57,26 @@
             cursor: pointer;
         }
 
-        .playlist-item:hover {
-            color: #FF6347;
-        }
+
 
         .playlist-item img {
             margin-right: 10px;
         }
 
         .playlist-item span {
-            font-size: 25px;
-            font-weight: bold;
+            font-size: 18px;
             transition: color 0.3s ease;
         }
 
-        .playlist-item:hover span {
-            color: #FF6347;
-        }
+
 
         /* 클릭된 상태에서 색을 유지하는 스타일 */
         .playlist-item.active span {
-            color: #FF6347; /* 클릭 후 색상 유지 */
+            font-weight:bold;
         }
         /* 전체음악에 active 클래스를 적용했을 때 빨간색으로 유지 */
 		.pli-text-left.active {
-		    color: #FF6347;
+		    font-weight:bold;
 		}
         
     </style>
@@ -94,49 +86,51 @@
 		
      	// 전체음악 클릭 시 active 클래스를 적용하는 함수
         function setAllMusicActive(element) {
-            // 이전에 선택된 항목에서 active 클래스를 제거
-            if (currentActive) {
-                currentActive.classList.remove('active');
-            }
+		    // 이전에 선택된 항목에서 active 클래스를 제거
+		    if (currentActive) {
+		        currentActive.classList.remove('active');
+		    }
+		
+		    // 전체음악에 active 클래스를 추가
+		    element.classList.add('active');
+		    currentActive = element; // 현재 활성화된 항목을 저장
+		
+		    // 모든 플레이리스트 아이템의 이미지를 folder.png로 변경
+		    const playlistItems = document.querySelectorAll('.playlist-item img');
+		    playlistItems.forEach(function(img) {
+		        if (img.src.includes('folder2.png')) {
+		            img.src = '../seyoung/img/folder.png'; // 기본 폴더 이미지로 변경
+		        }
+		    });
+		}
 
-            // 전체음악에 active 클래스를 추가
-            element.classList.add('active');
-            currentActive = element; // 현재 활성화된 항목을 저장
-        }
-        document.addEventListener('DOMContentLoaded', function() {
-            // 페이지 로드 시 전체음악 자동 클릭
-            const allMusicElement = document.querySelector('.pli-text-left');
-            if (allMusicElement) {
-                setAllMusicActive(allMusicElement); // 전체음악 클릭 함수 호출
-                showPlaylist('allMusic'); // 전체음악 리스트 보여주기
-            }
-        });
 
 
         //플레이리스트 이름을 서버로 보냄
         function setPlaylist(playlistName, element) {
-            // 서버에 선택한 플레이리스트 이름을 전송하는 AJAX 요청
-            fetch('../yang/music1.jsp', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'playlistName=' + encodeURIComponent(playlistName)
-            })
-            .then(response => response.text())
-            .then(data => {
-                console.log(data);
-            });
+		    // 이전에 선택된 항목에서 active 클래스를 제거하고 이미지를 원래대로 되돌림
+		    if (currentActive && currentActive !== element) {
+		        currentActive.classList.remove('active');
+		
+		        // 이전에 선택된 항목의 이미지를 기본 폴더 이미지로 복원
+		        let previousImg = currentActive.querySelector('img');
+		        if (previousImg && previousImg.src.includes('folder2.png')) {
+		            previousImg.src = '../seyoung/img/folder.png'; // 기본 폴더 이미지 경로
+		        }
+		    }
+		
+		    // 현재 클릭된 항목에 active 클래스를 추가하고 이미지 경로를 변경
+		    element.classList.add('active');
+		    currentActive = element; // 현재 활성화된 항목을 저장
+		
+		    // 클릭된 항목의 이미지를 열려있는 폴더로 변경
+		    let currentImg = element.querySelector('img');
+		    if (currentImg && currentImg.src.includes('folder.png')) {
+		        currentImg.src = '../seyoung/img/folder2.png'; // 열려있는 폴더 이미지 경로
+		    }
+		}
 
-            // 이전에 선택된 항목에서 active 클래스를 제거
-            if (currentActive) {
-                currentActive.classList.remove('active');
-            }
 
-            // 현재 클릭된 항목에 active 클래스를 추가
-            element.classList.add('active');
-            currentActive = element; // 현재 활성화된 항목을 저장
-        }
 
         function showPlaylist(playlistId) {
             // 선택한 플레이리스트를 화면에 보여주는 함수
@@ -337,6 +331,15 @@
                 alert('오류가 발생했습니다.');
             });
         }
+        document.addEventListener('DOMContentLoaded', function() {
+            // 페이지가 로드될 때 "전체음악" 요소에 active 클래스를 추가
+            var allMusicElement = document.querySelector('.pli-text-left');
+            if (allMusicElement) {
+                allMusicElement.classList.add('active');
+                currentActive = allMusicElement; // 전체음악을 기본 활성화 항목으로 설정
+            }
+        });
+
         
     </script>
     
@@ -345,7 +348,7 @@
 <body>
     <div class="folder-container">
         <div class="pli-top-content">
-            <span onclick="setAllMusicActive(this); showPlaylist('allMusic')" class="pli-text-left" style="font-weight: bold;">전체음악</span>
+            <span onclick="setAllMusicActive(this); showPlaylist('allMusic')" class="pli-text-left" ">전체음악</span>
         </div>
         <hr class="pli-horizontal-line">
 
@@ -361,11 +364,11 @@
 			                String playlist = playlists.get(i);
 			%>
 			                <div class="playlist-item" style="position: relative;" onclick="setPlaylist('<%= playlist %>', this); showPlaylist('playlist-<%= i %>')">
-			                    <img src="../seyoung/img/folder.png" width="50" height="50" alt="folder icon" />
-			                    <span style="font-size: 25px; font-weight: bold;"><%= playlist %></span>
+			                    <img src="../seyoung/img/folder.png" width="27" height="27" alt="folder icon" />
+			                    <span style="font-size: 18px; "><%= playlist %></span>
 			
 			                    <!-- 삭제 버튼 추가 -->
-			                    <img src="../seyoung/img/trashcan.png" width="30" height="30" alt="delete icon"
+			                    <img src="../seyoung/img/trashcan.png" width="14" height="14" alt="delete icon"
 								     class="delete-button1" style="position: absolute; right: 10px; cursor: pointer; display: none;"
 								     onclick="event.stopPropagation(); deleteFolder1('<%= playlist %>', this.parentElement);" />
 

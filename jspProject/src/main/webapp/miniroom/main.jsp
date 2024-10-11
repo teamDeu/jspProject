@@ -231,6 +231,7 @@
     }
 </style>
 <script>
+
 function loadContent(url) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
@@ -311,6 +312,7 @@ function mainCategoryLoad(){
         var dataSeparator = "㉠"
         var messageSeparator = "㉡";
         var timeNameText = "";
+        
         var section = "<%=category%>";
         function connect() {
             ws = new WebSocket("ws://" + location.host + "<%=request.getContextPath()%>/chat");
