@@ -159,9 +159,4 @@
 
 			<%
 			}
-			 else { // if vlist.size() > 0
-			%>
-			<h2 style="text-align: center">새로운 알림이 없습니다.</h2>
-			<%
-			}
 			%>

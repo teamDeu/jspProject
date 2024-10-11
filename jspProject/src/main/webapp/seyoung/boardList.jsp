@@ -292,10 +292,11 @@ td a {
 	<h2 class="board-recentpost" id="board-recentpost"></h2>
 
 	<div class="button-group">
+	<%if((board_id).equals(UserId)){ %>
 		<button onclick="delbList()" type="button" class="delete-button2">삭제</button>
 		<button onclick="clickOpenBox('boardWrite')" type="button"
 			class="write-button">작성</button>
-
+	<%} %>
 	</div>
 	<div class="boardlist-line"></div>
 	<div class="board-box">
