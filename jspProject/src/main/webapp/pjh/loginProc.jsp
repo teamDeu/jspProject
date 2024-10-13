@@ -7,7 +7,7 @@
 	String user_id = request.getParameter("user_id");
 	String user_pwd = request.getParameter("user_pwd");
 	String msg = "로그인에 실패 하였습니다.";
-	String href = "login.jsp";
+	String href = "../miniroom/main.jsp?url="+user_id;
 	
 	// 로그인 처리
 	int result = mgr.loginMember(user_id, user_pwd);  // 로그인 결과를 int로 반환
