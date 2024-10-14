@@ -452,7 +452,7 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 						
 						</div>
 						
-						<div class="wanswer-form" id="wanswer-form" style="display: none;">
+						<div class="wanswer-form" id="wanswer-form" style="display: flex;">
 							<input type="text" onkeypress = "baddAnswerEnter(event)" id="ansewerinput" placeholder="  게시판에 댓글을 남겨주세요.">
 							<button type="button" onclick="baddAnswer()">등록</button>
 						</div>
@@ -576,6 +576,11 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	    function bloadAnswers() {
 	    	
 	        var bwriteContent = document.querySelector(".bwrite-form").querySelector(".bwrite-content");
+	        if(bwriteContent == null){
+	        	var banswerForm = document.querySelector('.banswer-form');
+                banswerForm.innerHTML = ""; // 서버로부터 받은 HTML을 그대로 삽입
+	        	return;
+	        }
 	        var boardNum = bwriteContent.id;
 	        var xhr = new XMLHttpRequest();
 	        xhr.open("GET", "../seyoung/bLatestPostComments.jsp?board_num=" + boardNum, true);
@@ -585,7 +590,6 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	                var banswerForm = document.querySelector('.banswer-form');
 	                banswerForm.innerHTML = xhr.responseText; // 서버로부터 받은 HTML을 그대로 삽입
 	                banswerForm.style.display = 'flex'; // 댓글 폼 보이도록 설정
-	                
 	            }
 	        };
 
