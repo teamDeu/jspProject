@@ -10,6 +10,7 @@ String board_id = request.getParameter("board_id");
 String UserId = (String) session.getAttribute("idKey"); // 현재 로그인한 사용자 ID
 //가장 최근 게시글 불러오기
 BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
+int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; // 댓글 허용 여부
 %>
 
 <!DOCTYPE html>
@@ -451,7 +452,7 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 						
 						</div>
 						
-						<div class="wanswer-form">
+						<div class="wanswer-form" id="wanswer-form" style="display: none;">
 							<input type="text" onkeypress = "baddAnswerEnter(event)" id="ansewerinput" placeholder="  게시판에 댓글을 남겨주세요.">
 							<button type="button" onclick="baddAnswer()">등록</button>
 						</div>
@@ -459,6 +460,9 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	
 	<script>
 		var latestBoard = <%= latestBoard != null ? latestBoard.getBoard_num() : "null" %>;	
+		
+		
+		
 		
 		function baddReAnswerEnter(event,num){
 			if(event.keyCode == 13){
@@ -722,6 +726,17 @@ BoardWriteBean latestBoard = mgr.getLatestBoard(board_id);
 	                console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
 	                postFolderName = document.getElementById("latestBoard_folderName").value;
 	                document.getElementById("board-recentpost3").innerHTML = "| " + postFolderName;
+	                
+	                // 서버에서 게시글에 대한 answer_type 값을 받아옴
+	                var answerType = document.getElementById("answerTypeValue").value; // bLatestPost.jsp에서 answer_type 값을 전달받음
+	                
+	                // answer_type 값에 따라 wanswer-form 표시 여부 결정
+	                if (answerType === "1") {
+	                    document.getElementById('wanswer-form').style.display = 'flex'; // 댓글 허용 시 표시
+	                } else {
+	                    document.getElementById('wanswer-form').style.display = 'none'; // 댓글 비허용 시 숨김
+	                }
+	                
 	                bloadAnswers(); // 댓글 로드
 	                
 	            }

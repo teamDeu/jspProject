@@ -223,6 +223,7 @@ function addCategory() {
                 // 카테고리 항목 클릭 시 수정란에 반영하는 이벤트 리스너 추가
                 categoryItem.addEventListener('click', function() {
 
+
                     // 현재 선택된 카테고리에 'selected' 클래스 추가
                     categoryItem.classList.add('selected');
 
