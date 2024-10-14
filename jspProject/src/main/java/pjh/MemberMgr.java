@@ -118,7 +118,7 @@ public class MemberMgr {
                    pstmt3.setString(5, "임시 취미");  // 기본 취미
                    pstmt3.setString(6, "ENFJ");  // 기본 MBTI
                    pstmt3.setString(7, "기본 상태 메시지");  // 기본 상태 메시지
-                   pstmt3.setString(8, "img/default_profile.png");  // 기본 프로필 사진
+                   pstmt3.setString(8, "img/character1.png");  // 기본 프로필 사진
                    
                    if (pstmt3.executeUpdate() == 1) {
                        // itemhold 테이블에 user_id와 item_num을 각각 1과 6으로 저장
