@@ -361,7 +361,7 @@ function deleteCategory(categoryType, categoryName, categoryItem) {
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 if (xhr.responseText.trim() === "success") {
-                    alert("카테고리가 삭제되었습니다.");
+                    alert("카테고리가 삭제되었습니다."); 
                     categoryItem.remove();
                     loadCategoryList();
                     mainCategoryLoad();
