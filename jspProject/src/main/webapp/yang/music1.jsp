@@ -254,7 +254,8 @@
     </style>
 
     <script>
-    let currentIndex = 1;
+    let currentIndex = 0;
+    let currentIndex1 = 1;
     let selectedSongs = [];
     let selectedItemName = "";
     const pageSize = 10;
@@ -289,10 +290,14 @@
         const savedTime = localStorage.getItem('savedTime');
         const savedTitle = localStorage.getItem('currentSongTitle');
         const savedArtist = localStorage.getItem('currentArtist');
+        const savedIndex = localStorage.getItem('currentIndex');
+        
+        
 
         if (savedSelectedSongs) {
             selectedSongs = JSON.parse(savedSelectedSongs);  // 로컬 스토리지에서 노래 목록 가져오기
-            playSongs(0);  // 첫 번째 곡부터 재생
+            currentIndex = savedIndex ? parseInt(savedIndex) : 0;  // 인덱스를 로드, 없으면 0으로 설정
+            playSongs(currentIndex);
         }
 
         if (savedSong && savedTime) {
@@ -333,11 +338,10 @@
     }
 
     // 현재 재생 시간을 주기적으로 로컬 스토리지에 저장 (로컬에서만 동작)
-    if (currentUrl === initialUrl) {
-        audioPlayer.ontimeupdate = function () {
-            localStorage.setItem('savedTime', audioPlayer.currentTime);
-        };
-    }
+    audioPlayer.ontimeupdate = function () {
+        localStorage.setItem('savedTime', audioPlayer.currentTime);
+        localStorage.setItem('currentIndex', currentIndex);  // currentIndex를 로컬 스토리지에 저장
+    };
 
     // 음악이 끝나면 다음 곡 재생
     audioPlayer.onended = function () {
@@ -367,7 +371,7 @@
         }
 
         // 현재 페이지에 active 클래스 추가
-        updateActivePage(currentIndex);
+        updateActivePage(currentIndex1);
     }
 
    
@@ -428,14 +432,10 @@
         // 재생 시작
         audioPlayer.play();
 
-        // 로컬 스토리지에 현재 재생 정보 저장 (초기 URL일 경우만 저장)
-        const currentUrl = window.location.href;
-        const initialUrl = localStorage.getItem('initialUrl');
-        if (currentUrl === initialUrl) {
-            localStorage.setItem('currentSong', currentSong.path);
-            localStorage.setItem('currentSongTitle', currentSong.song);
-            localStorage.setItem('currentArtist', currentSong.artist || '');
-        }
+        localStorage.setItem('currentSong', currentSong.path);
+        localStorage.setItem('currentSongTitle', currentSong.song);
+        localStorage.setItem('currentArtist', currentSong.artist || '');
+        localStorage.setItem('currentIndex', currentIndex);  // 곡 재생 시 currentIndex 저장
     }
 
     // 음악이 끝났을 때 다음 곡 재생
@@ -501,6 +501,22 @@
             alert('음악을 선택해 주세요.');
         }
     }
+    
+    
+    function afterReloadFunction() {
+        // id가 custom-button-chatBox인 네모박스 배경색 변경
+        const chatBoxElement = document.getElementById('custom-button-chatBox');
+        if (chatBoxElement) {
+            chatBoxElement.style.backgroundColor = '#C0E5AF';
+        }
+
+        // id가 custom-button-music인 네모박스 배경색 변경
+        const musicBoxElement = document.getElementById('custom-button-music');
+        if (musicBoxElement) {
+            musicBoxElement.style.backgroundColor = '#F7F7F7';
+        }
+    }
+
 
 
     function resetAllItemUsage(user_id) {
@@ -604,7 +620,7 @@
           }
       
           // 현재 페이지를 업데이트하고 active 클래스 적용
-          currentIndex = page;
+          currentIndex1 = page;
           updateActivePage(page);
       }
 
@@ -718,6 +734,7 @@
                        
                        // 성공적으로 추가된 후 로컬 스토리지에 상태 저장
                        if (xhr.responseText.includes("성공적으로 플레이리스트에 추가되었습니다.")) {
+                    	   localStorage.setItem('executeAfterReload', 'true');
                            localStorage.setItem('openBox', 'music');  // 로컬 스토리지에 'music' 저장
                            location.reload();  // 페이지 새로고침
                        }
@@ -735,6 +752,7 @@
        // 새로고침 후에 특정 함수 실행
        document.addEventListener('DOMContentLoaded', function () {
            const openBox = localStorage.getItem('openBox');
+           
            
            if (openBox === 'music') {
                localStorage.removeItem('openBox');  // 값을 바로 삭제하여 남아있지 않게 처리
@@ -786,7 +804,8 @@
            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
            xhr.onreadystatechange = function() {
                if (xhr.readyState === 4 && xhr.status === 200) {
-                  localStorage.setItem('openBox', 'music');  // 로컬 스토리지에 'music' 저장
+            	   localStorage.setItem('executeAfterReload', 'true');
+                   localStorage.setItem('openBox', 'music');  // 로컬 스토리지에 'music' 저장
                    location.reload();  // 페이지 새로고침
                }
            };
@@ -800,7 +819,8 @@
            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
            xhr.onreadystatechange = function() {
                if (xhr.readyState === 4 && xhr.status === 200) {
-                  localStorage.setItem('openBox', 'music');  // 로컬 스토리지에 'music' 저장
+            	   localStorage.setItem('executeAfterReload', 'true');
+                   localStorage.setItem('openBox', 'music');  // 로컬 스토리지에 'music' 저장
                    location.reload();  // 페이지 새로고침
                }
            };
@@ -982,7 +1002,6 @@
                      }
                  } else {
          %>
-                     <p>플레이리스트가 없습니다.</p>
          <%
                  }
              } 

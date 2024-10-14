@@ -145,22 +145,23 @@
     	
         function toggleFolderInput1() {
 		    var inputContainer = document.getElementById('folderInputContainer1');
-		    var deleteButtons = document.querySelectorAll('.delete-button1'); // 모든 삭제 버튼을 선택
-		
+		    
 		    // 폴더 입력 컨테이너의 표시 여부를 토글
 		    if (inputContainer.style.display === 'flex') {
 		        inputContainer.style.display = 'none'; // 입력 컨테이너 숨김
-		        // 모든 삭제 버튼을 숨김
-		        deleteButtons.forEach(function(button) {
-		            button.style.display = 'none';
-		        });
 		    } else {
 		        inputContainer.style.display = 'flex'; // 입력 컨테이너 표시
-		        // 모든 삭제 버튼을 표시
-		        deleteButtons.forEach(function(button) {
-		            button.style.display = 'flex';
-		        });
 		    }
+		
+		    // 모든 삭제 버튼을 선택하여 표시 여부를 토글
+		    var deleteButtons = document.querySelectorAll('.delete-button1'); 
+		    deleteButtons.forEach(function(button) {
+		        if (inputContainer.style.display === 'flex') {
+		            button.style.display = 'flex'; // 폴더 관리 활성화 시 삭제 버튼 보이기
+		        } else {
+		            button.style.display = 'none'; // 폴더 관리 비활성화 시 삭제 버튼 숨기기
+		        }
+		    });
 		}
 
 		
@@ -239,7 +240,7 @@
             deleteButton.width = 14;
             deleteButton.height = 14;
             deleteButton.alt = 'delete icon';
-            deleteButton.className = 'delete-button'; // 삭제 버튼에 클래스 추가
+            deleteButton.className = 'delete-button1'; // 삭제 버튼에 클래스 추가
             deleteButton.style.position = 'absolute';
             deleteButton.style.right = '10px';
             deleteButton.style.cursor = 'pointer';
@@ -375,7 +376,6 @@
 			            }
 			        } else {
 			%>
-			            <p>플레이리스트가 없습니다.</p>
 			<%
 			        }
 			    } else {
