@@ -308,6 +308,9 @@ function clickOpenBox(id){
 	   document.getElementById("musicInnerBox").style.display = "block";
 	   document.getElementById("normalInnerBox").style.display = "none";
    }
+   else if(id.includes("game")){
+	   gamemainshow();
+   }
    openButton.style.backgroundColor = "#F7F7F7";
    
 }
@@ -452,6 +455,7 @@ function mainCategoryLoad(){
                           // 첫 번째 자식 요소를 반환
                           return tempDiv.firstChild;
                       };
+                   
                    const profileDiv = createProfileDiv(userName,userId,userCharacter,localId,flag);
                    
                     if(requestType == "일촌"){
@@ -462,6 +466,9 @@ function mainCategoryLoad(){
                        friend_items_second.push(profileDiv)
                        changeFriendType(2);
                     }
+                 }
+                 else if(command == ("refuse")){
+                	 document.getElementById("status").textContent = "서버인원초과";
                  }
             };
             ws.onclose = function() {

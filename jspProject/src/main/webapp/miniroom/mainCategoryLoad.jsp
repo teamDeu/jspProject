@@ -23,13 +23,15 @@
 	categoryType.put("상점","store");
 	categoryType.put("게임","game");
 	String firstCategory = null;
+	boolean isFriend = fMgr.isRealFriend(id, pageOwnerId);
 	for(int i = 0 ; i < categoryList.size() ; i ++){ 
 	CategoryBean cBean = categoryList.get(i);
 	if(i == 0){
 		firstCategory = categoryType.get(cBean.getCategoryType());
+		
 	}
 %>
-<%if(fMgr.isRealFriend(cBean.getUserId(), id)|| cBean.getCategorySecret() == 0 || id.equals(pageOwnerId)) { 
+<%if((fMgr.isRealFriend(pageOwnerId, id) && cBean.getCategorySecret() == 1)|| cBean.getCategorySecret() == 0 || id.equals(pageOwnerId)) {
          	if(!cBean.getCategoryType().equals("미니룸") || id.equals(pageOwnerId)){%>
             <button <%if(i == 0){ %>style = "background-color :#F7F7F7" <%} %> onclick = "javascript:clickOpenBox('<%=categoryType.get(cBean.getCategoryType()) %>')" class="custom-button" id ="custom-button-<%=categoryType.get(cBean.getCategoryType())%>"><%=cBean.getCategoryName()%></button>
 <%}}} %>

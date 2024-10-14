@@ -262,7 +262,7 @@ public class FriendMgr {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "SELECT * FROM friendinfo WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?) and friend_type = 1";
+			sql = "SELECT * FROM friendinfo WHERE ((user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?)) and friend_type = 1";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, user_id1);
 			pstmt.setString(2, user_id2);

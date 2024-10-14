@@ -31,7 +31,14 @@
 
     // CategoryMgr 객체를 통해 DB 업데이트
     CategoryMgr categoryMgr = new CategoryMgr();
-    boolean success = categoryMgr.updateCategory(category);
+    boolean success = false;
+    if((categoryIndex == 1 && !categoryType.equals("홈")) || (categoryType.equals("홈") && (categoryIndex != 1 || categorySecret == 1))){
+		success = false;
+    }
+    else{
+    	success = categoryMgr.updateCategory(category);
+    }
+    
 
     // 성공 여부에 따라 응답 반환
     if (success) {
