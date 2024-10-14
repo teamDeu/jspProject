@@ -576,9 +576,16 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	    function bloadAnswers() {
 	    	
 	        var bwriteContent = document.querySelector(".bwrite-form").querySelector(".bwrite-content");
+
 	        if(bwriteContent == null){
 	        	var banswerForm = document.querySelector('.banswer-form');
                 banswerForm.innerHTML = ""; // 서버로부터 받은 HTML을 그대로 삽입
+                var answerType = document.getElementById("answerTypeValue").value;
+                if (answerType === "1") {
+                    document.getElementById('wanswer-form').style.display = 'flex'; // 댓글 허용 시 표시
+                } else {
+                    document.getElementById('wanswer-form').style.display = 'none'; // 댓글 비허용 시 숨김
+                }
 	        	return;
 	        }
 	        var boardNum = bwriteContent.id;
