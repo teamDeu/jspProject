@@ -118,7 +118,7 @@
     %>
                 <li id="<%=alarmNum%>" class="alarmlist_main_div_item">
                     <span class="alarmlist_main_div_item_readbool <% if (alarmRead) { %>alarmlist_main_div_item_read<% } %>">읽음</span>
-                    <span id = "<%=bwBean.getBoard_num() %>" onclick="clickAlarmBoard(event)" class="alarmlist_main_div_item_title">삭제된 게시판 댓글 알람입니다.</span>
+                    <span onclick="clickAlarmBoard(event)"  class="alarmlist_main_div_item_title">삭제된 게시판 댓글 알람입니다.</span>
                     <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
                 </li>
     <%
@@ -139,7 +139,7 @@
     %>
                 <li id="<%=alarmNum%>" class="alarmlist_main_div_item">
                     <span class="alarmlist_main_div_item_readbool <% if (alarmRead) { %>alarmlist_main_div_item_read<% } %>">읽음</span>
-                    <span id = "<%=bwBean.getBoard_num() %>" onclick="clickAlarmBoard(event)" class="alarmlist_main_div_item_title">삭제된 게시판 답글 알람입니다.</span>
+                    <span onclick="clickAlarmBoard(event)" class="alarmlist_main_div_item_title">삭제된 게시판 답글 알람입니다.</span>
                     <span class="alarmlist_main_div_item_requestAt"><%=alarmAt%></span>
                 </li>
     <%
