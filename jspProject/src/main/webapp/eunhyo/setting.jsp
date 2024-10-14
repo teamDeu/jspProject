@@ -1,47 +1,44 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>MyPage Settings</title>
 <style>
-.custom-box {
-	position: relative;
-	margin: 100px auto;
-	width: 80%;
-	height: 450px;
-	background-color: #f7f7f7;
-	border: 1px solid #BAB9AA;
-	padding: 20px;
-	font-size: 24px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	overflow-y: auto;
-}
-
-.s-button-container {
-	position: relative;
-	top: 105px;
-	left: 101px;
-	text-align: left;
-}
-
-.mypage-btn, .category-btn {
-	margin-right: -10px;
-	padding: 10px 20px;
-	font-size: 22px;
-	background-color: #f7f7f7;
-	border: 1px solid #BAB9AA;
-	cursor: pointer;
-	width: 100px;
-}
-
-.active-btn {
-	background-color: #e3e3e3;
-}
+    .custom-box {
+        position: relative;
+        margin: 100px auto;
+        width: 80%; 
+        height: 450px; 
+        background-color: #f7f7f7; 
+        border: 1px solid #BAB9AA; 
+        padding: 20px;
+        font-size: 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow-y: auto;
+    }
+    .s-button-container {
+        position: relative;
+        top: 105px;
+        left: 101px;
+        text-align: left;
+    }
+    .mypage-btn, .category-btn {
+        margin-right: -10px;
+        padding: 10px 20px;
+        font-size: 22px;
+        background-color: #f7f7f7;
+        border: 1px solid #BAB9AA;
+        cursor: pointer;
+        width: 100px;
+    }
+    .active-btn {
+        background-color: #e3e3e3;
+    } 
+    
 </style>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -223,6 +220,9 @@ function addCategory() {
                 // 리스트 스크롤을 맨 아래로 이동
                 categoryListDiv.scrollTop = categoryListDiv.scrollHeight;
                 
+              
+                
+
                     // 현재 선택된 카테고리에 'selected' 클래스 추가
                     categoryItem.classList.add('selected');
 
@@ -474,12 +474,12 @@ function toggleCheckbox(currentCheckbox) {
 </script>
 </head>
 <body>
-	<div class="s-button-container">
-		<button class="mypage-btn active-btn">마이페이지</button>
-		<button class="category-btn">카테고리</button>
-	</div>
-	<div id="custom-box" class="custom-box">
-		<!-- 로드된 내용이 이곳에 표시됨 -->
-	</div>
+<div class="s-button-container">
+    <button class="mypage-btn active-btn">마이페이지</button>
+    <button class="category-btn">카테고리</button>
+</div>
+<div id="custom-box" class="custom-box">
+    <!-- 로드된 내용이 이곳에 표시됨 -->
+</div>
 </body>
 </html>
