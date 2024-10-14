@@ -10,6 +10,7 @@
 	BoardFolderMgr mgr = new BoardFolderMgr();
 	int latestNum = mgr.getLatestBoardFolder().getFolder_num();
 	String id = request.getParameter("music_id");
+	request.setCharacterEncoding("UTF-8");
 %>
 <!DOCTYPE html>
 <html lang="en">
