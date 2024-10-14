@@ -520,6 +520,8 @@ function buyStoreItem(itemNum, itemPrice, itemName, itemImage,itemType) {
 							num : itemNum,			
 							name : itemName
 						})
+						console.log(characterArray);
+						printCharacter(0);
 					}
 					else if(itemType == '배경화면'){
 						backgroundArray.push({
@@ -527,6 +529,8 @@ function buyStoreItem(itemNum, itemPrice, itemName, itemImage,itemType) {
 							num : itemNum,			
 							name : itemName
 						})
+						console.log(backgroundArray);
+						printBackground(0);
 					}
                 // 구매한 아이템을 구매 목록에 즉시 추가
                 addToBuylist(itemNum, itemPrice, itemName, itemImage);
@@ -602,7 +606,10 @@ function refundStoreItem(itemNum, itemPrice) {
                     let currentClover = parseInt(document.querySelectorAll('.clover-amount-span')[0].innerText);
                     currentClover += itemPrice; // 환불된 클로버 금액 더하기
                     document.querySelectorAll('.clover-amount-span').forEach((e) => e.innerText = currentClover);
-
+                    characterArray = characterArray.filter((e) => e.num != itemNum);
+                    backgroundArray = backgroundArray.filter((e) => e.num != itemNum);
+                    printBackground(0);
+                    printCharacter(0);
                     // 구매 목록을 즉시 업데이트
                     loadBuylist();  // 환불 후 즉시 구매 목록을 새로고침
                 } else {
