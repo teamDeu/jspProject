@@ -426,23 +426,23 @@ function mainCategoryLoad(){
                  }
                  else if(command == ("submitFriendRequest")){
                     flag = false;
-                    userId = rawdata[1];
+                    submitFriendRequestUserId = rawdata[1];
                     userName = rawdata[2];
                     userCharacter = rawdata[3];
                     requestType = rawdata[4];
                     flag = isFriend(localId,userId);
                     
-                    const createProfileDiv = (userName, userId, userCharacter, localId, flag) => {
+                    const createProfileDiv = (userName, submitFriendRequestUserId, userCharacter, localId, flag) => {
                        const profileDiv = 
                              '<div onclick="onclickMainProfileFriendsDiv(this)" class="main_profile_friends_div friends_type_first">' +
                                  '<div class="profile_function_div_main" style="display: none;">' +
                                      '<div class="profile_function_div">' +
                                          '<span>' + userName + '</span>' +
                                          (flag ? 
-                                             '<button onclick="onclickDeleteFriend(\'' + localId + '\', \'' + userId + '\', \'' + userName + '\')">친구삭제</button>' :
-                                             '<button onclick="onclickAddFriend(\'' + localId + '\', \'' + userId + '\', \'' + userCharacter + '\', \'' + userName + '\')">친구추가</button>'
+                                             '<button onclick="onclickDeleteFriend(\'' + localId + '\', \'' + submitFriendRequestUserId + '\', \'' + userName + '\')">친구삭제</button>' :
+                                             '<button onclick="onclickAddFriend(\'' + localId + '\', \'' + submitFriendRequestUserId + '\', \'' + userCharacter + '\', \'' + userName + '\')">친구추가</button>'
                                          ) +
-                                         '<button onclick="onclickGoHomePage(\'' + userId + '\')">미니룸 구경가기</button>' +
+                                         '<button onclick="onclickGoHomePage(\'' + submitFriendRequestUserId + '\')">미니룸 구경가기</button>' +
                                      '</div>' +
                                  '</div>' +
                                  '<img class="main_profile_friends" src="' + userCharacter + '">' +
