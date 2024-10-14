@@ -709,6 +709,16 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
 	                document.getElementById("board-recentpost3").innerHTML = "| 최근게시물";
 	                //console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
+	                // 서버에서 게시글에 대한 answer_type 값을 받아옴
+	                var answerType = document.getElementById("answerTypeValue").value; // bLatestPost.jsp에서 answer_type 값을 전달받음
+	                
+	                // answer_type 값에 따라 wanswer-form 표시 여부 결정
+	                if (answerType === "1") {
+	                    document.getElementById('wanswer-form').style.display = 'flex'; // 댓글 허용 시 표시
+	                } else {
+	                    document.getElementById('wanswer-form').style.display = 'none'; // 댓글 비허용 시 숨김
+	                }
+	                
 	                bloadAnswers(); // 댓글 로드
 	            }
 	        };
