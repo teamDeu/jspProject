@@ -295,10 +295,10 @@ public class CategoryMgr {
 		Vector<MemberBean> vlist= mgr.getAllUserList();
 		for(int i = 0 ; i < vlist.size(); i ++) {
 			MemberBean bean = vlist.get(i);
-			
+			CategoryMgr cMgr = new CategoryMgr();
+			cMgr.initCategory(bean.getUser_id());
 		}
-		CategoryMgr cMgr = new CategoryMgr();
-		cMgr.initCategory("1234");
+		
 	}
 
 }
