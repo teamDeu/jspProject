@@ -249,6 +249,7 @@
             console.log(document.querySelector('.main_profile_comment').innerText);
             console.log(profileContent);
             document.querySelector('.main_profile_comment').innerHTML = profileContent;
+            document.getElementById("<%=userId%>").querySelector(".userNameTag").innerText = document.getElementById('profile_name').value;
             if(uploadFile != null){
             	document.querySelector(".main_profile_img").src = uploadFile;
             }
