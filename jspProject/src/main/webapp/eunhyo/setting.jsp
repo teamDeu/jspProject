@@ -319,8 +319,11 @@ function loadCategoryList() {
                     // 현재 선택된 카테고리에 'selected' 클래스 추가
                     categoryItem.classList.add('selected');
 
+                    // 수정란에 값 업데이트 (이 부분을 즉시 반영하도록 수정)
+                    var editCategoryNameInput = document.getElementById("edit-category-name");
+
                     // 카테고리명 필드에 '카테고리명 (번호)' 형태로 표시
-                    document.querySelector('.category-edit .content-input').value = category.name + " (" + category.index + ")";
+                    editCategoryNameInput.value = category.name + " (" + category.index + ")";
 
                     // 공개 설정 체크박스 값을 반영
                     if (category.secret === 0) {
@@ -347,6 +350,7 @@ function loadCategoryList() {
 }
 
 
+
 function deleteCategory(categoryType, categoryName, categoryItem) {
     if (categoryType === '홈') {
         alert("홈 카테고리는 삭제할 수 없습니다.");
@@ -357,9 +361,9 @@ function deleteCategory(categoryType, categoryName, categoryItem) {
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 if (xhr.responseText.trim() === "success") {
-                    alert("카테고리가 삭제되었습니다.");
+                    alert("카테고리가 삭제되었습니다."); 
                     categoryItem.remove();
-                    updateCategoryNumbers();
+                    loadCategoryList();
                     mainCategoryLoad();
                 } else {
                     alert("카테고리 삭제에 실패했습니다. 다시 시도해주세요.");
@@ -372,18 +376,6 @@ function deleteCategory(categoryType, categoryName, categoryItem) {
     }
 }
 
-
-//카테고리 번호 재할당 함수
-function updateCategoryNumbers() {
-    var categoryListDiv = document.querySelector(".category-list");
-    var categoryItems = categoryListDiv.querySelectorAll('.category-item');
-
-    // 각 카테고리 항목의 번호 업데이트
-    categoryItems.forEach(function(item, index) {
-        var number = item.querySelector('.category-item-number');
-        number.innerText = (index + 1) + " . ";
-    });
-}
 
 function updateCategory() {
     // 선택된 카테고리 요소 가져오기
