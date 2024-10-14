@@ -243,6 +243,7 @@ function addCategory() {
                 // 입력 필드 및 체크박스 초기화
                 document.querySelector('select[name="categoryType"]').selectedIndex = 0;
                 document.querySelector('input[name="categoryName"]').value = '';
+                mainCategoryLoad();
                 checkboxes.forEach(function(checkbox) {
                     checkbox.checked = false;
                 });
