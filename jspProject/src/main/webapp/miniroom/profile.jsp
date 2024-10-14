@@ -299,7 +299,7 @@ GuestbookprofileBean profileBean = profileMgr.getProfileByUserId(user_id);
 		    </div>
 		
 		    <!-- 음악 재생 컨트롤 -->
-		    <audio id="audioPlayer" controls autoplay muted style="width: 100%; height: 40px; margin-top: 5px;">
+		    <audio id="audioPlayer" controls autoplay style="width: 100%; height: 40px; margin-top: 5px;">
 		        <source type="audio/mp3">
 		    </audio>
 		</div>

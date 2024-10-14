@@ -328,10 +328,19 @@ function mainCategoryLoad(){
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState === 4 && xhr.status === 200){
 			document.querySelector(".button-container").innerHTML = xhr.responseText;
+			if (localStorage.getItem('executeAfterReload') === 'true') {
+		        // 새로고침 후 실행되는 함수 호출
+		        afterReloadFunction();
+
+		        // 함수 실행 후 플래그를 삭제하여 재실행 방지
+		        localStorage.removeItem('executeAfterReload');
+		    }
 		}
 	};
 	xhr.open("GET","../miniroom/mainCategoryLoad.jsp?url="+url,true);
 	xhr.send();
+	
+	
 }
 </script>
 <!-- 웹소켓통신 자바스크립트 -->
