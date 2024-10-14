@@ -452,7 +452,7 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 						
 						</div>
 						
-						<div class="wanswer-form" id="wanswer-form" style="display: none;">
+						<div class="wanswer-form" id="wanswer-form" style="display: flex;">
 							<input type="text" onkeypress = "baddAnswerEnter(event)" id="ansewerinput" placeholder="  게시판에 댓글을 남겨주세요.">
 							<button type="button" onclick="baddAnswer()">등록</button>
 						</div>
@@ -576,6 +576,11 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	    function bloadAnswers() {
 	    	
 	        var bwriteContent = document.querySelector(".bwrite-form").querySelector(".bwrite-content");
+	        if(bwriteContent == null){
+	        	var banswerForm = document.querySelector('.banswer-form');
+                banswerForm.innerHTML = ""; // 서버로부터 받은 HTML을 그대로 삽입
+	        	return;
+	        }
 	        var boardNum = bwriteContent.id;
 	        var xhr = new XMLHttpRequest();
 	        xhr.open("GET", "../seyoung/bLatestPostComments.jsp?board_num=" + boardNum, true);
@@ -585,7 +590,6 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	                var banswerForm = document.querySelector('.banswer-form');
 	                banswerForm.innerHTML = xhr.responseText; // 서버로부터 받은 HTML을 그대로 삽입
 	                banswerForm.style.display = 'flex'; // 댓글 폼 보이도록 설정
-	                
 	            }
 	        };
 
@@ -709,12 +713,22 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	                document.querySelector(".bwrite-form").innerHTML = xhr.responseText;
 	                document.getElementById("board-recentpost3").innerHTML = "| 최근게시물";
 	                //console.log(document.querySelector(".bwrite-form").querySelector(".bwrite-content").id);
+	                // 서버에서 게시글에 대한 answer_type 값을 받아옴
+	                var answerType = document.getElementById("answerTypeValue").value; // bLatestPost.jsp에서 answer_type 값을 전달받음
+	                
+	                // answer_type 값에 따라 wanswer-form 표시 여부 결정
+	                if (answerType === "1") {
+	                    document.getElementById('wanswer-form').style.display = 'flex'; // 댓글 허용 시 표시
+	                } else {
+	                    document.getElementById('wanswer-form').style.display = 'none'; // 댓글 비허용 시 숨김
+	                }
+	                
 	                bloadAnswers(); // 댓글 로드
 	            }
 	        };
 
 	        xhr.send();
-	    }
+	    }   
 	 	
 	    //게시글이 로드된 후 댓글을 불러오는 함수 호출
 	    function loadPost(board_num) {
