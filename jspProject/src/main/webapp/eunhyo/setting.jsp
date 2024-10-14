@@ -222,10 +222,10 @@ function addCategory() {
                 
                 // 카테고리 항목 클릭 시 수정란에 반영하는 이벤트 리스너 추가
                 categoryItem.addEventListener('click', function() {
-    if (category.type === '홈') {
-        alert("홈 카테고리는 수정할 수 없습니다.");
-        return; // '홈'은 수정 불가
-    }
+					    if (categoryType === '홈') {
+					        alert("홈 카테고리는 수정할 수 없습니다.");
+					        return; // '홈'은 수정 불가
+					    }
 
                     // 현재 선택된 카테고리에 'selected' 클래스 추가
                     categoryItem.classList.add('selected');
