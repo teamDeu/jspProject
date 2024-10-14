@@ -11,7 +11,7 @@
 	suspensionBean = reportMgr.getSuspension(suspension_num);
 	ReportBean reportBean = reportMgr.getReportBean(suspensionBean.getSuspension_reason());
 	Vector<ChatLogBean> chatLogList = new Vector<ChatLogBean>();
-	if(reportBean.getReport_type().equals("chat")){
+	if(reportBean.getReport_type().equals("채팅")){
 		chatLogList = reportMgr.getChatLogByReport(reportBean);
 	}
 	System.out.println("suspensionBean" + reportBean.getReport_type());

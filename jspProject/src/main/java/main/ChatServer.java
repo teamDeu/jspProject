@@ -23,6 +23,8 @@ public class ChatServer {
     private static HashMap<String,String> userId = new HashMap<String,String>();
     private static HashMap<String,String> userUrl = new HashMap<String,String>();
     private static HashMap<String,String> userName = new HashMap<String,String>();
+    private static HashMap<String,Integer> urlCount = new HashMap<String,Integer>();
+    private static HashMap<String,String> refuseId = new HashMap<String,String>();
     private static String dataSeparator = "㉠";
     boolean flag;
     @OnOpen
@@ -47,6 +49,26 @@ public class ChatServer {
         	userId.put(session.getId(),data);
         	userCharacter.put(data, rawData[2]);
         	userName.put(session.getId(), name);
+        	
+        	if(urlCount.get(url) != null) {
+        		if(urlCount.get(url) == 8) {
+        			System.out.println(urlCount.get(url)+"접속거부됨");
+        			refuseId.put(session.getId(),url);
+        			session.getBasicRemote().sendText("refuse");
+            		return;
+        		}
+        		else {
+        			urlCount.put(url,urlCount.get(url)+1);
+        			System.out.println(urlCount.get(url) + "접속됨");
+        		}
+        	}
+        	else {
+        		urlCount.put(url, 1);
+        	}
+        	
+        	
+        	
+
         	synchronized (clients) {
                 for (int i = 0; i < clients.size() ; i++) {
                 	Session client = (Session)clients.toArray()[i];
@@ -119,6 +141,13 @@ public class ChatServer {
 
     @OnClose
     public void onClose(Session session) {
+    	if(refuseId.get(session.getId()) == userUrl.get(session.getId())) {
+    		refuseId.remove(session.getId());
+    	}
+    	else {
+    		urlCount.put(userUrl.get(session.getId()), urlCount.get(userUrl.get(session.getId())) - 1);
+    	}
+    	System.out.println(urlCount.get(userUrl.get(session.getId())));
         clients.remove(session);
         System.out.println("클라이언트 연결이 종료되었습니다: " + session.getId());
     }

@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Vector;
 
+import javax.print.attribute.PrintJobAttribute;
+
 import miniroom.UtilMgr;
 import pjh.ItemBean;
 
@@ -186,7 +188,6 @@ public class ReportMgr {
 				pstmt.setString(2, times[0]);
 				pstmt.setString(3, times[1]);
 				rs = pstmt.executeQuery();
-
 				while (rs.next()) {
 					ChatLogBean bean = new ChatLogBean();
 					bean.setChatlog_num(rs.getInt(1));
@@ -196,7 +197,7 @@ public class ReportMgr {
 					vlist.add(bean);
 				}
 			} catch (Exception e) {
-				// TODO: handle exception
+				e.printStackTrace();
 			} finally {
 				pool.freeConnection(con, pstmt, rs);
 			}
