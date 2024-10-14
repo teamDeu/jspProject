@@ -574,10 +574,6 @@
                     const userCountB = parseInt(b.querySelector('.user-count').innerText.trim());  // userCount 값을 가져옴
                     return userCountB - userCountA;  // 내림차순으로 정렬
                 });
-
-                // 페이지 2로 이동 후 다시 1로 이동
-                showPage(2);
-                showPage(1);
             } else if (sortType === 'alphabetical') {
                 // 가나다순으로 정렬
                 linesArray.sort((a, b) => {
@@ -585,25 +581,28 @@
                     const songB = b.querySelector('.title').innerText.trim();
                     return songA.localeCompare(songB, 'ko');
                 });
-
-                // 페이지 2로 이동 후 다시 1로 이동
-                showPage(2);
-                showPage(1);
             } else {
                 // 기본 정렬 (data-index를 기준으로)
                 linesArray.sort((a, b) => {
                     return parseInt(a.getAttribute('data-index')) - parseInt(b.getAttribute('data-index'));
                 });
-
-                showPage(2);
-                showPage(1);
             }
 
             // 정렬된 노래 목록을 다시 렌더링
             bigBox.innerHTML = ''; // 기존 내용을 지움
             linesArray.forEach(line => bigBox.appendChild(line)); // 정렬된 내용을 추가
+
+            // 한 페이지인 경우에도 1페이지를 보여주도록 호출
+            showPage(1); // 항상 첫 페이지를 다시 보여줌
+
+            // 만약 두 페이지 이상이라면, 페이지 2로 이동 후 다시 1로 이동하여 전체 리스트를 갱신
+            if (totalPages > 1) {
+                showPage(2);
+                showPage(1);
+            }
         });
     }
+
     
     
 
@@ -752,8 +751,6 @@
        // 새로고침 후에 특정 함수 실행
        document.addEventListener('DOMContentLoaded', function () {
            const openBox = localStorage.getItem('openBox');
-           
-           
            if (openBox === 'music') {
                localStorage.removeItem('openBox');  // 값을 바로 삭제하여 남아있지 않게 처리
                clickOpenBox('music');  // 새로고침 후에 실행할 함수 호출
