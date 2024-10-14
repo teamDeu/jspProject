@@ -728,7 +728,7 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	        };
 
 	        xhr.send();
-	    }
+	    }   
 	 	
 	    //게시글이 로드된 후 댓글을 불러오는 함수 호출
 	    function loadPost(board_num) {
