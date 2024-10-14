@@ -7,6 +7,7 @@
 	String user_id = (String)session.getAttribute("idKey");
 	Vector<ItemBean> characterList = mgr.getHoldCharacter(user_id);
 	Vector<ItemBean> backgroundList = mgr.getHoldBackgroundImg(user_id);
+
 	ItemBean usingCharacter = mgr.getUsingCharacter(user_id);
 	ItemBean usingBackground = mgr.getUsingBackground(user_id);
 	if(usingBackground.getItem_path() == null){
@@ -260,39 +261,49 @@
 	<script>
 	characterArray = [];
 	backgroundArray = [];
-	<%
-		for(int i = 0 ; i < characterList.size(); i++){
+	
+	document.addEventListener('DOMContentLoaded', function () {
+		
+		<%
+			for(int i = 0 ; i < characterList.size(); i++){
+				
+			ItemBean bean = characterList.get(i);
+			String image = bean.getItem_path();
+			int num = bean.getItem_num();
+			String name = bean.getItem_name();
+		%>
+			characterArray.push({
+				image : '<%=image%>',
+				num : <%=num%>,			
+				name : "<%=name%>"
+			})
+		<%
+			}
+		%>
+		
+		<%
+		for(int i = 0 ; i < backgroundList.size(); i++){
 			
-		ItemBean bean = characterList.get(i);
+		ItemBean bean = backgroundList.get(i);
 		String image = bean.getItem_path();
 		int num = bean.getItem_num();
 		String name = bean.getItem_name();
 	%>
-		characterArray.push({
+		backgroundArray.push({
 			image : '<%=image%>',
-			num : <%=num%>,			
+			num : <%=num%> ,
 			name : "<%=name%>"
 		})
 	<%
 		}
 	%>
-	
-	<%
-	for(int i = 0 ; i < backgroundList.size(); i++){
-		
-	ItemBean bean = backgroundList.get(i);
-	String image = bean.getItem_path();
-	int num = bean.getItem_num();
-	String name = bean.getItem_name();
-%>
-	backgroundArray.push({
-		image : '<%=image%>',
-		num : <%=num%> ,
-		name : "<%=name%>"
+	printCharacter(0);
+	printBackground(0);
+	console.log(backgroundArray);
+	console.log(characterArray);
 	})
-<%
-	}
-%>
+
+	
 	 function printBackground(index){
 		div = document.querySelector(".miniroom_design_background_div");
 		indexLeft = div.querySelector(".index_button_left");
@@ -358,8 +369,7 @@
 		}
 	}
 
-	printCharacter(0);
-	printBackground(0);
+	
 	
 	function clickPrevIndex(type){
 		
