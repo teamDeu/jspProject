@@ -112,10 +112,10 @@ public class MemberMgr {
                         + "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
                    pstmt3 = con.prepareStatement(sql3);
                    pstmt3.setString(1, bean.getUser_id());
-                   pstmt3.setString(2, "임시 닉네임");  // 기본 닉네임
+                   pstmt3.setString(2, "임시닉네임");  // 기본 닉네임
                    pstmt3.setString(3, "example@example.com");  // 기본 이메일
                    pstmt3.setString(4, "2000-01-01");  // 기본 생일
-                   pstmt3.setString(5, "임시 취미");  // 기본 취미
+                   pstmt3.setString(5, "임시취미");  // 기본 취미
                    pstmt3.setString(6, "ENFJ");  // 기본 MBTI
                    pstmt3.setString(7, "기본 상태 메시지");  // 기본 상태 메시지
                    pstmt3.setString(8, "img/character1.png");  // 기본 프로필 사진
