@@ -140,10 +140,20 @@ public class CategoryMgr {
     public boolean deleteCategory(String userId, String categoryType, String categoryName) {
         Connection conn = null;
         PreparedStatement pstmt = null;
+        ResultSet rs = null;
         String sql = "DELETE FROM category WHERE user_id = ? AND category_type = ? AND category_name = ?";
+        String updateSql = "UPDATE category SET category_index = category_index - 1 WHERE user_id = ? AND category_index > ?";
 
         try {
             conn = pool.getConnection();
+            
+            // 삭제할 카테고리의 인덱스 가져오기
+            int deletedCategoryIndex = getIndex(userId, categoryType);
+            if (deletedCategoryIndex == 0) {
+                System.out.println("No category found for deletion.");
+                return false;
+            }
+            
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
             pstmt.setString(2, categoryType);
@@ -151,7 +161,19 @@ public class CategoryMgr {
             int count = pstmt.executeUpdate();
 
             System.out.println("Number of rows deleted: " + count); // 추가 로그
-            return count > 0;
+            if (count > 0) {
+                // 삭제된 후 인덱스 재정렬
+                System.out.println("Deleted category with index: " + deletedCategoryIndex);
+                pstmt = conn.prepareStatement(updateSql);
+                pstmt.setString(1, userId);
+                pstmt.setInt(2, deletedCategoryIndex);
+                int updateCount = pstmt.executeUpdate();
+
+                System.out.println("Number of rows updated after deletion: " + updateCount);
+                return true;
+            }else {
+                System.out.println("No category was deleted.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (Exception e) {
