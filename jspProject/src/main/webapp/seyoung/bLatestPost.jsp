@@ -55,12 +55,13 @@
     }
 
 %>
+<!-- 제목과 작성일을 상단에 배치하고 삭제 버튼 추가 -->
+    <input type="hidden" id="answerTypeValue" value="<%= latestBoard.getBoard_answertype() %>">
 <% 
 
 if (latestBoard != null && canView) { 
 %>
-    <!-- 제목과 작성일을 상단에 배치하고 삭제 버튼 추가 -->
-    <input type="hidden" id="answerTypeValue" value="<%= latestBoard.getBoard_answertype() %>">
+    
     <div class="bwrite-header" style="display: flex; align-items: center; width: 100%;">
     	<input type="hidden" id = "latestBoard_folderName" value ="<%=bFmgr.getFolderInfo(latestBoard.getBoard_folder()).getFolder_name()%>">
         <h3><%= latestBoard.getBoard_title() %></h3>
