@@ -109,9 +109,6 @@ public class CategoryMgr {
         System.out.println(currentIndex);
         
         String updateSql = "UPDATE category SET category_name = ?, category_secret = ?, category_index = ? WHERE user_id = ? AND category_type = ?";
-        if(category.getCategoryIndex() == 1) {
-        	return false;
-        }
         try {
             conn = pool.getConnection();
             updateIndex(category.getUserId(),category.getCategoryIndex(),currentIndex);

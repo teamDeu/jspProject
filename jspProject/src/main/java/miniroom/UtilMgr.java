@@ -119,7 +119,7 @@ public class UtilMgr {
 	}
 	
 	public static void main(String[] args) {
-		setTimeRange("2024-10-02 17:58:43");
+		setTimeRange("2024-10-14 11:04:43");
 	}
 }
 

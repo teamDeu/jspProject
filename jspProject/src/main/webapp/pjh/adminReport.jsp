@@ -264,7 +264,7 @@ html, body {
 		</ul>
 	</div>
 	<div class="main-content">
-		<h1>유저 관리</h1>
+		<h1>신고 관리</h1>
 		<!-- 검색 폼 -->
 		<form method="get" action="adminReport.jsp">
 			<select class="admin_select" name="user_keyField">
