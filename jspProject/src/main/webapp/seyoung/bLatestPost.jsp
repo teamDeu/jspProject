@@ -18,6 +18,7 @@
 	
 	
 	BoardWriteBean latestBoard = null;
+	
 	if(type.equals("latest")){
 		latestBoard = mgr.getLatestBoard(board_id);
 	}
@@ -77,6 +78,26 @@ if (latestBoard != null && canView) {
             <% } %>
         </div>
     </div>
+	<%
+	    // 게시물 작성일과 수정일을 각각 가져오기
+	    String boardAt = latestBoard.getBoard_at() != null ? latestBoard.getBoard_at().substring(0, 10) : "";
+	    String boardUpdatedAt = latestBoard.getBoard_updated_at() != null ? latestBoard.getBoard_updated_at().substring(0, 10) : "";;  // 수정된 날짜
+	    
+
+	    System.out.println("boardUpdatedAt: " + boardUpdatedAt);  // 콘솔에 출력하여 디버깅
+	    System.out.println("boardAt: " + boardAt);  // 콘솔에 출력하여 디버깅
+	
+	    // 수정된 게시물인 경우 수정된 날짜를 올바르게 표시
+	    if (!boardUpdatedAt.isEmpty()) {
+	        
+	%>
+	        <div class="modified-info" id="modifiedInfo_<%= latestBoard.getBoard_num() %>" style="margin-top: 5px; color: gray;">
+	            <p>수정된 게시물 (수정 날짜: <%= boardUpdatedAt %>)</p>
+	        </div>
+	<%
+	    }
+	%>
+	
 
     <!-- 이미지가 있을 경우 표시 -->
     <% if (latestBoard.getBoard_image() != null && !latestBoard.getBoard_image().isEmpty()) { %>
@@ -84,6 +105,7 @@ if (latestBoard != null && canView) {
             <img id="boardImage_<%= latestBoard.getBoard_num() %>" src="<%=latestBoard.getBoard_image()%>" style="width: 300px; height: 200px; border: 1px solid #CCC; padding: 5px;">
         </div>
     <% } %>
+    
     
     <!-- 내용 부분 -->
     <div id="<%= latestBoard.getBoard_num() %>" class="bwrite-content">
@@ -111,15 +133,18 @@ if (latestBoard != null && canView) {
         <textarea name="board_content" id="editBoardContent_<%= latestBoard.getBoard_num() %>" rows="8" cols="130" 
         style="width: 100%; font-size: 20px; margin-top: 22px; margin-left: 8px; border: none; background-color: #f7f7f7;"><%= latestBoard != null ? latestBoard.getBoard_content() : "" %></textarea><br>
 
-        <!-- 이미지 수정 부분 -->
-		<input type="file" name="board_image" id="editBoardImage_<%= latestBoard.getBoard_num() %>" style="display: none;" onchange="updateImageName(<%= latestBoard.getBoard_num() %>)">
-		<label for="editBoardImage_<%= latestBoard.getBoard_num() %>" style="cursor: pointer; display: inline-block; border: 1px solid #CCC; padding: 5px; text-align: center; width: 120px; margin-left: 10px;">
+        <!-- 이미지 수정 부분 -->	    
+	    <input type="file" name="board_image" id="editBoardImage_<%= latestBoard.getBoard_num() %>" style="display: none;" onchange="updateImageName(<%= latestBoard.getBoard_num() %>)">
+	    <label for="editBoardImage_<%= latestBoard.getBoard_num() %>" style="cursor: pointer; display: inline-block; border: 1px solid #CCC; padding: 5px; text-align: center; width: 120px; margin-left: 10px;">
 		    <img id="editBoardImagePreview_<%= latestBoard.getBoard_num() %>" src="../seyoung/img/photo-icon.png" style="width: 24px; height: 24px; vertical-align: middle;">
 		    <span  style="vertical-align: middle;">사진</span>
 		</label>
 
-		<span id="imageName_<%= latestBoard.getBoard_num() %>"></span>
-       
+		<span id="imageName_<%= latestBoard.getBoard_num() %>">
+			<% if (latestBoard.getBoard_image() != null && !latestBoard.getBoard_image().isEmpty()) { %>
+		        <%= latestBoard.getBoard_image().substring(latestBoard.getBoard_image().lastIndexOf("/") + 1) %> <!-- 이미지 파일명만 표시 -->
+		    <% } %>
+		</span>     
     </form>
 
 <% } else if (latestBoard != null && !canView) { %>

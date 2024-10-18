@@ -609,7 +609,7 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	        xhr.onreadystatechange = function () {
 	            if (xhr.readyState === 4 && xhr.status === 200) {
 	                alert("게시글이 수정되었습니다.");
-	                loadLatestPost(); // 게시글 수정 후 최신 게시글 다시 불러옴
+	    			loadPost(boardNum);
 	            }
 	        };
 	        xhr.send(formData); // 수정된 데이터 서버로 전송
@@ -738,9 +738,11 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	    
 	    function updateImageName(boardNum) {
 	        var fileInput = document.getElementById("editBoardImage_" + boardNum);
-	        var fileName = fileInput.files[0].name;
-	        var label = document.getElementById("imageName_" + boardNum);
-	        label.textContent = fileName; // 파일 이름을 라벨 옆에 표시
+	        if (fileInput.files.length > 0) { // 파일이 선택된 경우에만 이름 업데이트
+	            var fileName = fileInput.files[0].name;
+	            var label = document.getElementById("imageName_" + boardNum);
+	            label.textContent = fileName; // 파일 이름을 라벨 옆에 표시
+	        }
 	    }
 	    
 	    

@@ -550,9 +550,13 @@ public class BoardWriteMgr {
             // 이미지 파일 업데이트 여부 확인
             String boardImage = multi.getFilesystemName("board_image");
             if (boardImage != null && !boardImage.isEmpty()) {
+                // 새 이미지가 있을 경우 새 이미지 설정
+                board.setBoard_image("./img/" + boardImage);
                 pstmt.setString(6, "./img/" + boardImage);
             } else {
-                pstmt.setNull(6, java.sql.Types.VARCHAR);  // 이미지 없을 시 null 처리
+                // 새 이미지가 없을 경우 기존 이미지를 유지
+                boardImage = board.getBoard_image();
+                pstmt.setString(6, boardImage);  // 기존 이미지 경로 유지
             }
 
             pstmt.setInt(7, board.getBoard_num());  // 게시물 번호로 게시글 선택
@@ -570,6 +574,7 @@ public class BoardWriteMgr {
     }
 
 
+    
     
     
 }
