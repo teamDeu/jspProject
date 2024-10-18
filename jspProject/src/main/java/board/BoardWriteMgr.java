@@ -529,6 +529,46 @@ public class BoardWriteMgr {
         return totalPages;
     }
 
+    //게시물 수정
+    public boolean updateBoard(BoardWriteBean board, MultipartRequest multi) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        String sql = "";
+        boolean flag = false;
+        try {
+            con = pool.getConnection();
+            sql = "UPDATE board SET board_visibility = ?, board_answertype = ?, board_folder = ?, board_title = ?, board_content = ?, board_image = ?, board_updated_at = now() WHERE board_num = ?";
+            pstmt = con.prepareStatement(sql);
+
+            // 파라미터 설정
+            pstmt.setInt(1, board.getBoard_visibility());
+            pstmt.setInt(2, board.getBoard_answertype());
+            pstmt.setInt(3, board.getBoard_folder());
+            pstmt.setString(4, board.getBoard_title());
+            pstmt.setString(5, board.getBoard_content());
+
+            // 이미지 파일 업데이트 여부 확인
+            String boardImage = multi.getFilesystemName("board_image");
+            if (boardImage != null && !boardImage.isEmpty()) {
+                pstmt.setString(6, "./img/" + boardImage);
+            } else {
+                pstmt.setNull(6, java.sql.Types.VARCHAR);  // 이미지 없을 시 null 처리
+            }
+
+            pstmt.setInt(7, board.getBoard_num());  // 게시물 번호로 게시글 선택
+
+            int rs = pstmt.executeUpdate();
+            if (rs > 0) {
+                flag = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.freeConnection(con, pstmt);
+        }
+        return flag;
+    }
+
 
     
     

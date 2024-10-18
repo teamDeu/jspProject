@@ -11,12 +11,16 @@ public class BoardWriteBean {
     private String board_at; // 작성 시간
     private String board_image; // 이미지 경로
     private int board_views;
+    private String board_updated_at; //게시글 수정 날짜
     
     
     public BoardWriteBean(){}
 	 
-    public BoardWriteBean(int board_num, int board_visibility, int board_answertype, int board_folder, String board_id,
-			String board_title, String board_content, String board_at, String board_image) {
+    
+
+	public BoardWriteBean(int board_num, int board_visibility, int board_answertype, int board_folder, String board_id,
+			String board_title, String board_content, String board_at, String board_image, int board_views,
+			String board_updated_at) {
 		super();
 		this.board_num = board_num;
 		this.board_visibility = board_visibility;
@@ -27,7 +31,11 @@ public class BoardWriteBean {
 		this.board_content = board_content;
 		this.board_at = board_at;
 		this.board_image = board_image;
+		this.board_views = board_views;
+		this.board_updated_at = board_updated_at;
 	}
+
+
 
 	public int getBoard_num() {
         return board_num;
@@ -107,6 +115,14 @@ public class BoardWriteBean {
 
 	public void setBoard_views(int board_views) {
 		this.board_views = board_views;
+	}
+
+	public String getBoard_updated_at() {
+		return board_updated_at;
+	}
+
+	public void setBoard_updated_at(String board_updated_at) {
+		this.board_updated_at = board_updated_at;
 	}
     
     

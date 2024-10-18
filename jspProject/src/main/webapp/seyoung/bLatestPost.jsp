@@ -26,8 +26,6 @@
 		latestBoard = mgr.getBoard(board_num);	
 	}
 
-	
-
 	// 친구 관계 및 게시물 보기 권한 확인
     boolean canView = false;
     if (latestBoard != null) {
@@ -62,13 +60,16 @@
 if (latestBoard != null && canView) { 
 %>
     
-    <div class="bwrite-header" style="display: flex; align-items: center; width: 100%;">
-    	<input type="hidden" id = "latestBoard_folderName" value ="<%=bFmgr.getFolderInfo(latestBoard.getBoard_folder()).getFolder_name()%>">
-        <h3><%= latestBoard.getBoard_title() %></h3>
+    <div class="bwrite-header" id="bwriteHeader_<%= latestBoard.getBoard_num() %>" style="display: flex; align-items: center; width: 100%;">
+    	<input type="hidden" id="latestBoard_folderName" value="<%=bFmgr.getFolderInfo(latestBoard.getBoard_folder()).getFolder_name()%>">
+        <h3 id="boardTitle_<%= latestBoard.getBoard_num() %>"><%= latestBoard.getBoard_title() %></h3>
         <div style="flex-grow: 1; border-bottom: 1px dotted #BAB9AA; margin: 0 10px;"></div>
         <div>
-            <span><%= latestBoard.getBoard_at().substring(0, 10) %></span>
+            
+             <span id="boardAt"><%= latestBoard.getBoard_at().substring(0, 10) %></span>
+
             <% if (userId != null && userId.equals(latestBoard.getBoard_id())) { %>
+            	<button class="latestEdit-btn" onclick="beditlatestPost(<%= latestBoard.getBoard_num() %>)">수정</button>	
                 <button class="latestDel-btn" onclick="bdellatestPost(<%= latestBoard.getBoard_num() %>)">삭제</button>
             <% } %>
         </div>
@@ -76,22 +77,51 @@ if (latestBoard != null && canView) {
 
     <!-- 이미지가 있을 경우 표시 -->
     <% if (latestBoard.getBoard_image() != null && !latestBoard.getBoard_image().isEmpty()) { %>
-        <div style="text-align: center; margin-top: 10px;">
-            <img alt="" src="<%=latestBoard.getBoard_image()%>"   style="width: 300px; height: 200px; border: 1px solid #CCC; padding: 5px;">
+        <div style="text-align: center; margin-top: 10px;" id="boardImageContainer_<%= latestBoard.getBoard_num() %>">
+            <img id="boardImage_<%= latestBoard.getBoard_num() %>" src="<%=latestBoard.getBoard_image()%>" style="width: 300px; height: 200px; border: 1px solid #CCC; padding: 5px;">
         </div>
     <% } %>
+    
     <!-- 내용 부분 -->
-    <div id=<%=latestBoard.getBoard_num()%> class="bwrite-content">
+    <div id="<%= latestBoard.getBoard_num() %>" class="bwrite-content">
         <%= latestBoard.getBoard_content() %>
     </div>
 
+    <!-- 수정 폼 추가 -->
+    <form id="editForm_<%= latestBoard.getBoard_num() %>" style="display: none; margin-top: 0px;" enctype="multipart/form-data" method="post">
+        <input type="hidden" name="board_num" id="editBoardNum_<%= latestBoard.getBoard_num() %>">
+         
+        <div class="bwrite-header2" style="display: flex; align-items: center; width: 100%;">
+            <!-- 제목 필드 -->
+            <input type="text" name="board_title" id="editBoardTitle_<%= latestBoard.getBoard_num() %>" value="<%= latestBoard != null ? latestBoard.getBoard_title() : "" %>" >
+            
+            <!-- dotted line -->
+            <div style="flex-grow: 1; border-bottom: 1px dotted #BAB9AA; margin: 0 10px;"></div>
+            
+            <!-- 버튼 -->
+            <button class="submitbtn" type="button" onclick="submitEdit(<%= latestBoard.getBoard_num() %>)" >저장</button>
+            <button class="canclebtn" type="button" onclick="cancelEdit(<%= latestBoard.getBoard_num() %>)" >취소</button>
+        </div>
+        
+        
+        
+        <textarea name="board_content" id="editBoardContent_<%= latestBoard.getBoard_num() %>" rows="8" cols="130" 
+        style="width: 100%; font-size: 20px; margin-top: 22px; margin-left: 8px; border: none; background-color: #f7f7f7;"><%= latestBoard != null ? latestBoard.getBoard_content() : "" %></textarea><br>
+
+        <!-- 이미지 수정 부분 -->
+		<input type="file" name="board_image" id="editBoardImage_<%= latestBoard.getBoard_num() %>" style="display: none;" onchange="updateImageName(<%= latestBoard.getBoard_num() %>)">
+		<label for="editBoardImage_<%= latestBoard.getBoard_num() %>" style="cursor: pointer; display: inline-block; border: 1px solid #CCC; padding: 5px; text-align: center; width: 120px; margin-left: 10px;">
+		    <img id="editBoardImagePreview_<%= latestBoard.getBoard_num() %>" src="../seyoung/img/photo-icon.png" style="width: 24px; height: 24px; vertical-align: middle;">
+		    <span  style="vertical-align: middle;">사진</span>
+		</label>
+
+		<span id="imageName_<%= latestBoard.getBoard_num() %>"></span>
+       
+    </form>
+
 <% } else if (latestBoard != null && !canView) { %>
-    <!-- 권한이 없을 경우 -->
     <p>이 게시글을 볼 수 있는 권한이 없습니다.</p>
 <% } else { %>
     <p>작성한 게시글이 없습니다.</p>
 <% } %>
-
-
-
 
