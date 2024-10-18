@@ -14,15 +14,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
 
-@ServerEndpoint("/chaasdft")
-public class ChatServer {
+@ServerEndpoint("/chat")
+public class ChatServer3 {
 	
     private static Set<Session> clients = Collections.synchronizedSet(new HashSet<>());
+    private static HashMap<String,String> userCharacter = new HashMap<String,String>();
+    private static HashMap<String,String> userId = new HashMap<String,String>();
+    private static HashMap<String,String> userUrl = new HashMap<String,String>();
+    private static HashMap<String,String> userName = new HashMap<String,String>();
     private static HashMap<String,Integer> urlCount = new HashMap<String,Integer>();
     private static HashMap<String,String> refuseId = new HashMap<String,String>();
-    private static HashMap<String,User> userInfo = new HashMap<String,User>();
     private static String dataSeparator = "㉠";
     boolean flag;
     @OnOpen
@@ -43,7 +45,11 @@ public class ChatServer {
         if(command.equals("connect")) {
         	String url = rawData[3];
         	String name = rawData[4];
-        	userInfo.put(session.getId(),new User(session, data, url, name, rawData[2]));
+        	userUrl.put(session.getId(),url);
+        	userId.put(session.getId(),data);
+        	userCharacter.put(data, rawData[2]);
+        	userName.put(session.getId(), name);
+        	
         	if(urlCount.get(url) != null) {
         		if(urlCount.get(url) == 8) {
         			System.out.println(urlCount.get(url)+"접속거부됨");
@@ -67,17 +73,13 @@ public class ChatServer {
                 for (int i = 0; i < clients.size() ; i++) {
                 	Session client = (Session)clients.toArray()[i];
                 	try {
-                		User user = userInfo.get(client.getId());
-                		String userIdValue = user.getUserId();
-                		String userCharacterValue = user.getUserCharacter();
-                		String userNameValue = user.getUserName();
-                		String userUrl = user.getConnectedUrl();
-                		
-                		User connectUser = userInfo.get(session.getId());
+                		String userIdValue = userId.get(client.getId());
+                		String userCharacterValue = userCharacter.get(userIdValue);
+                		String userNameValue = userName.get(client.getId());
                 		if(session.getId() == client.getId()) {
                 			continue;
                 		}
-                		if(userUrl.equals(connectUser.getConnectedUrl())){
+                		if(userUrl.get(client.getId()).equals(userUrl.get(session.getId()))){
                 			session.getBasicRemote().sendText("init"+ dataSeparator +userIdValue + dataSeparator + userCharacterValue +dataSeparator +userNameValue);
                 		}
                 		
@@ -117,11 +119,7 @@ public class ChatServer {
         	String id = data;
         	synchronized (clients) {
                 for (Session client : clients) {
-                	User user = userInfo.get(client.getId());
-            		String userIdValue = user.getUserId();
-            		
-            		User connectUser = userInfo.get(session.getId());
-                		if(userIdValue.equals(data)) {
+                		if(userId.get(client.getId()).equals(id)) {
                 			client.getBasicRemote().sendText(message);	
                 		}
                 }
@@ -131,13 +129,7 @@ public class ChatServer {
         if(flag) {
         	synchronized (clients) {
                 for (Session client : clients) {
-                	User user = userInfo.get(client.getId());
-            		String userIdValue = user.getUserId();
-            		String userUrl = user.getConnectedUrl();
-            		
-            		User connectUser = userInfo.get(session.getId());
-            		String sendUserUrl = connectUser.getConnectedUrl();
-                	if(userUrl.equals(sendUserUrl)){
+                	if(userUrl.get(client.getId()).equals(userUrl.get(session.getId()))){
                 		client.getBasicRemote().sendText(message);
             		}
                 }
@@ -149,15 +141,13 @@ public class ChatServer {
 
     @OnClose
     public void onClose(Session session) {
-    	User connectUser = userInfo.get(session.getId());
-		String userUrl = connectUser.getConnectedUrl();
-    	if(refuseId.get(session.getId()).equals(userUrl)) {
+    	if(refuseId.get(session.getId()) == userUrl.get(session.getId())) {
     		refuseId.remove(session.getId());
     	}
     	else {
-    		urlCount.put(userUrl, urlCount.get(userUrl) - 1);
+    		urlCount.put(userUrl.get(session.getId()), urlCount.get(userUrl.get(session.getId())) - 1);
     	}
-    	System.out.println(urlCount.get(userUrl));
+    	System.out.println(urlCount.get(userUrl.get(session.getId())));
         clients.remove(session);
         System.out.println("클라이언트 연결이 종료되었습니다: " + session.getId());
     }
