@@ -430,7 +430,7 @@ function mainCategoryLoad(){
                     userName = rawdata[2];
                     userCharacter = rawdata[3];
                     requestType = rawdata[4];
-                    flag = isFriend(localId,userId);
+                    flag = isFriend(localId,submitFriendRequestUserId);
                     
                     const createProfileDiv = (userName, submitFriendRequestUserId, userCharacter, localId, flag) => {
                        const profileDiv = 
@@ -456,7 +456,7 @@ function mainCategoryLoad(){
                           return tempDiv.firstChild;
                       };
                    
-                   const profileDiv = createProfileDiv(userName,userId,userCharacter,localId,flag);
+                   const profileDiv = createProfileDiv(userName,submitFriendRequestUserId,userCharacter,localId,flag);
                    
                     if(requestType == "일촌"){
                        friend_items_first.push(profileDiv)

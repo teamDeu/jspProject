@@ -496,7 +496,7 @@ function buyStoreItem(itemNum, itemPrice, itemName, itemImage,itemType) {
     console.log("Item Image: ", itemImage);
     console.log("Item Price: ", itemPrice);
 
-    if (<%= user_clover %> < itemPrice) {
+    if (parseInt(document.querySelectorAll('.clover-amount-span')[0].innerText) < itemPrice) {
         alert("클로버가 부족합니다.");
         return;
     }

@@ -111,18 +111,18 @@ function frequest_receive_clickCancelBtn(){
 		alarmRenewal();
 	    fr_modal = document.getElementById("friend_request_modal_receive");
 	    
-	   	userId = fr_modal.querySelector(".request_senduserid").value;
+	    request_senduserid_userId = fr_modal.querySelector(".request_senduserid").value;
 	   	userName = fr_modal.querySelector(".request_user_name_font").innerText;
 	   	userCharacter = fr_modal.querySelector(".request_profile_img").src;
 	   	requestType = fr_modal.querySelector('.request_type_span').innerText;
 	   	connectId = '<%=connectId%>'
 	   	
-		if(!isFriend(connectId,userId)){
-			if(url == userId){
+		if(!isFriend(connectId,request_senduserid_userId)){
+			if(url == request_senduserid_userId){
 				submitFriendRequest(connectId,localName,localCharacter,requestType);
 			}
 			else if(url == connectId){
-				submitFriendRequest(userId,userName,userCharacter,requestType);
+				submitFriendRequest(request_senduserid_userId,userName,userCharacter,requestType);
 			}
 			
 		}
