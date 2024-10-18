@@ -179,6 +179,22 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	white-space: nowrap;
 }
 
+.bwrite-header2 {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	margin-left: -2px;
+}
+
+.bwrite-header2 input {
+	margin: 10px;
+	font-size: 22px;
+	font-weight: normal;
+	white-space: nowrap;
+	border: none;
+	background-color: #F7F7F7;
+}
+
 .latestDel-btn {
 	margin-right: 5px;
 	background: none;
@@ -188,6 +204,32 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	font-size: 22px;
 }
 
+.latestEdit-btn {
+	margin-right: 5px;
+	background: none;
+    color: black;
+    border: none;
+    font-family: 'NanumTobak', sans-serif;
+	font-size: 22px;
+}
+
+.submitbtn {
+	margin-right: 5px;
+	background: none;
+    color: black;
+    border: none;
+    font-family: 'NanumTobak', sans-serif;
+	font-size: 22px;
+}
+
+.canclebtn{
+	margin-right: -20px;
+	background: none;
+    color: #FF5A5A;
+    border: none;
+    font-family: 'NanumTobak', sans-serif;
+	font-size: 22px;
+}
 .brite-content {
 	margin: 10px;
 
@@ -540,6 +582,48 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	        }
 	    }
 		
+	    function beditlatestPost(boardNum) {
+	        // 기존 내용을 수정 폼에 넣기
+	        document.getElementById("editForm_" + boardNum).style.display = "block";
+	        document.getElementById("editBoardNum_" + boardNum).value = boardNum;
+
+	        var title = document.getElementById("boardTitle_" + boardNum).innerText;
+	        var content = document.querySelector(".bwrite-content").innerText;
+	        
+	        document.getElementById("editBoardTitle_" + boardNum).value = title;
+	        document.getElementById("editBoardContent_" + boardNum).value = content;
+
+	        // 기존 제목과 내용을 숨기고 수정 폼을 표시
+	        document.getElementById("bwriteHeader_" + boardNum).style.display = "none";
+	        document.querySelector(".bwrite-content").style.display = "none";
+	        var imageContainer = document.getElementById("boardImageContainer_" + boardNum);
+	        if (imageContainer) {
+	            imageContainer.style.display = "none";
+	        }
+	    }
+
+	    function submitEdit(boardNum) {
+	        var formData = new FormData(document.getElementById("editForm_" + boardNum));
+	        var xhr = new XMLHttpRequest();
+	        xhr.open("POST", "<%= cPath %>/seyoung/bLatestEditProc.jsp", true);
+	        xhr.onreadystatechange = function () {
+	            if (xhr.readyState === 4 && xhr.status === 200) {
+	                alert("게시글이 수정되었습니다.");
+	                loadLatestPost(); // 게시글 수정 후 최신 게시글 다시 불러옴
+	            }
+	        };
+	        xhr.send(formData); // 수정된 데이터 서버로 전송
+	    }
+
+	    function cancelEdit(boardNum) {
+	        document.getElementById("editForm_" + boardNum).style.display = "none";
+	        document.getElementById("bwriteHeader_" + boardNum).style.display = "flex";
+	        document.querySelector(".bwrite-content").style.display = "block";
+	        var imageContainer = document.getElementById("boardImageContainer_" + boardNum);
+	        if (imageContainer) {
+	            imageContainer.style.display = "block";
+	        }
+	    }
 	    
 	    //댓글 추가 함수
 	    function baddAnswer() {
@@ -652,7 +736,12 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	        xhr.send(params);
 	    }
 	    
-	    
+	    function updateImageName(boardNum) {
+	        var fileInput = document.getElementById("editBoardImage_" + boardNum);
+	        var fileName = fileInput.files[0].name;
+	        var label = document.getElementById("imageName_" + boardNum);
+	        label.textContent = fileName; // 파일 이름을 라벨 옆에 표시
+	    }
 	    
 	    
 	    // 답글 삭제 함수
