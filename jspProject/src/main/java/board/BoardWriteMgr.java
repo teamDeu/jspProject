@@ -574,7 +574,37 @@ public class BoardWriteMgr {
     }
 
 
-    
+    public String getBoardUpdatedAt(int board_num) {
+        String updatedAt = null;
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = pool.getConnection();
+            String sql = "SELECT board_updated_at FROM board WHERE board_num = ?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, board_num);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                updatedAt = rs.getString("board_updated_at");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // 리소스 해제
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (con != null) con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return updatedAt;
+    }
+
     
     
 }

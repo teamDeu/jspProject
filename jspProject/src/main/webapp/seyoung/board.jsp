@@ -157,6 +157,7 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
 	border: none;
 	width: 100%;
 	text-align: left; /* 내용의 텍스트를 왼쪽 정렬 */
+	
 }
 
 .bwrite-header {
@@ -474,6 +475,9 @@ int answerType = latestBoard != null ? latestBoard.getBoard_answertype() : -1; /
             cursor: pointer;
         }
 
+.modified-info {
+	margin-left: 10px;
+}
 </style>
 
 </head>

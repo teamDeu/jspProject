@@ -81,15 +81,18 @@ if (latestBoard != null && canView) {
 	<%
 	    // 게시물 작성일과 수정일을 각각 가져오기
 	    String boardAt = latestBoard.getBoard_at() != null ? latestBoard.getBoard_at().substring(0, 10) : "";
-	    String boardUpdatedAt = latestBoard.getBoard_updated_at() != null ? latestBoard.getBoard_updated_at().substring(0, 10) : "";;  // 수정된 날짜
-	    
-
-	    System.out.println("boardUpdatedAt: " + boardUpdatedAt);  // 콘솔에 출력하여 디버깅
-	    System.out.println("boardAt: " + boardAt);  // 콘솔에 출력하여 디버깅
+		String boardUpdatedAt = mgr.getBoardUpdatedAt(latestBoard.getBoard_num()); // 수정된 날짜 가져오기
 	
+	    // boardUpdatedAt가 null인지 확인하고 디버깅 메시지 출력
+	    if (boardUpdatedAt != null) {
+	        boardUpdatedAt = boardUpdatedAt.substring(0, 10); // null이 아닐 경우에만 substring 호출
+	    } else {
+	        System.out.println("boardUpdatedAt is null"); // 디버깅용 메시지
+	    }
+	
+	   
 	    // 수정된 게시물인 경우 수정된 날짜를 올바르게 표시
-	    if (!boardUpdatedAt.isEmpty()) {
-	        
+	    if (boardUpdatedAt != null && !boardUpdatedAt.isEmpty()) {
 	%>
 	        <div class="modified-info" id="modifiedInfo_<%= latestBoard.getBoard_num() %>" style="margin-top: 5px; color: gray;">
 	            <p>수정된 게시물 (수정 날짜: <%= boardUpdatedAt %>)</p>
@@ -131,7 +134,7 @@ if (latestBoard != null && canView) {
         
         
         <textarea name="board_content" id="editBoardContent_<%= latestBoard.getBoard_num() %>" rows="8" cols="130" 
-        style="width: 100%; font-size: 20px; margin-top: 22px; margin-left: 8px; border: none; background-color: #f7f7f7;"><%= latestBoard != null ? latestBoard.getBoard_content() : "" %></textarea><br>
+        style="width: 100%; font-size: 20px; margin-top: 22px; margin-left: 8px; border: none; background-color: #f7f7f7; white-space: pre-wrap;"><%= latestBoard != null ? latestBoard.getBoard_content() : "" %></textarea><br>
 
         <!-- 이미지 수정 부분 -->	    
 	    <input type="file" name="board_image" id="editBoardImage_<%= latestBoard.getBoard_num() %>" style="display: none;" onchange="updateImageName(<%= latestBoard.getBoard_num() %>)">
