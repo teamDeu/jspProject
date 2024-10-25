@@ -38,7 +38,7 @@ public class MemberMgr {
    public MemberMgr() {
       pool = DBConnectionMgr.getInstance();
       // 메시지 서비스 초기화
-      messageService = NurigoApp.INSTANCE.initialize("NCS05PHUJJCQP4KS", "GVI8ZIVSAONHOZGGTXDHCDHXGMW6SSSY",
+      messageService = NurigoApp.INSTANCE.initialize("NCS05PHUJJCQP4KS", APIKEY.coolsms_api_key,
             "https://api.coolsms.co.kr");
    }
 
